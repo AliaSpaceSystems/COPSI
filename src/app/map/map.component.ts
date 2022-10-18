@@ -58,7 +58,7 @@ export class MapComponent implements OnInit, OnDestroy {
     });
 
 
-    map.on('data', () => {
+    map.on('load', () => {
       map.getStyle().layers.forEach((layer:any) => {
         if (layer.id.endsWith('label')) {
           map.setLayoutProperty(layer.id, 'visibility', 'none');
