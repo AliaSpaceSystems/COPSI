@@ -1,8 +1,28 @@
 <div id="header-main-div">
   <mat-icon id="user-icon" aria-hidden="false" aria-label="Account icon" fontIcon="account_circle" (click)="onUserMenuClick()"></mat-icon>
-  <mat-icon id="settings-icon" aria-hidden="false" aria-label="Settings icon" fontIcon="settings"></mat-icon>
-  <div id="user-menu">
-  </div>
-
+  <mat-icon id="settings-icon" aria-hidden="false" aria-label="Settings icon" fontIcon="settings" (click)="onSettingsMenuClick()"></mat-icon>
 </div>
 
+<div id="user-menu">
+  <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
+  <p>MyUserName</p>
+  <hr style="width:100%;">
+  <p>Some useful information</p>
+  <p>...and other...</p>
+</div>
+
+<div id="settings-menu">
+  <mat-icon id="settings-image" aria-hidden="false" aria-label="Settings image" fontIcon="settings"></mat-icon>
+  <p>Map Settings</p>
+  <hr style="width:100%;">
+  <div class="menu-item">
+    <label for="map-style">Map style:</label>
+    <select name="map-style-select" id="map-style">
+      <option *ngFor="let option of mapStyles">{{option}}</option>
+    </select>
+  </div>
+  <div class="menu-item">
+    <label for="show-labels">Show labels:</label>
+    <input type="checkbox" id="show-labels" [value]="showLabels" (change)="onShowLabelCheck($event)"/>
+  </div>
+</div>

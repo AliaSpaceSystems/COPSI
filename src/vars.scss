@@ -8,30 +8,24 @@ $main-light-bg-color: #ffffff;
 $main-light-text-color: #000000;
 
 /* dark theme */
+/* main */
 $main-dark-bg-color: #202020cc;
 $main-dark-text-color: #fffff0;
-$main-dark-border-color: darken($main-dark-bg-color, 5%);
-
+$main-dark-border: 0.5px solid darken($main-dark-bg-color, 5%);
+/* menu */
+$menu-dark-bg-color: lighten($main-dark-bg-color, 10%);
+$menu-dark-border: 0.5px solid darken($menu-dark-bg-color, 5%);
 
 /* footer */
-$footer-bg-color: $main-dark-bg-color;
-$footer-border-color: $main-dark-border-color;
-$footer-text-color: $main-dark-text-color;
 $footer-font-size: 0.8rem;
 
 /* header */
-$header-bg-color: $main-dark-bg-color;
-$header-border-color: $main-dark-border-color;
-$header-text-color: $main-dark-text-color;
 $header-font-size: 1rem;
-//$header-width: 8rem;
+$header-menu-width: 16rem;
 
 /* search bar */
-$search-bar-bg-color: $main-dark-bg-color;
-$search-bar-border-color: $main-dark-border-color;
-$search-bar-text-color: $main-dark-text-color;
 $search-bar-font-size: 1rem;
-$search-bar-width: 40rem;
+$search-bar-width: 30rem;
 
 /* miscellaneus */
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);

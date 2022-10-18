@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 declare var mapboxgl: any;
 declare let $: any;
 declare let map: any;
@@ -9,7 +9,6 @@ declare let map: any;
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-
 
   constructor() {
   }

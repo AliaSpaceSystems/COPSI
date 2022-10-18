@@ -1,4 +1,4 @@
-@import "../../vars";
+@import "src/vars";
 
 #search-bar-main-div {
   display: flex;
@@ -8,10 +8,10 @@
   padding: 0.5rem 0;
   width: $search-bar-width;
   border-radius: 0.25rem;
-  border: 0.5px solid $search-bar-border-color;
+  border: $main-dark-border;
   box-shadow: $default-shadow;
-  background-color: $search-bar-bg-color;
-  color: $search-bar-text-color;
+  background-color: $main-dark-bg-color;
+  color: $main-dark-text-color;
   font-size: $search-bar-font-size;
   line-height: $search-bar-font-size;
   align-items: center;
@@ -35,9 +35,9 @@
   height: 5rem;
 
   border-radius: 0.25rem;
-  border: 0.5px solid $header-border-color;
+  border: $menu-dark-border;
   box-shadow: $default-shadow;
-  background-color: lighten($header-bg-color, 10%);
-  color: $header-text-color;
-  font-size: $header-font-size;
+  background-color: $menu-dark-bg-color;
+  color: $main-dark-text-color;
+  font-size: $search-bar-font-size;
 }
