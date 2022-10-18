@@ -87,20 +87,20 @@ export class MapComponent implements OnInit, OnDestroy {
         'line-width': 3
         }
       }); */
-    }
+  }
   changeMapDetails(showLabels: boolean) {
-      if (showLabels) {
-        map.getStyle().layers.forEach((layer:any) => {
-          if (layer.id.endsWith('label')) {
-            map.setLayoutProperty(layer.id, 'visibility', 'visible');
-          }
-        });
-      } else {
-        map.getStyle().layers.forEach((layer:any) => {
-          if (layer.id.endsWith('label')) {
-            map.setLayoutProperty(layer.id, 'visibility', 'none');
-          }
-        });
-      }
+    if (showLabels) {
+      map.getStyle().layers.forEach((layer:any) => {
+        if (layer.id.endsWith('label')) {
+          map.setLayoutProperty(layer.id, 'visibility', 'visible');
+        }
+      });
+    } else {
+      map.getStyle().layers.forEach((layer:any) => {
+        if (layer.id.endsWith('label')) {
+          map.setLayoutProperty(layer.id, 'visibility', 'none');
+        }
+      });
+    }
   }
 }
