@@ -17,12 +17,12 @@
   <hr style="width:100%;">
   <div class="menu-item">
     <label for="map-style">Map style:</label>
-    <select name="map-style-select" id="map-style">
+    <select name="map-style-select" id="map-style" (change)="onMapStyleChanged($event)">
       <option *ngFor="let option of mapStyles">{{option}}</option>
     </select>
   </div>
   <div class="menu-item">
     <label for="show-labels">Show labels:</label>
-    <input type="checkbox" id="show-labels" [value]="showLabels" (change)="onShowLabelCheck($event)"/>
+    <input type="checkbox" id="show-labels" [value]="false" (change)="onShowLabelCheck($event)"/>
   </div>
 </div>

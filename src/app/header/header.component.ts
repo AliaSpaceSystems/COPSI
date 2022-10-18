@@ -1,26 +1,39 @@
-import { Component, OnInit } from '@angular/core';
-import { MapComponent } from 'src/app/map/map.component';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ExchangeService } from '../exchange.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   public mapStyles = [
     "globe",
-    "mercator"
+    "mercator",
+    "equalEarth",
+    "equirectangular",
+    "naturalEarth",
+    "winkelTripel"
   ];
-  public showLabels = false;
+  mapStyle: string = '';
+  subscription!: Subscription;
 
-  constructor() { }
+  constructor(private exchangeService: ExchangeService) { }
 
   ngOnInit(): void {
+    this.subscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
+      this.mapStyle = value;
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   onUserMenuClick() {
     document.getElementById('settings-menu')!.style.display = 'none';
-    if (document.getElementById('user-menu')!.style.display === 'none') {
+    if (document.getElementById('user-menu')!.style.display != 'flex') {
       document.getElementById('user-menu')!.style.display = 'flex';
     } else {
       document.getElementById('user-menu')!.style.display = 'none';
@@ -29,16 +42,20 @@ export class HeaderComponent implements OnInit {
 
   onSettingsMenuClick() {
     document.getElementById('user-menu')!.style.display = 'none';
-    if (document.getElementById('settings-menu')!.style.display === 'none') {
+    if (document.getElementById('settings-menu')!.style.display != 'flex') {
       document.getElementById('settings-menu')!.style.display = 'flex';
     } else {
       document.getElementById('settings-menu')!.style.display = 'none';
     }
   }
 
+  onMapStyleChanged(event: Event) {
+    let newMapType = (event.target as HTMLInputElement).value;
+    this.exchangeService.setMapStyle(newMapType);
+  }
+
   onShowLabelCheck(event: any) {
-    //document.getElementById('user-menu')!
-    this.showLabels = event.target.checked;
-    console.log("Show labels: " + this.showLabels);
+    let showLabels = event.target.checked;
+    this.exchangeService.setShowLabels(showLabels);
   }
 }
