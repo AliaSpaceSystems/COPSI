@@ -1,0 +1,35 @@
+@import "../../vars";
+
+#footer-main-div {
+  z-index: 10;
+  display: flex;
+  position: absolute;
+  flex-wrap: nowrap;
+  /* align-items: center;
+  justify-content: center; */
+  line-height: $footer-font-size;
+
+  bottom: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 1rem;
+  border-radius: 0.25rem;
+  background-color: $footer-bg-color;
+  color: $footer-text-color;
+  border: 0.5px solid $footer-border-color;
+  font-size: $footer-font-size;
+  box-shadow: $default-shadow;
+}
+
+#footer-main-div p {
+  margin: 0;
+}
+
+.footer-sub-div {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+#footer-separator {
+  border-left: 2px solid grey;
+  margin: 0 1rem;
+}

@@ -1,0 +1,41 @@
+@import "src/vars";
+
+#header-main-div {
+  display: flex;
+  position: absolute;
+  //width: $header-width;
+  line-height: $header-font-size;
+  right: 0.5rem;
+  top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  gap: 0 0.5rem;
+  border-radius: 0.25rem;
+  border: 0.5px solid $header-border-color;
+  box-shadow: $default-shadow;
+  background-color: $header-bg-color;
+  color: $header-text-color;
+  font-size: $header-font-size;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+/* #user-icon {
+}
+#settings-icon {
+} */
+
+#user-menu {
+  position: absolute;
+  display: none;
+  top: 2rem;
+  right: 0rem;
+  width: 12rem;
+  height: 5rem;
+
+  border-radius: 0.25rem;
+  border: 0.5px solid $header-border-color;
+  box-shadow: $default-shadow;
+  background-color: lighten($header-bg-color, 10%);
+  color: $header-text-color;
+  font-size: $header-font-size;
+}

@@ -1,0 +1,43 @@
+@import "../../vars";
+
+#search-bar-main-div {
+  display: flex;
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+  padding: 0.5rem 0;
+  width: $search-bar-width;
+  border-radius: 0.25rem;
+  border: 0.5px solid $search-bar-border-color;
+  box-shadow: $default-shadow;
+  background-color: $search-bar-bg-color;
+  color: $search-bar-text-color;
+  font-size: $search-bar-font-size;
+  line-height: $search-bar-font-size;
+  align-items: center;
+}
+
+#search-title {
+  margin: auto;
+}
+
+#search-icon {
+  position: absolute;
+  right: 0.5rem;
+}
+
+#search-menu {
+  position: absolute;
+  display: none;
+  top: 2rem;
+  left: 0rem;
+  width: $search-bar-width;
+  height: 5rem;
+
+  border-radius: 0.25rem;
+  border: 0.5px solid $header-border-color;
+  box-shadow: $default-shadow;
+  background-color: lighten($header-bg-color, 10%);
+  color: $header-text-color;
+  font-size: $header-font-size;
+}

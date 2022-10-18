@@ -1,3 +1,5 @@
+@import "./vars";
+
 html, body {
   background-color: black;
   width: 100%;
@@ -6,23 +8,9 @@ html, body {
   font-family: "NotesESA-Reg", Arial, Helvetica, sans-serif;
   font-size: 16px;
 
-  /* Custom properties */
-  --scrollbar-bg-color: #29333c;
-  --main-text-color: #8a8d96;
-  --main-buttons-bg-color: #6a6d76;
-  --main-buttons-text-color: white;
-  --main-bg-color: #12222f;
-  --title-bg-color: #29333c;
-  --windows-bg-color: #1f2b37;
-  --windows-title-color: #5f5f6f;
-  --brighter-text-color: #aaaaaa;
-  --table-header-bg-color: #0e131e;
-  --modal-bg-color: #111111;
-  --table-border-color: #6A6D76;
-  --list-bg-color: #222a35a0;
-  --checked-color: #007bff;
-  --chart-timing-bg-color: #ccff00;
-  color: var(--main-text-color);
+
+
+  color: $main-text-color;
 }
 * {
   -webkit-box-sizing: border-box;
@@ -33,7 +21,7 @@ html, body {
 /* Scrollbar styling */
 /* Works on Firefox */
 * {
-  scrollbar-color: var(--main-buttons-bg-color) var(--scrollbar-bg-color);
+  scrollbar-color: $main-buttons-bg-color $scrollbar-bg-color;
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -42,13 +30,13 @@ html, body {
 }
 
 *::-webkit-scrollbar-track {
-  background: var(--scrollbar-bg-color);
+  background: $scrollbar-bg-color;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--main-buttons-bg-color);
+  background-color: $main-buttons-bg-color;
   border-radius: 20px;
-  border: 3px solid var(--scrollbar-bg-color);
+  border: 3px solid $scrollbar-bg-color;
 }
 
 
@@ -70,3 +58,6 @@ html, body {
   font-weight: normal;
   font-style: normal;
 } */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
