@@ -7,7 +7,8 @@
   right: 0.5rem;
   top: 0.5rem;
   padding: 0.25rem 0.5rem;
-  gap: 0 0.5rem;
+  width: $header-menu-width;
+  //gap: 0 0.5rem;
   border-radius: 0.25rem;
   border: $main-dark-border;
   box-shadow: $default-shadow;
@@ -15,7 +16,17 @@
   color: $main-dark-text-color;
   font-size: $header-font-size;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
+}
+
+#menu-buttons-div {
+  display: flex;
+  gap: 0 0.5rem;
+}
+
+#logo-div {
+  display: flex;
+  gap: 0 1.0rem;
 }
 
 #user-menu {
@@ -71,4 +82,18 @@
   width: 100%;
   padding: 0 1rem;
   justify-content: space-between;
+}
+
+
+#eu-logo {
+  height: $header-logo-height;
+}
+#dhs-logo {
+  height: $header-logo-height;
+}
+#copernicus-logo {
+  height: $header-logo-height
+}
+#esa-logo {
+  height: $header-logo-height;
 }
