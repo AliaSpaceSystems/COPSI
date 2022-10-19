@@ -17,18 +17,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     "winkelTripel"
   ];
   mapStyle: string = '';
-  subscription!: Subscription;
+  mapSettingsSubscription!: Subscription;
 
   constructor(private exchangeService: ExchangeService) { }
 
   ngOnInit(): void {
-    this.subscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
+    this.mapSettingsSubscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
       this.mapStyle = value;
     })
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.mapSettingsSubscription.unsubscribe();
   }
 
   onUserMenuClick() {

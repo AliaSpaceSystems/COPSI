@@ -15,8 +15,10 @@ declare let map: any;
 export class MapComponent implements OnInit, OnDestroy {
 
   mapStyle = 'globe';
+  productList: object = {};
   mapStyleSubscription!: Subscription;
   showLabelsSubscription!: Subscription;
+  productListSubscription!: Subscription;
 
   constructor(private exchangeService: ExchangeService) {
   }
@@ -33,12 +35,20 @@ export class MapComponent implements OnInit, OnDestroy {
         this.changeMapDetails(value);
       }
     });
+    this.productListSubscription = this.exchangeService.productListExchange.subscribe((value) => {
+      if (typeof(value) === 'object') {
+        this.productList = value;
+        this.setProductList(this.productList);
+      }
+    });
 
     this.initMap('globe');
   }
 
   ngOnDestroy(): void {
     this.mapStyleSubscription.unsubscribe();
+    this.showLabelsSubscription.unsubscribe();
+    this.productListSubscription.unsubscribe();
   }
 
   initMap(map_style: string) {
@@ -64,13 +74,18 @@ export class MapComponent implements OnInit, OnDestroy {
           map.setLayoutProperty(layer.id, 'visibility', 'none');
         }
       });
-    });
 
-    /* map.addSource('test', coords);
+      map.addSource('footprints', {
+        type: 'geojson',
+        data: {
+          "type": "FeatureCollection",
+          "features": []
+        }
+      });
       map.addLayer({
-        'id': 'test',
+        'id': 'footprints-fill',
         'type': 'fill',
-        'source': 'test', // reference the data source
+        'source': 'footprints', // reference the data source
         'layout': {},
         'paint': {
         'fill-color': '#0080ff', // blue color fill
@@ -78,16 +93,18 @@ export class MapComponent implements OnInit, OnDestroy {
         }
       });
       map.addLayer({
-        'id': 'outline',
+        'id': 'footprints-outline',
         'type': 'line',
-        'source': 'test',
+        'source': 'footprints',
         'layout': {},
         'paint': {
         'line-color': '#000',
         'line-width': 3
         }
-      }); */
+      });
+    });
   }
+
   changeMapDetails(showLabels: boolean) {
     if (showLabels) {
       map.getStyle().layers.forEach((layer:any) => {
@@ -102,5 +119,20 @@ export class MapComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  setProductList(productList: any) {
+    //console.log("SetProductList: " + JSON.stringify(productList, null, 2));
+    const source = map.getSource('footprints');
+    /* if (map != undefined && productList.products != null) {
+      map.getSource('footprints').setData(
+        {
+          "type": "FeatureCollection",
+          "features": [
+            productList.products[0].geoJson
+          ]
+        }
+      );
+    } */
   }
 }
