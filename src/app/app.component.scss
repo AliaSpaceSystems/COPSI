@@ -1,0 +1,10 @@
+@import "src/vars";
+
+#header-background {
+  position: absolute;
+  top: 0.33rem;
+  background-color: $menu-dark-bg-color;
+  border: $menu-dark-border;
+  width: 100%;
+  height: 2.55rem;
+}

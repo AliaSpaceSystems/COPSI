@@ -5,8 +5,9 @@
   position: absolute;
   left: 0.5rem;
   top: 0.5rem;
-  padding: 0.5rem 0;
-  width: $search-bar-width;
+  gap: 0 0.5rem;
+  padding: 0.25rem 0.5rem;
+  //width: $search-bar-width;
   border-radius: 0.25rem;
   border: $main-dark-border;
   box-shadow: $default-shadow;
@@ -17,13 +18,14 @@
   align-items: center;
 }
 
-#search-title {
-  margin: auto;
+#search-input {
+  //margin: auto;
+  flex-grow: 10;
 }
 
 #search-icon {
-  position: absolute;
-  right: 0.5rem;
+  //position: absolute;
+  //right: 0.5rem;
 }
 
 #search-menu {
