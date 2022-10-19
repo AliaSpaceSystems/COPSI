@@ -5,9 +5,9 @@
   position: absolute;
   left: 0.5rem;
   top: 0.5rem;
-  gap: 0 0.5rem;
+  //gap: 0 0.5rem;
   padding: 0.25rem 0.5rem;
-  //width: $search-bar-width;
+  width: $search-bar-width;
   border-radius: 0.25rem;
   border: $main-dark-border;
   box-shadow: $default-shadow;
@@ -16,30 +16,76 @@
   font-size: $search-bar-font-size;
   line-height: $search-bar-font-size;
   align-items: center;
+  justify-content: space-between;
 }
 
-#search-input {
-  //margin: auto;
-  flex-grow: 10;
+#search-click-div {
+  display: flex;
+  position: absolute;
+  left: 3.0rem;
+  top: 0.5rem;
+  width: calc($search-bar-width - 2.5rem);
+  opacity: 0;
+  height: 2.15rem;
 }
 
-#search-icon {
-  //position: absolute;
-  //right: 0.5rem;
+#app-title {
+  margin: 0;
+  padding: 0 2rem;
 }
 
 #search-menu {
+  z-index: 10;
   position: absolute;
   display: none;
-  top: 2rem;
-  left: 0rem;
-  width: $search-bar-width;
-  height: 5rem;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+  gap: 0.5rem;
+  top: 3rem;
+  left: 0.5rem;
+  width: $search-bar-menu-width;
 
   border-radius: 0.25rem;
   border: $menu-dark-border;
   box-shadow: $default-shadow;
   background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
-  font-size: $search-bar-font-size;
+}
+
+#search-menu p {
+  margin: 0;
+}
+
+#search-div {
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  gap: 0.5rem;
+  top: 3rem;
+  left: 0.5rem;
+  width: $search-bar-width;
+
+  border-radius: 0.25rem;
+  border: $menu-dark-border;
+  box-shadow: $default-shadow;
+  background-color: $menu-dark-bg-color;
+  color: $main-dark-text-color;
+  align-items: stretch;
+}
+
+input[type=text] {
+  margin: 0;
+  padding: 0.5rem;
+  color: $main-dark-text-color;
+  background-color: $main-dark-bg-color;
+  border: $main-dark-border; // add only bottom border
+  border-radius: 0.25rem;
+  text-align: center;
+}
+input:focus {
+  outline: none;
+  border: $main-light-border;
 }

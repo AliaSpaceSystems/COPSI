@@ -1,7 +1,17 @@
 <div id="search-bar-main-div">
-  <mat-icon>menu</mat-icon>
-  <!-- <input id="search-input" type="text" placeholder="search input"> -->
-  <mat-icon id="search-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search"></mat-icon>
- <!--  <div id="search-menu">
-  </div> -->
+  <mat-icon id="search-menu-icon" aria-hidden="false" aria-label="Menu icon" fontIcon="menu" (click)="onSearchMenuClick()"></mat-icon>
+  <p id="app-title">Copernicus Viewer</p>
+  <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search"></mat-icon>
+</div>
+<div id="search-click-div" (click)="onSearchBarClick()"></div>
+<div id="search-menu">
+  <p>Search Options</p>
+  <hr style="width:100%;">
+  <p>Option 1</p>
+  <p>Option 2</p>
+  <p>Option 3</p>
+  <p>Option 4</p>
+</div>
+<div id="search-div">
+  <input id="search-input" type="text" placeholder="input a search string: ex. *MSIL1C*">
 </div>

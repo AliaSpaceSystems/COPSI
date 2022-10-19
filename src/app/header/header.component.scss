@@ -1,24 +1,5 @@
 @import "src/vars";
 
-#header-main-div {
-  display: flex;
-  position: absolute;
-  line-height: $header-font-size;
-  left: 31%;
-  top: 0.5rem;
-  padding: 0.5rem 0.5rem;
-  //width: $header-menu-width;
-  //gap: 0 0.5rem;
-  border-radius: 0.25rem;
-  border: $main-dark-border;
-  box-shadow: $default-shadow;
-  background-color: $main-dark-bg-color;
-  color: $main-dark-text-color;
-  font-size: $header-font-size;
-  align-items: center;
-  justify-content: space-between;
-}
-
 #header-menu-div {
   display: flex;
   position: absolute;
@@ -37,15 +18,6 @@
   font-size: $header-font-size;
   align-items: center;
   justify-content: space-between;
-}
-
-#app-title {
-  margin: 0;
-}
-
-#logo-div {
-  display: flex;
-  gap: 0 3.0rem;
 }
 
 #user-menu {
@@ -101,18 +73,4 @@
   width: 100%;
   padding: 0 1rem;
   justify-content: space-between;
-}
-
-
-#eu-logo {
-  height: $header-logo-height;
-}
-#dhs-logo {
-  height: $header-logo-height;
-}
-#copernicus-logo {
-  height: $header-logo-height
-}
-#esa-logo {
-  height: $header-logo-height;
 }

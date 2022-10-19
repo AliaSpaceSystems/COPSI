@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-declare let $: any;
 
 export enum ScssVariables {
   Light = "light",
@@ -17,12 +16,30 @@ export class SearchBarComponent implements OnInit {
     dark: null,
   };
 
+  value = 'Clear me';
+
   constructor() {
   }
 
   ngOnInit(): void {
-    $(document).ready(function() {
-    });
   }
 
+  onSearchBarClick() {
+    document.getElementById('search-menu')!.style.display = 'none';
+    if (document.getElementById('search-div')!.style.display != 'flex') {
+      document.getElementById('search-div')!.style.display = 'flex';
+    } else {
+      document.getElementById('search-div')!.style.display = 'none';
+    }
+  }
+
+  onSearchMenuClick() {
+    /* hide search ? */
+    //document.getElementById('search-input')!.style.display = 'none';
+    if (document.getElementById('search-menu')!.style.display != 'flex') {
+      document.getElementById('search-menu')!.style.display = 'flex';
+    } else {
+      document.getElementById('search-menu')!.style.display = 'none';
+    }
+  }
 }
