@@ -22,12 +22,13 @@ $footer-font-size: 0.8rem;
 
 /* header */
 $header-font-size: 1rem;
-$header-menu-width: 16rem;
+$header-menu-title-width: 15rem;
+$header-menu-icon-width: 5rem;
+$header-menu-width: calc($header-menu-title-width + $header-menu-icon-width);
 $header-logo-height: 1.0rem;
 
 /* search bar */
 $search-bar-font-size: 1rem;
 $search-bar-width: 24rem;
-$search-bar-menu-width: 12rem;
 /* miscellaneus */
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);

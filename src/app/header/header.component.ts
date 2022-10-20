@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ExchangeService } from '../exchange.service';
 import { Subscription } from 'rxjs';
 
+declare let $: any;
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -22,6 +24,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private exchangeService: ExchangeService) { }
 
   ngOnInit(): void {
+    $(window).click(function() {
+      document.getElementById('settings-menu')!.style.display = 'none';
+      document.getElementById('user-menu')!.style.display = 'none';
+    });
     this.mapSettingsSubscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
       this.mapStyle = value;
     })
@@ -31,22 +37,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.mapSettingsSubscription.unsubscribe();
   }
 
-  onUserMenuClick() {
+  onUserMenuClick(event: any) {
     document.getElementById('settings-menu')!.style.display = 'none';
     if (document.getElementById('user-menu')!.style.display != 'flex') {
       document.getElementById('user-menu')!.style.display = 'flex';
     } else {
       document.getElementById('user-menu')!.style.display = 'none';
     }
+    event.stopPropagation();
   }
 
-  onSettingsMenuClick() {
+  onSettingsMenuClick(event: any) {
     document.getElementById('user-menu')!.style.display = 'none';
     if (document.getElementById('settings-menu')!.style.display != 'flex') {
       document.getElementById('settings-menu')!.style.display = 'flex';
     } else {
       document.getElementById('settings-menu')!.style.display = 'none';
     }
+    event.stopPropagation();
   }
 
   onMapStyleChanged(event: Event) {

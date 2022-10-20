@@ -1,10 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ExchangeService } from '../exchange.service';
 import { Subscription } from 'rxjs';
 
 declare var mapboxgl: any;
-declare let $: any;
 declare let map: any;
 
 @Component({
@@ -12,7 +11,7 @@ declare let map: any;
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   mapStyle = 'globe';
   productList: object = {};
@@ -20,10 +19,16 @@ export class MapComponent implements OnInit, OnDestroy {
   showLabelsSubscription!: Subscription;
   productListSubscription!: Subscription;
 
+  public footprintSource: any;
+
   constructor(private exchangeService: ExchangeService) {
   }
 
   ngOnInit(): void {
+    this.initMap('globe');
+  }
+
+  ngAfterViewInit(): void {
     this.mapStyleSubscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
       if (typeof(value) === 'string') {
         this.mapStyle = value;
@@ -41,8 +46,6 @@ export class MapComponent implements OnInit, OnDestroy {
         this.setProductList(this.productList);
       }
     });
-
-    this.initMap('globe');
   }
 
   ngOnDestroy(): void {
@@ -57,8 +60,8 @@ export class MapComponent implements OnInit, OnDestroy {
     map = new mapboxgl.Map({
       container: 'map',
       //style: 'mapbox://styles/spiderdab/cl8wvjdk3000315liyn5a5n0g',
-      style: 'mapbox://styles/spiderdab/cl9cn3wtn007114mtpl68mvwd',
-      center: [10.0, 45],
+      style: 'mapbox://styles/spiderdab/cl9fsoz10001s16t908boavv6',
+      center: [12.67225, 41.82791],
       zoom: 2.5,
       interactive: true,
       attributionControl: false,
@@ -79,16 +82,20 @@ export class MapComponent implements OnInit, OnDestroy {
         type: 'geojson',
         data: {
           "type": "FeatureCollection",
+          "properties": {},
           "features": []
         }
       });
+
+      this.footprintSource = map.getSource('footprints');
+
       map.addLayer({
         'id': 'footprints-fill',
         'type': 'fill',
         'source': 'footprints', // reference the data source
         'layout': {},
         'paint': {
-        'fill-color': '#0080ff', // blue color fill
+        'fill-color': ['get', 'color'],//'#0080ff', // blue color fill
         'fill-opacity': 0.5
         }
       });
@@ -102,6 +109,7 @@ export class MapComponent implements OnInit, OnDestroy {
         'line-width': 3
         }
       });
+
     });
   }
 
@@ -122,17 +130,18 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   setProductList(productList: any) {
-    //console.log("SetProductList: " + JSON.stringify(productList, null, 2));
-    const source = map.getSource('footprints');
-    /* if (map != undefined && productList.products != null) {
-      map.getSource('footprints').setData(
+    if (this.footprintSource && map && productList.products) {
+      //console.log(JSON.stringify(productList.products[0].geoJson, null, 2));
+      this.footprintSource.setData(
         {
           "type": "FeatureCollection",
           "features": [
-            productList.products[0].geoJson
+            productList.products[0].geoJson,
+            productList.products[1].geoJson
           ]
-        }
+        },
       );
-    } */
+
+    }
   }
 }

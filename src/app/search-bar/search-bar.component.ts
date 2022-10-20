@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ExchangeService } from '../exchange.service';
 import { Subscription } from 'rxjs';
 
+declare let $: any;
+
 export enum ScssVariables {
   Light = "light",
   Dark = "dark",
@@ -19,23 +21,29 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    $(window).click(function() {
+      document.getElementById('search-menu')!.style.display = 'none';
+    });
+
     this.productList = {
       products: [
         {
           name: "prod_1",
           geoJson: {
             "type": "Feature",
+            "properties": {
+              "name": "Footprint 1",
+              "color": "#bb8822"
+            },
             "geometry": {
               "type": "Polygon",
               "coordinates": [
                 [
-                  [0,60],
+                  [30,60],
                   [60,60],
-                  [120,60],
-                  [180,60],
-                  [-120,60],
-                  [-60,60],
-                  [0,60],
+                  [60,80],
+                  [30,80],
+                  [30,60],
                 ]
               ]
             }
@@ -45,15 +53,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           name: "prod_2",
           geoJson: {
             "type": "Feature",
+            "properties": {
+              "name": "Footprint 2",
+              "color": "#2288ee"
+            },
             "geometry": {
               "type": "Polygon",
               "coordinates": [
                 [
-                  [40,60],
-                  [60,60],
-                  [60,10],
-                  [40,10],
-                  [40,60],
+                  [0,50],
+                  [40,50],
+                  [40,70],
+                  [0,70],
+                  [0,50],
                 ]
               ]
             }
@@ -61,29 +73,24 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         }
       ]
     }
-    this.exchangeService.setProductList(this.productList);
+
   }
 
   ngOnDestroy(): void {
     this.productListSubscription.unsubscribe();
   }
 
-  onSearchBarClick() {
-    document.getElementById('search-menu')!.style.display = 'none';
-    if (document.getElementById('search-div')!.style.display != 'flex') {
-      document.getElementById('search-div')!.style.display = 'flex';
-    } else {
-      document.getElementById('search-div')!.style.display = 'none';
-    }
-  }
-
-  onSearchMenuClick() {
-    /* hide search ? */
-    //document.getElementById('search-input')!.style.display = 'none';
+  onSearchMenuClick(event: any) {
     if (document.getElementById('search-menu')!.style.display != 'flex') {
       document.getElementById('search-menu')!.style.display = 'flex';
     } else {
       document.getElementById('search-menu')!.style.display = 'none';
     }
+    event.stopPropagation();
+  }
+
+  search(el: any) {
+    console.log("Search: " + el.target.value);
+    this.exchangeService.setProductList(this.productList);
   }
 }
