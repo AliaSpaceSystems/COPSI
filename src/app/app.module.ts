@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
     MapComponent,
     FooterComponent,
     HeaderComponent,
-    SearchBarComponent
+    SearchBarComponent,
   ],
   imports: [
     BrowserModule,

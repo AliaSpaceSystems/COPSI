@@ -4,7 +4,7 @@ import { ExchangeService } from '../exchange.service';
 import { Subscription } from 'rxjs';
 
 declare var mapboxgl: any;
-declare let map: any;
+let map: any;
 
 @Component({
   selector: 'app-map',
@@ -25,10 +25,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.initMap('globe');
+    //this.initMap('globe')//;
   }
 
   ngAfterViewInit(): void {
+    this.initMap('globe');
     this.mapStyleSubscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
       if (typeof(value) === 'string') {
         this.mapStyle = value;
