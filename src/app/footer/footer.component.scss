@@ -1,5 +1,23 @@
 @import "src/vars";
 
+#info-icon-div {
+  position: absolute;
+  display: flex;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 1.5rem;
+  background-color: $main-dark-bg-color;
+  border: $main-dark-border;
+  align-items: center;
+  justify-content: center;
+}
+
+#info-icon {
+  scale: 1.5;
+}
+
 #footer-main-div {
   display: flex;
   position: absolute;

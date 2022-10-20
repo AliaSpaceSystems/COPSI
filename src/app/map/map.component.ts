@@ -60,7 +60,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     map = new mapboxgl.Map({
       container: 'map',
       //style: 'mapbox://styles/spiderdab/cl8wvjdk3000315liyn5a5n0g',
-      style: 'mapbox://styles/spiderdab/cl9fsoz10001s16t908boavv6',
+      style: 'mapbox://styles/spiderdab/cl9gvlih300ic15qr0jjktf5o',
       center: [12.67225, 41.82791],
       zoom: 2.5,
       interactive: true,

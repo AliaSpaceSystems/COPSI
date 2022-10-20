@@ -1,4 +1,8 @@
-<div id="footer-main-div">
+<div id="info-icon-div">
+  <mat-icon id="info-icon" aria-hidden="false" aria-label="Account icon" fontIcon="info" (click)="showInfo = !showInfo"></mat-icon>
+</div>
+
+<div id="footer-main-div" @inOut *ngIf="showInfo">
   <div class="footer-logo-div">
     <img id="dhs-logo" src="assets/images/logoDHS.png" alt="DHS logo">
     <img id="eu-logo" src="assets/images/logoEU.svg" alt="EU logo">
