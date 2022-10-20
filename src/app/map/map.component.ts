@@ -4,7 +4,7 @@ import { ExchangeService } from '../exchange.service';
 import { Subscription } from 'rxjs';
 
 declare var mapboxgl: any;
-declare let map: any;
+let map: any;
 
 @Component({
   selector: 'app-map',
