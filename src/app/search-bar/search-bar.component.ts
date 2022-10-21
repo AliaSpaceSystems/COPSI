@@ -33,9 +33,8 @@ export enum ScssVariables {
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   productListSubscription!: Subscription;
-  productList: object = {};
-
   public showSearchMenu = false;
+  productList: any;
 
   constructor(private exchangeService: ExchangeService) {
   }
@@ -48,12 +47,18 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.productList = {
       products: [
         {
-          name: "prod_1",
+          name: "S3B_SL_2_LST____20221019T093358_20221019T093658_20221020T055649_0179_071_364_2160_PS2_O_NT_004.SEN3",
+          sensing: "2022-10-19T09:33:58.097",
+          size: 72903618,
+          url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('b10e216a-bb1c-4ca6-9a98-baa78ec0efcb')/$value",
+          hasQL:true,
+          instrument: "SLSTR",
+          color: "#2288ee",
           geoJson: {
             "type": "Feature",
             "properties": {
               "name": "Footprint 1",
-              "color": "#bb8822"
+              "color": "#2288ee"
             },
             "geometry": {
               "type": "Polygon",
@@ -70,7 +75,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           }
         },
         {
-          name: "prod_2",
+          name: "S3A_SL_2_LST____20221018T202117_20221018T202417_20221020T054232_0179_091_114_0720_PS1_O_NT_004.SEN3",
+          sensing: "2022-10-18T20:21:16.674",
+          size: 73699097,
+          url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('eaaefe9e-8a42-48f9-ae79-a73433fb4d18')/$value",
+          color: "#2288ee",
+          instrument: "SLSTR",
           geoJson: {
             "type": "Feature",
             "properties": {
@@ -90,6 +100,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
               ]
             }
           }
+        },
+        {
+          name: "S1A_S6_OCN__2SDV_20221021T082953_20221021T083019_045538_0571A9_FF6A",
+          sensing: "2022-10-21T12:11:01.149",
+          size: 19726517,
+          url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('37b1f367-7f70-48c6-942e-62d890f78d17')/$value",
+          color: "#dc143c",
+          instrument: "SAR-C"
         }
       ]
     }
@@ -108,6 +126,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   search(el: any) {
     console.log("Search: " + el.target.value);
     this.exchangeService.setProductList(this.productList);
+    if (document.getElementById('product-list')!.style.display != 'flex') {
+      document.getElementById('product-list')!.style.display = 'flex';
+    } else {
+      document.getElementById('product-list')!.style.display = 'none';
+    }
   }
 
   onMenuClicked(event: any) {
