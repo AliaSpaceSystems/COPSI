@@ -34,6 +34,7 @@ export enum ScssVariables {
 export class SearchBarComponent implements OnInit, OnDestroy {
   productListSubscription!: Subscription;
   public showSearchMenu = false;
+  public showProductList = false;
   productList: any;
 
   constructor(private exchangeService: ExchangeService) {
@@ -111,7 +112,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         }
       ]
     }
-
   }
 
   ngOnDestroy(): void {
@@ -123,14 +123,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  search(el: any) {
-    console.log("Search: " + el.target.value);
+  search(event: any) {
+    console.log("Search: " + event.target.value);
     this.exchangeService.setProductList(this.productList);
-    if (document.getElementById('product-list')!.style.display != 'flex') {
-      document.getElementById('product-list')!.style.display = 'flex';
-    } else {
-      document.getElementById('product-list')!.style.display = 'none';
-    }
+    this.showProductList = !this.showProductList;
+    event.stopPropagation();
   }
 
   onMenuClicked(event: any) {

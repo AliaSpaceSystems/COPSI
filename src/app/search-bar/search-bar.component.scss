@@ -62,9 +62,8 @@ input:focus {
 }
 
 #product-list {
-  z-index: 10;
   position: absolute;
-  display: none;
+  display: flex;
   flex-direction: column;
   padding-left: 0.3rem;
   /*align-items: center;

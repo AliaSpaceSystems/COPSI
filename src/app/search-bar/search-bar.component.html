@@ -13,7 +13,7 @@
   <p>Option 4</p>
 </div>
 
-<div id="product-list">
+<div id="product-list" [@searchMenuAnimation]="showProductList ? 'open' : 'closed'">
   <p style="margin:10px 0;">Displaying 1 to {{productList.products.length}} of {{productList.products.length}} products </p>
   <hr style="width:100%;">
   <td *ngFor="let data of productList.products">

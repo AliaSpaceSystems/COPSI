@@ -141,7 +141,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         },
       );
-
     }
   }
 }
