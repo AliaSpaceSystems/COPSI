@@ -34,12 +34,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('b10e216a-bb1c-4ca6-9a98-baa78ec0efcb')/$value",
           hasQL:true,
           instrument: "SLSTR",
-          color: "#bb8822",
+          color: "#2288ee",
           geoJson: {
             "type": "Feature",
             "properties": {
               "name": "Footprint 1",
-              "color": "#bb8822"
+              "color": "#2288ee"
             },
             "geometry": {
               "type": "Polygon",
@@ -81,6 +81,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
               ]
             }
           }
+        },
+        {          
+          name: "S1A_S6_OCN__2SDV_20221021T082953_20221021T083019_045538_0571A9_FF6A",
+          sensing: "2022-10-21T12:11:01.149",
+          size: 19726517,
+          url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('37b1f367-7f70-48c6-942e-62d890f78d17')/$value",
+          color: "#dc143c",
+          instrument: "SAR-C"
         }
       ]
     }
