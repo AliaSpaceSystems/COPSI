@@ -13,7 +13,7 @@
 </div>
 
 <div id="product-list">
-  <p style="margin:10px 0;">Displaying 1 to 2 of 2 products </p>
+  <p style="margin:10px 0;">Displaying 1 to {{productList.products.length}} of {{productList.products.length}} products </p>
   <hr style="width:100%;">
   <td *ngFor="let data of productList.products">
     <div id="list-item">
@@ -25,7 +25,7 @@
               <!--<p class="item-name" *ngIf="data.url != null">Download Url: {{data.url}}</p>-->
           </div>
           <div *ngIf="data.hasQL == true" class="ql">
-              <img class=quicklook src="assets/images/ql.jpg">
+              <img class=quicklook src="assets/images/ql2.jpg">
           </div>
           <div *ngIf="data.hasQL ==null" class="ql">
             <img class=quicklook src="assets/images/no-preview-1.png">
