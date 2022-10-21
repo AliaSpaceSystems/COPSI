@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../exchange.service';
 import { Subscription } from 'rxjs';
 
@@ -12,11 +13,30 @@ export enum ScssVariables {
 @Component({
   selector: 'app-search-bar',
   templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.scss']
+  styleUrls: ['./search-bar.component.scss'],
+  animations: [
+    trigger('searchMenuAnimation', [
+      state('open', style({
+        'top': '3rem', 'opacity': 1
+      })),
+      state('closed', style({
+        'top': '2.5rem', 'opacity': 0
+      })),
+      transition('closed => open', [
+        animate('250ms ease-in')
+      ]),
+      transition('open => closed', [
+        animate('250ms ease-out')
+      ])
+    ])
+  ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   productListSubscription!: Subscription;
   productList: object = {};
+
+  public showSearchMenu = false;
+
   constructor(private exchangeService: ExchangeService) {
   }
 
@@ -81,16 +101,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onSearchMenuClick(event: any) {
-    if (document.getElementById('search-menu')!.style.display != 'flex') {
-      document.getElementById('search-menu')!.style.display = 'flex';
-    } else {
-      document.getElementById('search-menu')!.style.display = 'none';
-    }
+    this.showSearchMenu = !this.showSearchMenu;
     event.stopPropagation();
   }
 
   search(el: any) {
     console.log("Search: " + el.target.value);
     this.exchangeService.setProductList(this.productList);
+  }
+
+  onMenuClicked(event: any) {
+    event.stopPropagation();
   }
 }

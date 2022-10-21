@@ -1,9 +1,10 @@
 <div id="search-bar-main-div">
   <mat-icon id="search-menu-icon" aria-hidden="false" aria-label="Menu icon" fontIcon="menu" (click)="onSearchMenuClick($event)"></mat-icon>
-  <input id="search-input" type="text" placeholder="Type a search string: ex. *MSIL1C*" (keydown.enter)="search($event)">
+  <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" (keydown.enter)="search($event)">
   <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search"></mat-icon>
 </div>
-<div id="search-menu">
+
+<div id="search-menu" [@searchMenuAnimation]="showSearchMenu ? 'open' : 'closed'" (click)="onMenuClicked($event)">
   <p>Search Options</p>
   <hr style="width:100%;">
   <p>Option 1</p>

@@ -1,6 +1,6 @@
 /* Custom properties */
 $scrollbar-bg-color: #29333c;
-$main-text-color: #dfdfdf;
+$main-text-color: #fff;
 $main-buttons-bg-color: #6a6d76;
 
 /* light theme */
@@ -10,7 +10,7 @@ $main-light-text-color: #000000;
 /* dark theme */
 /* main */
 $main-dark-bg-color: #202020cc;
-$main-dark-text-color: #fffff0;
+$main-dark-text-color: $main-text-color;// #fffff0;
 $main-dark-border: 0.5px solid darken($main-dark-bg-color, 5%);
 $main-light-border: 0.5px solid lighten($main-dark-bg-color, 50%);
 /* menu */
@@ -21,7 +21,7 @@ $menu-dark-border: 0.5px solid darken($menu-dark-bg-color, 5%);
 $footer-font-size: 0.8rem;
 $footer-icon-font-size: 1rem;
 $footer-icon-div-width: 3rem;
-$footer-div-width: 42rem;
+$footer-div-width: 26rem;
 
 /* header */
 $header-font-size: 1rem;
@@ -33,5 +33,7 @@ $header-logo-height: 1.0rem;
 /* search bar */
 $search-bar-font-size: 1rem;
 $search-bar-width: 24rem;
+
 /* miscellaneus */
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);
+$copsi-blue: #00aeef;

@@ -1,44 +1,23 @@
-import { trigger, transition, style, animate, group } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { trigger, transition, style, animate, group, state } from '@angular/animations';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
   animations: [
-    trigger('info-inOut', [
-      transition(':enter', [
-        style({ 'bottom': '0rem', 'opacity': 0 }),
-        group ([
-          animate('300ms ease-in-out',
-            style({ 'bottom': '1.0rem' })
-          ),
-          animate('150ms',
-            style({ 'opacity': 1 })
-          ),
-        ])
-
+    trigger('infoAnimation', [
+      state('open', style({
+        'bottom': '1rem', 'opacity': 1
+      })),
+      state('closed', style({
+        'bottom': '0rem', 'opacity': 0
+      })),
+      transition('closed => open', [
+        animate('250ms ease-in')
       ]),
-      transition(':leave', [
-        animate('300ms ease-in-out',
-          style({ 'bottom': '0rem', 'opacity': 0 })
-        )
-      ])
-    ]),
-    trigger('icon-inOut', [
-      transition(':enter', [
-        style({ 'opacity': 0 }),
-        group ([
-          animate('10ms 300ms ease-in-out',
-            style({'opacity': 1 })
-          )
-        ])
-
-      ]),
-      transition(':leave', [
-        animate('30ms ease-in-out',
-          style({ 'opacity': 0 })
-        )
+      transition('open => closed', [
+        animate('250ms ease-out')
       ])
     ])
   ]
@@ -46,14 +25,14 @@ import { Component, OnInit } from '@angular/core';
 export class FooterComponent implements OnInit {
 
   public showInfo = false;
-  public showIcon = '';
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  onInfoIconClick(event: any) {
-
+  onInfoIconClicked(event: any) {
+    this.showInfo = !this.showInfo;
+    event.stopPropagation();
   }
 }
