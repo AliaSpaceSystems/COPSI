@@ -1,4 +1,6 @@
-# CopernicusViewer
+<img src="https://github.com/AliaSpaceSystems/COPSI/blob/master/COPSI_logo_black.svg" width=250>
+
+# The Graphical User Interface for Copernicus Space Components
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.6.
 
