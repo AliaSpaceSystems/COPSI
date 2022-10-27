@@ -1,12 +1,8 @@
 #map {
+  position: relative;
   width: 100vw;
   height: 100vh;
-}
+  background-color: black;
 
-.mapboxgl-ctrl {
-  display: none !important;
-}
-
-.mapboxgl-ctrl-bottom-left {
-  display: none !important;
+  /* background-image: url('../../assets/images/stars.jpg'); */
 }

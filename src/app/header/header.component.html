@@ -1,6 +1,8 @@
 <div id="header-title-div">
-  <img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
-  <p id="app-title">Italian National Mirror</p>
+  <!-- <img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
+  <p id="app-title">Italian National Mirror</p> -->
+  <img id="copsi-logo" src="../../assets/images/COPSI_logo.svg" alt="Copsi logo">
+  <p id="app-title"><span>COP</span>ernicus <span>S</span>pace <span>I</span>nterface</p>
   <!--<img id="copsi-logo" src="assets/images/COPSI_logotipo.svg" alt="Copsi logo">-->
 </div>
 <div id="header-menu-div">
@@ -22,7 +24,7 @@
   <hr style="width:100%;">
   <div class="menu-item">
     <label for="map-style">Map style:</label>
-    <select id="map-style" (change)="onMapStyleChanged($event)">
+    <select id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle">
       <option *ngFor="let option of mapStyles">{{option}}</option>
     </select>
   </div>

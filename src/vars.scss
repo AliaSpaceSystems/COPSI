@@ -14,7 +14,7 @@ $main-dark-text-color: $main-text-color;// #fffff0;
 $main-dark-border: 0.5px solid darken($main-dark-bg-color, 5%);
 $main-light-border: 0.5px solid lighten($main-dark-bg-color, 50%);
 /* menu */
-$menu-dark-bg-color: lighten($main-dark-bg-color, 10%);
+$menu-dark-bg-color: lighten($main-dark-bg-color, 20%);
 $menu-dark-border: 0.5px solid darken($menu-dark-bg-color, 5%);
 
 /* footer */
@@ -23,6 +23,7 @@ $footer-title-font-size: 0.9rem;
 $footer-icon-font-size: 1rem;
 $footer-icon-div-width: 3rem;
 $footer-div-width: 26rem;
+$footer-dark-bg-color: lighten(#20202070, 40%);
 
 /* header */
 $header-font-size: 1rem;
@@ -39,3 +40,4 @@ $search-bar-width: 24rem;
 /* miscellaneus */
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);
 $copsi-blue: #00aeef;
+$default-title-div-height: 2rem;

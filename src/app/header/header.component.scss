@@ -1,9 +1,10 @@
 @import "src/vars";
 
 #header-title-div {
+  z-index: 3;
   display: flex;
   position: absolute;
-  height: 2rem;
+  height: $default-title-div-height;
   line-height: $header-font-size;
   right: calc($header-menu-icon-width + 0.5rem);
   top: 0.5rem;
@@ -18,7 +19,9 @@
   align-items: center;
   justify-content: center;
 }
-
+#header-title-div span {
+  color: $copsi-blue;
+}
 #app-title {
   margin: 0 1rem;
 }
@@ -34,6 +37,7 @@
 }
 
 #header-menu-div {
+  z-index: 3;
   display: flex;
   position: absolute;
   line-height: $header-font-size;
@@ -41,6 +45,7 @@
   top: 0.5rem;
   padding: 0.25rem 0.5rem;
   width: $header-menu-icon-width;
+  height: $default-title-div-height;
   gap: 0 0.25rem;
   border-radius: 0 0.25rem 0.25rem 0;
   border: $main-dark-border;
@@ -53,6 +58,7 @@
 }
 
 #user-menu {
+  z-index: 3;
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -78,6 +84,7 @@
 }
 
 #settings-menu {
+  z-index: 3;
   position: absolute;
   display: flex;
   flex-direction: column;

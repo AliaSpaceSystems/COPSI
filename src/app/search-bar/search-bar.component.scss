@@ -1,13 +1,14 @@
 @import "src/vars";
 
 #search-bar-main-div {
+  z-index: 3;
   display: flex;
   position: absolute;
   left: 0.5rem;
   top: 0.5rem;
-  //gap: 0 0.5rem;
   padding: 0.25rem 0.5rem;
   width: $search-bar-width;
+  height: $default-title-div-height;
   border-radius: 0.25rem;
   border: $main-dark-border;
   box-shadow: $default-shadow;
@@ -20,6 +21,7 @@
 }
 
 #search-menu {
+  z-index: 3;
   display: flex;
   position: absolute;
   flex-direction: column;
@@ -62,6 +64,7 @@ input:focus {
 }
 
 #product-list {
+  z-index: 3;
   position: absolute;
   display: flex;
   flex-direction: column;

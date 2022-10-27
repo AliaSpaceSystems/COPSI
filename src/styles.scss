@@ -45,11 +45,3 @@ html, body {
   font-family: "NotesESA-Bol";
   src: local("NotesESA-Bol"), url(./assets/fonts/NotesESA/NotesEsaBol.otf) format("opentype");
 }
-
-.mapboxgl-ctrl {
-  display: none !important;
-}
-
-.mapboxgl-ctrl-bottom-left {
-  display: none !important;
-}

@@ -29,11 +29,7 @@ declare let $: any;
 export class HeaderComponent implements OnInit, OnDestroy {
   public mapStyles = [
     "globe",
-    "mercator",
-    "equalEarth",
-    "equirectangular",
-    "naturalEarth",
-    "winkelTripel"
+    "plane"
   ];
   mapStyle: string = '';
   mapSettingsSubscription!: Subscription;
