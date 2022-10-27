@@ -24,7 +24,7 @@ import { trigger, transition, style, animate, group, state } from '@angular/anim
 })
 export class FooterComponent implements OnInit {
 
-  public showInfo = false;
+  public showInfo = true;
 
   constructor() { }
 

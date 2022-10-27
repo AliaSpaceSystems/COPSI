@@ -78,9 +78,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         orthographic: false,
         bearing: 0,
         pitch: 0
-        //longitude: 0,
-        //latitude: 0,
-        //zoom: 1
       }),
       initialViewState: {
         longitude: 2.27,
@@ -90,11 +87,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         maxZoom: 10
       },
       canvas: <HTMLCanvasElement>document.getElementById('map'),
-      /* parent: document.getElementById('map'),
-      style: {pointerEvents: 'none', 'z-index': 1}, */
       layers: [
         /* Inner hemispheres to fill the poles */
-        (style === 'globe') ? new SolidPolygonLayer({
+        /* (style === 'globe') ? new SolidPolygonLayer({
           id: 'north-background',
           data: [
             [[-180, 90], [0, 90], [180, 90], [180, 0], [0, 0], [-180, 0]]
@@ -119,11 +114,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           getPolygonOffset: (z: any) => {
             return [5000, 0]
           }
-        }) : null,
+        }) : null, */
 
         /* Base Map Layer */
         new TileLayer({
-          data: 'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          //data: 'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          //data: 'https://tiles.maps.eox.at/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=terrain-light_3857',
+          //data: 'https://d.tiles.maps.eox.at/wmts/1.0.0/overlay_base/default/WGS84/{z}/{y}/{x}.png',
+          //data: 'https://d.tiles.maps.eox.at/wmts/1.0.0/terrain-light/default/WGS84/{z}/{y}/{x}.png',
+          //data: 'https://d.tiles.maps.eox.at/wmts/1.0.0/terrain-light/default/WGS84/{z}/{y}/{x}.png',
+          //data: 'https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg',
+          data: 'https://tiles.maps.eox.at/wmts/1.0.0/terrain_3857/default/g/{z}/{y}/{x}.jpg',
+          //data: 'https://tiles.maps.eox.at/wmts/1.0.0/blackmarble_3857/default/g/{z}/{y}/{x}.jpg',
+          //data: 'https://tiles.maps.eox.at/wmts/1.0.0/terrain_3857/default/g/{z}/{y}/{x}.jpg',
+          //data: 'https://tiles.maps.eox.at/wmts/1.0.0/bluemarble_3857/default/g/{z}/{y}/{x}.jpg',
           minZoom: 0,
           maxZoom: 14,
           tileSize: 256,
@@ -148,8 +152,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Footprint geojson layer */
         new GeoJsonLayer({
           id: 'geojson-layer',
-          //data: testFeatureCollection,
-          //data: this.getGeojsonFromOData(),
           data: this.getGeojsonFromWKT(),
           pickable: true,
           stroked: true,
@@ -160,30 +162,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           getLineWidth: 1,
           getFillColor: (d: any) => this.rgbConvertToArray(d.properties.Color),
           getLineColor: [0, 0, 0],
-          //getElevation: (d: any) => d.properties.height,
           autoHighlight: true,
           highlightColor: [255, 255, 255, 50],
           onClick: (d: any) => {
             if (d) {
-              /* console.log("Layer:");
-              console.log(e.layer);
-
-              console.log("Object:");
-              console.log(e.object); */
               console.log("Selected footprint name: " + d.object.properties.name);
-
             }
           },
           getPolygonOffset: (d: any) => {
-            //console.log(d);
             return [-5000, 1]
           },
         })
       ],
       getTooltip: ({object}:any) => {
         if (object != undefined) {
-          /* console.log("Tooltip object:");
-          console.log(object); */
         }
       }
     });
@@ -233,7 +225,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         "name": "S2_ABCDE_176998752525_12345",
         "CreationDate": "2022-10-02",
         "Sensor": "ABCDE",
-        "Color": "#8A2BE2"
+        "Color": "#ff000050"
       }
     };
     return geojsonObj;
