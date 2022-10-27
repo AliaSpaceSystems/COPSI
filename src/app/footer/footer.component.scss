@@ -12,6 +12,7 @@
   border: $main-dark-border;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
 
 #info-icon {
@@ -81,4 +82,38 @@
 #alia-logo {
   padding: 0;
   height: 1.0rem;
+}
+#centre-logo {
+  padding: 0;
+  height: 2rem;
+}
+
+#copsi-logo {
+  margin: 0;
+  height: 2rem;
+}
+
+
+#footer-title-div {
+  display: flex;
+  position: absolute;
+  line-height: $header-font-size;
+  //left: 0.5rem;
+  width: 100%;
+  height: 2.5rem;
+  bottom: 0.5rem;
+  padding: 0.25rem 1rem;
+  gap: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: transparent !important;
+  color: $main-dark-text-color;
+  //border: $main-dark-border;
+  //font-size: $footer-title-font-size;
+  //box-shadow: $default-shadow;
+  align-items: center;
+  justify-content: center;
+}
+
+#app-title {
+  margin: 0 1rem;
 }

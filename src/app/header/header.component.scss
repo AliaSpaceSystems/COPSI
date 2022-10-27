@@ -3,6 +3,7 @@
 #header-title-div {
   display: flex;
   position: absolute;
+  height: 2rem;
   line-height: $header-font-size;
   right: calc($header-menu-icon-width + 0.5rem);
   top: 0.5rem;
@@ -13,7 +14,7 @@
   box-shadow: $default-shadow;
   background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
-  font-size: $header-font-size;
+  font-size: $header-title-font-size;
   align-items: center;
   justify-content: center;
 }
@@ -25,6 +26,11 @@
 #copsi-logo {
   margin: 0;
   height: 1.2rem;
+}
+
+#centre-logo {
+  padding: 0;
+  height: 2rem;
 }
 
 #header-menu-div {

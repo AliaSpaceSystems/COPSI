@@ -19,12 +19,14 @@ $menu-dark-border: 0.5px solid darken($menu-dark-bg-color, 5%);
 
 /* footer */
 $footer-font-size: 0.8rem;
+$footer-title-font-size: 0.9rem;
 $footer-icon-font-size: 1rem;
 $footer-icon-div-width: 3rem;
 $footer-div-width: 26rem;
 
 /* header */
 $header-font-size: 1rem;
+$header-title-font-size: 0.9rem;
 $header-menu-title-width: 15rem;
 $header-menu-icon-width: 5rem;
 $header-menu-width: calc($header-menu-title-width + $header-menu-icon-width);
