@@ -1,30 +1,29 @@
-<div id="footer-main-div" [@infoAnimation]="showInfo ? 'open' : 'closed'" (click)="onInfoIconClicked($event)">
-  <div class="footer-logo-div">
-    <img id="dhs-logo" src="assets/images/logoDHS.png" alt="DHS logo">
-    <img id="eu-logo" src="assets/images/logoEU.svg" alt="EU logo">
-    <img id="copernicus-logo" src="assets/images/copernicus_eu_logo_blu_white.png" alt="Copernicus logo">
-    <img id="esa-logo" src="assets/images/ESA_logo_2020_White_cut.png" alt="ESA logo">
-    <div id="footer-separator"></div>
-    <img id="serco-logo" src="assets/images/logo-serco-grey_cut.png" alt="serco logo">
-    <img id="alia-logo" src="assets/images/logo_alia_white.png" alt="alia logo">
-  </div>
-
-  <div id="footer-separator"></div>
-
-  <div class="footer-info-div">
-    <p>v.</p>
-    <p>0.0.1</p>
-  </div>
-</div>
-
-<!-- <div id="info-icon-div" (click)="onInfoIconClicked($event)">
-  <mat-icon id="info-icon" aria-hidden="false" aria-label="Account icon" fontIcon="info" ></mat-icon>
-</div> -->
 <div id="footer-title-container-div">
-  <div id="footer-title-div">
+  <div id="footer-main-div" [@infoAnimation]="showInfo ? 'open' : 'closed'" (click)="onInfoIconClicked($event)">
+    <div class="footer-logo-div">
+      <img id="dhs-logo" src="assets/images/logoDHS.png" alt="DHS logo">
+      <img id="eu-logo" src="assets/images/logoEU.svg" alt="EU logo">
+      <img id="copernicus-logo" src="assets/images/copernicus_eu_logo_blu_white.png" alt="Copernicus logo">
+      <img id="esa-logo" src="assets/images/ESA_logo_2020_White_cut.png" alt="ESA logo">
+      <div id="footer-separator"></div>
+      <img id="serco-logo" src="assets/images/logo-serco-grey_cut.png" alt="serco logo">
+      <img id="alia-logo" src="assets/images/logo_alia_white.png" alt="alia logo">
+    </div>
+
+    <div id="footer-separator"></div>
+
+    <div class="footer-info-div">
+      <p>v.</p>
+      <p>0.0.1</p>
+    </div>
+  </div>
+  <div id="footer-title-div" (click)="onInfoIconClicked($event)">
     <img id="copsi-logo" src="assets/images/COPSI_logotipo.svg" alt="Copsi logo">
+    <!--<img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
+    <p id="app-title">Italian National Mirror with very very long name</p>-->
   </div>
 </div>
 
-<!--<img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
-    <p id="app-title">Italian National Mirror with very very long name</p>-->
+
+
+

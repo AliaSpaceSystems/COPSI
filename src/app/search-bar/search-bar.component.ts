@@ -54,12 +54,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('b10e216a-bb1c-4ca6-9a98-baa78ec0efcb')/$value",
           hasQL:true,
           instrument: "SLSTR",
-          color: "#2288ee",
+          color: "#ff6400",
           geoJson: {
             "type": "Feature",
             "properties": {
               "name": "Footprint 1",
-              "color": "#2288ee"
             },
             "geometry": {
               "type": "Polygon",
@@ -80,13 +79,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           sensing: "2022-10-18T20:21:16.674",
           size: 73699097,
           url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('eaaefe9e-8a42-48f9-ae79-a73433fb4d18')/$value",
-          color: "#2288ee",
           instrument: "SLSTR",
+          color: "#ff6400",
           geoJson: {
             "type": "Feature",
             "properties": {
               "name": "Footprint 2",
-              "color": "#2288ee"
             },
             "geometry": {
               "type": "Polygon",
@@ -107,7 +105,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           sensing: "2022-10-21T12:11:01.149",
           size: 19726517,
           url:"https://scihub.copernicus.eu/dhus/odata/v1/Products('37b1f367-7f70-48c6-942e-62d890f78d17')/$value",
-          color: "#dc143c",
+          color: "#0000ff",
           instrument: "SAR-C"
         }
       ]
@@ -124,7 +122,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   search(event: any) {
-    console.log("Search: " + event.target.value);
     this.exchangeService.setProductList(this.productList);
     this.showProductList = !this.showProductList;
     event.stopPropagation();

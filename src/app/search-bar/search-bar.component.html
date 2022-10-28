@@ -23,7 +23,6 @@
               <p class="item-name item-name-bold" *ngIf="data.name != null">{{data.name}}</p>
               <p class="item-name" *ngIf="data.sensing != null"><span class="item-value">Sensing Start: </span> {{data.sensing}}</p>
               <p class="item-name" *ngIf="data.size != null"><span class="item-value">Size: </span>{{data.size}} bytes</p>
-              <!--<p class="item-name" *ngIf="data.url != null">Download Url: {{data.url}}</p>-->
           </div>
           <div *ngIf="data.hasQL == true" class="ql">
               <img class=quicklook src="assets/images/ql.jpg">

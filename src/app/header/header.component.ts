@@ -27,11 +27,37 @@ declare let $: any;
   ]
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+
+  /* Base Map Styles Layer Data Array */
+  public mapTiles = {
+    styles: [
+      {
+        name: 'openstreetmap',
+        url: 'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      },
+      {
+        name: 'eoxTerrain',
+        url: 'https://tiles.maps.eox.at/wmts/1.0.0/terrain_3857/default/g/{z}/{y}/{x}.jpg'
+      },
+      {
+        name: 'eoxTerrainLight',
+        url: 'https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg'
+      },
+      {
+        name: 'eoxBlackMarble',
+        url: 'https://tiles.maps.eox.at/wmts/1.0.0/blackmarble_3857/default/g/{z}/{y}/{x}.jpg'
+      },
+      {
+        name: 'eoxBlueMarble',
+        url: 'https://tiles.maps.eox.at/wmts/1.0.0/bluemarble_3857/default/g/{z}/{y}/{x}.jpg'
+      }
+    ]
+  };
   public mapStyles = [
-    "globe",
-    "plane"
+    'globe',
+    'plane'
   ];
-  mapStyle: string = '';
+  public mapStyle: string = '';
   mapSettingsSubscription!: Subscription;
 
   public showUser = false;
@@ -44,20 +70,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       document.getElementById('settings-menu')!.style.display = 'none';
       document.getElementById('user-menu')!.style.display = 'none';
     });
-    this.mapSettingsSubscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
-      this.mapStyle = value;
-    })
   }
 
   ngOnDestroy(): void {
-    this.mapSettingsSubscription.unsubscribe();
   }
 
   onUserMenuClick(event: any) {
     this.showUser = !this.showUser;
     this.showSettings = false;
-    console.log("ShowUser: " + this.showUser);
-
     event.stopPropagation();
   }
 
@@ -68,8 +88,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onMapStyleChanged(event: Event) {
-    let newMapType = (event.target as HTMLInputElement).value;
-    this.exchangeService.setMapStyle(newMapType);
+    let newMapStyle = (event.target as HTMLInputElement).value;
+    this.exchangeService.setMapStyle(newMapStyle);
   }
 
   onShowLabelCheck(event: any) {
