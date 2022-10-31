@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
+import { AppConfig } from '../services/app.config';
 
 @Component({
   selector: 'app-footer',
@@ -25,6 +26,7 @@ import { trigger, transition, style, animate, group, state } from '@angular/anim
 export class FooterComponent implements OnInit {
 
   public showInfo = false;
+  public version = AppConfig.settings.version;
 
   constructor() { }
 

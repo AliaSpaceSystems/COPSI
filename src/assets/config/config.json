@@ -1,0 +1,31 @@
+{
+    "version": "1.0.0-SNAPSHOT",
+    "centreDefaultInfo": {
+        "title": "",
+        "logo": "assets/images/COPSI_logo.svg"
+    },
+    "centreInfo": {
+        "title": "",
+        "logo": ""
+    },
+    "baseUrl": "",
+    "searchOptions": {
+        "pageSize": 100,
+        "orderBy": "PublicationDate",
+        "sort": "DESC"
+    },
+    "mapSettings": {
+        "initialViewState": {
+            "longitude": 2.27,
+            "latitude": 38.86,
+            "zoom": 1.5,
+            "minZoom": 1,
+            "maxZoom": 10
+        },
+        "footprint": {
+            "fill": "rgba(255,100,0,0.5)",
+            "border": "rgba(255,100,0,1)"
+        }
+    }
+    
+}
