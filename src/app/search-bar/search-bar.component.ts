@@ -6,11 +6,6 @@ import { ProductSearchService } from '../product-search/product-search.service';
 
 declare let $: any;
 
-export enum ScssVariables {
-  Light = "light",
-  Dark = "dark",
-}
-
 @Component({
   selector: 'app-search-bar',
   templateUrl: './search-bar.component.html',
@@ -42,10 +37,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    $(window).click(function() {
-      document.getElementById('search-menu')!.style.display = 'none';
-    });
-
     this.productList = {
       products: [
         {
@@ -118,19 +109,20 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onSearchMenuClick(event: any) {
+    this.showProductList = false;
     this.showSearchMenu = !this.showSearchMenu;
     event.stopPropagation();
   }
 
   search(event: any) {
     this.exchangeService.setProductList(this.productList);
+    this.showSearchMenu = false;
     this.showProductList = !this.showProductList;
     let obj = this.productSearch.search("", 0).subscribe(
       (res: object) => {
         console.log(res);
       }
     );
-    
     event.stopPropagation();
   }
 

@@ -10,7 +10,7 @@
   <mat-icon id="settings-icon" aria-hidden="false" aria-label="Settings icon" fontIcon="settings" (click)="onSettingsMenuClick($event)"></mat-icon>
 </div>
 
-<div id="user-menu" [@menuAnimation]="showUser ? 'open' : 'closed'" (click)="onMenuClicked($event)">
+<div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (click)="onMenuClicked($event)">
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
   <p>MyUserName</p>
   <hr style="width:100%;">
@@ -18,7 +18,7 @@
   <p>...and other...</p>
 </div>
 
-<div id="settings-menu" [@menuAnimation]="showSettings ? 'open' : 'closed'" (click)="onMenuClicked($event)">
+<div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (click)="onMenuClicked($event)">
   <mat-icon id="settings-image" aria-hidden="false" aria-label="Settings image" fontIcon="settings"></mat-icon>
   <p>Map Settings</p>
   <hr style="width:100%;">

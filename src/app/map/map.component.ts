@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 /* Map Imports */
 import { Deck, MapView, _GlobeView as GlobeView, COORDINATE_SYSTEM, PostProcessEffect } from '@deck.gl/core';
 import { TileLayer } from '@deck.gl/geo-layers';
-import { BitmapLayer, GeoJsonLayer, SolidPolygonLayer } from '@deck.gl/layers';
+import { BitmapLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { wktToGeoJSON } from '@terraformer/wkt';
 
 //import worldJson from '../../assets/world_borders_and_names.json';

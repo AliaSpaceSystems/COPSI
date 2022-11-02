@@ -16,10 +16,10 @@ export class LoginComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log("ShowSignUp: " + this.showSignUp);
   }
 
   onLoginClicked() {
     this.userIsLogged = true;
+    document.getElementById('main-login-container')!.style.display = 'none';
   }
 }

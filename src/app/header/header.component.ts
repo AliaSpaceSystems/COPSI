@@ -10,7 +10,7 @@ declare let $: any;
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   animations: [
-    trigger('menuAnimation', [
+    trigger('headerMenuAnimation', [
       state('open', style({
         'top': '3rem', 'opacity': 1
       })),
@@ -66,25 +66,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private exchangeService: ExchangeService) { }
 
   ngOnInit(): void {
-    $(window).click(function() {
-      document.getElementById('settings-menu')!.style.display = 'none';
-      document.getElementById('user-menu')!.style.display = 'none';
-    });
   }
 
   ngOnDestroy(): void {
   }
 
   onUserMenuClick(event: any) {
+    console.log("UserMenu: " + event);
+
     this.showUser = !this.showUser;
     this.showSettings = false;
-    event.stopPropagation();
+    //event.stopPropagation();
   }
 
   onSettingsMenuClick(event: any) {
     this.showSettings = !this.showSettings;
     this.showUser = false;
-    event.stopPropagation();
+    //event.stopPropagation();
   }
 
   onMapStyleChanged(event: Event) {
