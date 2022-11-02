@@ -72,17 +72,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onUserMenuClick(event: any) {
-    console.log("UserMenu: " + event);
-
     this.showUser = !this.showUser;
     this.showSettings = false;
-    //event.stopPropagation();
+    event.stopPropagation();
   }
 
   onSettingsMenuClick(event: any) {
     this.showSettings = !this.showSettings;
     this.showUser = false;
-    //event.stopPropagation();
+    event.stopPropagation();
   }
 
   onMapStyleChanged(event: Event) {
