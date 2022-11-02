@@ -27,6 +27,10 @@
             "fill": "rgba(255,100,0,0.5)",
             "border": "rgba(255,100,0,1)"
         }
+    },
+    "loginSettings": {
+      "text": "Please Log in or Sign up to our service",
+      "showSignUp": true,
+      "showForgotPassword": false
     }
-    
 }
