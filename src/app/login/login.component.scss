@@ -1,0 +1,61 @@
+@import "src/vars";
+
+#main-login-container {
+  z-index: 99;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #111b;
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 2rem;
+  background-color: $menu-dark-bg-color;
+  border: $main-dark-border;
+  box-shadow: $login-shadow;
+  border-radius: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+#copsi-logo {
+  margin: 0;
+  height: 2.0rem;
+}
+
+#login-title {
+  margin: 0;
+}
+
+#buttons-div {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+button {
+  display: flex;
+  width: 11rem;
+  height: 2rem;
+  background-color: $main-buttons-bg-color;
+  border-radius: 5px;
+  border: $main-dark-border;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.button-text {
+  position: fixed;
+}
+
+.button-icon {
+  position: relative;
+  left: 4rem;
+}
