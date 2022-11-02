@@ -10,6 +10,7 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login.component';
 import { AppConfig } from './services/app.config';
 
 export function initializeApp(
@@ -25,6 +26,7 @@ export function initializeApp(
     FooterComponent,
     HeaderComponent,
     SearchBarComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
