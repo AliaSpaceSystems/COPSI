@@ -26,6 +26,21 @@
             "fill": "rgba(255,100,0,0.5)",
             "border": "rgba(255,100,0,1)"
         }
+    },
+    "loginSettings": {
+        "text": "Please Log in or Sign up to our service",
+        "showSignUp": true,
+        "showForgotPassword": false
+    },
+    "keycloak": {
+        "issuer": "https://<keycloak_url>/auth/realms/<realm>/protocol/openid-connect/auth",
+        "redirectUri": "http://localhost:4200/",
+        "clientId": "",
+        "responseType": "code",
+        "scope": "openid profile email",
+        "requireHttps": false,
+        "showDebugInformation": true,
+        "disableAtHashCheck": true
     }
     
 }

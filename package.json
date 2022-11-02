@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
     "@terraformer/wkt": "^2.1.2",
+    "angular-oauth2-oidc": "^13.0.1",
     "deck.gl": "^8.8.15",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

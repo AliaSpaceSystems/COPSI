@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { AppConfig } from './services/app.config';
+import { AuthConfigModule } from './services/oauth/auth.config.module';
 
 export function initializeApp(
   appConfig: AppConfig
@@ -34,7 +35,8 @@ export function initializeApp(
     BrowserAnimationsModule,
     MatIconModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AuthConfigModule
   ],
   providers: [
     {

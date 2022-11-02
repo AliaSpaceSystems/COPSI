@@ -4,7 +4,31 @@
 
 export const environment = {
   production: false,
-  configFile: 'assets/config/config.dev.json'
+  configFile: 'assets/config/config.dev.json',
+  keycloak: {
+    // Url of the Identity Provider
+    issuer: 'https://s1a.prip.copernicus.eu/auth/realms/prip_s1a/protocol/openid-connect/auth',
+
+    // URL of the SPA to redirect the user to after login
+    redirectUri: 'https://s1a.prip.copernicus.eu/odata/v1/Products',
+
+    // The SPA's id. 
+    // The SPA is registerd with this id at the auth-serverß
+    clientId: 's1a_prip-catalogue',
+
+    responseType: 'code',
+    // set the scope for the permissions the client should request
+    // The first three are defined by OIDC.
+    scope: 'openid profile email',
+    // Remove the requirement of using Https to simplify the demo
+    // THIS SHOULD NOT BE USED IN PRODUCTION
+    // USE A CERTIFICATE FOR YOUR IDP
+    // IN PRODUCTION
+    requireHttps: true,
+    // at_hash is not present in JWT token
+    showDebugInformation: true,
+    disableAtHashCheck: true
+  }
 };
 
 /*

@@ -32,5 +32,15 @@
       "text": "Please Log in or Sign up to our service",
       "showSignUp": true,
       "showForgotPassword": false
+    },
+    "keycloak": {
+        "issuer": "https://s1a.prip.copernicus.eu/auth/realms/prip_s1a/protocol/openid-connect/auth",
+        "redirectUri": "http://localhost:4400/",
+        "clientId": "prip_s1a-catalogue",
+        "responseType": "code",
+        "scope": "openid profile email",
+        "requireHttps": false,
+        "showDebugInformation": true,
+        "disableAtHashCheck": true
     }
 }
