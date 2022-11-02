@@ -1,0 +1,7 @@
+{
+    "/odata": {
+        "target": "https://ivvproxy.onda.onda-dias.com/das-cat02/",
+        "secure": false,
+        "changeOrigin": true
+    }
+}

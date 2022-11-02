@@ -8,6 +8,7 @@
         "title": "",
         "logo": ""
     },
+    "baseUrl_": "https://ivvproxy.onda.onda-dias.com/das-cat02/",
     "baseUrl": "",
     "searchOptions": {
         "pageSize": 100,

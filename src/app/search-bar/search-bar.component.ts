@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../exchange.service';
 import { Subscription } from 'rxjs';
+import { ProductSearchService } from '../product-search/product-search.service';
 
 declare let $: any;
 
@@ -37,7 +38,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public showProductList = false;
   productList: any;
 
-  constructor(private exchangeService: ExchangeService) {
+  constructor(private exchangeService: ExchangeService, private productSearch: ProductSearchService) {
   }
 
   ngOnInit(): void {
@@ -124,6 +125,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   search(event: any) {
     this.exchangeService.setProductList(this.productList);
     this.showProductList = !this.showProductList;
+    let obj = this.productSearch.search("", 0).subscribe(
+      (res: object) => {
+        console.log(res);
+      }
+    );
+    
     event.stopPropagation();
   }
 
