@@ -12,10 +12,10 @@
 
 <div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (click)="onMenuClicked($event)">
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
-  <p>MyUserName</p>
+  <p>User Name</p>
   <hr style="width:100%;">
   <p>Some useful information</p>
-  <p>...and other...</p>
+  <p>about the user</p>
 </div>
 
 <div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (click)="onMenuClicked($event)">
@@ -23,7 +23,7 @@
   <p>Map Settings</p>
   <hr style="width:100%;">
   <div class="menu-item">
-    <label for="map-style">Map style:</label>
+    <label for="map-style">Map projection:</label>
     <select id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle">
       <option *ngFor="let option of mapStyles">{{option}}</option>
     </select>
