@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { ExchangeService } from '../exchange.service';
+import { ExchangeService } from '../services/exchange.service';
 import { Subscription } from 'rxjs';
 /* Map Imports */
 import { Deck, MapView, _GlobeView as GlobeView, COORDINATE_SYSTEM, PostProcessEffect } from '@deck.gl/core';

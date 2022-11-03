@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
-import { ExchangeService } from '../exchange.service';
+import { ExchangeService } from '../services/exchange.service';
 import { Subscription } from 'rxjs';
 
 declare let $: any;
