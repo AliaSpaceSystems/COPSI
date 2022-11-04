@@ -17,15 +17,44 @@ export class ProductSearchService {
 
   constructor(private http: HttpClient) { }
 
-  parseFilter(filter: string) {
-
+  parseFilter(str: string) {
+    console.log('initial filter', str);
+    let filterArray: any =[];
+    const regexContains = /\*(.*)\*/gm;
+    const regexStartsWith = /[^;]+\*(?=$|;)/gm;
+    const regexEndsWith = /^\*(.*)/gm;
+    
+    let filterPortions=str.split(' ');
+    
+    let processedString='';
+    try {
+      
+      filterPortions.forEach(function (portion) {
+        if(regexContains.test(portion)) {
+          filterArray.push(`contains(Name, '${portion.replace(/\*/g,'')}')`);
+        } else if (regexEndsWith.test(portion)) {
+          filterArray.push(`endswith(Name, '${portion.replace(/\*/g,'')}')`);
+        } else if (regexStartsWith.test(portion)) {
+          filterArray.push(`startswith(Name, '${portion.replace(/\*/g,'')}')`);
+        } else {
+          filterArray.push(portion);
+        }
+      }); 
+      processedString = filterArray.join(' ');
+      console.log('final replacement', processedString);
+      
+    } catch (error) {
+      console.error("Error converting Filter!");
+      console.error(error);
+    }
+    return processedString;
   }
 
   search(filter: string, top: number, skip: number = 0, order: string='PublicationDate', sort: string='desc') {
     // return odata/v1/Products?$count=true with additional optional filters response in JSON Format
     let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$count=true'
-    if(filter && !filter.trim()) {
-      productsUrl+='&$filter=' + filter;
+    if(filter && filter.trim()) {
+      productsUrl+='&$filter=' + this.parseFilter(filter);
     }
     if(top) {
       productsUrl+='&$top=' + top;
