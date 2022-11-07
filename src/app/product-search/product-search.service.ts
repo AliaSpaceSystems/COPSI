@@ -50,17 +50,40 @@ export class ProductSearchService {
     return processedString;
   }
 
-  search(filter: string, top: number, skip: number = 0, order: string='PublicationDate', sort: string='desc') {
+  /*
+   search(searchOptions: any) is used to trigger the odata/v1/Products request
+   searchOptions = {
+    filter: string (OData filter syntax),
+    top: number, 
+    skip: number, 
+    order: string (must be a Products entity Property),
+    sort: string (asc|desc)
+   }
+  */ 
+  //search(filter: string, top: number, skip: number = 0, order: string='PublicationDate', sort: string='desc') {
+  search(searchOptions: any) {
     // return odata/v1/Products?$count=true with additional optional filters response in JSON Format
+    let order = 'PublicationDate';
+    let sort = 'desc';
+    let skip = 0;
     let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$count=true'
-    if(filter && filter.trim()) {
-      productsUrl+='&$filter=' + this.parseFilter(filter);
+    if(searchOptions && searchOptions.filter && searchOptions.filter.trim()) {
+      productsUrl+='&$filter=' + this.parseFilter(searchOptions.filter);
     }
-    if(top) {
-      productsUrl+='&$top=' + top;
+    if(searchOptions && searchOptions.top) {
+      productsUrl+='&$top=' + searchOptions.top;
     } else {
       productsUrl+='&$top=' + AppConfig.settings.searchOptions.pageSize;
     }
+    if(searchOptions && searchOptions.skip ) {
+      skip = searchOptions.skip;
+    } 
+    if(searchOptions && searchOptions.order ) {
+      order = searchOptions.order;
+    } 
+    if(searchOptions && searchOptions.sort ) {
+      sort = searchOptions.sort;
+    } 
     productsUrl+='&$skip=' + skip + '&$orderby=' + order + ' ' + sort.toLowerCase();
     return this.http.get<any>(
       productsUrl,
