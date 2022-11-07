@@ -1,9 +1,7 @@
-/* Custom properties */
-$scrollbar-bg-color: #29333c;
-$main-text-color: #fff;
-$main-buttons-bg-color: #dddddd;
-$main-buttons-bg-color-hover: #ababab;
 
+/* Custom properties */
+$main-text-color: #fff;
+$main-buttons-bg-color-hover: #ababab;
 
 /* light theme */
 $main-light-bg-color: #ffffff;
@@ -12,7 +10,7 @@ $main-light-text-color: #000000;
 /* dark theme */
 /* main */
 $main-dark-bg-color: #202020cc;
-$main-dark-text-color: $main-text-color;// #fffff0;
+$main-dark-text-color: #ffffff;
 $main-dark-border: 0.5px solid darken($main-dark-bg-color, 5%);
 $main-light-border: 0.5px solid lighten($main-dark-bg-color, 50%);
 /* menu */
@@ -46,3 +44,5 @@ $login-shadow: 0 2px 50px rgba(0,0,0,1.0);
 $copsi-blue: #00aeef;
 $default-title-div-height: 2rem;
 $font-family: "NotesESA-Reg";
+$scrollbar-bg-color: #0000;//$main-dark-bg-color;
+$main-buttons-bg-color: #dddddd;

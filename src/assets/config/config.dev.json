@@ -8,7 +8,7 @@
         "title": "",
         "logo": ""
     },
-    "baseUrl_": "https://ivvproxy.onda.onda-dias.com/das-cat02/",
+    "baseUrl_": "https://ivvproxy.onda.onda-dias.com/das-cat02",
     "baseUrl": "",
     "searchOptions": {
         "pageSize": 100,
@@ -42,5 +42,6 @@
         "requireHttps": false,
         "showDebugInformation": true,
         "disableAtHashCheck": true
-    }
+    },
+    "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value"
 }

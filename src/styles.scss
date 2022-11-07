@@ -7,7 +7,7 @@ html, body {
   margin: 0;
   font-family: "NotesESA-Reg", Arial, Helvetica, sans-serif;
   font-size: 16px;
-  color: $main-text-color;
+  color: $main-dark-text-color;
 }
 * {
   -webkit-box-sizing: border-box;
@@ -18,12 +18,12 @@ html, body {
 /* Scrollbar styling */
 /* Works on Firefox */
 * {
-  scrollbar-color: $main-buttons-bg-color $scrollbar-bg-color;
+  scrollbar-color: $main-buttons-bg-color $scrollbar-bg-color; // thumb and truck
 }
 
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-  width: 12px;
+  width: 4px;
 }
 
 *::-webkit-scrollbar-track {
@@ -33,9 +33,12 @@ html, body {
 *::-webkit-scrollbar-thumb {
   background-color: $main-buttons-bg-color;
   border-radius: 20px;
-  border: 3px solid $scrollbar-bg-color;
+  /* border: 1px solid $scrollbar-bg-color; */
 }
 
+::-webkit-scrollbar-thumb:hover{
+  background-color: darken($main-buttons-bg-color, 10%);
+}
 
 @font-face {
   font-family: "NotesESA-Reg";

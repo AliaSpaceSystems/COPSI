@@ -130,10 +130,15 @@
 }
 
 #map-style {
+  -webkit-appearance: none;
   color: $main-dark-text-color;
   background-color: #0000;
   border: 0;
   border-bottom: $main-light-border;
+}
+
+#map-style option {
+  background-color: $main-dark-bg-color;
 }
 
 input[type="checkbox"] {

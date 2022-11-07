@@ -18,14 +18,12 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   public showForgotPassword = AppConfig.settings.loginSettings.showForgotPassword;
   isLoggedSubscription!: Subscription;
 
-  constructor(private oauthService: OAuthService, 
+  constructor(private oauthService: OAuthService,
     private exchangeService: ExchangeService) {
-    
   }
 
   ngOnInit(): void {
-    
-    if(this.oauthService.hasValidAccessToken()) {      
+    if(this.oauthService.hasValidAccessToken()) {
       //document.getElementById('main-login-container')!.style.display = 'none';
       this.userIsLogged = true;
     } else {
@@ -35,13 +33,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    
+
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
         this.setComponentVisibility(value);
       }
     });
-    
+
   }
 
   ngOnDestroy(): void {
@@ -49,13 +47,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onLoginClicked() {
-    this.oauthService.initCodeFlow();        
+    this.oauthService.initCodeFlow();
   }
 
   onSignupClicked() {
-    window.location.href = environment.keycloak.issuer + environment.keycloak.registrationPath + 
-    environment.keycloak.clientId + '&response_type=code&scope=openid profile&redirect_uri=' + environment.keycloak.redirectUri;   
-  } 
+    window.location.href = environment.keycloak.issuer + environment.keycloak.registrationPath +
+    environment.keycloak.clientId + '&response_type=code&scope=openid profile&redirect_uri=' + environment.keycloak.redirectUri;
+  }
 
   setComponentVisibility(isLogged: boolean) {
     if(isLogged) {
@@ -65,5 +63,5 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  
+
 }

@@ -23,12 +23,12 @@ export class ProductSearchService {
     const regexContains = /\*(.*)\*/gm;
     const regexStartsWith = /[^;]+\*(?=$|;)/gm;
     const regexEndsWith = /^\*(.*)/gm;
-    
+
     let filterPortions=str.split(' ');
-    
+
     let processedString='';
     try {
-      
+
       filterPortions.forEach(function (portion) {
         if(regexContains.test(portion)) {
           filterArray.push(`contains(Name, '${portion.replace(/\*/g,'')}')`);
@@ -39,10 +39,10 @@ export class ProductSearchService {
         } else {
           filterArray.push(portion);
         }
-      }); 
+      });
       processedString = filterArray.join(' ');
       console.log('final replacement', processedString);
-      
+
     } catch (error) {
       console.error("Error converting Filter!");
       console.error(error);
@@ -54,19 +54,19 @@ export class ProductSearchService {
    search(searchOptions: any) is used to trigger the odata/v1/Products request
    searchOptions = {
     filter: string (OData filter syntax),
-    top: number, 
-    skip: number, 
+    top: number,
+    skip: number,
     order: string (must be a Products entity Property),
     sort: string (asc|desc)
    }
-  */ 
+  */
   //search(filter: string, top: number, skip: number = 0, order: string='PublicationDate', sort: string='desc') {
   search(searchOptions: any) {
     // return odata/v1/Products?$count=true with additional optional filters response in JSON Format
     let order = 'PublicationDate';
     let sort = 'desc';
     let skip = 0;
-    let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$count=true'
+    let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$count=true';
     if(searchOptions && searchOptions.filter && searchOptions.filter.trim()) {
       productsUrl+='&$filter=' + this.parseFilter(searchOptions.filter);
     }
@@ -77,16 +77,33 @@ export class ProductSearchService {
     }
     if(searchOptions && searchOptions.skip ) {
       skip = searchOptions.skip;
-    } 
+    }
     if(searchOptions && searchOptions.order ) {
       order = searchOptions.order;
-    } 
+    }
     if(searchOptions && searchOptions.sort ) {
       sort = searchOptions.sort;
-    } 
+    }
     productsUrl+='&$skip=' + skip + '&$orderby=' + order + ' ' + sort.toLowerCase();
     return this.http.get<any>(
       productsUrl,
+      httpOptions
+    )
+    .pipe(
+    catchError(err => {
+        console.error(err);
+        return throwError(err);
+        }
+    ));
+  }
+
+  /* getQL(uuid: string) is used to check if there is a quicklook for that product id */
+  getQL(uuid: string) {
+    let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', AppConfig.settings.baseUrl_).replace('<uuid>', uuid);
+    console.log(uuidURL);
+
+    return this.http.get<any>(
+      uuidURL,
       httpOptions
     )
     .pipe(

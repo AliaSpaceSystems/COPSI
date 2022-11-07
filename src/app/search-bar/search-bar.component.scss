@@ -3,7 +3,7 @@
 #search-bar-main-div {
   z-index: 3;
   display: flex;
-  position: absolute;
+  position: relative;
   left: 0.5rem;
   top: 0.5rem;
   padding: 0.25rem 0.5rem;
@@ -77,21 +77,90 @@ input:focus {
   margin: 0 1.0rem;
 }
 
-#product-list {
+/* List: */
+.product-list-container {
   z-index: 3;
   position: absolute;
   display: flex;
-  flex-direction: column;
-  padding-left: 0.3rem;
+  flex-direction: row;
+  gap: 0.5rem;
   top: 3rem;
   left: 0.5rem;
   width: $search-bar-width;
+  //width: 2rem;
+  bottom: 0.5rem;
 
   border-radius: 0.25rem;
-  border: $menu-dark-border;
+  //border: $menu-dark-border;
   box-shadow: $default-shadow;
   background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
+}
+.product-list-container.animate {
+  -webkit-transition: 250ms;
+  -moz-transition: 250ms;
+  -ms-transition: 250ms;
+  -o-transition: 250ms;
+  transition: 250ms;
+  width: 0 !important;
+}
+
+#product-list-div {
+  display: flex;
+  flex-direction: column;
+  width: $search-bar-width;
+
+  border-radius: 0.25rem;
+  //border: $menu-dark-border;
+  box-shadow: $default-shadow;
+  background-color: $menu-dark-bg-color;
+  color: $main-dark-text-color;
+}
+
+#list-header {
+  background-color: $main-dark-bg-color;
+  //border: $menu-dark-border;
+  margin: 0;
+  padding: 0 0.25rem;
+  box-shadow: 0 7px 5px 0px black;
+  border-bottom: 1px solid black;
+}
+#list-items {
+  display: flex;
+  flex-direction: column;
+  width: $search-bar-width;
+  background-color: $menu-dark-bg-color;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0 0.25rem;
+
+  /* mask-image: linear-gradient(to top, $menu-dark-bg-color, black),
+    linear-gradient(to left, $menu-dark-bg-color 4px, black 4px);
+  mask-size: 4px 20000px;
+  mask-position: left bottom; */
+  /* -webkit-mask-image: linear-gradient(to top, transparent, black),
+    linear-gradient(to left, transparent 4px, black 4px);
+  -webkit-mask-size: 100% 20000px;
+  -webkit-mask-position: left bottom;
+  transition: mask-position 0.3s, -webkit-mask-position 0.3s; */
+}
+#list-items:hover {
+  /* -webkit-mask-position: left top; */
+}
+
+#showHideButton {
+  width: 1.5rem;
+  height: 3rem;
+  background-color: $menu-dark-bg-color;
+  color: $main-dark-text-color;
+  border: $main-dark-border;
+  /* border-radius: 0rem 0.5rem 0.5rem 0rem; */
+  border-radius: 0.3rem;
+  padding: 0;
+  margin: 0;
+  align-self: center;
+  box-shadow: $default-shadow;
 }
 
 .item-name{
