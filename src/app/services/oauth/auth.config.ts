@@ -5,27 +5,28 @@ import { environment } from 'src/environments/environment';
 export const authConfig: AuthConfig = {
     
     // Url of the Identity Provider
-    issuer: AppConfig.settings.keycloak.issuer,
+    issuer: environment.keycloak.issuer,
 
     // URL of the SPA to redirect the user to after login
-    redirectUri: AppConfig.settings.environment.keycloak.redirectUri,
+    redirectUri: environment.keycloak.redirectUri,
 
     // The SPA's id. 
     // The SPA is registerd with this id at the auth-serverß
-    clientId: AppConfig.settings.keycloak.clientId,
+    clientId: environment.keycloak.clientId,
 
-    responseType: AppConfig.settings.keycloak.responseType,
+    responseType: environment.keycloak.responseType,
     // set the scope for the permissions the client should request
     // The first three are defined by OIDC.
-    scope: AppConfig.settings.keycloak.scope,
+    scope: environment.keycloak.scope,
     // Remove the requirement of using Https to simplify the demo
     // THIS SHOULD NOT BE USED IN PRODUCTION
     // USE A CERTIFICATE FOR YOUR IDP
     // IN PRODUCTION
-    requireHttps: AppConfig.settings.keycloak.requireHttps,
+    requireHttps: environment.keycloak.requireHttps,
     // at_hash is not present in JWT token
-    showDebugInformation: AppConfig.settings.keycloak.showDebugInformation,
-    disableAtHashCheck: AppConfig.settings.keycloak.disableAtHashCheck
+    showDebugInformation: environment.keycloak.showDebugInformation,
+    disableAtHashCheck: environment.keycloak.disableAtHashCheck,
+    tokenEndpoint: environment.keycloak.issuer
 };
 
 

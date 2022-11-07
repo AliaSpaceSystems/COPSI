@@ -35,7 +35,9 @@
     },
     "keycloak": {
         "issuer": "https://s1a.prip.copernicus.eu/auth/realms/prip_s1a/protocol/openid-connect/auth",
-        "redirectUri": "http://localhost:4400/",
+        "loginUrl_": "https://s1a.prip.copernicus.eu/auth/realms/prip_s1a/protocol/openid-connect/auth?responseType=code&client_id=prip_s1a-catalogue&redirect_uri=http%3A%2F%2Flocalhost%3A4400&scope=openid&login=true",
+        "loginUrl": "https://s1a.prip.copernicus.eu/auth/realms/prip_s1a/protocol/openid-connect/auth",
+        "redirectUri": "http://192.168.56.103:4400/home",
         "clientId": "prip_s1a-catalogue",
         "responseType": "code",
         "scope": "openid profile email",

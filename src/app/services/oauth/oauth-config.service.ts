@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AuthConfig, NullValidationHandler, OAuthService } from 'angular-oauth2-oidc';
+import { AuthConfig, NullValidationHandler, OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
 import { filter } from 'rxjs/operators';
 import { AppConfig } from '../app.config';
 
@@ -15,7 +15,8 @@ export class OAuthConfigService {
 
     constructor(
       private readonly oauthService: OAuthService,
-      private readonly authConfig: AuthConfig
+      private readonly authConfig: AuthConfig,
+      private readonly storage: OAuthStorage
     ) {}
 
     async initAuth(): Promise<any> {
@@ -35,7 +36,7 @@ export class OAuthConfigService {
         // disabling keycloak for now
          // resolveFn();
         // continue initializing app or redirect to login-page
-        
+        console.log("access_token ??", this.storage.getItem('access_token'));
         this.oauthService.tryLogin().then(isLoggedIn => {
           console.log(this.oauthService.getAccessToken());
           console.log("isLoggedIn",isLoggedIn);

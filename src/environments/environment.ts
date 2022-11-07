@@ -10,7 +10,8 @@ export const environment = {
     issuer: 'https://s1a.prip.copernicus.eu/auth/realms/prip_s1a/protocol/openid-connect/auth',
 
     // URL of the SPA to redirect the user to after login
-    redirectUri: 'https://s1a.prip.copernicus.eu/odata/v1/Products',
+    //redirectUri: 'https://s1a.prip.copernicus.eu/odata/v1/Products',
+    redirectUri: 'http://localhost:4400/home',
 
     // The SPA's id. 
     // The SPA is registerd with this id at the auth-serverß
@@ -24,7 +25,7 @@ export const environment = {
     // THIS SHOULD NOT BE USED IN PRODUCTION
     // USE A CERTIFICATE FOR YOUR IDP
     // IN PRODUCTION
-    requireHttps: true,
+    requireHttps: false,
     // at_hash is not present in JWT token
     showDebugInformation: true,
     disableAtHashCheck: true

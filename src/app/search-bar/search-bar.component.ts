@@ -118,11 +118,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.exchangeService.setProductList(this.productList);
     this.showSearchMenu = false;
     this.showProductList = !this.showProductList;
-    /* let obj = this.productSearch.search("", 0).subscribe(
+    let obj = this.productSearch.search({filter:"*MSI* or S3*", top:0, sort:'asc'}).subscribe(
       (res: object) => {
         console.log(res);
       }
-    ); */
+    ); 
     event.stopPropagation();
   }
 
