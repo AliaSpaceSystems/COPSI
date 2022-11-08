@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { OAuthModule, AuthConfig } from 'angular-oauth2-oidc';
 
 import { OAuthConfigService } from './oauth-config.service';
-import { authConfig, OAuthModuleConfig } from './auth.config';
+import { authFlowConfig } from './auth.config';
 
 export function init_app(oauthConfigService: OAuthConfigService) {
     return () => oauthConfigService.initAuth();
@@ -13,8 +13,8 @@ export function init_app(oauthConfigService: OAuthConfigService) {
   imports: [ HttpClientModule, OAuthModule.forRoot() ],
   providers: [
     OAuthConfigService,
-    { provide: AuthConfig, useValue: authConfig },
-    OAuthModuleConfig,
+    { provide: AuthConfig, useValue: authFlowConfig },
+    //OAuthModuleConfig,
     { 
       provide: APP_INITIALIZER, 
       useFactory: init_app, 

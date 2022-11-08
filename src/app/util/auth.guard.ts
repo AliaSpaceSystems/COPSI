@@ -1,31 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { OAuthConfigService } from '../services/oauth/oauth-config.service';
-import { OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { Observable } from 'rxjs';
 
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthGuard implements CanActivate {
-    constructor(
-        private router: Router,
-        private oauthService: OAuthConfigService,
-        private oauthStorage: OAuthStorage
-    ) { }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        console.log("canActivate and check token...");
-        console.log(sessionStorage.getItem('access_token'));
-        console.log("canActivate and check token localStorage...");
-        console.log(localStorage.getItem('access_token'));
-        var token = this.oauthStorage.getItem('access_token')
+  constructor(private oauthService: OAuthService,
+              private router: Router) {}
 
-        if (token) {            
-            return true; 
-        } else {
-            
-            this.router.navigate(['/login']);
-            return false; 
-        }
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    }
+      let hasIdToken = this.oauthService.hasValidIdToken();
+      let hasAccessToken = this.oauthService.hasValidAccessToken();
+      if ((hasIdToken && hasAccessToken)) {
+        console.log("logged");
+        console.log(this.oauthService.getIdentityClaims());
+        return true;
+      } else {
+        this.router.navigate(['/login']);
+        console.log("NOT logged");
+        return false;
+      }
+      
+  }
+  
 }

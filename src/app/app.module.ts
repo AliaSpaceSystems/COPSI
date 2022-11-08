@@ -12,10 +12,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { AppConfig } from './services/app.config';
-import { AuthConfigModule } from './services/oauth/auth.config.module';
+//import { AuthConfigModule } from './services/oauth/auth.config.module';
 import { JwtInterceptor } from './util/jwt.interceptor';
 import { ErrorInterceptor } from './util/error.interceptor';
-import { OAuthService } from 'angular-oauth2-oidc';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 export function initializeApp(
   appConfig: AppConfig
@@ -39,11 +39,12 @@ export function initializeApp(
     MatIconModule,
     FormsModule,
     HttpClientModule,
-    AuthConfigModule
+    //AuthConfigModule,
+    OAuthModule.forRoot()
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    //{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,

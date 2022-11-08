@@ -2,7 +2,7 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 import { AppConfig } from '../app.config';
 import { environment } from 'src/environments/environment';
 
-export const authConfig: AuthConfig = {
+export const authFlowConfig: AuthConfig = {
     
     // Url of the Identity Provider
     issuer: environment.keycloak.issuer,
@@ -22,15 +22,15 @@ export const authConfig: AuthConfig = {
     // THIS SHOULD NOT BE USED IN PRODUCTION
     // USE A CERTIFICATE FOR YOUR IDP
     // IN PRODUCTION
-    requireHttps: environment.keycloak.requireHttps,
+    //requireHttps: environment.keycloak.requireHttps,
     // at_hash is not present in JWT token
     showDebugInformation: environment.keycloak.showDebugInformation,
-    disableAtHashCheck: environment.keycloak.disableAtHashCheck,
-    tokenEndpoint: environment.keycloak.issuer
+    //disableAtHashCheck: environment.keycloak.disableAtHashCheck,
+    //tokenEndpoint: environment.keycloak.issuer
 };
 
 
-export class OAuthModuleConfig {
+/*export class OAuthModuleConfig {
     resourceServer: OAuthResourceServerConfig = {sendAccessToken: false};
 }
 
@@ -40,7 +40,7 @@ export class OAuthResourceServerConfig {
      * If there is an ResourceServerErrorHandler registered, it is used for them.
      * If sendAccessToken is set to true, the access_token is send to them too.
      */
-    allowedUrls?: Array<string>;
-    sendAccessToken = true;
-    customUrlValidation?: (url: string) => boolean;
-}
+    //allowedUrls?: Array<string>;
+   //sendAccessToken = true;
+    //customUrlValidation?: (url: string) => boolean;
+//}*/

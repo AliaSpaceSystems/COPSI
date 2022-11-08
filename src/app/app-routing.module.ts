@@ -6,8 +6,8 @@ import { AuthGuard } from './util/auth.guard';
 
 const routes: Routes = [
   /* Main routes */
-  { path: 'login', component: LoginComponent, runGuardsAndResolvers: 'always'},
-  { path: 'home', component: AppComponent, canActivate: [AuthGuard] , runGuardsAndResolvers: 'always'
+  { path: 'login', component: LoginComponent/*, runGuardsAndResolvers: 'always'*/},
+  { path: 'home', component: AppComponent, canActivate: [AuthGuard] /*, runGuardsAndResolvers: 'always'*/
   //  , children: [
   //    /* Auxiliary routes */
   //    { path: 'network-component/:mapType', outlet: 'centralBodyRouter', component: NetworkViewComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},

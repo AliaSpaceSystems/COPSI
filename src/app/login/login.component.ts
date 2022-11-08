@@ -16,13 +16,13 @@ export class LoginComponent implements OnInit {
 
   constructor(private oauthService: OAuthService) {
     console.log(AppConfig.settings);
-    this.oauthService.loginUrl = AppConfig.settings.keycloak.loginUrl;
+    /*this.oauthService.loginUrl = AppConfig.settings.keycloak.loginUrl;
     this.oauthService.redirectUri = AppConfig.settings.keycloak.redirectUri;
     this.oauthService.clientId = AppConfig.settings.keycloak.clientId;
     this.oauthService.scope = AppConfig.settings.keycloak.scope;
     this.oauthService.setStorage(localStorage); 
     this.oauthService.logoutUrl = AppConfig.settings.keycloak.logoutUrl;
-    this.oauthService.tokenEndpoint = AppConfig.settings.keycloak.redirectUri;
+    this.oauthService.tokenEndpoint = AppConfig.settings.keycloak.redirectUri;*/
     //this.oauthService.tryLogin();
 
   }
@@ -34,8 +34,9 @@ export class LoginComponent implements OnInit {
     //this.userIsLogged = true;
     document.getElementById('main-login-container')!.style.display = 'none';
     //window.location.href = AppConfig.settings.keycloak.loginUrl;
-    this.oauthService.revokeTokenAndLogout();
-    this.oauthService.resetImplicitFlow();
-    this.oauthService.initImplicitFlow();
+    //this.oauthService.revokeTokenAndLogout();
+    //this.oauthService.resetImplicitFlow();
+    //this.oauthService.;
+    this.oauthService.initCodeFlow();
   }
 }
