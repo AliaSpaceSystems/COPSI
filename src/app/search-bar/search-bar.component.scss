@@ -77,8 +77,9 @@ input:focus {
   margin: 0 1.0rem;
 }
 
+
 /* List: */
-.product-list-container {
+#product-list-container {
   z-index: 3;
   position: absolute;
   display: flex;
@@ -89,31 +90,30 @@ input:focus {
   width: $search-bar-width;
   //width: 2rem;
   bottom: 0.5rem;
+  //max-height: calc(100vh - 3.5rem);
 
   border-radius: 0.25rem;
   //border: $menu-dark-border;
   box-shadow: $default-shadow;
-  background-color: $menu-dark-bg-color;
+  //background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
 }
-.product-list-container.animate {
+/* .product-list-container.animate {
   -webkit-transition: 250ms;
   -moz-transition: 250ms;
   -ms-transition: 250ms;
   -o-transition: 250ms;
   transition: 250ms;
   width: 0 !important;
-}
+} */
 
 #product-list-div {
   display: flex;
   flex-direction: column;
   width: $search-bar-width;
-
   border-radius: 0.25rem;
-  //border: $menu-dark-border;
   box-shadow: $default-shadow;
-  background-color: $menu-dark-bg-color;
+  //background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
 }
 
@@ -122,18 +122,19 @@ input:focus {
   //border: $menu-dark-border;
   margin: 0;
   padding: 0 0.25rem;
-  box-shadow: 0 7px 5px 0px black;
+  border-radius: 0.25rem 0.25rem 0 0;
   border-bottom: 1px solid black;
 }
 #list-items {
   display: flex;
   flex-direction: column;
   width: $search-bar-width;
-  background-color: $menu-dark-bg-color;
+  //background-color: $menu-dark-bg-color;
   overflow-y: scroll;
   overflow-x: hidden;
   margin: 0;
-  padding: 0 0.25rem;
+  padding: 0;
+  gap: 0; //0.5rem;
 
   /* mask-image: linear-gradient(to top, $menu-dark-bg-color, black),
     linear-gradient(to left, $menu-dark-bg-color 4px, black 4px);
@@ -155,7 +156,6 @@ input:focus {
   background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
   border: $main-dark-border;
-  /* border-radius: 0rem 0.5rem 0.5rem 0rem; */
   border-radius: 0.3rem;
   padding: 0;
   margin: 0;
@@ -163,55 +163,111 @@ input:focus {
   box-shadow: $default-shadow;
 }
 
-.item-name{
-  /*text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;*/
+/* list item */
+.list-item {
+  background-color: $menu-dark-bg-color;
+}
+.list-item hr{
+  width: 100%;
+  margin: 0;
+  border: 0.5px solid black; //$main-buttons-bg-color;
+}
+
+/* Product Name */
+.name-div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 0.25rem;
+
+  background-color: $main-dark-bg-color;
+}
+.name-title{
+  color: darken($main-dark-text-color, 20%);
+  font-style: italic;
+  font-weight: normal;
+  text-align: left;
+  font-size: $search-bar-font-size-small;
+}
+.name-value{
   word-break: break-all;
   text-align: left;
-  font-size: small;
-  margin: 8px 0 !important;
-
+  font-weight: bold;
+  font-size: $search-bar-font-size-small;
 }
 
-.item-name-bold{
-  font-weight: bold;
-
+/* Product data */
+.data-row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.25rem;
+}
+.item-data-column-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.item-metadata-column-div {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  /* gap: 0.25rem; */
+}
+.item-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+.item-title{
+  color: darken($main-dark-text-color, 20%);
+  font-style: italic;
+  font-weight: normal;
+  font-size: $search-bar-font-size-small;
 }
 .item-value{
-  font-style: italic;
-
+  text-align: left;
+  font-weight: normal;
+  font-size: $search-bar-font-size-small;
+}
+.tag {
+  /* margin: 3px; */
+  font-size: small;
+  align-self: flex-start;
 }
 
-.item-row{
+/* Quick look */
+.ql-div {
   display: flex;
+  flex-direction: row;
+  align-items: flex-end;
 }
+.ql-buttons-div {
 
-.metadata{
-  width: 18rem;
+  display: flex;
+  margin: 0;
+  padding: 0 0.2rem;
+  gap: 0.2rem;
 }
-
-.metadata-large{
-  width: 24rem;
+.item-button-icon{
+  cursor: pointer;
+  font-size: 1rem !important;
+  padding: 0;
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
 }
-
 .ql{
-  width: 6rem;
-  margin: 5px;
+  /* padding: 0;
+  margin: 0; */
+  margin-bottom: -4px;
 }
 
 .quicklook{
-  height: 5rem;
-}
-
-.tag {
-  float: left;
-  margin: 3px;
-  font-size: small;
-}
-
-.item-button-icon{
-  cursor: pointer;
-  font-size: 18px !important;
-  float: right;
+  height: 4rem;
+  border: 1px solid black;
+  border-radius: 8px;
+  box-shadow: $default-shadow;
+  padding: 0;
+  margin: 0;
 }

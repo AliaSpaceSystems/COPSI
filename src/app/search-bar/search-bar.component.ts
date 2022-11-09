@@ -397,7 +397,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.showProductList = true;
     this.searchOptions = {
       filter: "",
-      top: 5,
+      top: 30,
       skip: 0,
       order: 'PublicationDate',
       sort: 'desc'
@@ -411,17 +411,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     /* Real data */
     let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
       (res: any) => {
-        console.log("SEARCH: " + res);
         this.productTotalNumber = res['@odata.count'];
         this.productList = res;
         this.exchangeService.setProductList(this.productList);
-        this.productList.value.forEach((product: any) => {     //////////// da testare!!!
+        /* this.productList.value.forEach((product: any) => {     //////////// da testare!!!
           this.productSearch.getQL(product.Id).subscribe(
             (res: any) => {
               console.log("HAS QL: " + res)
             }
           );
-        });
+        }); */
       }
     );
     this.listContainerIsOpen = true;

@@ -13,32 +13,49 @@
   <p>Option 4</p>
 </div>
 
-<div class="product-list-container" id="product-list-container" [@searchMenuAnimation]="showProductList ? 'open' : 'closed'">
+<div id="product-list-container" [@searchMenuAnimation]="showProductList ? 'open' : 'closed'">
   <div id="product-list-div">
     <div id="list-header">
       <p style="margin:10px 0;">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products </p>
     </div>
     <div id="list-items">
-      <div id="list-item" *ngFor="let product of productList.value">
-        <div class="row item-row">
-          <div [ngClass]="{'metadata':product.hasQL == true, 'metadata-large':!product.hasQL }">
-              <p class="item-name item-name-bold" *ngIf="product.Name != null">{{product.Name}}</p>
-              <p class="item-name" *ngIf="product.ContentDate.Start != null"><span class="item-value">Sensing Start: </span> {{product.ContentDate.Start}}</p>
-              <p class="item-name" *ngIf="product.ContentLength != null"><span class="item-value">Size: </span>{{product.ContentLength}} bytes</p>
+      <div class="list-item" *ngFor="let product of productList.value; let idx=index;">
+        <div class="name-div">
+          <div class="name-title">Name: </div>
+          <div class="name-value" *ngIf="product.Name != null">{{product.Name}}</div>
+        </div>
+        <div class="data-row">
+          <div class="item-data-column-div">
+            <div class="item-metadata-column-div">
+              <div class="item-row">
+                <div class="item-title">Sensing Start: </div>
+                <div class="item-value" *ngIf="product.ContentDate.Start != null"> {{product.ContentDate.Start}}</div>
+              </div>
+              <div class="item-row">
+                <div class="item-title">Size: </div>
+                <div class="item-value" *ngIf="product.ContentLength != null"> {{product.ContentLength}}</div>
+                <div class="item-title"> bytes</div>
+              </div>
+            </div>
+            <div class="item-row">
+              <div class="tag" *ngIf="product.instrument != null" [ngStyle]="{'background-color': product.color}">{{product.instrument}}</div>
+              <div class="tag" *ngIf="product.instrument == null && idx%2==0" [ngStyle]="{'background-color': '#ff6400'}">TEST TAG</div>
+            </div>
           </div>
-          <div *ngIf="product.hasQL == true" class="ql">
-            <img class="quicklook" src="assets/images/ql.jpg">
-          </div>
-          <div *ngIf="product.hasQL == null" class="ql">
-            <img class="quicklook" src="assets/images/no-preview-1.png">
+          <div class="ql-div">
+            <div class="ql-buttons-div">
+              <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"></mat-icon>
+              <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"></mat-icon>
+            </div>
+            <div class="ql" *ngIf="product.hasQL == true || idx%2==0">
+              <img class="quicklook" src="assets/images/ql.jpg">
+            </div>
+            <div class="ql" *ngIf="product.hasQL == null && idx%2==1">
+              <img class="quicklook" src="assets/images/no-preview-1.png">
+            </div>
           </div>
         </div>
-        <div id="buttons" class="row">
-          <span *ngIf="product.instrument != null" [ngStyle]="{'background-color': product.color}" class="tag">{{product.instrument}}</span>
-          <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"></mat-icon>
-          <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"></mat-icon>
-        </div>
-        <hr style="width:100%;">
+        <hr>
       </div>
     </div>
   </div>
