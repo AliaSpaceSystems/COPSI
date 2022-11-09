@@ -16,6 +16,7 @@ import { AppConfig } from './services/app.config';
 import { JwtInterceptor } from './util/jwt.interceptor';
 import { ErrorInterceptor } from './util/error.interceptor';
 import { OAuthModule } from 'angular-oauth2-oidc';
+import { HomeComponent } from './home/home.component';
 
 export function initializeApp(
   appConfig: AppConfig
@@ -25,7 +26,8 @@ export function initializeApp(
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent,    
+    HomeComponent,
     MapComponent,
     FooterComponent,
     HeaderComponent,

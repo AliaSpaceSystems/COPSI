@@ -12,7 +12,7 @@ export const environment = {
 
     // URL of the SPA to redirect the user to after login
     //redirectUri: 'https://s1a.prip.copernicus.eu/odata/v1/Products',
-    redirectUri: 'http://192.168.56.103:4400/home',
+    redirectUri: 'http://192.168.56.103:4400/login',
 
     // The SPA's id. 
     // The SPA is registerd with this id at the auth-serverß
@@ -30,7 +30,8 @@ export const environment = {
     requireHttps: false,
     // at_hash is not present in JWT token
     showDebugInformation: true,
-    disableAtHashCheck: true
+    disableAtHashCheck: true,
+    registrationPath: '/login-actions/registration?client_id='
   }
 };
 

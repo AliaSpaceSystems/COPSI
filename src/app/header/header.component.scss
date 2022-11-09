@@ -171,3 +171,31 @@ input[type="checkbox"]::before {
 input[type="checkbox"]:checked::before {
   transform: scale(1);
 }
+
+#logout:hover {
+  color: #8a8a8a !important;
+}
+
+
+button {
+  text-decoration: underline;
+  cursor: pointer;
+  display: flex;
+  width: 11rem;
+  height: 2rem;
+  background-color: transparent;
+  border: none !important;
+  border-radius: 5px;
+  border: $main-dark-border;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: $main-dark-text-color;
+  font-family: "NotesESA-Reg";
+}
+
+.button-text {
+  position: fixed;
+  text-decoration: underline;
+  cursor: pointer;
+}

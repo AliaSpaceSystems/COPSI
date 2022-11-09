@@ -12,10 +12,11 @@
 
 <div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (click)="onMenuClicked($event)">
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
-  <p>User Name</p>
+  <p>{{name}}</p>
   <hr style="width:100%;">
-  <p>Some useful information</p>
-  <p>about the user</p>
+  <button id="logout" (click)="onLogoutClicked()">
+    <p class="button-text">Logout</p>    
+  </button>
 </div>
 
 <div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (click)="onMenuClicked($event)">

@@ -22,7 +22,7 @@ export const authFlowConfig: AuthConfig = {
     // THIS SHOULD NOT BE USED IN PRODUCTION
     // USE A CERTIFICATE FOR YOUR IDP
     // IN PRODUCTION
-    //requireHttps: environment.keycloak.requireHttps,
+    requireHttps: environment.keycloak.requireHttps,
     // at_hash is not present in JWT token
     showDebugInformation: environment.keycloak.showDebugInformation,
     //disableAtHashCheck: environment.keycloak.disableAtHashCheck,

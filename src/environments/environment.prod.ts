@@ -26,6 +26,7 @@ export const environment = {
     requireHttps: false,
     // at_hash is not present in JWT token
     showDebugInformation: true,
-    disableAtHashCheck: true
+    disableAtHashCheck: true,
+    registrationPath: '/login-actions/registration?client_id='
   }
 };

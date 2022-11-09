@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
 import { Subscription } from 'rxjs';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 declare let $: any;
 
@@ -62,10 +63,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   public showUser = false;
   public showSettings = false;
+  public name: string = ''; 
 
-  constructor(private exchangeService: ExchangeService) { }
+  constructor(private exchangeService: ExchangeService,
+              private oauthService: OAuthService) { }
 
   ngOnInit(): void {
+    const userClaims: any = this.oauthService.getIdentityClaims();
+    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";    
   }
 
   ngOnDestroy(): void {
@@ -95,5 +100,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onMenuClicked(event: any) {
     event.stopPropagation();
+  }
+
+  onLogoutClicked() {
+    this.oauthService.logOut();
   }
 }
