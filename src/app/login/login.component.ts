@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
       console.log('I amhere');
       document.getElementById('main-login-container')!.style.display = 'none';
       this.route.navigate(['/home']);
+      
     } 
   }
 

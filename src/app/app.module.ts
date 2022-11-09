@@ -42,11 +42,16 @@ export function initializeApp(
     FormsModule,
     HttpClientModule,
     //AuthConfigModule,
-    OAuthModule.forRoot()
+    OAuthModule.forRoot({
+      resourceServer: {
+          allowedUrls: ['/odata/*'],
+          sendAccessToken: true
+      }
+    })
   ],
   providers: [
-    //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    //{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
