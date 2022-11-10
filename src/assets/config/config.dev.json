@@ -29,7 +29,7 @@
         }
     },
     "loginSettings": {
-      "text": "Please Log in or Sign up to our service",
+      "text": "Please Sign in to access our service",
       "showSignUp": true,
       "showForgotPassword": false
     },

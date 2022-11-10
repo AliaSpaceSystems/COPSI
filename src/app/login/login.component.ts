@@ -17,37 +17,31 @@ export class LoginComponent implements OnInit {
   public showForgotPassword = AppConfig.settings.loginSettings.showForgotPassword;
 
   constructor(private oauthService: OAuthService, private route: Router) {
-    console.log(AppConfig.settings);
+    
   }
 
   ngOnInit(): void {
     
     if(this.oauthService.hasValidAccessToken()) {      
-      console.log('I amhere');
-      document.getElementById('main-login-container')!.style.display = 'none';
+      //document.getElementById('main-login-container')!.style.display = 'none';
+      this.userIsLogged = true;
       this.route.navigate(['/home']);
-      
-    } 
+    } else {
+      this.userIsLogged = false
+    }
   }
 
   onLoginClicked() {
-    //this.userIsLogged = true;
-    document.getElementById('main-login-container')!.style.display = 'none';
-    //window.location.href = AppConfig.settings.keycloak.loginUrl;
-    //this.oauthService.resetImplicitFlow();
-    //this.oauthService.;
+    //document.getElementById('main-login-container')!.style.display = 'none';
     this.oauthService.initCodeFlow();
-    console.log(this.oauthService.getAccessToken());
-    alert('vedi il token');
+    console.log(this.oauthService.getAccessToken());    
   }
 
   onSignupClicked() {
-    document.getElementById('main-login-container')!.style.display = 'none';
-    window.location.href = environment.keycloak.issuer + environment.keycloak.registrationPath + environment.keycloak.clientId;
-    //this.oauthService.r();
+    //document.getElementById('main-login-container')!.style.display = 'none';
+    window.location.href = environment.keycloak.issuer + environment.keycloak.registrationPath + 
+    environment.keycloak.clientId + '&response_type=code&scope=openid profile&redirect_uri=' + environment.keycloak.redirectUri;   
   } 
 
-  reloadPage(){
-    window.location.reload()
-  }
+  
 }

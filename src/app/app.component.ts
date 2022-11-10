@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
       if (event instanceof OAuthSuccessEvent) {
         if(event.type == 'token_received') {
           console.log('token_received');
-          console.log(this.oauthService.getAccessToken());
+          //console.log(this.oauthService.getAccessToken());
           this.route.navigate(['/home']);
 
         }
@@ -42,11 +42,8 @@ export class AppComponent implements OnInit {
       this.oauthService.configure(authFlowConfig);      
       this.oauthService.tokenValidationHandler = new JwksValidationHandler();
       this.oauthService.loadDiscoveryDocumentAndTryLogin();
-      console.log('configured');
-      //this.oauthService.initCodeFlow();
-      console.log('configuinitCodeFlow');
-      console.log(this.oauthService.getAccessToken());
-      console.log(this.oauthService.hasValidAccessToken());
+      //console.log(this.oauthService.getAccessToken());
+      //console.log(this.oauthService.hasValidAccessToken());
     
   }
 

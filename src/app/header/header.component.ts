@@ -77,6 +77,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onUserMenuClick(event: any) {
+    const userClaims: any = this.oauthService.getIdentityClaims();
+    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";  
     this.showUser = !this.showUser;
     this.showSettings = false;
     event.stopPropagation();

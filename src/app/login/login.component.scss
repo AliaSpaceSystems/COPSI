@@ -1,4 +1,4 @@
-@import "src/vars";
+@import "../../../src/vars";
 
 #main-login-container {
   z-index: 99;
@@ -41,7 +41,7 @@
 
 button {
   display: flex;
-  width: 11rem;
+  width: 7rem;
   height: 2rem;
   background-color: $main-buttons-bg-color;
   border-radius: 5px;
@@ -49,6 +49,8 @@ button {
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  cursor: pointer;
+  font-family: $font-family;
 }
 
 .button-text {
@@ -58,4 +60,8 @@ button {
 .button-icon {
   position: relative;
   left: 4rem;
+}
+
+button:hover {
+  background-color: $main-buttons-bg-color-hover;
 }

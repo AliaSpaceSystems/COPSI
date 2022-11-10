@@ -14,9 +14,10 @@
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
   <p>{{name}}</p>
   <hr style="width:100%;">
-  <button id="logout" (click)="onLogoutClicked()">
-    <p class="button-text">Logout</p>    
-  </button>
+  <div id="logout">
+    <mat-icon class="button-icon" id="login-image" aria-hidden="false" aria-label="login image" fontIcon="login"></mat-icon>
+    <p class="button-text">Logout</p>
+  </div>
 </div>
 
 <div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (click)="onMenuClicked($event)">

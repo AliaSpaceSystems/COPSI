@@ -18,7 +18,6 @@ export class ErrorInterceptor implements HttpInterceptor {
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('error intercept');
     /* Spinner Service On */
     const now = moment.now().toLocaleString();
     //this.spinner.setOn(now);

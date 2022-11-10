@@ -16,17 +16,13 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
       let hasIdToken = this.oauthService.hasValidIdToken();
-      console.log("hasIdToken", hasIdToken);
       let hasAccessToken = this.oauthService.hasValidAccessToken();
-      console.log("hasAccessToken", hasAccessToken);
       if (hasIdToken && hasAccessToken) {
-        console.log("logged");
-        console.log(this.oauthService.getIdentityClaims());
-        console.log(this.oauthService.getAccessToken());
+        console.log("user is logged");
         return true;
       } else {
-        this.router.navigate(['/login']);
-        console.log("NOT logged");
+        console.log("user is NOT logged");
+        this.router.navigate(['/login']);        
         return false;
       }
       
