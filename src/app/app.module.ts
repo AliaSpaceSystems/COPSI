@@ -12,11 +12,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { AppConfig } from './services/app.config';
-//import { AuthConfigModule } from './services/oauth/auth.config.module';
 import { JwtInterceptor } from './util/jwt.interceptor';
 import { ErrorInterceptor } from './util/error.interceptor';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { HomeComponent } from './home/home.component';
+import { SpinnerComponent } from './spinner/spinner.component';
+import { AlertComponent } from './alert/alert.component';
+import { ToastComponent } from './toast/toast.component'
 
 export function initializeApp(
   appConfig: AppConfig
@@ -26,13 +28,16 @@ export function initializeApp(
 
 @NgModule({
   declarations: [
-    AppComponent,    
+    AppComponent,      
     HomeComponent,
     MapComponent,
     FooterComponent,
     HeaderComponent,
     SearchBarComponent,
     LoginComponent,
+    SpinnerComponent,  
+    ToastComponent,
+    AlertComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +62,8 @@ export function initializeApp(
       useFactory: initializeApp,
       deps: [AppConfig], multi: true
     },
-    AppConfig
+    AppConfig,
+    SpinnerComponent
   ],
   bootstrap: [AppComponent]
 })

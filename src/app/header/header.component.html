@@ -14,7 +14,7 @@
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
   <p>{{name}}</p>
   <hr style="width:100%;">
-  <div id="logout">
+  <div id="logout" (click)="onLogoutClicked()">
     <mat-icon class="button-icon" id="login-image" aria-hidden="false" aria-label="login image" fontIcon="login"></mat-icon>
     <p class="button-text">Logout</p>
   </div>

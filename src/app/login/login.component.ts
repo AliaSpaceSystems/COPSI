@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/assets/environments/environment';
 import { AppConfig } from '../services/app.config';
 
 @Component({

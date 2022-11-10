@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
-//import { SpinnerComponent } from '../spinner/spinner.component';
+import { SpinnerComponent } from '../spinner/spinner.component';
 import * as moment from 'moment';
 //import { AlertComponent } from '../alert/alert.component';
 
@@ -13,24 +13,24 @@ export class ErrorInterceptor implements HttpInterceptor {
   constructor(private oauthStorage: OAuthStorage,
               private oauthService: OAuthService,
               private router: Router,
-              //private spinner: SpinnerComponent,
+              private spinner: SpinnerComponent,
               //private alert: AlertComponent
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     /* Spinner Service On */
     const now = moment.now().toLocaleString();
-    //this.spinner.setOn(now);
+    this.spinner.setOn(now);
     return next.handle(request).pipe(
       tap(evt => {
         if (evt instanceof HttpResponse) {
           /* Spinner Service Off */
-          //this.spinner.setOff(now);
+          this.spinner.setOff(now);
         }
       }),
       catchError(err => {
         /* Spinner Service Off */
-        //this.spinner.setOff(now);
+        this.spinner.setOff(now);
         console.log('Error Interceptor: ', err);
 
         if (err.status === 401) {
