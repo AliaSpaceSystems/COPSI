@@ -10,11 +10,13 @@ $main-light-text-color: #000000;
 /* dark theme */
 /* main */
 $main-dark-bg-color: #202020cc;
+$main-dark-bg-color-opaque: #202020f6;
 $main-dark-text-color: #ffffff;
 $main-dark-border: 0.5px solid darken($main-dark-bg-color, 5%);
 $main-light-border: 0.5px solid lighten($main-dark-bg-color, 50%);
 /* menu */
 $menu-dark-bg-color: lighten($main-dark-bg-color, 15%);
+$menu-dark-bg-color-opaque: lighten($main-dark-bg-color-opaque, 15%);
 $menu-dark-border: 0.5px solid darken($menu-dark-bg-color, 5%);
 
 /* footer */
@@ -37,7 +39,8 @@ $header-logo-height: 1.0rem;
 /* search bar */
 $search-bar-font-size: 1rem;
 $search-bar-font-size-small: 0.75rem;
-$search-bar-width: 24rem;
+$search-bar-width: 26rem;
+$search-bar-product-icons-dim: 1.0rem;
 
 /* miscellaneus */
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);

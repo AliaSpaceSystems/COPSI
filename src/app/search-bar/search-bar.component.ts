@@ -45,6 +45,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   public listContainerTempWidth: any;
   public listContainerIsOpen: boolean = false;
+  public listIsReady: boolean = false;
+
+  public showSimpleView: boolean = true;
+  public showDetailedView: boolean = true;
 
   constructor(private exchangeService: ExchangeService, private productSearch: ProductSearchService) {
   }
@@ -393,6 +397,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onSearch(event: any) {
+    this.listIsReady = false;
     this.showSearchMenu = false;
     this.showProductList = true;
     this.searchOptions = {
@@ -421,6 +426,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             }
           );
         }); */
+        this.listIsReady = true;
       }
     );
     this.listContainerIsOpen = true;
@@ -432,7 +438,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onShowHideButtonClick(event: any) {
     let listContainer = document.getElementById('product-list-container')!;
     let listDiv = document.getElementById('product-list-div')!;
-    let arrowIcon = document.getElementById('showHideListIcon')!;
+    let arrowIcon = document.getElementById('show-hide-list-icon')!;
     if (this.listContainerIsOpen) {
       if (this.productListRolled) {
         this.productListRolled = false;
@@ -451,5 +457,29 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     event.stopPropagation();
+  }
+
+  simplifyBytes(bytes: number) {
+    let result: string = "";
+    if (bytes > 1000000000) {
+      return (bytes / 1000000000).toFixed(2) + " GB";
+    } else if (bytes > 1000000) {
+      return (bytes / 1000000).toFixed(2) + " MB";
+    } else if (bytes > 1000) {
+      return (bytes / 1000).toFixed(2) + " KB";
+    }
+    return result;
+  }
+
+  setListView(view: string) {
+    if (view === 'detailed') {
+      this.showDetailedView = this.showSimpleView = true;
+    } else if (view === 'simple') {
+      this.showDetailedView = false;
+      this.showSimpleView = true;
+    } else {
+      this.showDetailedView = false;
+      this.showSimpleView = false;
+    }
   }
 }
