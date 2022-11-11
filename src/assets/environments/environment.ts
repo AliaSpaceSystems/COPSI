@@ -7,17 +7,16 @@ export const environment = {
   configFile: 'assets/config/config.dev.json',
   keycloak: {
     // Url of the Identity Provider
-    //issuer: 'https://s1a.prip.copernicus.eu/auth/realms/prip_s1a/protocol/openid-connect/auth',
+    //issuer: 'https://keycloak.alia-space.com/auth/realms/PRIP-S2',
     issuer: 'https://keycloak.alia-space.com/auth/realms/dhus',
 
     // URL of the SPA to redirect the user to after login
-    //redirectUri: 'https://s1a.prip.copernicus.eu/odata/v1/Products',
-    redirectUri: 'http://192.168.56.103:4400/login',
+    redirectUri: 'http://localhost:4200/login',
 
     // The SPA's id. 
     // The SPA is registerd with this id at the auth-serverß
-    clientId: 'dafne',
-    //clientId: 'spa',
+    //clientId: 'prip-api',
+    clientId: 'dafne',    
 
     responseType: 'code',
     // set the scope for the permissions the client should request
