@@ -1,8 +1,7 @@
 import { Component, OnInit} from '@angular/core';
-import { enableDebugTools } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { OAuthService, OAuthSuccessEvent } from 'angular-oauth2-oidc';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
+import { ExchangeService } from './services/exchange.service';
 import { authFlowConfig } from './services/oauth/auth.config';
 
 @Component({
@@ -15,7 +14,8 @@ export class AppComponent implements OnInit {
   title: string = 'COPSI';
   name: string = "";
 
-  constructor( private oauthService: OAuthService, private route: Router) {
+  constructor( private oauthService: OAuthService, 
+    private exchangeService: ExchangeService) {
   }
 
   ngOnInit(): void {
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
         if(event.type == 'token_received') {
           console.log('token_received');
           //console.log(this.oauthService.getAccessToken());
-          this.route.navigate(['/home']);
+          this.exchangeService.setIsLogged(true);
 
         }
         

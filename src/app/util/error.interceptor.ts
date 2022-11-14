@@ -6,6 +6,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import * as moment from 'moment';
+import { ExchangeService } from '../services/exchange.service';
 //import { AlertComponent } from '../alert/alert.component';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               private oauthService: OAuthService,
               private router: Router,
               private spinner: SpinnerComponent,
+              private exchangeService: ExchangeService
               //private alert: AlertComponent
   ) { }
 
@@ -37,8 +39,9 @@ export class ErrorInterceptor implements HttpInterceptor {
           /* auto logout if 401 response returned from api */
           console.log("ERROR 401: Not Authorized");
           
-          this.oauthService.revokeTokenAndLogout();          
-          this.router.navigate(['/login']);
+          this.oauthService.revokeTokenAndLogout();       
+          this.exchangeService.setIsLogged(false);             
+
           
         } else if (err.status === 404) {
           /* show alert with message if error is 404: Not found */

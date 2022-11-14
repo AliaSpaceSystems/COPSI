@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable } from 'rxjs';
+import { ExchangeService } from '../services/exchange.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 export class AuthGuard implements CanActivate {
 
   constructor(private oauthService: OAuthService,
-              private router: Router) {}
+              private exchangeService: ExchangeService) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -19,11 +20,12 @@ export class AuthGuard implements CanActivate {
       let hasAccessToken = this.oauthService.hasValidAccessToken();
       if (hasIdToken && hasAccessToken) {
         console.log("user is logged");
+        this.exchangeService.setIsLogged(true);
         return true;
       } else {
         console.log("user is NOT logged");
-        this.router.navigate(['/login']);        
-        return false;
+        this.exchangeService.setIsLogged(false);      
+        return true;
       }
       
   }

@@ -14,6 +14,10 @@ export class ExchangeService {
   private productList = new BehaviorSubject<any>({});
   productListExchange = this.productList.asObservable();
 
+  private isLogged = new BehaviorSubject<any>({});
+  isLoggedExchange = this.isLogged.asObservable();
+
+
   constructor() { }
 
   setMapStyle(mapStyle: string) {
@@ -26,5 +30,9 @@ export class ExchangeService {
 
   setProductList(productList: object) {
     this.productList.next(productList);
+  }
+
+  setIsLogged(isLogged: boolean) {
+    this.isLogged.next(isLogged);
   }
 }
