@@ -36,6 +36,10 @@ export class AlertComponent implements OnInit {
     this.alertMessage = message;
     document.getElementById('title')!.innerHTML = this.alertTitle;
     document.getElementById('message')!.innerHTML = this.alertMessage;
-    $("#portal-alert").modal('show');
+    document.getElementById('main-alert-container')!.style.display = 'flex';
+  }
+
+  dismiss() {    
+    document.getElementById('main-alert-container')!.style.display = 'none';
   }
 }

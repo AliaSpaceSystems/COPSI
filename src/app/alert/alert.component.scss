@@ -1,35 +1,74 @@
-/* Alert Modal */
-.modal-content {
-  box-shadow: 0 0 2rem 1rem #000;
-}
-.modal-content {
-  background-color: var(--title-bg-color);
-  color: var(--main-text-color);
-}
-.modal-header {
-  border-bottom: 1px solid var(--table-border-color);
-}
-.modal-title {
-  color: var(--brighter-text-color);
-  text-align: left;
-}
-.modal-body button {
-  margin: 0 2rem 0 0;
-}
+@import "../../../src/vars";
 
-.fa-exclamation-triangle {
-  font-size: 2rem;
-  color: tomato;
-}
-
-.modal-backdrop {
+#main-alert-container {
+  z-index: 99;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
   display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: #111b;
 }
 
-.modal {
-  background: rgba(0, 0, 0, 0.5);
+#alert-form {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 2rem;
+  background-color: $menu-dark-bg-color;
+  border: $main-dark-border;
+  box-shadow: $login-shadow;
+  border-radius: 1rem;
+  align-items: center;
+  justify-content: center;
+  width: 24rem;
 }
 
-#portal-alert {
-  display: none;
+#alert-header {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+#copsi-logo {
+  margin: 1 rem;
+  height: 2.0rem;
+}
+
+#title {
+  margin: 0;
+}
+
+hr {
+  width: 100%;
+}
+
+#buttons-div {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+button {
+  display: flex;
+  width: 4rem;
+  height: 2rem;
+  background-color: $main-buttons-bg-color;
+  border-radius: 5px;
+  border: $main-dark-border;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  font-family: $font-family;
+}
+
+button:hover {
+  background-color: $main-buttons-bg-color-hover;
+}
+
+#message {
+  word-break: break-all;
 }

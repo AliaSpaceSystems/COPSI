@@ -18,7 +18,7 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import { HomeComponent } from './home/home.component';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { AlertComponent } from './alert/alert.component';
-import { ToastComponent } from './toast/toast.component'
+import { ToastComponent } from './toast/toast.component';
 
 export function initializeApp(
   appConfig: AppConfig
@@ -46,7 +46,6 @@ export function initializeApp(
     MatIconModule,
     FormsModule,
     HttpClientModule,
-    //AuthConfigModule,
     OAuthModule.forRoot({
       resourceServer: {
           allowedUrls: ['/odata/*'],

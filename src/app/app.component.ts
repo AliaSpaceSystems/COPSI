@@ -3,6 +3,7 @@ import { OAuthService, OAuthSuccessEvent } from 'angular-oauth2-oidc';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { ExchangeService } from './services/exchange.service';
 import { authFlowConfig } from './services/oauth/auth.config';
+import { ToastComponent } from './toast/toast.component';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ export class AppComponent implements OnInit {
   name: string = "";
 
   constructor( private oauthService: OAuthService, 
-    private exchangeService: ExchangeService) {
+    private exchangeService: ExchangeService,
+    private toast: ToastComponent) {
   }
 
   ngOnInit(): void {
@@ -27,6 +29,7 @@ export class AppComponent implements OnInit {
         if(event.type == 'token_received') {
           console.log('token_received');
           //console.log(this.oauthService.getAccessToken());
+          this.toast.showInfoToast('LOGIN SUCCESSFUL!')
           this.exchangeService.setIsLogged(true);
 
         }

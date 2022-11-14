@@ -7,7 +7,7 @@ import { OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import * as moment from 'moment';
 import { ExchangeService } from '../services/exchange.service';
-//import { AlertComponent } from '../alert/alert.component';
+import { AlertComponent } from '../alert/alert.component';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -15,8 +15,8 @@ export class ErrorInterceptor implements HttpInterceptor {
               private oauthService: OAuthService,
               private router: Router,
               private spinner: SpinnerComponent,
-              private exchangeService: ExchangeService
-              //private alert: AlertComponent
+              private exchangeService: ExchangeService,
+              private alert: AlertComponent
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -40,20 +40,20 @@ export class ErrorInterceptor implements HttpInterceptor {
           console.log("ERROR 401: Not Authorized");
           
           this.oauthService.revokeTokenAndLogout();       
-          this.exchangeService.setIsLogged(false);             
-
+          this.exchangeService.setIsLogged(false);        
+          
           
         } else if (err.status === 404) {
           /* show alert with message if error is 404: Not found */
           console.log("ERROR 404: Not Found.");
-          //this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.message);
+          this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.message);
           this.reloadCurrentRoute();
         } else {
           /* Show alert on any other error */
           if (err.error.hasOwnProperty('errors')) {
-            //this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.error.errors[0].message);
+            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.error.errors[0].message);
           } else {
-            //this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.message);
+            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.message);
           }
         }
 
