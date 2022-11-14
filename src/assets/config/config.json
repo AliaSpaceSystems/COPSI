@@ -33,9 +33,9 @@
         "showForgotPassword": false
     },
     "keycloak": {
-        "issuer": "https://<keycloak_url>/auth/realms/<realm>/protocol/openid-connect/auth",
-        "redirectUri": "http://localhost:4200/",
-        "clientId": "",
+        "issuer": "https://<keycloak_url>/auth/realms/<realm>",
+        "redirectUri": "http(s)://<copsy_domain>/home",
+        "clientId": "<client_id>",
         "responseType": "code",
         "scope": "openid profile email",
         "requireHttps": false,

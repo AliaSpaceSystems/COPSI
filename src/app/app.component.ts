@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
-import { OAuthService, OAuthSuccessEvent } from 'angular-oauth2-oidc';
+import { AuthConfig, OAuthService, OAuthSuccessEvent } from 'angular-oauth2-oidc';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
+import { AppConfig } from './services/app.config';
 import { ExchangeService } from './services/exchange.service';
 import { authFlowConfig } from './services/oauth/auth.config';
 import { ToastComponent } from './toast/toast.component';
@@ -14,6 +15,7 @@ export class AppComponent implements OnInit {
 
   title: string = 'COPSI';
   name: string = "";
+  ssoConfig: AuthConfig = new AuthConfig({});
 
   constructor( private oauthService: OAuthService, 
     private exchangeService: ExchangeService,
@@ -21,6 +23,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initConfig();
     this.configureSSO();
     const userClaims: any = this.oauthService.getIdentityClaims();
     this.name = (userClaims && userClaims.name) ? userClaims.name : "";
@@ -40,9 +43,18 @@ export class AppComponent implements OnInit {
     });
   }
 
+  initConfig() {
+    if(AppConfig.settings.keycloak) {
+      this.ssoConfig = AppConfig.settings.keycloak
+
+    } else {
+      this.ssoConfig = authFlowConfig;
+    }
+  }
+
   configureSSO() {
-    
-      this.oauthService.configure(authFlowConfig);      
+      console.log(this.ssoConfig);
+      this.oauthService.configure(this.ssoConfig);      
       this.oauthService.tokenValidationHandler = new JwksValidationHandler();
       this.oauthService.loadDiscoveryDocumentAndTryLogin();
       //console.log(this.oauthService.getAccessToken());
