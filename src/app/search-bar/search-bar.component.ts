@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ProductSearchService } from '../services/product-search.service';
 
 declare let $: any;
+let listDiv: any;
 
 @Component({
   selector: 'app-search-bar',
@@ -32,7 +33,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public showSearchMenu = false;
   public showProductList = false;
   public productListRolled = false;
-  
+
   @Input()
   public filter: string = "";
 
@@ -44,6 +45,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public productTotalNumber: number = 0;
   public productStartNumber: number = 0;
   public productEndNumber: number = 0;
+  public currentPage: number = 0;
+  public lastPage: number = 0;
+  public prevPage: number = 0;
   public searchOptions: any;
 
   public listContainerTempWidth: any;
@@ -57,6 +61,60 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    listDiv = document.getElementById('list-items-container')!;
+    let scrollPosWasMovedFromZero: boolean = false;
+    let askNextPage: boolean = false;
+    let askPrevPage: boolean = false;
+    let scrollCounter = 0;
+
+    document.getElementById('list-items-container')!.addEventListener('wheel', (e) => {
+      console.log("SCROLLING to " + listDiv.scrollTop);
+
+      if (askNextPage) {
+        if (e.deltaY < 0) {
+          askNextPage = false;
+        }
+        scrollCounter += e.deltaY;
+        if (scrollCounter > 700) {
+          this.currentPage += 1;
+          scrollPosWasMovedFromZero = false;
+          scrollCounter = 0;
+          askNextPage = false;
+          this.loadPage(this.currentPage);
+          //listDiv.scrollTop = 0;
+        }
+      }
+      if (askPrevPage) {
+        if (e.deltaY > 0) {
+          askNextPage = false;
+        }
+        scrollCounter += e.deltaY;
+        if (scrollCounter < -700) {
+          this.currentPage -= 1;
+          scrollPosWasMovedFromZero = false;
+          scrollCounter = 0;
+          askPrevPage = false;
+          this.loadPage(this.currentPage);
+          //listDiv.scrollTop = listDiv.scrollHeight + listDiv.offsetHeight;
+        }
+      }
+    });
+    document.getElementById('list-items-container')!.addEventListener('scroll', (e) => {
+      if (listDiv.scrollTop > 0) {
+        scrollPosWasMovedFromZero = true;
+      }
+      if (listDiv.offsetHeight + listDiv.scrollTop >= listDiv.scrollHeight) {
+        if (this.currentPage < this.lastPage) {
+          askNextPage = true;
+        }
+      }
+      if (listDiv.scrollTop == 0 && scrollPosWasMovedFromZero == true) {
+        if (this.currentPage > 0) {
+          askPrevPage = true;
+        }
+      }
+    });
+
     this.fakeProductList = {
       "@odata.context": "$metadata#Products",
       "@odata.count": 1234,
@@ -403,6 +461,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.listIsReady = false;
     this.showSearchMenu = false;
     this.showProductList = true;
+    this.currentPage = 0;
     this.searchOptions = {
       filter: this.filter,
       top: 30,
@@ -410,28 +469,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       order: 'PublicationDate',
       sort: 'desc'
      }
-
-    /* Fake data: */
-    /* this.productList = this.fakeProductList;
-    this.productTotalNumber = this.productList['@odata.count'];
-    this.exchangeService.setProductList(this.productList); */
-
-    /* Real data */
-    let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
-      (res: any) => {
-        this.productTotalNumber = res['@odata.count'];
-        this.productList = res;
-        this.exchangeService.setProductList(this.productList);
-        /* this.productList.value.forEach((product: any) => {     //////////// da testare!!!
-          this.productSearch.getQL(product.Id).subscribe(
-            (res: any) => {
-              console.log("HAS QL: " + res)
-            }
-          );
-        }); */
-        this.listIsReady = true;
-      }
-    );
+    this.loadPage(this.currentPage);
     this.listContainerIsOpen = true;
     this.productListRolled = true;
     this.onShowHideButtonClick(event);
@@ -484,5 +522,48 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.showDetailedView = false;
       this.showSimpleView = false;
     }
+  }
+
+  loadPage(page: number) {
+    this.searchOptions.skip = page * this.searchOptions.top;
+
+    /* Fake data: */
+    /* this.productList = this.fakeProductList;
+    this.productTotalNumber = this.productList['@odata.count'];
+    this.exchangeService.setProductList(this.productList); */
+
+    /* Real data */
+
+    let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
+      (res: any) => {
+        this.productTotalNumber = res['@odata.count'];
+        this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
+        //console.log("LastPage: " + this.lastPage);
+
+        this.productList = res;
+        this.exchangeService.setProductList(this.productList);
+        /* this.productList.value.forEach((product: any) => {     //////////// da testare!!!
+          this.productSearch.getQL(product.Id).subscribe(
+            (res: any) => {
+              console.log("HAS QL: " + res)
+            }
+          );
+        }); */
+        this.listIsReady = true;
+        this.productStartNumber = page * this.searchOptions.top + 1;
+        this.productEndNumber = page * this.searchOptions.top + this.searchOptions.top;
+        if (this.productEndNumber > this.productTotalNumber) {
+          this.productEndNumber = this.productTotalNumber;
+        }
+        if (page > this.prevPage) {
+          listDiv.scrollTop = 0;
+        } else if (page < this.prevPage) {
+          setTimeout(() => {
+            listDiv.scrollTop = 99999;
+          }, 10);
+        }
+        this.prevPage = page;
+      }
+    );
   }
 }
