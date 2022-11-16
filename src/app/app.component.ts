@@ -26,12 +26,12 @@ export class AppComponent implements OnInit {
     this.initConfig();
     this.configureSSO();
     const userClaims: any = this.oauthService.getIdentityClaims();
+
     this.name = (userClaims && userClaims.name) ? userClaims.name : "";
     this.oauthService.events.subscribe(event => {
       if (event instanceof OAuthSuccessEvent) {
         if(event.type == 'token_received') {
           console.log('token_received');
-          //console.log(this.oauthService.getAccessToken());
           this.toast.showInfoToast('LOGIN SUCCESSFUL!')
           this.exchangeService.setIsLogged(true);
 
@@ -53,13 +53,10 @@ export class AppComponent implements OnInit {
   }
 
   configureSSO() {
-      console.log(this.ssoConfig);
       this.oauthService.configure(this.ssoConfig);      
       this.oauthService.tokenValidationHandler = new JwksValidationHandler();
       this.oauthService.loadDiscoveryDocumentAndTryLogin();
-      //console.log(this.oauthService.getAccessToken());
-      //console.log(this.oauthService.hasValidAccessToken());
-    
+      
   }
 
   get token() {

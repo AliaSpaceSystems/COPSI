@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
 import { Subscription } from 'rxjs';
@@ -32,6 +32,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public showSearchMenu = false;
   public showProductList = false;
   public productListRolled = false;
+  
+  @Input()
+  public filter: string = "";
 
   public productList: any = {
     "@odata.count": 0,
@@ -401,7 +404,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.showSearchMenu = false;
     this.showProductList = true;
     this.searchOptions = {
-      filter: "",
+      filter: this.filter,
       top: 30,
       skip: 0,
       order: 'PublicationDate',

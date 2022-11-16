@@ -1,6 +1,6 @@
 <div id="search-bar-main-div">
   <mat-icon id="search-menu-icon" aria-hidden="false" aria-label="Menu icon" fontIcon="menu" (click)="onSearchMenuClick($event)"></mat-icon>
-  <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" (keydown.enter)="onSearch($event)">
+  <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter"   (keydown.enter)="onSearch($event)" value="{{filter}}">
   <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" (click)="onSearch($event)"></mat-icon>
 </div>
 

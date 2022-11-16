@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { forkJoin, of, throwError } from 'rxjs';
 import { AppConfig } from '../services/app.config';
 
 const httpOptions = {
@@ -50,6 +50,20 @@ export class ProductSearchService {
     return processedString;
   }
 
+  getProductsCount(url:string) {
+    return this.http.get<any>(
+      url,
+      httpOptions
+    )
+  }
+
+  getProducts(url:string) {
+    return this.http.get<any>(
+      url,
+      httpOptions
+    )
+  }
+
   /*
    search(searchOptions: any) is used to trigger the odata/v1/Products request
    searchOptions = {
@@ -66,9 +80,13 @@ export class ProductSearchService {
     let order = 'PublicationDate';
     let sort = 'desc';
     let skip = 0;
-    let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$count=true';
+    let productsCountUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$count=true&$top=1';
+    let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$expand=Attributes';
+    //The option $count=true requires only the $filter parameter. No $orderby or $skip is needed for the count.
+    //The $top is fixed to 1 
     if(searchOptions && searchOptions.filter && searchOptions.filter.trim()) {
       productsUrl+='&$filter=' + this.parseFilter(searchOptions.filter);
+      productsCountUrl+='&$filter=' + this.parseFilter(searchOptions.filter);
     }
     if(searchOptions && searchOptions.top) {
       productsUrl+='&$top=' + searchOptions.top;
@@ -85,16 +103,22 @@ export class ProductSearchService {
       sort = searchOptions.sort;
     }
     productsUrl+='&$skip=' + skip + '&$orderby=' + order + ' ' + sort.toLowerCase();
-    return this.http.get<any>(
-      productsUrl,
-      httpOptions
-    )
+    return forkJoin({
+      count: this.getProductsCount(productsCountUrl).pipe(map((res) => res), catchError(e => of(e))),
+      products: this.getProducts(productsUrl).pipe(map((res) => res), catchError(e => of(e)))
+    })
     .pipe(
-    catchError(err => {
-        console.error(err);
-        return throwError(err);
+      map((response: { count: object; products: object }) => {
+        const count: any = response.count;
+        const products: any = response.products;
+        let result: any = products;
+        if (!result.hasOwnProperty('@odata.count')) {
+          result['@odata.count'] = count['@odata.count'];
         }
-    ));
+        
+        return(result);
+      })
+    )
   }
 
   /* getQL(uuid: string) is used to check if there is a quicklook for that product id */
