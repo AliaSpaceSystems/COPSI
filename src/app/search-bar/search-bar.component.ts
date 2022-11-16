@@ -68,8 +68,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     let scrollCounter = 0;
 
     document.getElementById('list-items-container')!.addEventListener('wheel', (e) => {
-      console.log("SCROLLING to " + listDiv.scrollTop);
-
       if (askNextPage) {
         if (e.deltaY < 0) {
           askNextPage = false;
@@ -538,7 +536,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       (res: any) => {
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
-        //console.log("LastPage: " + this.lastPage);
+        console.log(res);
 
         this.productList = res;
         this.exchangeService.setProductList(this.productList);
