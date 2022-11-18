@@ -1,8 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProductSearchService } from '../services/product-search.service';
+import { saveAs } from 'file-saver';
+import { AppConfig } from '../services/app.config';
+import { HttpClient } from '@angular/common/http';
 
 declare let $: any;
 let listDiv: any;
@@ -564,4 +567,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  
+
+  downloadProduct(id: string, name: string) {
+    let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
+    this.productSearch.download(downloadUrl).subscribe(blob => saveAs(blob, name));
+    
+  }
+
 }

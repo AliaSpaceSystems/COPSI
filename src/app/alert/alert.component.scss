@@ -8,7 +8,7 @@
   display: none;
   align-items: center;
   justify-content: center;
-  background-color: #111b;
+  background-color: #1116;
 }
 
 #alert-form {
@@ -70,5 +70,6 @@ button:hover {
 }
 
 #message {
-  word-break: break-all;
+  word-break: break-word;
+  text-align: justify;
 }
