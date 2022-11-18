@@ -27,6 +27,8 @@ export class FooterComponent implements OnInit {
 
   public showInfo = false;
   public version = AppConfig.settings.version;
+  public infoLogosLeft = AppConfig.settings.infoLogosLeft;
+  public infoLogosRight = AppConfig.settings.infoLogosRight;
 
   constructor() { }
 

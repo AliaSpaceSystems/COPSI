@@ -13,9 +13,8 @@ import { ExchangeService } from '../services/exchange.service';
 export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public userIsLogged = false;  // temp variable to show login form
-  public showSignUp = AppConfig.settings.loginSettings.showSignUp;
   public loginText = AppConfig.settings.loginSettings.text;
-  public showForgotPassword = AppConfig.settings.loginSettings.showForgotPassword;
+  public loginButtonText = AppConfig.settings.loginSettings.buttonText;
   isLoggedSubscription!: Subscription;
 
   constructor(private oauthService: OAuthService,
@@ -50,11 +49,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.oauthService.initCodeFlow();
   }
 
-  onSignupClicked() {
-    window.location.href = environment.keycloak.issuer + environment.keycloak.registrationPath +
-    environment.keycloak.clientId + '&response_type=code&scope=openid profile&redirect_uri=' + environment.keycloak.redirectUri;
-  }
-
+  
   setComponentVisibility(isLogged: boolean) {
     if(isLogged) {
       document.getElementById('main-login-container')!.style.display = 'none';

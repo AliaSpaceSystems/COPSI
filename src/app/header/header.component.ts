@@ -3,6 +3,7 @@ import { trigger, transition, style, animate, group, state } from '@angular/anim
 import { ExchangeService } from '../services/exchange.service';
 import { Subscription } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { AppConfig } from '../services/app.config';
 
 declare let $: any;
 
@@ -64,6 +65,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public showUser = false;
   public showSettings = false;
   public name: string = ''; 
+  public centreInfo: any = AppConfig.settings.centreInfo;
 
   constructor(private exchangeService: ExchangeService,
               private oauthService: OAuthService) { }

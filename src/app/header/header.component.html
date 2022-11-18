@@ -1,8 +1,15 @@
-<div id="header-title-div">
+<div *ngIf="!(centreInfo  && centreInfo.image  && centreInfo.name )" id="header-title-div">
   <!-- <img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
   <p id="app-title">Italian National Mirror</p> -->
-  <img id="copsi-logo" src="../../assets/images/COPSI_logo.svg" alt="Copsi logo">
+  <img id="copsi-logo" src="./assets/images/COPSI_logo.svg" alt="Copsi logo">
   <p id="app-title"><span>COP</span>ernicus <span>S</span>pace <span>I</span>nterface</p>
+  <!--<img id="copsi-logo" src="assets/images/COPSI_logotipo.svg" alt="Copsi logo">-->
+</div>
+<div *ngIf="centreInfo  && centreInfo.image && centreInfo.name " id="header-title-div">
+  <!-- <img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
+  <p id="app-title">Italian National Mirror</p> -->
+  <a href={{centreInfo.link}} target="_blank"><img id="copsi-logo" src={{centreInfo.image}} alt={{centreInfo.alt}} title={{centreInfo.title}} ></a>
+  <p id="app-title">{{centreInfo.name}}</p>
   <!--<img id="copsi-logo" src="assets/images/COPSI_logotipo.svg" alt="Copsi logo">-->
 </div>
 <div id="header-menu-div">
