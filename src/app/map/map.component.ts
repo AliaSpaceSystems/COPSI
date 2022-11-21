@@ -6,13 +6,13 @@ import { Deck, MapView, View, _GlobeView as GlobeView, COORDINATE_SYSTEM, PostPr
 import { TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, GeoJsonLayer } from '@deck.gl/layers';
 import { wktToGeoJSON } from '@terraformer/wkt';
+import { AppConfig } from '../services/app.config';
 
 //import worldJson from '../../assets/world_borders_and_names.json';
 
 let deckGlobe: any;
 let deckPlane: any;
 let mapProjection: string = 'globe';
-let defaultFootprintColor: number[] = [255, 100, 0, 150];
 
 /* Data to inject to the GeoJsonLayer */
 let geojsonData: any = {
@@ -60,6 +60,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   mapStyleSubscription!: Subscription;
   showLabelsSubscription!: Subscription;
   productListSubscription!: Subscription;
+
+  public defaultFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultColor);
 
   /* Base Map Layer */
   public mapLayerPlane = new TileLayer({
@@ -263,7 +265,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           featureList[featureList.length-1].properties = {
             'Id': product.Id,
             'Name': product.Name,
-            'Color': defaultFootprintColor
+            'Color': this.defaultFootprintColor
           }
         }
       });

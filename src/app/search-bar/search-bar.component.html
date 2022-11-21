@@ -26,8 +26,6 @@
     <div id="list-items-container">
       <div class="list-item-div" *ngFor="let product of productList.value; let idx=index;">
         <div class="product-name-div">
-          <!-- <div class="name-title">Name: </div> -->
-          <!-- <mat-icon id="productFileIcon" class="product-icon" aria-hidden="false" aria-label="product-file" title="product-file" fontIcon="satellite"></mat-icon> -->
           <div class="product-name-value" *ngIf="product.Name != null && (showSimpleView || showDetailedView)">{{product.Name}}</div>
         </div>
         <div class="product-data-row-div">
@@ -35,16 +33,14 @@
             <div class="product-metadata-column-div">
               <div class="metadata-row">
                 <img class="metadata-svg" aria-hidden="false" aria-label="product" title="product" src="../../assets/images/satellite-icon.svg" alt="satellite-icon">
-                <div class="metadata-value">Sentinel-2B</div>
+                <div class="metadata-value">{{product.platformShortName}}{{product.platformSerialIdentifier}}</div>
               </div>
               <div class="metadata-row">
-                <!-- <div class="item-title">Sensing Start: </div> -->
                 <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-sensing" title="product-sensing" fontIcon="today"></mat-icon>
                 <div class="metadata-value" *ngIf="product.ContentDate.Start != null">{{product.ContentDate.Start}}</div>
               </div>
               <div class="metadata-row">
-                <!-- <div class="item-title">Size: </div> -->
-                <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="product-size" fontIcon="dns"></mat-icon> <!-- insert_drive_file -->
+                <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="product-size" fontIcon="dns"></mat-icon>
                 <div class="metadata-value" *ngIf="product.ContentLength != null">{{product.ContentLength}}</div>
                 <div class="metadata-value-italic">bytes</div>
                 <div class="metadata-value" *ngIf="product.ContentLength != null">( {{simplifyBytes(product.ContentLength)}} )</div>
@@ -53,13 +49,7 @@
           </div>
           <div class="tag-ql-div">
             <div class="tag-div">
-              <div class="tag" *ngIf="product.instrument != null" [ngStyle]="{'background-color': product.color}">{{product.instrument}}</div>
-              <div class="tag" *ngIf="product.instrument == null && idx%2==0" [ngStyle]="{'background-color': '#ff6400'}">TEST TAG</div>
-              <div class="tag" *ngIf="product.instrument == null && idx%2==0" [ngStyle]="{'background-color': '#6400ff'}">TEST TAG long</div>
-
-              <div class="tag" *ngIf="product.instrument == null && idx%2==1" [ngStyle]="{'background-color': '#23b'}">TEST</div>
-              <div class="tag" *ngIf="product.instrument == null && idx%2==1" [ngStyle]="{'background-color': '#3ad'}">TEST 1</div>
-              <div class="tag" *ngIf="product.instrument == null && idx%2==1" [ngStyle]="{'background-color': '#ac0'}">TEST 2</div>
+              <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}">{{beautifyTag(tag.value)}}</div>
             </div>
             <div class="ql-div">
               <div class="ql" *ngIf="product.hasQL == true || idx%2==0">
@@ -71,7 +61,7 @@
               <div class="ql-buttons-div">
                 <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon>
                 <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"></mat-icon>
-                <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download" 
+                <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
                 (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
               </div>
             </div>
