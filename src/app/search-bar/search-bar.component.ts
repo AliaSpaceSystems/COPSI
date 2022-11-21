@@ -81,8 +81,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           scrollPosWasMovedFromZero = false;
           scrollCounter = 0;
           askNextPage = false;
-          this.loadPage(this.currentPage);
-          //listDiv.scrollTop = 0;
+          this.loadPage(this.currentPage);          
         }
       }
       if (askPrevPage) {
@@ -95,8 +94,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           scrollPosWasMovedFromZero = false;
           scrollCounter = 0;
           askPrevPage = false;
-          this.loadPage(this.currentPage);
-          //listDiv.scrollTop = listDiv.scrollHeight + listDiv.offsetHeight;
+          this.loadPage(this.currentPage);          
         }
       }
     });
@@ -104,7 +102,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       if (listDiv.scrollTop > 0) {
         scrollPosWasMovedFromZero = true;
       }
-      if (listDiv.offsetHeight + listDiv.scrollTop >= listDiv.scrollHeight) {
+      if (listDiv.offsetHeight + listDiv.scrollTop >= listDiv.scrollHeight-1) {
         if (this.currentPage < this.lastPage) {
           askNextPage = true;
         }
