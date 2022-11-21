@@ -81,7 +81,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           scrollPosWasMovedFromZero = false;
           scrollCounter = 0;
           askNextPage = false;
-          this.loadPage(this.currentPage);          
+          this.loadPage(this.currentPage);
         }
       }
       if (askPrevPage) {
@@ -94,7 +94,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           scrollPosWasMovedFromZero = false;
           scrollCounter = 0;
           askPrevPage = false;
-          this.loadPage(this.currentPage);          
+          this.loadPage(this.currentPage);
         }
       }
     });
@@ -566,12 +566,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     );
   }
 
-  
+
 
   downloadProduct(id: string, name: string) {
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
     this.productSearch.download(downloadUrl).subscribe(blob => saveAs(blob, name));
-    
+
   }
 
 }

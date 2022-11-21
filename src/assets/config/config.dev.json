@@ -31,9 +31,9 @@
         "buttonText": "Sign in"
     },
     "keycloak": {
-        "issuer": "https://keycloak.alia-space.com/auth/realms/dhus",
+        "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
         "redirectUri": "http://localhost:4200/home",
-        "clientId": "dafne",
+        "clientId": "prip-api",
         "responseType": "code",
         "scope": "openid profile email",
         "requireHttps": false,
@@ -43,10 +43,10 @@
     "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
     "infoLogosLeft": [
         { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
-        { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },        
+        { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },
         { "link": "http://www.copernicus.eu", "image": "./assets/images/copernicus_eu_logo_blu_white.png", "title": "Visit Copernicus website", "alt": "Copernicus logo" },
         { "link": "https://ivvproxy.onda.onda-dias.com/col-dhs-website/", "image": "./assets/images/logoDHS.png", "title": "Visit DHS website" , "alt": "DHS logo"}
-        
+
     ],
     "infoLogosRight": [
         { "link": "https://www.serco.com/", "image": "./assets/images/logo-serco-grey_cut.png", "title": "Visit Serco website", "alt": "Serco logo"  },
