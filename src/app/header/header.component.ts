@@ -31,35 +31,20 @@ declare let $: any;
 export class HeaderComponent implements OnInit, OnDestroy {
 
   /* Base Map Styles Layer Data Array */
-  public mapTiles = {
-    styles: [
-      {
-        name: 'openstreetmap',
-        url: 'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      },
-      {
-        name: 'eoxTerrain',
-        url: 'https://tiles.maps.eox.at/wmts/1.0.0/terrain_3857/default/g/{z}/{y}/{x}.jpg'
-      },
-      {
-        name: 'eoxTerrainLight',
-        url: 'https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg'
-      },
-      {
-        name: 'eoxBlackMarble',
-        url: 'https://tiles.maps.eox.at/wmts/1.0.0/blackmarble_3857/default/g/{z}/{y}/{x}.jpg'
-      },
-      {
-        name: 'eoxBlueMarble',
-        url: 'https://tiles.maps.eox.at/wmts/1.0.0/bluemarble_3857/default/g/{z}/{y}/{x}.jpg'
-      }
-    ]
+  /* Managed default OSM Tile layer */
+  public mapTiles: any = { styles: [
+    {
+      "name": "openstreetmap",
+      "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    }]
   };
+
   public mapStyles = [
     'globe',
     'plane'
   ];
   public mapStyle: string = '';
+  public mapLayer: string = '';
   mapSettingsSubscription!: Subscription;
 
   public showUser = false;
@@ -73,6 +58,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const userClaims: any = this.oauthService.getIdentityClaims();
     this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";    
+    this.mapTiles.styles = AppConfig.settings.styles;
   }
 
   ngOnDestroy(): void {
@@ -95,6 +81,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onMapStyleChanged(event: Event) {
     let newMapStyle = (event.target as HTMLInputElement).value;
     this.exchangeService.setMapStyle(newMapStyle);
+  }
+
+  onMapLayerChanged(event: Event) {
+    let newMapLayer = (event.target as HTMLInputElement).value;
+    this.exchangeService.setMapLayer(newMapLayer);
   }
 
   onShowLabelCheck(event: any) {

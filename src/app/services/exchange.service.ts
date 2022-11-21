@@ -17,6 +17,9 @@ export class ExchangeService {
   private isLogged = new BehaviorSubject<any>({});
   isLoggedExchange = this.isLogged.asObservable();
 
+  private mapLayer = new BehaviorSubject<any>({});
+  selectedMapLayer = this.mapLayer.asObservable();
+
 
   constructor() { }
 
@@ -34,5 +37,9 @@ export class ExchangeService {
 
   setIsLogged(isLogged: boolean) {
     this.isLogged.next(isLogged);
+  }
+
+  setMapLayer(mapLayer: string) {
+    this.mapLayer.next(mapLayer);
   }
 }

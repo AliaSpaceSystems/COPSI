@@ -129,15 +129,16 @@
   justify-content: space-between;
 }
 
-#map-style {
+.map-settings-menu {
   -webkit-appearance: none;
   color: $main-dark-text-color;
   background-color: #0000;
   border: 0;
   border-bottom: $main-light-border;
+  text-align: right;
 }
 
-#map-style option {
+.map-settings-menu option {
   background-color: $main-dark-bg-color;
 }
 

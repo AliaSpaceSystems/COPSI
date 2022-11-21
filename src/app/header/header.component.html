@@ -33,8 +33,14 @@
   <hr style="width:100%;">
   <div class="menu-item">
     <label for="map-style">Map projection:</label>
-    <select id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle">
+    <select class="map-settings-menu" id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle">
       <option *ngFor="let option of mapStyles">{{option}}</option>
+    </select>
+  </div>
+  <div class="menu-item">
+    <label for="map-layer">Map layer:</label>
+    <select class="map-settings-menu" id="map-layer" (change)="onMapLayerChanged($event)" [value]="mapLayer">
+      <option *ngFor="let tile of mapTiles.styles">{{tile.name}}</option>
     </select>
   </div>
   <!-- <div class="menu-item">

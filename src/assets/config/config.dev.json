@@ -60,5 +60,31 @@
   ],
   "footprints": {
     "defaultColor": "#ff640096"
-  }
+  },
+  "styles": [
+    {
+        "name": "OSM",
+        "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    },
+    {
+        "name": "Terrain",
+        "url": "https://tiles.maps.eox.at/wmts/1.0.0/terrain_3857/default/g/{z}/{y}/{x}.jpg"
+    },
+    {
+        "name": "Terrain Light",
+        "url": "https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg"
+    },
+    {
+        "name": "Black Marble",
+        "url": "https://tiles.maps.eox.at/wmts/1.0.0/blackmarble_3857/default/g/{z}/{y}/{x}.jpg"
+    },
+    {
+        "name": "Blue Marble",
+        "url": "https://tiles.maps.eox.at/wmts/1.0.0/bluemarble_3857/default/g/{z}/{y}/{x}.jpg"
+    },
+    {
+        "name": "S2 Cloudless",
+        "url": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"
+    }
+    ]
 }
