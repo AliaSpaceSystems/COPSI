@@ -33,7 +33,6 @@ let listDiv: any;
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   productListSubscription!: Subscription;
-  public showSearchMenu: boolean = false;
   public showProductList: boolean = false;
   public productListRolled: boolean = false;
 
@@ -54,7 +53,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public searchOptions: any;
 
   public listContainerTempWidth: any;
-  public listContainerIsOpen: boolean = false;
   public listIsReady: boolean = false;
 
   public showSimpleView: boolean = true;
@@ -119,15 +117,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.productListSubscription.unsubscribe();
   }
 
-  onSearchMenuClick(event: any) {
-    this.showProductList = false;
-    this.showSearchMenu = !this.showSearchMenu;
-    event.stopPropagation();
-  }
-
   onSearch(event: any) {
     this.listIsReady = false;
-    this.showSearchMenu = false;
     this.showProductList = true;
     this.currentPage = 0;
     this.searchOptions = {
@@ -138,9 +129,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       sort: AppConfig.settings.searchOptions.sort
      }
     this.loadPage(this.currentPage);
-    this.listContainerIsOpen = true;
-    this.productListRolled = true;
-    this.onShowHideButtonClick(event);
+    this.productListRolled = false;
     event.stopPropagation();
   }
 
@@ -202,10 +191,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onShowHideButtonClick(event: any) {
-    let listContainer = document.getElementById('product-list-container')!;
-    let listDiv = document.getElementById('list-items-container')!;
-    let arrowIcon = document.getElementById('show-hide-list-icon')!;
-    if (this.listContainerIsOpen) {
+    if (this.listIsReady) {
+      let listContainer = document.getElementById('product-list-container')!;
+      let listDiv = document.getElementById('list-items-container')!;
+      let arrowIcon = document.getElementById('show-hide-list-icon')!;
       if (this.productListRolled) {
         this.productListRolled = false;
         listDiv.style.width = this.listContainerTempWidth+'px';
