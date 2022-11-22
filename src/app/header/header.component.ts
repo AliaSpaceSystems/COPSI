@@ -14,10 +14,10 @@ declare let $: any;
   animations: [
     trigger('headerMenuAnimation', [
       state('open', style({
-        'top': '3rem', 'opacity': 1
+        'top': '3rem', 'opacity': 1, 'visibility': 'visible'
       })),
       state('closed', style({
-        'top': '2.5rem', 'opacity': 0
+        'top': '2.5rem', 'opacity': 0, 'visibility': 'hidden'
       })),
       transition('closed => open', [
         animate('250ms ease-in')
@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     'globe',
     'plane'
   ];
-  public mapStyle: string = '';
+  public mapStyle: any = '';
   public mapLayer: string = '';
   mapSettingsSubscription!: Subscription;
 
@@ -59,6 +59,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const userClaims: any = this.oauthService.getIdentityClaims();
     this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";    
     this.mapTiles.styles = AppConfig.settings.styles;
+    this.mapStyle = AppConfig.settings.mapSettings.projection;
   }
 
   ngOnDestroy(): void {

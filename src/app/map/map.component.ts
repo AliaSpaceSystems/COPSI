@@ -13,6 +13,13 @@ import { AppConfig } from '../services/app.config';
 let deckGlobe: any;
 let deckPlane: any;
 let mapProjection: string = 'globe';
+let initialViewState: any = {
+  "longitude": 2.27,
+  "latitude": 38.86,
+  "zoom": 1.5,
+  "minZoom": 1,
+  "maxZoom": 10
+}
 
 /* Data to inject to the GeoJsonLayer */
 let geojsonData: any = {
@@ -95,6 +102,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(private exchangeService: ExchangeService) {
     mapTiles.styles = AppConfig.settings.styles;
+    mapProjection = AppConfig.settings.mapSettings.projection;
+    initialViewState = AppConfig.settings.mapSettings.initialViewState;
   }
 
   ngOnInit(): void {
@@ -189,13 +198,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       parameters: {
         cull: true
       },
-      initialViewState: {
-        longitude: 2.27,
-        latitude: 32.0, //38.86,
-        zoom: 1.5,
-        minZoom: 1,
-        maxZoom: 10
-      },
+      initialViewState: initialViewState,
       views: new GlobeView({
           id: 'globe',
           resolution: 1,
@@ -218,13 +221,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       parameters: {
         cull: true
       },
-      initialViewState: {
-        longitude: 2.27,
-        latitude: 38.86,
-        zoom: 1.5,
-        minZoom: 1,
-        maxZoom: 10
-      },
+      initialViewState: initialViewState,
       views: new MapView({
         id: 'plane',
         controller: true,

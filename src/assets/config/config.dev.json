@@ -20,7 +20,8 @@
           "zoom": 1.5,
           "minZoom": 1,
           "maxZoom": 10
-      }
+      },
+      "projection": "globe"
   },
   "loginSettings": {
       "text": "Please Sign in to access our service",

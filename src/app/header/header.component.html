@@ -19,7 +19,7 @@
 
 <div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (click)="onMenuClicked($event)">
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
-  <p>{{name}}</p>
+  <p>Welcome <span >{{name}}!</span></p>
   <hr style="width:100%;">
   <div id="logout" (click)="onLogoutClicked()">
     <mat-icon class="button-icon" id="login-image" aria-hidden="false" aria-label="login image" fontIcon="login"></mat-icon>
@@ -33,7 +33,7 @@
   <hr style="width:100%;">
   <div class="menu-item">
     <label for="map-style">Map projection:</label>
-    <select class="map-settings-menu" id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle">
+    <select class="map-settings-menu" id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle" [(ngModel)]="mapStyle">
       <option *ngFor="let option of mapStyles">{{option}}</option>
     </select>
   </div>
