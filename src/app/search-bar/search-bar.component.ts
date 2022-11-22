@@ -33,9 +33,9 @@ let listDiv: any;
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   productListSubscription!: Subscription;
-  public showSearchMenu = false;
-  public showProductList = false;
-  public productListRolled = false;
+  public showSearchMenu: boolean = false;
+  public showProductList: boolean = false;
+  public productListRolled: boolean = false;
 
   @Input()
   public filter: string = "";
@@ -132,10 +132,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.currentPage = 0;
     this.searchOptions = {
       filter: this.filter,
-      top: 30,
+      top: AppConfig.settings.searchOptions.productsPerPage,
       skip: 0,
-      order: 'PublicationDate',
-      sort: 'desc'
+      order: AppConfig.settings.searchOptions.orderBy,
+      sort: AppConfig.settings.searchOptions.sort
      }
     this.loadPage(this.currentPage);
     this.listContainerIsOpen = true;
@@ -144,27 +144,81 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
+  loadPage(page: number) {
+    this.searchOptions.skip = page * this.searchOptions.top;
+
+    let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
+      (res: any) => {
+        this.productTotalNumber = res['@odata.count'];
+        this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
+        console.log(res);
+        if ("status" in res) {
+          this.productList = {
+            "@odata.count": 0,
+            value: []
+          };
+          this.showProductList = false;
+          this.exchangeService.setProductList(this.productList);
+        } else {
+          this.productList = res;
+          this.productList.value.forEach((product: any) => {
+            product.tags = [];
+            if ("Attributes" in product) {
+              product.Attributes.forEach((attribute: any) => {
+                if (attribute.Name == "platformShortName") {
+                  product.platformShortName = attribute.Value;
+                }
+                if (attribute.Name == "platformSerialIdentifier") {
+                  product.platformSerialIdentifier = attribute.Value;
+                }
+                AppConfig.settings.tags.forEach((tag: any) => {
+                  if (attribute.Name == tag.name) {
+                    product.tags.push({name: tag.name, value: attribute.Value, color: tag.color});
+                  }
+                });
+              });
+            }
+          });
+
+
+          this.exchangeService.setProductList(this.productList);
+          this.listIsReady = true;
+          this.productStartNumber = page * this.searchOptions.top + 1;
+          this.productEndNumber = page * this.searchOptions.top + this.searchOptions.top;
+          if (this.productEndNumber > this.productTotalNumber) {
+            this.productEndNumber = this.productTotalNumber;
+          }
+          if (page > this.prevPage) {
+            listDiv.scrollTop = 0;
+          } else if (page < this.prevPage) {
+            setTimeout(() => {
+              listDiv.scrollTop = 99999;
+            }, 10);
+          }
+          this.prevPage = page;
+        }
+      }
+    );
+  }
+
   onShowHideButtonClick(event: any) {
     let listContainer = document.getElementById('product-list-container')!;
-    let listDiv = document.getElementById('product-list-div')!;
+    let listDiv = document.getElementById('list-items-container')!;
     let arrowIcon = document.getElementById('show-hide-list-icon')!;
     if (this.listContainerIsOpen) {
       if (this.productListRolled) {
         this.productListRolled = false;
-        listContainer.style.width = this.listContainerTempWidth+'px';
-        //listContainer.classList.remove('animate');
-        listDiv.style.display = 'flex';
+        listDiv.style.width = this.listContainerTempWidth+'px';
         arrowIcon.innerText =  "keyboard_arrow_left";
       } else {
         this.productListRolled = true;
-        listContainer.style.width = '0';
-        //listContainer.classList.add('animate');
-        listDiv.style.display = 'none';
-        arrowIcon.innerText =  "keyboard_arrow_right";
         this.listContainerTempWidth = listContainer.offsetWidth;
+        listDiv.style.width = '0';
+        arrowIcon.innerText =  "keyboard_arrow_right";
+        console.log(this.listContainerTempWidth);
+
       }
     }
-
     event.stopPropagation();
   }
 
@@ -196,63 +250,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadPage(page: number) {
-    this.searchOptions.skip = page * this.searchOptions.top;
-
-    let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
-      (res: any) => {
-        this.productTotalNumber = res['@odata.count'];
-        this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
-        console.log(res);
-
-        this.productList = res;
-        this.productList.value.forEach((product: any) => {
-          product.tags = [];
-          if ("Attributes" in product) {
-            product.Attributes.forEach((attribute: any) => {
-              if (attribute.Name == "platformShortName") {
-                product.platformShortName = attribute.Value;
-              }
-              if (attribute.Name == "platformSerialIdentifier") {
-                product.platformSerialIdentifier = attribute.Value;
-              }
-              AppConfig.settings.tags.forEach((tag: any) => {
-                if (attribute.Name == tag.name) {
-                  product.tags.push({value: attribute.Value, color: tag.color});
-                }
-              });
-            });
-          }
-        });
-        this.exchangeService.setProductList(this.productList);
-        /* this.productList.value.forEach((product: any) => {     //////////// da testare!!!
-          this.productSearch.getQL(product.Id).subscribe(
-            (res: any) => {
-              console.log("HAS QL: " + res)
-            }
-          );
-        }); */
-        this.listIsReady = true;
-        this.productStartNumber = page * this.searchOptions.top + 1;
-        this.productEndNumber = page * this.searchOptions.top + this.searchOptions.top;
-        if (this.productEndNumber > this.productTotalNumber) {
-          this.productEndNumber = this.productTotalNumber;
-        }
-        if (page > this.prevPage) {
-          listDiv.scrollTop = 0;
-        } else if (page < this.prevPage) {
-          setTimeout(() => {
-            listDiv.scrollTop = 99999;
-          }, 10);
-        }
-        this.prevPage = page;
-      }
-    );
-  }
-
   downloadProduct(id: string, name: string) {
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
     this.productSearch.download(downloadUrl).subscribe(blob => saveAs(blob, name));
   }
-
 }

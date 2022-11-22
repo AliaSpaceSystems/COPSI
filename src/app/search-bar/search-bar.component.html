@@ -1,5 +1,6 @@
 <div id="search-bar-main-div">
-  <mat-icon id="search-menu-icon" aria-hidden="false" aria-label="Menu icon" fontIcon="menu" (click)="onSearchMenuClick($event)"></mat-icon>
+  <!-- <mat-icon id="search-menu-icon" aria-hidden="false" aria-label="Menu icon" fontIcon="menu" (click)="onSearchMenuClick($event)"></mat-icon> -->
+  <img id="copsi-logo" src="./assets/images/COPSI_logo.svg" alt="Copsi logo">
   <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter"   (keydown.enter)="onSearch($event)" value="{{filter}}">
   <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" (click)="onSearch($event)"></mat-icon>
 </div>
@@ -16,61 +17,67 @@
 <div id="product-list-container" [@searchMenuAnimation]="showProductList && listIsReady ? 'open' : 'closed'">
   <div id="product-list-div">
     <div id="product-list-header">
-      <div id="product-list-header-text">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products</div>
-      <div id="product-list-header-icons-div">
+      <div id="product-list-header-text" *ngIf="productTotalNumber > 0">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products</div>
+      <div id="product-list-header-text" *ngIf="productTotalNumber == 0">No products found..</div>
+      <div id="product-list-header-icons-div" *ngIf="productTotalNumber > 0">
         <mat-icon id="detailed-view" class="view-style-icon" aria-hidden="false" aria-label="detailed view" title="detailed view" fontIcon="format_align_justify" (click)="setListView('detailed')"></mat-icon>
         <mat-icon id="simple-view" class="view-style-icon" aria-hidden="false" aria-label="simple view" title="simple view" fontIcon="notes" (click)="setListView('simple')"></mat-icon>
         <mat-icon id="minimal-view" class="view-style-icon" aria-hidden="false" aria-label="minimal view" title="minimal view" fontIcon="short_text" (click)="setListView('minimal')"></mat-icon>
       </div>
     </div>
-    <div id="list-items-container">
-      <div class="list-item-div" *ngFor="let product of productList.value; let idx=index;">
-        <div class="product-name-div">
-          <div class="product-name-value" *ngIf="product.Name != null && (showSimpleView || showDetailedView)">{{product.Name}}</div>
-        </div>
-        <div class="product-data-row-div">
-          <div class="product-data-column-div">
-            <div class="product-metadata-column-div">
-              <div class="metadata-row">
-                <img class="metadata-svg" aria-hidden="false" aria-label="product" title="product" src="../../assets/images/satellite-icon.svg" alt="satellite-icon">
-                <div class="metadata-value">{{product.platformShortName}}{{product.platformSerialIdentifier}}</div>
-              </div>
-              <div class="metadata-row">
-                <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-sensing" title="product-sensing" fontIcon="today"></mat-icon>
-                <div class="metadata-value" *ngIf="product.ContentDate.Start != null">{{product.ContentDate.Start}}</div>
-              </div>
-              <div class="metadata-row">
-                <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="product-size" fontIcon="dns"></mat-icon>
-                <div class="metadata-value" *ngIf="product.ContentLength != null">{{product.ContentLength}}</div>
-                <div class="metadata-value-italic">bytes</div>
-                <div class="metadata-value" *ngIf="product.ContentLength != null">( {{simplifyBytes(product.ContentLength)}} )</div>
-              </div>
-            </div>
+    <div id="list-items-parent-container">
+      <div id="list-items-container">
+        <div class="list-item-div" *ngFor="let product of productList.value; let idx=index;">
+          <div class="product-name-div">
+            <div class="product-name-value" *ngIf="product.Name != null && showDetailedView">{{product.Name}}</div>
           </div>
-          <div class="tag-ql-div">
-            <div class="tag-div">
-              <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}">{{beautifyTag(tag.value)}}</div>
+          <div class="product-data-row-div">
+            <div class="product-data-column-div">
+              <div class="product-metadata-column-div">
+                <div class="metadata-row">
+                  <img class="metadata-svg" aria-hidden="false" aria-label="product" title="product" src="../../assets/images/satellite-icon.svg" alt="satellite-icon">
+                  <div class="metadata-value">{{product.platformShortName}}{{product.platformSerialIdentifier}}</div>
+                </div>
+                <div class="metadata-row">
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-sensing" title="product-sensing" fontIcon="today"></mat-icon>
+                  <div class="metadata-value" *ngIf="product.ContentDate.Start != null">{{product.ContentDate.Start}}</div>
+                </div>
+                <div class="metadata-row">
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="product-size" fontIcon="dns"></mat-icon>
+                  <div class="metadata-value" *ngIf="product.ContentLength != null">{{product.ContentLength}}</div>
+                  <div class="metadata-value-italic">bytes</div>
+                  <div class="metadata-value" *ngIf="product.ContentLength != null">( {{simplifyBytes(product.ContentLength)}} )</div>
+                </div>
+              </div>
             </div>
-            <div class="ql-div">
-              <div class="ql" *ngIf="product.hasQL == true || idx%2==0">
-                <img class="quicklook" src="assets/images/ql.jpg">
+            <div class="tag-ql-div">
+              <div class="tag-div">
+                <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.name">{{beautifyTag(tag.value)}}</div>
               </div>
-              <div class="ql" *ngIf="product.hasQL == null && idx%2==1">
-                <img class="quicklook" src="assets/images/no-preview-1.png">
-              </div>
-              <div class="ql-buttons-div">
-                <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon>
-                <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"></mat-icon>
-                <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
-                (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+              <div class="ql-div">
+                <div class="ql" *ngIf="(product.hasQL == true || idx%2==0) && showSimpleView">
+                  <img class="quicklook" src="assets/images/ql.jpg">
+                </div>
+                <div class="ql" *ngIf="product.hasQL == null && idx%2==1 && showSimpleView">
+                  <img class="quicklook" src="assets/images/no-preview-1.png">
+                </div>
+                <div class="ql-buttons-div">
+                  <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon>
+                  <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"></mat-icon>
+                  <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                  (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <button id="show-hide-button" *ngIf="productTotalNumber > 0" (click)="onShowHideButtonClick($event)">
+        <mat-icon id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList" title="showHideList">keyboard_arrow_left</mat-icon>
+      </button>
     </div>
   </div>
-  <button id="show-hide-button" (click)="onShowHideButtonClick($event)">
+  <!-- <button id="show-hide-button" (click)="onShowHideButtonClick($event)">
     <mat-icon id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList" title="showHideList">keyboard_arrow_left</mat-icon>
-  </button>
+  </button> -->
 </div>

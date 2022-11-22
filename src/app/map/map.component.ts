@@ -256,7 +256,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setProductList(productList: any) {
-    if (productList['@odata.count']) {
+    if ("@odata.count" in productList) {
       //console.log(JSON.stringify(productList.products[0].geoJson, null, 2));
       let featureList: any[] = [];
       productList.value.forEach((product: any) => {

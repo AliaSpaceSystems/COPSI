@@ -9,7 +9,7 @@
   },
   "baseUrl": "",
   "searchOptions": {
-      "pageSize": 100,
+      "productsPerPage": 50,
       "orderBy": "PublicationDate",
       "sort": "DESC"
   },
