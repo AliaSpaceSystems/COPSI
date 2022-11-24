@@ -99,8 +99,6 @@ input:focus {
 #product-list-div {
   display: flex;
   flex-direction: column;
-  //width: $search-bar-width;
-  border-radius: 0.25rem;
   color: $main-dark-text-color;
 }
 
@@ -113,7 +111,7 @@ input:focus {
   background-color: $main-dark-bg-color;
   margin: 0;
   padding: 0.5rem 0.25rem;
-  border-radius: 0.25rem 0.25rem 0 0;
+  border-radius: 0.25rem;
   border-bottom: 1px solid black;
 }
 #product-list-header-icons-div {
@@ -134,25 +132,50 @@ input:focus {
 #list-items-parent-container {
   display: flex;
   flex-direction: row;
-  overflow-y: scroll;
-  //overflow-x: hidden;
-  gap: 0.25rem;
+  overflow: hidden;
+  gap: 0 0.25rem;
 }
+
 #list-items-container {
   display: flex;
   flex-direction: column;
   width: $search-bar-width;
-  overflow-y: scroll;
+  overflow-y: overlay;
   overflow-x: hidden;
   margin: 0;
-  padding: 0;
+  padding: 0.1rem 0;
   gap: 0.1rem;
+}
+
+/* Scrollbar hiding */
+#list-items-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+#list-items-container::-webkit-scrollbar {
+  display: none;  /* Chrome */
+}
+
+#scroll-thumb {
+  position: absolute;
+  z-index: 99;
+  width: 4px;
+  border: $main-dark-border;
+  box-shadow: $default-shadow;
+  height: 6rem;
+  background-color: $main-dark-text-color;
+  border-radius: 2px;
+  right: -4px;
+  margin: 2.4rem 0 0 0;
+  top: 0;
+
+  transition: top 0.25s linear, background-color 0.25s linear;
 }
 
 /* list item */
 .list-item-div {
   border: $main-dark-border;
-  border-radius: 5px;
+  border-radius: 0.25rem;
   box-shadow: $default-shadow;
 }
 

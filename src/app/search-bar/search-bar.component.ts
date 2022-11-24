@@ -58,58 +58,64 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public showSimpleView: boolean = true;
   public showDetailedView: boolean = true;
 
+  public scrollThumb: any;
+  public scrollThumbPos: number = 0;
+  public scrollCounter: number = 0;
+  public scrollCounterThreshold: number = 1000;
+
+  public thumbColorTimeout: any;
+
   constructor(private exchangeService: ExchangeService, private productSearch: ProductSearchService) {
   }
 
   ngOnInit(): void {
     listDiv = document.getElementById('list-items-container')!;
-    let scrollPosWasMovedFromZero: boolean = false;
     let askNextPage: boolean = false;
     let askPrevPage: boolean = false;
-    let scrollCounter = 0;
+
+    this.scrollThumb = document.getElementById('scroll-thumb');
 
     document.getElementById('list-items-container')!.addEventListener('wheel', (e) => {
+
       if (askNextPage) {
         if (e.deltaY < 0) {
           askNextPage = false;
         }
-        scrollCounter += e.deltaY;
-        if (scrollCounter > 700) {
+        this.scrollCounter += e.deltaY;
+        this.calcColorThumb();
+        if (this.scrollCounter > this.scrollCounterThreshold) {
           this.currentPage += 1;
-          scrollPosWasMovedFromZero = false;
-          scrollCounter = 0;
+          this.scrollCounter = 0;
           askNextPage = false;
           this.loadPage(this.currentPage);
         }
       }
       if (askPrevPage) {
         if (e.deltaY > 0) {
-          askNextPage = false;
+          askPrevPage = false;
         }
-        scrollCounter += e.deltaY;
-        if (scrollCounter < -700) {
+        this.scrollCounter += e.deltaY;
+        this.calcColorThumb();
+        if (this.scrollCounter < -this.scrollCounterThreshold) {
           this.currentPage -= 1;
-          scrollPosWasMovedFromZero = false;
-          scrollCounter = 0;
+          this.scrollCounter = 0;
           askPrevPage = false;
           this.loadPage(this.currentPage);
         }
       }
     });
     document.getElementById('list-items-container')!.addEventListener('scroll', (e) => {
-      if (listDiv.scrollTop > 0) {
-        scrollPosWasMovedFromZero = true;
-      }
       if (listDiv.offsetHeight + listDiv.scrollTop >= listDiv.scrollHeight-1) {
         if (this.currentPage < this.lastPage) {
           askNextPage = true;
         }
       }
-      if (listDiv.scrollTop == 0 && scrollPosWasMovedFromZero == true) {
+      if (listDiv.scrollTop == 0) {
         if (this.currentPage > 0) {
           askPrevPage = true;
         }
       }
+      this.calcThumbPos();
     });
   }
 
@@ -198,10 +204,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       if (this.productListRolled) {
         this.productListRolled = false;
         listDiv.style.width = this.listContainerTempWidth+'px';
+        this.scrollThumb.style.opacity = 1.0;
         arrowIcon.innerText =  "keyboard_arrow_left";
       } else {
         this.productListRolled = true;
         this.listContainerTempWidth = listContainer.offsetWidth;
+        this.scrollThumb.style.opacity = 0.0;
         listDiv.style.width = '0';
         arrowIcon.innerText =  "keyboard_arrow_right";
         console.log(this.listContainerTempWidth);
@@ -242,5 +250,24 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   downloadProduct(id: string, name: string) {
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
     this.productSearch.download(downloadUrl).subscribe(blob => saveAs(blob, name));
+  }
+
+  calcThumbPos() {
+    this.scrollThumbPos = listDiv.scrollTop * (listDiv.clientHeight - this.scrollThumb!.clientHeight - 5) / (listDiv.scrollHeight - listDiv.offsetHeight);
+    this.scrollThumb!.style.top = this.scrollThumbPos.toString() + 'px';
+  }
+  calcColorThumb() {
+    clearTimeout(this.thumbColorTimeout);
+    this.thumbColorTimeout = setTimeout(() => {
+      this.scrollCounter = 0;
+      this.scrollThumb!.style.backgroundColor = '#fff';
+    }, 1000);
+    let green = (255 - Math.round(Math.abs(this.scrollCounter) * 100 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    let blue = (255 - Math.round(Math.abs(this.scrollCounter) * 155 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    console.log(green);
+    let color: string = '#ff' + green + blue;
+    console.log(color);
+    console.log(this.scrollCounter);
+    this.scrollThumb!.style.backgroundColor = color;
   }
 }
