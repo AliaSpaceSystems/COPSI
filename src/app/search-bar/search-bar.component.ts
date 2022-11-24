@@ -9,6 +9,9 @@ import { HttpClient } from '@angular/common/http';
 
 declare let $: any;
 let listContainer: any;
+//let showHideButton: any;
+let productListContainer: any;
+let productListHeader: any;
 let scrollThumb: any;
 
 @Component({
@@ -56,12 +59,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public listContainerTempWidth: any;
   public listIsReady: boolean = false;
 
+  public lastViewStyle: string = "detailed";
   public showSimpleView: boolean = true;
   public showDetailedView: boolean = true;
+  public lastListContainerHeight: number = 0;
 
   public scrollThumbPos: number = 0;
   public scrollCounter: number = 0;
-  public scrollCounterThreshold: number = 1000;
+  public scrollCounterThreshold: number = 750;
+  public scrollThumbTempPos: number = 0;
+  public scrollSize: number = 0;
 
   public thumbColorTimeout: any;
 
@@ -69,53 +76,63 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    window.addEventListener("resize", () => {this.setListView(this.lastViewStyle)});
     listContainer = document.getElementById('list-items-container')!;
+    //showHideButton = document.getElementById('show-hide-button')!;
+    productListHeader = document.getElementById('product-list-header');
+    productListContainer = document.getElementById('product-list-container')!;
     let askNextPage: boolean = false;
     let askPrevPage: boolean = false;
-
+    let wheelDeltaY: number = 0;
     scrollThumb = document.getElementById('scroll-thumb');
+    this.dragElement(scrollThumb);
 
     listContainer!.addEventListener('wheel', (e: any) => {
-
+      wheelDeltaY = e.deltaY;
       if (askNextPage) {
-        if (e.deltaY < 0) {
+        if (wheelDeltaY < 0) {
           askNextPage = false;
-        }
-        this.scrollCounter += e.deltaY;
-        this.calcColorThumb();
-        if (this.scrollCounter > this.scrollCounterThreshold) {
-          this.currentPage += 1;
-          this.scrollCounter = 0;
-          askNextPage = false;
-          this.loadPage(this.currentPage);
+        } else {
+          this.scrollCounter += wheelDeltaY;
+          this.calcColorThumb();
+          if (this.scrollCounter > this.scrollCounterThreshold) {
+            this.currentPage += 1;
+            this.scrollCounter = 0;
+            askNextPage = false;
+            this.loadPage(this.currentPage);
+          }
         }
       }
       if (askPrevPage) {
-        if (e.deltaY > 0) {
+        if (wheelDeltaY > 0) {
           askPrevPage = false;
-        }
-        this.scrollCounter += e.deltaY;
-        this.calcColorThumb();
-        if (this.scrollCounter < -this.scrollCounterThreshold) {
-          this.currentPage -= 1;
-          this.scrollCounter = 0;
-          askPrevPage = false;
-          this.loadPage(this.currentPage);
+        } else {
+          this.scrollCounter += wheelDeltaY;
+          this.calcColorThumb();
+          if (this.scrollCounter < -this.scrollCounterThreshold) {
+            this.currentPage -= 1;
+            this.scrollCounter = 0;
+            askPrevPage = false;
+            this.loadPage(this.currentPage);
+          }
         }
       }
     });
     listContainer!.addEventListener('scroll', (e: any) => {
-      if (listContainer.offsetHeight + listContainer.scrollTop >= listContainer.scrollHeight-1) {
+      askPrevPage = false;
+      askNextPage = false;
+      if (listContainer.offsetHeight + listContainer.scrollTop >= listContainer.scrollHeight - 1) {
         if (this.currentPage < this.lastPage) {
           askNextPage = true;
         }
       }
-      if (listContainer.scrollTop == 0) {
+      if (listContainer.scrollTop < 1) {
         if (this.currentPage > 0) {
           askPrevPage = true;
         }
       }
       this.calcThumbPos();
+      this.setThumbPos(this.scrollThumbPos);
     });
   }
 
@@ -133,7 +150,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       skip: 0,
       order: AppConfig.settings.searchOptions.orderBy,
       sort: AppConfig.settings.searchOptions.sort
-     }
+    }
     this.loadPage(this.currentPage);
     this.productListRolled = false;
     event.stopPropagation();
@@ -176,6 +193,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           });
           this.exchangeService.setProductList(this.productList);
           this.listIsReady = true;
+          this.productListRolled = true;
           this.productStartNumber = page * this.searchOptions.top + 1;
           this.productEndNumber = page * this.searchOptions.top + this.searchOptions.top;
           if (this.productEndNumber > this.productTotalNumber) {
@@ -193,20 +211,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           this.prevPage = page;
 
           setTimeout(() => {
-            var $listContainer = $('#list-items-container');
-            var $listContainerCopy = $listContainer
-                                  .clone()
-                                  .css({display: 'inline', height: 'auto', visibility: 'hidden'})
-                                  .appendTo('body');
-            //console.log("listContainer ClientHeight: " + $listContainer.height());
-            //console.log("listContainerCopy ClientHeight: " + $listContainerCopy.height());
-            if ($listContainerCopy.height() > $listContainer.height() && this.productTotalNumber > 0) {
-              scrollThumb.style.visibility = 'visible';
-            } else {
-              scrollThumb.style.visibility = 'hidden';
-            }
-            $listContainerCopy.remove();
-            //this.calcThumbPos();
+            //this.calcThumbSize();
+            this.setListView(this.lastViewStyle);
+            //this.lastListContainerHeight = buttonContainer.clientHeight;
+            //console.log("Cont height: " + this.lastListContainerHeight);
+
+            this.onShowHideButtonClick(null);
           }, 10);
         }
       }
@@ -216,20 +226,30 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onShowHideButtonClick(event: any) {
     if (this.listIsReady) {
       let arrowIcon = document.getElementById('show-hide-list-icon')!;
+      let listItemParentContainer = document.getElementById('list-items-parent-container');
       if (this.productListRolled) {
         this.productListRolled = false;
-        listContainer.style.width = this.listContainerTempWidth+'px';
-        scrollThumb.style.opacity = 1.0;
+        listContainer.style.visibility = 'visible';
+        listContainer.style.opacity = '1.0';
+        productListHeader.style.visibility = 'visible';
+        productListHeader.style.opacity = '1.0';
+        productListContainer.style.left = '0.5rem';
+        scrollThumb.style.visibility = 'visible';
+        listItemParentContainer!.style.gap = '0 0.5rem';
         arrowIcon.innerText =  "keyboard_arrow_left";
       } else {
         this.productListRolled = true;
-        this.listContainerTempWidth = listContainer.offsetWidth;
-        scrollThumb.style.opacity = 0.0;
-        listContainer.style.width = '0';
+        listContainer.style.visibility = 'hidden';
+        listContainer.style.opacity = '0.0';
+        productListHeader.style.visibility = 'hidden';
+        productListHeader.style.opacity = '0.0';
+        productListContainer.style.left = (-productListContainer.clientWidth - scrollThumb.clientWidth - 2).toString() + 'px';
+        scrollThumb.style.visibility = 'hidden';
+        listItemParentContainer!.style.gap = '0 1.0rem';
         arrowIcon.innerText =  "keyboard_arrow_right";
       }
     }
-    event.stopPropagation();
+    if (event != null) event.stopPropagation();
   }
 
   simplifyBytes(bytes: number) {
@@ -258,6 +278,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.showDetailedView = false;
       this.showSimpleView = false;
     }
+    this.lastViewStyle = view;
+    setTimeout(() => {
+      this.calcThumbSize();
+      this.calcThumbPos();
+      this.setThumbSize(this.scrollSize);
+      this.setThumbPos(this.scrollThumbPos);
+    }, 10);
   }
 
   downloadProduct(id: string, name: string) {
@@ -266,18 +293,70 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcThumbPos() {
-    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - scrollThumb!.clientHeight - 5) / (listContainer.scrollHeight - listContainer.offsetHeight);
-    scrollThumb!.style.top = this.scrollThumbPos.toString() + 'px';
+    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize - 3) / (listContainer.scrollHeight - listContainer.offsetHeight);
+  }
+  setThumbPos(pos: number) {
+    scrollThumb!.style.top = pos.toString() + 'px';
+  }
+  calcThumbSize() {
+    var $listContainer = $('#list-items-container');
+    var $listContainerCopy = $listContainer
+                          .clone()
+                          .css({display: 'inline', height: 'auto', visibility: 'hidden'})
+                          .appendTo('body');
+    if ($listContainerCopy.height() > $listContainer.height() && this.productTotalNumber > 0) {
+      scrollThumb.style.visibility = 'visible';
+      this.scrollSize = $listContainer.height() * $listContainer.height() / $listContainerCopy.height();
+    } else {
+      scrollThumb.style.visibility = 'hidden';
+    }
+    $listContainerCopy.remove();
+  }
+  setThumbSize(size: number) {
+    scrollThumb.style.height = size.toString() + "px";
   }
   calcColorThumb() {
     clearTimeout(this.thumbColorTimeout);
     this.thumbColorTimeout = setTimeout(() => {
       this.scrollCounter = 0;
       scrollThumb!.style.backgroundColor = '#fff';
-    }, 1000);
-    let green = (255 - Math.round(Math.abs(this.scrollCounter) * 100 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
-    let blue = (255 - Math.round(Math.abs(this.scrollCounter) * 155 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
-    let color: string = '#ff' + green + blue;
+    }, 500);
+    let red = (255 - Math.round(Math.abs(this.scrollCounter) * 255 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    let green = (255 - Math.round(Math.abs(this.scrollCounter) * 81 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    let blue = (255 - Math.round(Math.abs(this.scrollCounter) * 16 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    let color: string = '#' + red + green + blue;
     scrollThumb!.style.backgroundColor = color;
+  }
+
+  dragElement(elmnt: any) {
+    var yDiff = 0, yPos = 0;
+    elmnt.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e: any) {
+      e = e || window.event;
+      e.preventDefault();
+      // get the mouse cursor position at startup:
+      yPos = e.clientY;
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e: any) {
+      e = e || window.event;
+      e.preventDefault();
+      // calculate the new cursor position:
+      yDiff = yPos - e.clientY;
+      yPos = e.clientY;
+      // set the element's new position:
+      //elmnt.style.top = (elmnt.offsetTop - yDiff) + "px";
+      listContainer.scrollTop = listContainer.scrollTop - (yDiff * listContainer.scrollHeight / listContainer.clientHeight);
+    }
+
+    function closeDragElement() {
+      // stop moving when mouse button is released:
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
   }
 }
