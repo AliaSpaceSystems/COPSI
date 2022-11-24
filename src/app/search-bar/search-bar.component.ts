@@ -8,7 +8,8 @@ import { AppConfig } from '../services/app.config';
 import { HttpClient } from '@angular/common/http';
 
 declare let $: any;
-let listDiv: any;
+let listContainer: any;
+let scrollThumb: any;
 
 @Component({
   selector: 'app-search-bar',
@@ -58,7 +59,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public showSimpleView: boolean = true;
   public showDetailedView: boolean = true;
 
-  public scrollThumb: any;
   public scrollThumbPos: number = 0;
   public scrollCounter: number = 0;
   public scrollCounterThreshold: number = 1000;
@@ -69,13 +69,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    listDiv = document.getElementById('list-items-container')!;
+    listContainer = document.getElementById('list-items-container')!;
     let askNextPage: boolean = false;
     let askPrevPage: boolean = false;
 
-    this.scrollThumb = document.getElementById('scroll-thumb');
+    scrollThumb = document.getElementById('scroll-thumb');
 
-    document.getElementById('list-items-container')!.addEventListener('wheel', (e) => {
+    listContainer!.addEventListener('wheel', (e: any) => {
 
       if (askNextPage) {
         if (e.deltaY < 0) {
@@ -104,13 +104,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         }
       }
     });
-    document.getElementById('list-items-container')!.addEventListener('scroll', (e) => {
-      if (listDiv.offsetHeight + listDiv.scrollTop >= listDiv.scrollHeight-1) {
+    listContainer!.addEventListener('scroll', (e: any) => {
+      if (listContainer.offsetHeight + listContainer.scrollTop >= listContainer.scrollHeight-1) {
         if (this.currentPage < this.lastPage) {
           askNextPage = true;
         }
       }
-      if (listDiv.scrollTop == 0) {
+      if (listContainer.scrollTop == 0) {
         if (this.currentPage > 0) {
           askPrevPage = true;
         }
@@ -126,7 +126,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onSearch(event: any) {
     this.listIsReady = false;
     this.showProductList = true;
-    this.currentPage = 0;
+    this.currentPage = this.prevPage = 0;
     this.searchOptions = {
       filter: this.filter,
       top: AppConfig.settings.searchOptions.productsPerPage,
@@ -147,14 +147,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
         console.log(res);
-        if ("status" in res) {
+        if ("status" in res) { /* response error */
           this.productList = {
             "@odata.count": 0,
             value: []
           };
           this.showProductList = false;
           this.exchangeService.setProductList(this.productList);
-        } else {
+        } else { /* got a list */
           this.productList = res;
           this.productList.value.forEach((product: any) => {
             product.tags = [];
@@ -174,8 +174,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
               });
             }
           });
-
-
           this.exchangeService.setProductList(this.productList);
           this.listIsReady = true;
           this.productStartNumber = page * this.searchOptions.top + 1;
@@ -184,13 +182,32 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             this.productEndNumber = this.productTotalNumber;
           }
           if (page > this.prevPage) {
-            listDiv.scrollTop = 0;
+            listContainer.scrollTop = 0;
           } else if (page < this.prevPage) {
             setTimeout(() => {
-              listDiv.scrollTop = 99999;
+              listContainer.scrollTop = 99999;
             }, 10);
+          } else {
+            listContainer.scrollTop = 0;
           }
           this.prevPage = page;
+
+          setTimeout(() => {
+            var $listContainer = $('#list-items-container');
+            var $listContainerCopy = $listContainer
+                                  .clone()
+                                  .css({display: 'inline', height: 'auto', visibility: 'hidden'})
+                                  .appendTo('body');
+            //console.log("listContainer ClientHeight: " + $listContainer.height());
+            //console.log("listContainerCopy ClientHeight: " + $listContainerCopy.height());
+            if ($listContainerCopy.height() > $listContainer.height() && this.productTotalNumber > 0) {
+              scrollThumb.style.visibility = 'visible';
+            } else {
+              scrollThumb.style.visibility = 'hidden';
+            }
+            $listContainerCopy.remove();
+            //this.calcThumbPos();
+          }, 10);
         }
       }
     );
@@ -198,22 +215,18 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   onShowHideButtonClick(event: any) {
     if (this.listIsReady) {
-      let listContainer = document.getElementById('product-list-container')!;
-      let listDiv = document.getElementById('list-items-container')!;
       let arrowIcon = document.getElementById('show-hide-list-icon')!;
       if (this.productListRolled) {
         this.productListRolled = false;
-        listDiv.style.width = this.listContainerTempWidth+'px';
-        this.scrollThumb.style.opacity = 1.0;
+        listContainer.style.width = this.listContainerTempWidth+'px';
+        scrollThumb.style.opacity = 1.0;
         arrowIcon.innerText =  "keyboard_arrow_left";
       } else {
         this.productListRolled = true;
         this.listContainerTempWidth = listContainer.offsetWidth;
-        this.scrollThumb.style.opacity = 0.0;
-        listDiv.style.width = '0';
+        scrollThumb.style.opacity = 0.0;
+        listContainer.style.width = '0';
         arrowIcon.innerText =  "keyboard_arrow_right";
-        console.log(this.listContainerTempWidth);
-
       }
     }
     event.stopPropagation();
@@ -253,21 +266,18 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcThumbPos() {
-    this.scrollThumbPos = listDiv.scrollTop * (listDiv.clientHeight - this.scrollThumb!.clientHeight - 5) / (listDiv.scrollHeight - listDiv.offsetHeight);
-    this.scrollThumb!.style.top = this.scrollThumbPos.toString() + 'px';
+    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - scrollThumb!.clientHeight - 5) / (listContainer.scrollHeight - listContainer.offsetHeight);
+    scrollThumb!.style.top = this.scrollThumbPos.toString() + 'px';
   }
   calcColorThumb() {
     clearTimeout(this.thumbColorTimeout);
     this.thumbColorTimeout = setTimeout(() => {
       this.scrollCounter = 0;
-      this.scrollThumb!.style.backgroundColor = '#fff';
+      scrollThumb!.style.backgroundColor = '#fff';
     }, 1000);
     let green = (255 - Math.round(Math.abs(this.scrollCounter) * 100 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
     let blue = (255 - Math.round(Math.abs(this.scrollCounter) * 155 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
-    console.log(green);
     let color: string = '#ff' + green + blue;
-    console.log(color);
-    console.log(this.scrollCounter);
-    this.scrollThumb!.style.backgroundColor = color;
+    scrollThumb!.style.backgroundColor = color;
   }
 }

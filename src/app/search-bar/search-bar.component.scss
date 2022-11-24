@@ -157,6 +157,7 @@ input:focus {
 }
 
 #scroll-thumb {
+  visibility: visible;
   position: absolute;
   z-index: 99;
   width: 4px;
