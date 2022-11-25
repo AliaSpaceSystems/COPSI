@@ -8,6 +8,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
 import * as moment from 'moment';
 import { ExchangeService } from '../services/exchange.service';
 import { AlertComponent } from '../alert/alert.component';
+import { AppConfig } from '../services/app.config';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -29,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     /* Spinner Service On */
     const now = moment.now().toLocaleString();
-    this.spinner.setOn(now);
+    this.spinner.setOn(now);    
     return next.handle(request).pipe(
       tap(evt => {
         if (evt instanceof HttpResponse) {
@@ -51,7 +52,9 @@ export class ErrorInterceptor implements HttpInterceptor {
             break;  
           }
           case 400: {
-            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.BAD_REQUEST_MSG);
+            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.BAD_REQUEST_MSG);
+            }
             /* Show alert on any other error */
             /*if (err.error.hasOwnProperty('error')) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.error.error.message);
@@ -61,29 +64,41 @@ export class ErrorInterceptor implements HttpInterceptor {
             break;
           }
           case 403: {
-            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_ALLOWED_MSG);
+            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_ALLOWED_MSG);
+            }
             break;
           }
           case 404: {
-            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_FOUND_MSG);    
+            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_FOUND_MSG);    
+            }
             this.reloadCurrentRoute();
             break;
           }
           case 429: {
-            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.TOO_MANY_MSG);    
+            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.TOO_MANY_MSG);    
+            }
             break;
           }
           case 500: {
-            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
+            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
+            }
             break;
           }
           case 503: 
           case 504: {
-            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.SERVICE_GATEWAY_TIMEOUT_MSG);
+            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.SERVICE_GATEWAY_TIMEOUT_MSG);
+            }
             break;
           }
           default: {
-            this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
+            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
+            }
             break;
           }      
         } 

@@ -48,7 +48,7 @@ export function initializeApp(
     HttpClientModule,
     OAuthModule.forRoot({
       resourceServer: {
-          allowedUrls: ['/odata/*'],
+          allowedUrls: ['/odata/*','/test/*'],
           sendAccessToken: true
       }
     })

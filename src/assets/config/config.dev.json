@@ -9,7 +9,7 @@
   },
   "baseUrl": "",
   "searchOptions": {
-      "productsPerPage": 50,
+      "productsPerPage": 100,
       "orderBy": "PublicationDate",
       "sort": "DESC"
   },
@@ -37,7 +37,8 @@
       "showDebugInformation": false,
       "disableAtHashCheck": true
   },
-  "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
+  "quicklookURL": "<base_url>/test/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
+  "quicklookSubPath": "AttachedFiles",
   "infoLogosLeft": [
       { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
       { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },
@@ -86,6 +87,5 @@
     {
         "name": "S2 Cloudless",
         "url": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"
-    }
-    ]
+    }]
 }
