@@ -83,7 +83,7 @@ export class ProductSearchService {
     let productsCountUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$count=true&$top=1';
     let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$expand=Attributes';
     //The option $count=true requires only the $filter parameter. No $orderby or $skip is needed for the count.
-    //The $top is fixed to 1 
+    //The $top is fixed to 1
     let checkWildcard = (searchOptions && searchOptions.filter) ? searchOptions.filter.replace(/\*/g, '') : '';
     if(searchOptions && searchOptions.filter && searchOptions.filter.trim() && checkWildcard) {
       productsUrl+='&$filter=' + this.parseFilter(searchOptions.filter);
@@ -116,7 +116,7 @@ export class ProductSearchService {
         if (!result.hasOwnProperty('@odata.count')) {
           result['@odata.count'] = count['@odata.count'];
         }
-        
+
         return(result);
       })
     )

@@ -189,7 +189,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                   }
                 });
               });
-            }
+            };
+            this.productSearch.getQL(product.Id).subscribe(
+              (res: any) => {
+                console.log("HAS QL: " + res)
+              }
+            );
           });
           this.exchangeService.setProductList(this.productList);
           this.listIsReady = true;

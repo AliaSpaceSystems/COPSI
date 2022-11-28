@@ -15,8 +15,8 @@
         "changeOrigin": true,
         "pathRewrite": {
             "^/test": "/odata3"
-        }  
+        }
     }
-    
+
 
 }
