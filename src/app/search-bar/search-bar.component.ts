@@ -6,6 +6,7 @@ import { ProductSearchService } from '../services/product-search.service';
 import { saveAs } from 'file-saver';
 import { AppConfig } from '../services/app.config';
 import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 declare let $: any;
 let listContainer: any;
@@ -72,7 +73,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   public thumbColorTimeout: any;
 
-  constructor(private exchangeService: ExchangeService, private productSearch: ProductSearchService) {
+  constructor(
+    private exchangeService: ExchangeService,
+    private productSearch: ProductSearchService,
+    private sanitizer: DomSanitizer
+    ) {
+  }
+
+  sanitizeImageUrl(imageUrl: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(imageUrl);
   }
 
   ngOnInit(): void {
@@ -192,7 +201,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             };
             this.productSearch.getQL(product.Id).subscribe(
               (res: any) => {
-                console.log("HAS QL: " + res)
+                console.log(res);
+                if ("type" in res) {
+                  product.hasQL = true;
+                  product.qlURL = this.sanitizeImageUrl(URL.createObjectURL(res));
+                  //console.log(product.qlURL);
+                  // Test Search:  *S20220523T000611_N04*
+                } else {
+                  product.hasQl = false;
+                  product.qlURL = "";
+                }
               }
             );
           });
@@ -223,6 +241,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
             this.onShowHideButtonClick(null);
           }, 10);
+          console.log("Product List:");
+
+          console.log(this.productList);
+
         }
       }
     );

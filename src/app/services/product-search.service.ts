@@ -132,10 +132,10 @@ export class ProductSearchService {
         responseType: 'blob'
       })
     .pipe(
-    catchError(err => {
+      catchError(err => {
         console.error(err);
         return throwError(err);
-        }
+      }
     ));
   }
 
