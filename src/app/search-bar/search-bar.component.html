@@ -57,7 +57,8 @@
                 </div>
                 <div class="ql-buttons-div">
                   <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon>
-                  <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"></mat-icon>
+                  <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
+                  (click)="copyUrl(product.Id)"></mat-icon>
                   <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
                   (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
                 </div>

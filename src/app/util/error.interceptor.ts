@@ -19,13 +19,18 @@ export class ErrorInterceptor implements HttpInterceptor {
   NOT_ALLOWED_MSG = "You are not authorized to perform this request.";
   NOT_FOUND_MSG = "Request or product not available on the server.";
   TOO_MANY_MSG = "Maximum number of requests exceeded. Please wait the completion of the ongoing requests.";
+  QL_SUBPATH = "AttachedFiles"
   constructor(private oauthStorage: OAuthStorage,
               private oauthService: OAuthService,
               private router: Router,
               private spinner: SpinnerComponent,
               private exchangeService: ExchangeService,
               private alert: AlertComponent
-  ) { }
+  ) { 
+    if (AppConfig.settings && AppConfig.settings.quicklookSubPath) {
+      this.QL_SUBPATH = AppConfig.settings.quicklookSubPath;
+    }
+  }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     /* Spinner Service On */
@@ -41,7 +46,8 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError(err => {
         /* Spinner Service Off */
         this.spinner.setOff(now);
-        console.log('Error Interceptor: ', err);
+        //console.log('Error Interceptor: ', err);
+        console.log(request.url);
 
         switch (err.status) {
           case 401: {
@@ -52,7 +58,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             break;  
           }
           case 400: {
-            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.BAD_REQUEST_MSG);
             }
             /* Show alert on any other error */
@@ -64,39 +70,39 @@ export class ErrorInterceptor implements HttpInterceptor {
             break;
           }
           case 403: {
-            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_ALLOWED_MSG);
             }
             break;
           }
           case 404: {
-            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_FOUND_MSG);    
             }
             this.reloadCurrentRoute();
             break;
           }
           case 429: {
-            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.TOO_MANY_MSG);    
             }
             break;
           }
           case 500: {
-            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
             }
             break;
           }
           case 503: 
           case 504: {
-            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.SERVICE_GATEWAY_TIMEOUT_MSG);
             }
             break;
           }
           default: {
-            if(request.url.indexOf(AppConfig.settings.quicklookSubPath) < 0) {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
             }
             break;

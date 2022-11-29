@@ -1,12 +1,14 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ProductSearchService } from '../services/product-search.service';
 import { saveAs } from 'file-saver';
 import { AppConfig } from '../services/app.config';
-import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 declare let $: any;
 let listContainer: any;
@@ -84,7 +86,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   constructor(
     private exchangeService: ExchangeService,
     private productSearch: ProductSearchService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private clipboard: Clipboard
     ) {
   }
 
@@ -434,5 +437,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       document.onmouseup = null;
       document.onmousemove = null;
     }
+  }
+
+  copyUrl(id: string) {
+    let copyUrl: any = AppConfig.settings.baseUrl + `/odata/v1/Products(${id})`;
+    
+    this.clipboard.copy(window.location.origin + copyUrl);
   }
 }
