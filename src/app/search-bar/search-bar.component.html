@@ -7,6 +7,10 @@
 <div id="product-list-container" [@searchMenuAnimation]="showProductList && listIsReady ? 'open' : 'closed'">
   <div id="product-list-div">
     <div id="product-list-header">
+      <div id="page-buttons-div" *ngIf="productTotalNumber > 0">
+        <mat-icon id="load-prev" class="load-page-icon" aria-hidden="false" aria-label="load prev page" title="load prev page" fontIcon="navigate_before" (click)="loadPageFromButtons(-1)"></mat-icon>
+        <mat-icon id="load-next" class="load-page-icon" aria-hidden="false" aria-label="load next page" title="load next page" fontIcon="navigate_next" (click)="loadPageFromButtons(1)"></mat-icon>
+      </div>
       <div id="product-list-header-text" *ngIf="productTotalNumber > 0">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products</div>
       <div id="product-list-header-text" *ngIf="productTotalNumber == 0">No products found..</div>
       <div id="product-list-header-icons-div" *ngIf="productTotalNumber > 0">

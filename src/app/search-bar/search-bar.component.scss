@@ -115,6 +115,19 @@ input:focus {
   border-bottom: 1px solid black;
   transition: visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
 }
+#page-buttons-div {
+  display: flex;
+}
+.load-page-icon {
+  cursor: pointer;
+  font-size: $search-bar-product-icons-dim;
+  width: $search-bar-product-icons-dim;
+  height: $search-bar-product-icons-dim;
+  transition: opacity 0.15s ease-in-out, color 0.25s linear;
+}
+.load-page-icon:hover {
+  opacity: 0.7;
+}
 #product-list-header-icons-div {
   display: flex;
   flex-direction: row;

@@ -10,10 +10,18 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 declare let $: any;
 let listContainer: any;
-//let showHideButton: any;
 let productListContainer: any;
 let productListHeader: any;
 let scrollThumb: any;
+let detailedView: any;
+let simpleView: any;
+let minimalView: any;
+let prevPageButton: any;
+let nextPageButton: any;
+let copsyBlueColor: string = '#00aeef';
+let copsyBlueColor_RED: number = parseInt(copsyBlueColor.slice(1, 3), 16);
+let copsyBlueColor_GREEN: number = parseInt(copsyBlueColor.slice(3, 5), 16);
+let copsyBlueColor_BLUE: number = parseInt(copsyBlueColor.slice(5, 7), 16);
 
 @Component({
   selector: 'app-search-bar',
@@ -85,11 +93,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
     window.addEventListener("resize", () => {this.setListView(this.lastViewStyle)});
+
     listContainer = document.getElementById('list-items-container')!;
-    //showHideButton = document.getElementById('show-hide-button')!;
-    productListHeader = document.getElementById('product-list-header');
+    productListHeader = document.getElementById('product-list-header')!;
     productListContainer = document.getElementById('product-list-container')!;
+
     let askNextPage: boolean = false;
     let askPrevPage: boolean = false;
     let wheelDeltaY: number = 0;
@@ -201,7 +211,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             };
             this.productSearch.getQL(product.Id).subscribe(
               (res: any) => {
-                console.log(res);
+                //console.log(res);
                 if ("type" in res) {
                   product.hasQL = true;
                   product.qlURL = this.sanitizeImageUrl(URL.createObjectURL(res));
@@ -234,20 +244,48 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           this.prevPage = page;
 
           setTimeout(() => {
-            //this.calcThumbSize();
+            prevPageButton = document.getElementById('load-prev')!;
+            nextPageButton = document.getElementById('load-next')!;
+            if (this.currentPage == 0) {
+              prevPageButton.style.visibility = 'hidden';
+              if (this.currentPage < this.lastPage) {
+                nextPageButton.style.visibility = 'visible';
+              } else {
+                nextPageButton.style.visibility = 'hidden';
+              }
+            } else if (this.currentPage == this.lastPage) {
+              nextPageButton.style.visibility = 'hidden';
+              if (this.currentPage > 0) {
+                prevPageButton.style.visibility = 'visible';
+              }
+            } else {
+              prevPageButton.style.visibility = nextPageButton.style.visibility = 'visible';
+            }
             this.setListView(this.lastViewStyle);
-            //this.lastListContainerHeight = buttonContainer.clientHeight;
-            //console.log("Cont height: " + this.lastListContainerHeight);
-
             this.onShowHideButtonClick(null);
           }, 10);
-          console.log("Product List:");
-
-          console.log(this.productList);
-
         }
       }
     );
+  }
+
+  loadPageFromButtons(page: number) {
+    if (page == 1) {
+      if (this.currentPage < this.lastPage) {
+        nextPageButton.style.color = copsyBlueColor;
+        this.currentPage += page;
+        this.loadPage(this.currentPage);
+        setTimeout(() => {nextPageButton.style.color = "white"}, 1000);
+      }
+    }
+    if (page == -1) {
+      if (this.currentPage > 0) {
+        prevPageButton.style.color = copsyBlueColor;
+        this.currentPage += page;
+        this.loadPage(this.currentPage);
+        setTimeout(() => {prevPageButton.style.color = "white"}, 1000);
+      }
+    }
   }
 
   onShowHideButtonClick(event: any) {
@@ -296,14 +334,26 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   setListView(view: string) {
+    detailedView = document.getElementById('detailed-view')!;
+    simpleView = document.getElementById('simple-view')!;
+    minimalView = document.getElementById('minimal-view')!;
     if (view === 'detailed') {
       this.showDetailedView = this.showSimpleView = true;
+      detailedView.style.color = copsyBlueColor;
+      simpleView.style.color = "white";
+      minimalView.style.color = "white";
     } else if (view === 'simple') {
       this.showDetailedView = false;
       this.showSimpleView = true;
+      detailedView.style.color = "white";
+      simpleView.style.color = copsyBlueColor;
+      minimalView.style.color = "white";
     } else {
       this.showDetailedView = false;
       this.showSimpleView = false;
+      detailedView.style.color = "white";
+      simpleView.style.color = "white";
+      minimalView.style.color = copsyBlueColor;
     }
     this.lastViewStyle = view;
     setTimeout(() => {
@@ -320,11 +370,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcThumbPos() {
-    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize - 3) / (listContainer.scrollHeight - listContainer.offsetHeight);
+    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize - 2) / (listContainer.scrollHeight - listContainer.offsetHeight);
   }
+
   setThumbPos(pos: number) {
     scrollThumb!.style.top = pos.toString() + 'px';
   }
+
   calcThumbSize() {
     var $listContainer = $('#list-items-container');
     var $listContainerCopy = $listContainer
@@ -339,18 +391,21 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
     $listContainerCopy.remove();
   }
+
   setThumbSize(size: number) {
     scrollThumb.style.height = size.toString() + "px";
   }
+
   calcColorThumb() {
     clearTimeout(this.thumbColorTimeout);
     this.thumbColorTimeout = setTimeout(() => {
       this.scrollCounter = 0;
       scrollThumb!.style.backgroundColor = '#fff';
     }, 500);
-    let red = (255 - Math.round(Math.abs(this.scrollCounter) * 255 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
-    let green = (255 - Math.round(Math.abs(this.scrollCounter) * 81 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
-    let blue = (255 - Math.round(Math.abs(this.scrollCounter) * 16 / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+
+    let red = (255 - Math.round(Math.abs(this.scrollCounter) * (255 - copsyBlueColor_RED) / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    let green = (255 - Math.round(Math.abs(this.scrollCounter) * (255 - copsyBlueColor_GREEN) / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    let blue = (255 - Math.round(Math.abs(this.scrollCounter) * (255 - copsyBlueColor_BLUE) / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
     let color: string = '#' + red + green + blue;
     scrollThumb!.style.backgroundColor = color;
   }
@@ -362,26 +417,20 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     function dragMouseDown(e: any) {
       e = e || window.event;
       e.preventDefault();
-      // get the mouse cursor position at startup:
       yPos = e.clientY;
       document.onmouseup = closeDragElement;
-      // call a function whenever the cursor moves:
       document.onmousemove = elementDrag;
     }
 
     function elementDrag(e: any) {
       e = e || window.event;
       e.preventDefault();
-      // calculate the new cursor position:
       yDiff = yPos - e.clientY;
       yPos = e.clientY;
-      // set the element's new position:
-      //elmnt.style.top = (elmnt.offsetTop - yDiff) + "px";
       listContainer.scrollTop = listContainer.scrollTop - (yDiff * listContainer.scrollHeight / listContainer.clientHeight);
     }
 
     function closeDragElement() {
-      // stop moving when mouse button is released:
       document.onmouseup = null;
       document.onmousemove = null;
     }
