@@ -1,22 +1,24 @@
 @import "src/vars";
 
 #toast-title-container-div {
-  z-index: 2;
-  display: none;
+  z-index: 99;
+  display: flex;
   width: 100vw;
-  height: $footer-copsi-height;
   flex-direction: row;
   position: absolute;
   gap: 0.5rem;
-  bottom: 0.5rem;
+  top: calc(1rem + $default-title-div-height);
   align-items: center;
-  justify-content: left;
+  justify-content: right;
   padding: 0 0.5rem;
+  opacity: 0.0;
+  transition: opacity 0.25s linear;
 }
 
 #toast-main-div {
-  z-index: 2;
+  z-index: 99;
   display: flex;
+  width: $header-menu-width;
   height: $default-title-div-height;
   padding: 0.25rem 1rem;
   gap: 0.5rem;

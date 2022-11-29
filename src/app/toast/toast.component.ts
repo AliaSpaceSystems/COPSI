@@ -12,15 +12,17 @@ export class ToastComponent {
 
   public message: string = '';
   constructor() {
-    
+
   }
 
   showToast(message: string) {
     this.message = message;
-    document.getElementById('toast-title')!.innerHTML = this.message;    
-    document.getElementById('toast-title-container-div')!.style.display = 'flex';
+    document.getElementById('toast-title-container-div')!.style.opacity = '1.0';
+    document.getElementById('toast-title')!.innerHTML = this.message;
+    //document.getElementById('toast-title-container-div')!.style.display = 'flex';
     setTimeout(function(){
-      document.getElementById('toast-title-container-div')!.style.display = 'none';
+      //document.getElementById('toast-title-container-div')!.style.display = 'none';
+      document.getElementById('toast-title-container-div')!.style.opacity = '0.0';
     }, 5000);
   }
 
