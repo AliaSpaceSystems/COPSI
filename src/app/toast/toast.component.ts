@@ -18,11 +18,11 @@ export class ToastComponent {
   showToast(message: string) {
     this.message = message;
     document.getElementById('toast-title-container-div')!.style.opacity = '1.0';
+    document.getElementById('toast-title-container-div')!.style.top = '3rem';
     document.getElementById('toast-title')!.innerHTML = this.message;
-    //document.getElementById('toast-title-container-div')!.style.display = 'flex';
     setTimeout(function(){
-      //document.getElementById('toast-title-container-div')!.style.display = 'none';
       document.getElementById('toast-title-container-div')!.style.opacity = '0.0';
+      document.getElementById('toast-title-container-div')!.style.top = '2.5rem';
     }, 5000);
   }
 
