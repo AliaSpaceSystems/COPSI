@@ -129,6 +129,10 @@
   justify-content: space-between;
 }
 
+.menu-item select {
+  width: 50%;
+}
+
 .map-settings-menu {
   --webkit-appearance: none;
   color: $main-dark-text-color;
