@@ -9,6 +9,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { ToastComponent } from '../toast/toast.component';
 
 declare let $: any;
 let listContainer: any;
@@ -87,7 +88,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     private exchangeService: ExchangeService,
     private productSearch: ProductSearchService,
     private sanitizer: DomSanitizer,
-    private clipboard: Clipboard
+    private clipboard: Clipboard,
+    private toast: ToastComponent
     ) {
   }
 
@@ -185,7 +187,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       (res: any) => {
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
-        console.log(res);
+        //console.log(res);
         if ("status" in res) { /* response error */
           this.productList = {
             "@odata.count": 0,
@@ -207,7 +209,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                 }
                 AppConfig.settings.tags.forEach((tag: any) => {
                   if (attribute.Name == tag.name) {
-                    product.tags.push({name: tag.name, value: attribute.Value, color: tag.color});
+                    product.tags.push({name: tag.name, value: attribute.Value, color: tag.color, title: tag.title});
                   }
                 });
               });
@@ -443,5 +445,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     let copyUrl: any = AppConfig.settings.baseUrl + `/odata/v1/Products(${id})`;
     
     this.clipboard.copy(window.location.origin + copyUrl);
+    this.toast.showInfoToast('PRODUCT URL COPIED!')
   }
 }

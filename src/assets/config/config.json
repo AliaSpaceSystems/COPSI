@@ -52,11 +52,13 @@
     "tags": [
       {
         "name": "productType",
-        "color": "#ff6400"
+        "color": "#ff6400",
+        "title": "Product Type"
       },
       {
         "name": "tileId",
-        "color": "#6400ff"
+        "color": "#6400ff",
+        "title": "Tile Identifier"
       }
     ],
     "footprints": {

@@ -46,8 +46,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError(err => {
         /* Spinner Service Off */
         this.spinner.setOff(now);
-        //console.log('Error Interceptor: ', err);
-        console.log(request.url);
+        //console.log('Error Interceptor: ', err);        
 
         switch (err.status) {
           case 401: {

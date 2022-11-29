@@ -29,15 +29,15 @@
             <div class="product-data-column-div">
               <div class="product-metadata-column-div">
                 <div class="metadata-row">
-                  <img class="metadata-svg" aria-hidden="false" aria-label="product" title="product" src="../../assets/images/satellite-icon.svg" alt="satellite-icon">
+                  <img class="metadata-svg" aria-hidden="false" aria-label="product" title="Platform" src="./assets/images/satellite-icon.svg" alt="satellite-icon">
                   <div class="metadata-value">{{product.platformShortName}}{{product.platformSerialIdentifier}}</div>
                 </div>
                 <div class="metadata-row">
-                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-sensing" title="product-sensing" fontIcon="today"></mat-icon>
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-sensing" title="Sensing Start" fontIcon="today"></mat-icon>
                   <div class="metadata-value" *ngIf="product.ContentDate.Start != null">{{product.ContentDate.Start}}</div>
                 </div>
                 <div class="metadata-row">
-                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="product-size" fontIcon="dns"></mat-icon>
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="Size" fontIcon="dns"></mat-icon>
                   <div class="metadata-value" *ngIf="product.ContentLength != null">{{product.ContentLength}}</div>
                   <div class="metadata-value-italic">bytes</div>
                   <div class="metadata-value" *ngIf="product.ContentLength != null">( {{simplifyBytes(product.ContentLength)}} )</div>
@@ -46,14 +46,14 @@
             </div>
             <div class="tag-ql-div">
               <div class="tag-div">
-                <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.name">{{beautifyTag(tag.value)}}</div>
+                <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.title ? tag.title : tag.name">{{beautifyTag(tag.value)}}</div>
               </div>
               <div class="ql-div">
                 <div class="ql" *ngIf="product.hasQL == true && showSimpleView">
                   <img class="quicklook" [src]="product.qlURL">
                 </div>
                 <div class="ql" *ngIf="product.hasQL == null && showSimpleView">
-                  <img class="quicklook" src="assets/images/no-preview-1.png">
+                  <img class="quicklook" src="./assets/images/no-preview-1.png">
                 </div>
                 <div class="ql-buttons-div">
                   <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon>

@@ -125,16 +125,15 @@ export class ProductSearchService {
   /* getQL(uuid: string) is used to check if there is a quicklook for that product id */
   getQL(uuid: string) {
     let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', AppConfig.settings.baseUrl).replace('<uuid>', uuid);
-    console.log(uuidURL);
-
+    
     return this.http.get(
       uuidURL, {
         responseType: 'blob'
       })
     .pipe(
       catchError(err => {
-        console.error(err);
-        return throwError(err);
+        //console.error(err);
+        return throwError(() => err);
       }
     ));
   }
