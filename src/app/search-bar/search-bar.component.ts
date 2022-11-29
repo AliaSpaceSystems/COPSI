@@ -7,8 +7,6 @@ import { saveAs } from 'file-saver';
 import { AppConfig } from '../services/app.config';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
 import { ToastComponent } from '../toast/toast.component';
 
 declare let $: any;
