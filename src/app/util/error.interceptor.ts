@@ -52,7 +52,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           case 401: {
             /* auto logout if 401 response returned from api */
             console.log("ERROR 401: Not Authorized");
-            this.oauthService.logOut();       
+            //this.oauthService.logOut();       
             this.exchangeService.setIsLogged(false);  
             break;  
           }
