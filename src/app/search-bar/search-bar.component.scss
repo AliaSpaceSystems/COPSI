@@ -87,11 +87,11 @@ input:focus {
   position: absolute;
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
-  top: 3rem;
-  left: 0.5rem;
+  top: 2.5rem;
+  left: 0;
   width: $search-bar-width;
-  bottom: 0.5rem;
+  padding: 0;
+  bottom: 0;
   border-radius: 0.25rem;
   color: $main-dark-text-color;
 }
@@ -109,8 +109,9 @@ input:focus {
   justify-content: space-between;
   align-items: center;
   background-color: $main-dark-bg-color;
+  box-shadow: $default-shadow;
   margin: 0;
-  padding: 0.5rem 0.25rem;
+  padding: 0.5rem 0.5rem;
   border-radius: 0.25rem;
   border-bottom: 1px solid black;
   transition: visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
@@ -146,7 +147,9 @@ input:focus {
 #list-items-parent-container {
   display: flex;
   flex-direction: row;
+  bottom: 0;
   overflow: hidden;
+  padding: 0.1rem 0 0.5rem 0;
   gap: 0 0.5rem;
 }
 
@@ -154,10 +157,12 @@ input:focus {
   display: flex;
   flex-direction: column;
   width: $search-bar-width;
+  box-shadow: $default-shadow;
   overflow-y: overlay;
   overflow-x: hidden;
+  border-radius: 0.25rem;
   margin: 0;
-  padding: 0.1rem 0 0 0;
+  padding: 0 0 0 0;
   gap: 0.1rem;
   transition: visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
 }
@@ -180,13 +185,13 @@ input:focus {
   box-shadow: $default-shadow;
   height: 6rem;
   background-color: $main-dark-text-color;
-  border-radius: 20px;
+  border-radius: 0.25rem;
   right: -0.5rem;
   margin: 2.4rem 0 0 0;
   top: 0;
   opacity: 1.0;
 
-  transition: top 0.1s ease-out, background-color 0.25s linear, height 0.25s ease-in-out, visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
+  transition: background-color 0.1s linear;
 }
 
 /* list item */
@@ -201,7 +206,6 @@ input:focus {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
-  //padding: 0.25rem 0.25rem 0.4rem 0.25rem;
   background-color: $main-dark-bg-color-opaque;
   align-items: center;
 }
@@ -324,7 +328,6 @@ input:focus {
   max-width: 5.5rem;
   max-height: 4.5rem;
 }
-
 
 #show-hide-button {
   display: flex;

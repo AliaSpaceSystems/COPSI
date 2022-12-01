@@ -97,7 +97,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    window.addEventListener("resize", () => {this.setListView(this.lastViewStyle)});
+    window.addEventListener("resize", () => {
+      this.setListView(this.lastViewStyle)
+    });
 
     listContainer = document.getElementById('list-items-container')!;
     productListHeader = document.getElementById('product-list-header')!;
@@ -106,7 +108,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     let askNextPage: boolean = false;
     let askPrevPage: boolean = false;
     let wheelDeltaY: number = 0;
-    scrollThumb = document.getElementById('scroll-thumb');
+    scrollThumb = document.getElementById('scroll-thumb')!;
     this.dragElement(scrollThumb);
 
     listContainer!.addEventListener('wheel', (e: any) => {
@@ -249,6 +251,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             prevPageButton = document.getElementById('load-prev')!;
             nextPageButton = document.getElementById('load-next')!;
+
+            /* Check if page buttons should be visible */
             if (this.currentPage == 0) {
               prevPageButton.style.visibility = 'hidden';
               if (this.currentPage < this.lastPage) {
@@ -264,8 +268,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             } else {
               prevPageButton.style.visibility = nextPageButton.style.visibility = 'visible';
             }
-            this.setListView(this.lastViewStyle);
             this.onShowHideButtonClick(null);
+            this.setListView(this.lastViewStyle);
           }, 10);
         }
       }
@@ -302,7 +306,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         productListHeader.style.visibility = 'visible';
         productListHeader.style.opacity = '1.0';
         productListContainer.style.left = '0.5rem';
-        scrollThumb.style.visibility = 'visible';
+        this.calcThumbSize();
         listItemParentContainer!.style.gap = '0 0.5rem';
         arrowIcon.innerText =  "keyboard_arrow_left";
       } else {
@@ -337,34 +341,36 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   setListView(view: string) {
-    detailedView = document.getElementById('detailed-view')!;
-    simpleView = document.getElementById('simple-view')!;
-    minimalView = document.getElementById('minimal-view')!;
-    if (view === 'detailed') {
-      this.showDetailedView = this.showSimpleView = true;
-      detailedView.style.color = copsyBlueColor;
-      simpleView.style.color = "white";
-      minimalView.style.color = "white";
-    } else if (view === 'simple') {
-      this.showDetailedView = false;
-      this.showSimpleView = true;
-      detailedView.style.color = "white";
-      simpleView.style.color = copsyBlueColor;
-      minimalView.style.color = "white";
-    } else {
-      this.showDetailedView = false;
-      this.showSimpleView = false;
-      detailedView.style.color = "white";
-      simpleView.style.color = "white";
-      minimalView.style.color = copsyBlueColor;
+    if (this.showProductList) {
+      detailedView = document.getElementById('detailed-view')!;
+      simpleView = document.getElementById('simple-view')!;
+      minimalView = document.getElementById('minimal-view')!;
+      if (view === 'detailed') {
+        this.showDetailedView = this.showSimpleView = true;
+        detailedView.style.color = copsyBlueColor;
+        simpleView.style.color = "white";
+        minimalView.style.color = "white";
+      } else if (view === 'simple') {
+        this.showDetailedView = false;
+        this.showSimpleView = true;
+        detailedView.style.color = "white";
+        simpleView.style.color = copsyBlueColor;
+        minimalView.style.color = "white";
+      } else {
+        this.showDetailedView = false;
+        this.showSimpleView = false;
+        detailedView.style.color = "white";
+        simpleView.style.color = "white";
+        minimalView.style.color = copsyBlueColor;
+      }
+      this.lastViewStyle = view;
+      setTimeout(() => {
+        this.calcThumbSize();
+        this.calcThumbPos();
+        this.setThumbSize(this.scrollSize);
+        this.setThumbPos(this.scrollThumbPos);
+      }, 10);
     }
-    this.lastViewStyle = view;
-    setTimeout(() => {
-      this.calcThumbSize();
-      this.calcThumbPos();
-      this.setThumbSize(this.scrollSize);
-      this.setThumbPos(this.scrollThumbPos);
-    }, 10);
   }
 
   downloadProduct(id: string, name: string) {
@@ -373,7 +379,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcThumbPos() {
-    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize - 2) / (listContainer.scrollHeight - listContainer.offsetHeight);
+    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize) / (listContainer.scrollHeight - listContainer.offsetHeight);
   }
 
   setThumbPos(pos: number) {
@@ -386,6 +392,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                           .clone()
                           .css({display: 'inline', height: 'auto', visibility: 'hidden'})
                           .appendTo('body');
+
     if ($listContainerCopy.height() > $listContainer.height() && this.productTotalNumber > 0) {
       scrollThumb.style.visibility = 'visible';
       this.scrollSize = $listContainer.height() * $listContainer.height() / $listContainerCopy.height();
@@ -441,7 +448,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   copyUrl(id: string) {
     let copyUrl: any = AppConfig.settings.baseUrl + `/odata/v1/Products(${id})`;
-    
+
     this.clipboard.copy(window.location.origin + copyUrl);
     this.toast.showInfoToast('PRODUCT URL COPIED!')
   }
