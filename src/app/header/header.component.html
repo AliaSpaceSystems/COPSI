@@ -1,20 +1,24 @@
-<div *ngIf="!(centreInfo  && centreInfo.image  && centreInfo.name )" id="header-title-div">
+<div id="header-title-div" *ngIf="!(centreInfo && centreInfo.image && centreInfo.name)">
   <!-- <img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
   <p id="app-title">Italian National Mirror</p> -->
   <img id="copsi-logo" src="./assets/images/COPSI_logo.svg" alt="Copsi logo">
   <p id="app-title"><span>COP</span>ernicus <span>S</span>pace <span>I</span>nterface</p>
   <!--<img id="copsi-logo" src="assets/images/COPSI_logotipo.svg" alt="Copsi logo">-->
 </div>
-<div *ngIf="centreInfo  && centreInfo.image && centreInfo.name " id="header-title-div">
+<div id="header-title-div" *ngIf="centreInfo && centreInfo.image && centreInfo.name">
   <!-- <img id="centre-logo" src="assets/images/logo-asi-white.png" alt="ASI logo">
   <p id="app-title">Italian National Mirror</p> -->
-  <a href={{centreInfo.link}} target="_blank"><img id="copsi-logo" src={{centreInfo.image}} alt={{centreInfo.alt}} title={{centreInfo.title}} ></a>
+  <a id="copsi-logo" href={{centreInfo.link}} target="_blank"><img src={{centreInfo.image}} alt={{centreInfo.alt}} title={{centreInfo.title}} ></a>
   <p id="app-title">{{centreInfo.name}}</p>
   <!--<img id="copsi-logo" src="assets/images/COPSI_logotipo.svg" alt="Copsi logo">-->
 </div>
 <div id="header-menu-div">
-  <mat-icon id="user-icon" aria-hidden="false" aria-label="Account icon" fontIcon="account_circle" (click)="onUserMenuClick($event)"></mat-icon>
-  <mat-icon id="settings-icon" aria-hidden="false" aria-label="Settings icon" fontIcon="settings" (click)="onSettingsMenuClick($event)"></mat-icon>
+  <div class="header-menu-button-div">
+    <mat-icon class="header-menu-button" id="user-icon" aria-hidden="false" aria-label="Account icon" fontIcon="account_circle" (click)="onUserMenuClick($event)"></mat-icon>
+  </div>
+  <div class="header-menu-button-div">
+    <mat-icon class="header-menu-button" id="settings-icon" aria-hidden="false" aria-label="Settings icon" fontIcon="settings" (click)="onSettingsMenuClick($event)"></mat-icon>
+  </div>
 </div>
 
 <div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (click)="onMenuClicked($event)">

@@ -1,7 +1,9 @@
 <div id="search-bar-main-div">
   <img id="copsi-logo" src="./assets/images/COPSI_logo.svg" alt="Copsi logo">
   <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter"   (keydown.enter)="onSearch($event)" value="{{filter}}">
-  <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" (click)="onSearch($event)"></mat-icon>
+  <div id="search-magnifier-icon-div">
+    <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" (click)="onSearch($event)"></mat-icon>
+  </div>
 </div>
 
 <div id="product-list-container" [@searchMenuAnimation]="showProductList && listIsReady ? 'open' : 'closed'">
@@ -48,6 +50,7 @@
               <div class="tag-div">
                 <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.title ? tag.title : tag.name">{{beautifyTag(tag.value)}}</div>
               </div>
+
               <div class="ql-div">
                 <div class="ql" *ngIf="product.hasQL == true && showSimpleView">
                   <img class="quicklook" [src]="product.qlURL">
@@ -55,13 +58,16 @@
                 <div class="ql" *ngIf="product.hasQL == null && showSimpleView">
                   <img class="quicklook" src="./assets/images/no-preview-1.png">
                 </div>
+
+                <!-- <div> -->
                 <div class="ql-buttons-div">
-                  <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon>
+                  <!-- <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon> -->
                   <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
                   (click)="copyUrl(product.Id)"></mat-icon>
                   <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
                   (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
                 </div>
+                <!-- </div> -->
               </div>
             </div>
           </div>

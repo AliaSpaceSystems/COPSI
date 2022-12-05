@@ -27,7 +27,7 @@
   background-color: $main-dark-bg-color;
   color: $main-dark-text-color;
   border: $main-dark-border;
-  font-size: $footer-font-size;
+  font-size: $toast-font-size;
   box-shadow: $default-shadow;
   align-items: center;
   justify-content: space-evenly;
@@ -37,5 +37,15 @@
   margin: 0;
 }
 
+@media screen and (max-width: $screen-width-threshold-medium) {
+  #toast-title-container-div, #toast-main-div {
+    width: $header-menu-width-mobile;
+  }
+}
 
-
+@media screen and (max-width: $screen-width-threshold-little) {
+  #toast-title-container-div, #toast-main-div {
+    width: $header-menu-width-mobile-little;
+    font-size: $toast-font-size-mobile;
+  }
+}

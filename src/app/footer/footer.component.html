@@ -1,16 +1,14 @@
 <div id="footer-title-container-div">
+  <!-- footer bar -->
   <div id="footer-main-div" [@infoAnimation]="showInfo ? 'open' : 'closed'" (click)="onInfoIconClicked($event)">
     <div class="footer-logo-div">
       <a *ngFor="let lLogo of infoLogosLeft" href={{lLogo.link}}  target="_blank">
         <img class="info-logo" src={{lLogo.image}} alt={{lLogo.alt}} title={{lLogo.title}}>
-      </a> 
-      
-      <div id="footer-separator"></div>
-      
-      <a *ngFor="let rLogo of infoLogosRight" href={{rLogo.link}}  target="_blank">
-        <img  class="info-logo" src={{rLogo.image}} alt={{rLogo.alt}} title={{rLogo.title}}>
       </a>
-            
+      <div id="footer-separator"></div>
+      <a *ngFor="let rLogo of infoLogosRight" href={{rLogo.link}}  target="_blank">
+        <img class="info-logo" src={{rLogo.image}} alt={{rLogo.alt}} title={{rLogo.title}}>
+      </a>
     </div>
     <div id="footer-separator"></div>
     <div class="footer-info-div">
@@ -18,9 +16,12 @@
       <p>{{version}}</p>
     </div>
   </div>
+
+  <!-- logo button -->
   <div id="footer-logo-div" (click)="onInfoIconClicked($event)">
     <img id="copsi-logo" src="./assets/images/COPSI_logotipo.svg" alt="Copsi logo">
   </div>
+
 </div>
 
 

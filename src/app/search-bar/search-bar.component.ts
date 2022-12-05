@@ -73,6 +73,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public showSimpleView: boolean = true;
   public showDetailedView: boolean = true;
   public lastListContainerHeight: number = 0;
+  public lastQlDivBGColor: string = "";
+  public lastQlDivBorderColor: string = "";
 
   public scrollThumbPos: number = 0;
   public scrollCounter: number = 0;
@@ -345,23 +347,39 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       detailedView = document.getElementById('detailed-view')!;
       simpleView = document.getElementById('simple-view')!;
       minimalView = document.getElementById('minimal-view')!;
+      var els = document.getElementsByClassName('ql-div')!;
       if (view === 'detailed') {
         this.showDetailedView = this.showSimpleView = true;
         detailedView.style.color = copsyBlueColor;
         simpleView.style.color = "white";
         minimalView.style.color = "white";
+        [].forEach.call(els, (el:any) => {
+          el.style.backgroundColor = this.lastQlDivBGColor;
+          el.style.borderColor = this.lastQlDivBorderColor;
+        });
       } else if (view === 'simple') {
         this.showDetailedView = false;
         this.showSimpleView = true;
         detailedView.style.color = "white";
         simpleView.style.color = copsyBlueColor;
         minimalView.style.color = "white";
+        [].forEach.call(els, (el:any) => {
+          el.style.backgroundColor = this.lastQlDivBGColor;
+          el.style.borderColor = this.lastQlDivBorderColor;
+        });
       } else {
         this.showDetailedView = false;
         this.showSimpleView = false;
         detailedView.style.color = "white";
         simpleView.style.color = "white";
         minimalView.style.color = copsyBlueColor;
+        var tempEl = <HTMLElement>els[0];
+        this.lastQlDivBGColor = tempEl.style.backgroundColor;
+        this.lastQlDivBorderColor = tempEl.style.borderColor;
+        [].forEach.call(els, (el: any)  => {
+          el.style.backgroundColor = "transparent";
+          el.style.border = "transparent";
+        });
       }
       this.lastViewStyle = view;
       setTimeout(() => {
