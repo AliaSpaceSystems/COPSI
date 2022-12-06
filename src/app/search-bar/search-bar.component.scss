@@ -6,7 +6,7 @@
   position: absolute;
   left: 0.5rem;
   top: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0 0.5rem;
   width: $search-bar-width;
   height: $default-title-div-height;
   border-radius: 0.25rem;
@@ -18,7 +18,7 @@
   line-height: $search-bar-font-size;
   align-items: center;
   align-content: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 #copsi-logo {
   margin: 0;

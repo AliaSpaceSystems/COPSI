@@ -54,6 +54,7 @@
   justify-content: space-evenly;
 }
 
+/* Header Buttons */
 .header-menu-button-div {
   display: flex;
   height: 1.55rem;
@@ -77,13 +78,15 @@
   opacity: 0.7;
 }
 
+/* User menu */
 #user-menu {
   z-index: 3;
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.5rem 0;
+  justify-content: center;
+  padding: 1.0rem 0;
   gap: 0.5rem;
   top: 3rem;
   right: 0.5rem;
@@ -95,20 +98,49 @@
   background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
 }
-
+#user-menu p {
+  text-align: center;
+  color: darken($main-dark-text-color, 15);
+}
+#user-menu span {
+  color: $main-dark-text-color;
+}
 #user-image {
   font-size: 3rem;
   height: 3rem;
   width: 3rem;
 }
 
+#logout-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 0.5rem;
+  gap: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  height: 2rem;
+}
+#logout-div:hover #logout-icon{
+  opacity: 0.7;
+}
+#logout-text {
+  margin: 0;
+}
+#logout-icon {
+  margin: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Settings menu */
 #settings-menu {
   z-index: 3;
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.5rem 0;
+  padding: 1.0rem 0;
   gap: 0.5rem;
   top: 3rem;
   right: 0.5rem;
@@ -120,21 +152,26 @@
   background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
 }
-
+#settings-menu p {
+  color: darken($main-dark-text-color, 15);
+}
 #settings-image {
   font-size: 3rem;
   height: 3rem;
   width: 3rem;
 }
 
-.menu-item{
+.menu-item-div {
   display: flex;
+  flex-direction: row;
   width: 100%;
   padding: 0 1rem;
   justify-content: space-between;
 }
-
-.menu-item select {
+.menu-item-div label {
+  color: darken($main-dark-text-color, 15);
+}
+.menu-item-div select {
   width: 50%;
 }
 
@@ -151,7 +188,7 @@
   background-color: $main-dark-bg-color;
 }
 
-input[type="checkbox"] {
+/* input[type="checkbox"] {
   -webkit-appearance: none;
   appearance: none;
   background-color: #fff;
@@ -185,23 +222,7 @@ input[type="checkbox"]::before {
 
 input[type="checkbox"]:checked::before {
   transform: scale(1);
-}
-
-#logout:hover {
-  background-color: #8a8a8a !important;
-}
-
-#logout {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  width: 100%;
-  height: 2rem;
-}
-
-.button-icon {
-  margin: 0rem 0.4rem;
-}
+} */
 
 @media screen and (max-width: $screen-width-threshold-medium) {
   #header-title-div {
@@ -238,6 +259,7 @@ input[type="checkbox"]:checked::before {
 
   #settings-menu {
     width: $header-menu-width-mobile-little;
+    gap: 1.0rem;
   }
 
   #app-title {
@@ -245,5 +267,16 @@ input[type="checkbox"]:checked::before {
   }
   #copsi-logo {
     display: inline;
+  }
+  .menu-item-div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 1rem;
+    gap: 0.25rem;
+    align-items: flex-end;
+  }
+  .menu-item-div select {
+    width: 100%;
   }
 }
