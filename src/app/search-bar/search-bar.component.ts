@@ -1,13 +1,14 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProductSearchService } from '../services/product-search.service';
 import { saveAs } from 'file-saver';
 import { AppConfig } from '../services/app.config';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
+import { Download } from 'ngx-operators';
 
 declare let $: any;
 let listContainer: any;
@@ -83,6 +84,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public scrollSize: number = 0;
 
   public thumbColorTimeout: any;
+
+  download$: Observable<Download> | undefined
 
   constructor(
     private exchangeService: ExchangeService,
@@ -217,6 +220,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           /* got a list */
           this.productList = res;
           this.productList.value.forEach((product: any) => {
+            product.download = {};
             product.tags = [];
             if ("Attributes" in product) {
               product.Attributes.forEach((attribute: any) => {
@@ -414,7 +418,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   downloadProduct(id: string, name: string) {
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
-    this.productSearch.download(downloadUrl).subscribe(blob => saveAs(blob, name));
+    
+    this.productSearch.download(downloadUrl, name).subscribe(
+      (res: any) => {
+        //console.log(res);
+        this.productList.value.forEach((product: any) => {
+          if (product.Id == id) {
+            product.download = res;
+          }
+        });
+        this.exchangeService.setProductList(this.productList);
+      }
+    );
+    /**/
   }
 
   calcThumbPos() {

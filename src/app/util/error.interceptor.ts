@@ -20,6 +20,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   NOT_FOUND_MSG = "Request or product not available on the server.";
   TOO_MANY_MSG = "Maximum number of requests exceeded. Please wait the completion of the ongoing requests.";
   QL_SUBPATH = "AttachedFiles"
+  DOWNLOAD_SUBPATH = "$value"
   constructor(private oauthStorage: OAuthStorage,
               private oauthService: OAuthService,
               private router: Router,
@@ -35,17 +36,23 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     /* Spinner Service On */
     const now = moment.now().toLocaleString();
-    this.spinner.setOn(now);    
+    if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
+      this.spinner.setOn(now);    
+    }
     return next.handle(request).pipe(
       tap(evt => {
         if (evt instanceof HttpResponse) {
           /* Spinner Service Off */
-          this.spinner.setOff(now);
+          if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
+            this.spinner.setOff(now);    
+          }
         }
       }),
       catchError(err => {
         /* Spinner Service Off */
-        this.spinner.setOff(now);
+        if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
+          this.spinner.setOff(now);    
+        }
         //console.log('Error Interceptor: ', err);        
 
         switch (err.status) {

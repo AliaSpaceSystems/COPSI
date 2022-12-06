@@ -35,7 +35,8 @@
         "scope": "openid profile email",
         "requireHttps": false,
         "showDebugInformation": true,
-        "disableAtHashCheck": true
+        "disableAtHashCheck": true,
+        "useSilentRefresh": false
     },
     "quicklookURL": "<base_url>/test/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
     "infoLogosLeft": [

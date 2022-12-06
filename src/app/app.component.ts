@@ -1,5 +1,5 @@
 import { Component, OnInit} from '@angular/core';
-import { AuthConfig, OAuthService, OAuthSuccessEvent } from 'angular-oauth2-oidc';
+import { AuthConfig, OAuthInfoEvent, OAuthService, OAuthSuccessEvent } from 'angular-oauth2-oidc';
 import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { AppConfig } from './services/app.config';
 import { ExchangeService } from './services/exchange.service';
@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
 
   title: string = 'COPSI';
   name: string = "";
+  isFirst: boolean = false;
   ssoConfig: AuthConfig = new AuthConfig({});
 
   constructor( private oauthService: OAuthService, 
@@ -32,12 +33,20 @@ export class AppComponent implements OnInit {
       if (event instanceof OAuthSuccessEvent) {
         if(event.type == 'token_received') {
           console.log('token_received');
-          this.toast.showInfoToast('LOGIN SUCCESSFUL!')
-          this.exchangeService.setIsLogged(true);
-
+          if(this.isFirst){
+            this.toast.showInfoToast('LOGIN SUCCESSFUL!')
+            this.isFirst = false;
+          }
+          this.exchangeService.setIsLogged(true);          
         }
         
-      } else {
+      } else if (event instanceof OAuthInfoEvent) {
+        if(event.type == 'token_expires' && AppConfig.settings?.keycloak.useSilentRefresh) {
+          console.log('token is expiring...');
+          this.oauthService.refreshToken();
+        }
+      }
+      else {
         console.warn(event);
       }
     });
@@ -53,10 +62,12 @@ export class AppComponent implements OnInit {
   }
 
   configureSSO() {
+      if(!(this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()))  {
+        this.isFirst = true;
+      }
       this.oauthService.configure(this.ssoConfig);      
       this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-      this.oauthService.loadDiscoveryDocumentAndTryLogin();
-      
+      this.oauthService.loadDiscoveryDocumentAndTryLogin();      
   }
 
   get token() {

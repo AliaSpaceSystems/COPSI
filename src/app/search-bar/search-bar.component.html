@@ -42,9 +42,18 @@
                   <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="Size" fontIcon="dns"></mat-icon>
                   <div class="metadata-value" *ngIf="product.ContentLength != null">{{product.ContentLength}}</div>
                   <div class="metadata-value-italic">bytes</div>
-                  <div class="metadata-value" *ngIf="product.ContentLength != null">( {{simplifyBytes(product.ContentLength)}} )</div>
-                </div>
+                  <div class="metadata-value" *ngIf="product.ContentLength != null">( {{simplifyBytes(product.ContentLength)}} )</div>                  
+                </div>                               
               </div>
+              <div class="metadata-row">
+                <mat-progress-bar class="metadata-value progress-value" 
+                  *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )" 
+                  [mode]="product.download.state == 'PENDING' ? 'buffer' : 'determinate'" 
+                  [value]="product.download.progress">
+              </mat-progress-bar> 
+              <div class="metadata-value" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )" class="metadata-value" >
+                {{product.download.progress}}%</div>
+              </div>              
             </div>
             <div class="tag-ql-div">
               <div class="tag-div">
@@ -70,7 +79,7 @@
                 <!-- </div> -->
               </div>
             </div>
-          </div>
+          </div>          
         </div>
         <div id="scroll-thumb"></div>
       </div>

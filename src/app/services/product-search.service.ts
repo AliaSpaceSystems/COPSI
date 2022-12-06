@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { AppConfig } from '../services/app.config';
+import { download, Download } from 'ngx-operators';
+import { saveAs } from 'file-saver';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -138,9 +140,15 @@ export class ProductSearchService {
     ));
   }
 
-  download(url: string): Observable<Blob> {
+  download(url: string, filename: string): Observable<Download> {
     return this.http.get(url, {
+      reportProgress: true,
+      observe: 'events',
       responseType: 'blob'
-    })
+    }).pipe(download(blob => saveAs(blob, filename)), catchError(err => {
+      //console.error(err);
+      return throwError(() => err);
+    }
+  ))
   }
 }

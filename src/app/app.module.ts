@@ -19,6 +19,7 @@ import { HomeComponent } from './home/home.component';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { AlertComponent } from './alert/alert.component';
 import { ToastComponent } from './toast/toast.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 export function initializeApp(
   appConfig: AppConfig
@@ -46,6 +47,7 @@ export function initializeApp(
     MatIconModule,
     FormsModule,
     HttpClientModule,
+    MatProgressBarModule,
     OAuthModule.forRoot({
       resourceServer: {
           allowedUrls: ['/odata/*','/test/*'],
