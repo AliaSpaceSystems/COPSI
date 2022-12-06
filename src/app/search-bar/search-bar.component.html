@@ -48,7 +48,7 @@
             </div>
             <div class="tag-ql-div">
               <div class="tag-div">
-                <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.title ? tag.title : tag.name">{{beautifyTag(tag.value)}}</div>
+                <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.title ? tag.title.concat(': ').concat(tag.value) : tag.name">{{beautifyTag(tag.value)}}</div>
               </div>
 
               <div class="ql-div">

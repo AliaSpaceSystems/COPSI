@@ -147,7 +147,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     listContainer!.addEventListener('scroll', (e: any) => {
       askPrevPage = false;
       askNextPage = false;
-      if (listContainer.offsetHeight + listContainer.scrollTop >= listContainer.scrollHeight - 1) {
+      if (listContainer.clientHeight + listContainer.scrollTop >= listContainer.scrollHeight - 1) {
         if (this.currentPage < this.lastPage) {
           askNextPage = true;
         }
@@ -190,14 +190,31 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
         //console.log(res);
-        if ("status" in res) { /* response error */
+
+        if ("status" in res) {
+          /* response error */
           this.productList = {
             "@odata.count": 0,
             value: []
           };
-          this.showProductList = false;
           this.exchangeService.setProductList(this.productList);
-        } else { /* got a list */
+        } else if (this.productTotalNumber == 0) {
+          /* 0 products found */
+          this.showProductList = true;
+          this.listIsReady = true;
+          this.productListRolled = true;
+
+          this.productList = {
+            "@odata.count": 0,
+            value: []
+          };
+          this.exchangeService.setProductList(this.productList);
+
+          setTimeout(() => {
+            this.onShowHideButtonClick(null);
+          }, 10);
+        } else {
+          /* got a list */
           this.productList = res;
           this.productList.value.forEach((product: any) => {
             product.tags = [];
@@ -222,8 +239,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                 if ("type" in res) {
                   product.hasQL = true;
                   product.qlURL = this.sanitizeImageUrl(URL.createObjectURL(res));
-                  //console.log(product.qlURL);
-                  // Test Search:  *S20220523T000611_N04*
                 } else {
                   product.hasQl = false;
                   product.qlURL = "";
@@ -303,7 +318,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       let listItemParentContainer = document.getElementById('list-items-parent-container');
       if (this.productListRolled) {
         this.productListRolled = false;
-        listContainer.style.visibility = 'visible';
+        if (this.productTotalNumber > 0) {
+          productListContainer.style.bottom = '0';
+          listContainer.style.visibility = 'visible';
+        } else {
+          productListContainer.style.bottom = 'auto';
+          listContainer.style.visibility = 'hidden';
+        }
         listContainer.style.opacity = '1.0';
         productListHeader.style.visibility = 'visible';
         productListHeader.style.opacity = '1.0';
@@ -397,7 +418,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcThumbPos() {
-    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize) / (listContainer.scrollHeight - listContainer.offsetHeight);
+    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize) / (listContainer.scrollHeight - listContainer.clientHeight);
   }
 
   setThumbPos(pos: number) {
