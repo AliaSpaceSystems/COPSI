@@ -1,12 +1,13 @@
 @import "src/vars";
 
-#footer-title-container-div {
+#footer-container-div {
   z-index: 99;
   display: flex;
-  width: 100vw;
   height: $footer-copsi-height;
   flex-direction: row;
   position: absolute;
+  right: 0;
+  left: auto;
   gap: 0.5rem;
   bottom: 0.5rem;
   align-items: center;
@@ -27,7 +28,7 @@
   box-shadow: $default-shadow;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
 }
 
 #footer-logo-div:hover {
@@ -36,10 +37,11 @@
 
 #footer-main-div {
   z-index: 2;
-  display: flex;
+  display: none;
   height: $default-title-div-height;
   padding: 0.25rem 1rem;
   gap: 0.5rem;
+  margin-right: -0.5rem;
   border-radius: 0.25rem;
   background-color: $main-dark-bg-color;
   color: $main-dark-text-color;
@@ -48,6 +50,7 @@
   box-shadow: $default-shadow;
   align-items: center;
   justify-content: space-evenly;
+  transition: opacity 0.25s ease-in-out, margin-right 0.25s ease-in-out;
 }
 
 #footer-main-div p {

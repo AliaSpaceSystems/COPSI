@@ -1,6 +1,6 @@
-<div id="footer-title-container-div">
+<div id="footer-container-div">
   <!-- footer bar -->
-  <div id="footer-main-div" [@infoAnimation]="showInfo ? 'open' : 'closed'" (click)="onInfoIconClicked($event)">
+  <div id="footer-main-div" (click)="onInfoIconClicked($event)">
     <div class="footer-logo-div">
       <a *ngFor="let lLogo of infoLogosLeft" href={{lLogo.link}}  target="_blank">
         <img class="info-logo" src={{lLogo.image}} alt={{lLogo.alt}} title={{lLogo.title}}>
