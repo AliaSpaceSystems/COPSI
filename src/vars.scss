@@ -53,6 +53,9 @@ $search-bar-product-icons-dim: 1.0rem;
 /* toast */
 $toast-font-size: $footer-font-size;
 $toast-font-size-mobile: 0.7rem;
+$toast-default-color: $menu-dark-bg-color;
+$toast-success-color: #419641;
+$toast-error-color: #ff4141;
 
 /* miscellaneus */
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -62,6 +65,7 @@ $default-title-div-height: 2rem;
 $font-family: "NotesESA-Reg";
 $scrollbar-bg-color: #0000;
 $main-buttons-bg-color: #dddddd;
+
 
 /* responsiveness */
 $screen-width-threshold-medium: 48rem;

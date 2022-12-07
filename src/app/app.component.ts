@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   isFirst: boolean = false;
   ssoConfig: AuthConfig = new AuthConfig({});
 
-  constructor( private oauthService: OAuthService, 
+  constructor( private oauthService: OAuthService,
     private exchangeService: ExchangeService,
     private toast: ToastComponent) {
   }
@@ -34,12 +34,12 @@ export class AppComponent implements OnInit {
         if(event.type == 'token_received') {
           console.log('token_received');
           if(this.isFirst){
-            this.toast.showInfoToast('LOGIN SUCCESSFUL!')
+            this.toast.showInfoToast('success', 'LOGIN SUCCESSFUL!')
             this.isFirst = false;
           }
-          this.exchangeService.setIsLogged(true);          
+          this.exchangeService.setIsLogged(true);
         }
-        
+
       } else if (event instanceof OAuthInfoEvent) {
         if(event.type == 'token_expires' && AppConfig.settings?.keycloak.useSilentRefresh) {
           console.log('token is expiring...');
@@ -65,9 +65,9 @@ export class AppComponent implements OnInit {
       if(!(this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()))  {
         this.isFirst = true;
       }
-      this.oauthService.configure(this.ssoConfig);      
+      this.oauthService.configure(this.ssoConfig);
       this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-      this.oauthService.loadDiscoveryDocumentAndTryLogin();      
+      this.oauthService.loadDiscoveryDocumentAndTryLogin();
   }
 
   get token() {

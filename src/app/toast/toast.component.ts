@@ -1,4 +1,7 @@
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
+
+let toastContainerDiv: any;
+let toastMainDiv: any;
 
 @Component({
   selector: 'app-toast',
@@ -8,28 +11,39 @@ import { Component, Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class ToastComponent {
+export class ToastComponent implements OnInit {
 
   public message: string = '';
   constructor() {
+  }
 
+  ngOnInit(): void {
+    toastContainerDiv = document.getElementById('toast-container-div')!;
+    toastMainDiv = document.getElementById('toast-main-div')!;
   }
 
   showToast(message: string) {
     this.message = message;
-    document.getElementById('toast-title-container-div')!.style.visibility = 'visible';
-    document.getElementById('toast-title-container-div')!.style.opacity = '1.0';
-    document.getElementById('toast-title-container-div')!.style.top = '3rem';
+    toastContainerDiv.style.visibility = 'visible';
+    toastContainerDiv.style.bottom = '1.75rem';
+    toastContainerDiv.style.opacity = '1.0';
     document.getElementById('toast-title')!.innerHTML = this.message;
     setTimeout(function(){
-      document.getElementById('toast-title-container-div')!.style.opacity = '0.0';
-      document.getElementById('toast-title-container-div')!.style.top = '2.5rem';
-      document.getElementById('toast-title-container-div')!.style.visibility = 'hidden';
+      toastContainerDiv.style.opacity = '0.0';
+      toastContainerDiv.style.bottom = '1.25rem';
+      toastContainerDiv.style.visibility = 'hidden';
     }, 5000);
   }
 
-  showInfoToast(message: string) {
-    document.getElementById('toast-main-div')!.style.backgroundColor = '#419641';
+  showInfoToast(type: string, message: string) {
+    if (type === "success") {
+      toastMainDiv.className = "success";
+    } else if (type === "error") {
+      toastMainDiv.className = "error";
+    } else {
+      toastMainDiv.className = "base";
+    }
+
     this.showToast(message);
   }
 }
