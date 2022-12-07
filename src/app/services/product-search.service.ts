@@ -145,10 +145,6 @@ export class ProductSearchService {
       reportProgress: true,
       observe: 'events',
       responseType: 'blob'
-    }).pipe(download(blob => saveAs(blob, filename)), catchError(err => {
-      //console.error(err);
-      return throwError(() => err);
-    }
-  ))
+    }).pipe(download(blob => saveAs(blob, filename)))
   }
 }

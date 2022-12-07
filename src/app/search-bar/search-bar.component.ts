@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, throwError } from 'rxjs';
 import { ProductSearchService } from '../services/product-search.service';
 import { saveAs } from 'file-saver';
 import { AppConfig } from '../services/app.config';
@@ -419,9 +419,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   downloadProduct(id: string, name: string) {
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
     
-    this.productSearch.download(downloadUrl, name).subscribe(
-      (res: any) => {
-        //console.log(res);
+    this.productSearch.download(downloadUrl, name).subscribe({
+      next: (res: any) => {
+        console.log(res);
         this.productList.value.forEach((product: any) => {
           if (product.Id == id) {
             product.download = res;
@@ -429,7 +429,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         });
         this.exchangeService.setProductList(this.productList);
       }
-    );
+      , error: (e) => {
+        this.productList.value.forEach((product: any) => {
+          if (product.Id == id) {
+            product.download = {};
+          }
+        });
+        this.exchangeService.setProductList(this.productList);
+      }
+    });
     /**/
   }
 
