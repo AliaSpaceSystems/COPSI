@@ -237,8 +237,37 @@ input:focus {
 .product-data-column-div {
   display: flex;
   flex-direction: column;
+  flex-grow: 3;
   justify-content: space-between;
 }
+
+/* Progress bar */
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: $copsi-blue;
+}
+::ng-deep .mat-progress-bar-buffer {
+  background: #000000;
+}
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+.progress-div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  align-items: center;
+}
+.progress-bar {
+  width: 100%;
+}
+.progress-value {
+  text-align: left;
+  font-weight: normal;
+  font-size: $search-bar-font-size-small;
+}
+
+/* metadata */
 .product-metadata-column-div {
   display: flex;
   flex-direction: column;
@@ -390,21 +419,4 @@ input:focus {
   #scroll-thumb {
     margin: 2.2rem 0 0 0;
   }
-}
-
-
-::ng-deep .mat-progress-bar-fill::after {
-  background-color: #cccccc;
-}
-
-::ng-deep .mat-progress-bar-buffer {
-  background: #000000;
-}
-
-::ng-deep .mat-progress-bar {
-  border-radius: 2px;
-}
-
-.progress-value {
-  width: 75%;
 }

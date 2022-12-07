@@ -13,6 +13,7 @@
   align-items: center;
   justify-content: right;
   padding: 0 0.5rem;
+  pointer-events: none;
 }
 
 #footer-logo-div {
@@ -29,6 +30,7 @@
   align-items: center;
   justify-content: center;
   transition: opacity 0.15s ease-in-out;
+  pointer-events: visible;
 }
 
 #footer-logo-div:hover {
@@ -51,6 +53,7 @@
   align-items: center;
   justify-content: space-evenly;
   transition: opacity 0.25s ease-in-out, margin-right 0.25s ease-in-out;
+  pointer-events: visible;
 }
 
 #footer-main-div p {

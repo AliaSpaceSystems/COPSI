@@ -417,8 +417,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   downloadProduct(id: string, name: string) {
+    this.toast.showInfoToast('success', 'PRODUCT DOWNLOADING..');
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
-    
     this.productSearch.download(downloadUrl, name).subscribe({
       next: (res: any) => {
         console.log(res);
@@ -427,7 +427,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             product.download = res;
           }
         });
-        this.exchangeService.setProductList(this.productList);
+        //this.exchangeService.setProductList(this.productList);
       }
       , error: (e) => {
         this.productList.value.forEach((product: any) => {
@@ -435,7 +435,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             product.download = {};
           }
         });
-        this.exchangeService.setProductList(this.productList);
+        //this.exchangeService.setProductList(this.productList);
       }
     });
     /**/
@@ -511,8 +511,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   copyUrl(id: string) {
     let copyUrl: any = AppConfig.settings.baseUrl + `/odata/v1/Products(${id})`;
-
     this.clipboard.copy(window.location.origin + copyUrl);
-    this.toast.showInfoToast('success', 'PRODUCT URL COPIED!')
+    this.toast.showInfoToast('success', 'PRODUCT URL COPIED!');
   }
 }
