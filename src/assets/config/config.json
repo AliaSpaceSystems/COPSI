@@ -11,7 +11,7 @@
     "searchOptions": {
         "productsPerPage": 100,
         "orderBy": "PublicationDate",
-        "sort": "DESC"
+        "sort": "desc"
     },
     "mapSettings": {
         "initialViewState": {
