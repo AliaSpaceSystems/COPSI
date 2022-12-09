@@ -42,14 +42,18 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "3kb",
+                  "maximumError": "6kb"
                 }
               ],
               "fileReplacements": [
                 {
                   "replace": "src/assets/environments/environment.ts",
                   "with": "src/assets/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/assets/config/config.dev.json",
+                  "with": "src/assets/config/config.json"
                 }
               ],
               "outputHashing": "all"
@@ -70,6 +74,7 @@
           "configurations": {
             "production": {
               "browserTarget": "COPSI:build:production"
+
             },
             "development": {
               "browserTarget": "COPSI:build:development"

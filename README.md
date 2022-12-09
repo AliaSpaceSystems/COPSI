@@ -27,3 +27,17 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## How to cretae a Docker Image of COPSI
+
+1. From COPSI home directory, build the application in production mode
+
+   `ng build -c production --base-href /copsi/`
+
+2. Build the Docker image creating the proper tag
+   
+   `docker build -t aliaspace/copsi:<tag> .`
+
+3. Open the docker-compose.yml file, update the reference to docker image (if needed), check the mapping of volumes and ports and, finally, run the image with docker-compose
+
+   `docker-compose up -d`
