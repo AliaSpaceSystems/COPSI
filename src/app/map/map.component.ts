@@ -72,9 +72,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMinPixels: 1,
     lineWidthMaxPixels: 1,
     getLineWidth: 1,
-    getFillColor: (d: any) => {
-      return d.properties.Color
-    },
+    getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color,
+    /* updateTriggers: {
+      getFillColor: (d: any) => [d.properties.SelectedColor, d.properties.Color]
+    }, */
     getLineColor: [0, 0, 0],
     getPolygonOffset: (d: any) => {
       return [-5000, 1]
@@ -92,9 +93,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMinPixels: 1,
     lineWidthMaxPixels: 1,
     getLineWidth: 1,
-    getFillColor: (d: any) => {
-      return d.properties.Color
-    },
+    getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color,
+    /* updateTriggers: {
+      getFillColor: (d: any) => [d.properties.SelectedColor, d.properties.Color]
+    }, */
     getLineColor: [0, 0, 0],
     getPolygonOffset: (d: any) => {
       return [-5000, 1]
@@ -319,7 +321,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         featureList[featureList.length-1].properties = {
           'Id': product.Id,
           'Name': product.Name,
-          'Color': this.defaultFootprintColor
+          'Color': this.defaultFootprintColor,
+          'SelectedColor': [0, 0, 255, 150],
+          'Selected': false
         }
       });
       geojsonData = {
@@ -355,8 +359,67 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   selectProductFootprint(selectedProductId: string) {
-    console.log("MAP - selected product id: " + selectedProductId);
+    //console.log("MAP - selected product id: " + selectedProductId);
+    geojsonData.features.forEach((feature: any) => {
+      if(feature.properties.Id === selectedProductId) {
+        console.log("Found product - name: " + feature.properties.Name);
+        feature.properties.Selected = true;
+      }
+    });
+    /* let featureList: any[] = [];
+    let tempList: any = this.productList;
+    tempList.value.forEach((product: any) => {
+      if (product.GeoFootprint != null) {
+        //console.log("GeoJSON Footprint is present.");
+        featureList.push(product.GeojsonFootprint);
+      } else if (product.Footprint != null) {
+        //console.log("Footprint is present.");
+        featureList.push(this.getGeojsonFromWKT(product.Footprint));
+      } else {
+        //console.log("NO Footprint present....");
+        featureList.push({
+          "type": "Feature",
+          "geometry": {
+            type: "Polygon",
+            coordinates: []
+          }
+        });
+      }
+      featureList[featureList.length-1].properties = {
+        'Id': product.Id,
+        'Name': product.Name,
+        'Color': this.defaultFootprintColor
+      }
+      if (featureList[featureList.length-1].properties.Id === selectedProductId) {
+        //console.log("Found product - name: " + feature.properties.Name);
+        featureList[featureList.length-1].properties.Color = [0, 255, 255, 150];
+      }
+    }); */
+    /* geojsonData = {
+      "type": "FeatureCollection",
+      "features": featureList
+    }; */
+    //console.log(geojsonData);
+    this.geojsonLayerGlobe = this.geojsonLayerGlobe.clone({
+      data: geojsonData,
+      getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color
+    })
+    this.geojsonLayerPlane = this.geojsonLayerPlane.clone({
+      data: geojsonData,
+      getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color
+    })
+    console.log(geojsonData);
+    const layersPlane =  [
+      this.mapLayerPlane,
+      this.geojsonLayerPlane
+    ]
+    deckPlane.setProps({layers: layersPlane});
 
+    const layersGlobe =  [
+      this.mapLayerGlobe,
+      this.geojsonLayerGlobe
+    ]
+    deckGlobe.setProps({layers: layersGlobe});
   }
 
   /* Convert WKT footprints to geojson Feature */
