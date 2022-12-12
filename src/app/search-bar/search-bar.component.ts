@@ -14,6 +14,7 @@ declare let $: any;
 let listContainer: any;
 let productListContainer: any;
 let productListHeader: any;
+let listItemDiv: HTMLCollectionOf<Element>;
 let scrollThumb: any;
 let detailedView: any;
 let simpleView: any;
@@ -301,6 +302,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  selectProduct(e:any) {
+    let selectedProductId = $(e.currentTarget).data('productid');
+    this.exchangeService.selectProductOnMap(selectedProductId);
   }
 
   loadPageFromButtons(page: number) {

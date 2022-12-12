@@ -52,6 +52,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   mapLayerSubscription!: Subscription;
   showLabelsSubscription!: Subscription;
   productListSubscription!: Subscription;
+  selectedProductIdSubscription!: Subscription;
 
   public defaultFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultColor);
 
@@ -132,6 +133,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapLayerSubscription = this.exchangeService.selectedMapLayer.subscribe((value) => {
       if (typeof(value) === 'string') {
         this.changeMapLayer(value);
+      }
+    });
+    this.selectedProductIdSubscription = this.exchangeService.selectProductOnMapExchange.subscribe((value) => {
+      if (typeof(value) === 'string') {
+        this.selectProductFootprint(value);
       }
     });
   }
@@ -346,6 +352,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       ]
       deckGlobe.setProps({layers: layersGlobe});
     }
+  }
+
+  selectProductFootprint(selectedProductId: string) {
+    console.log("MAP - selected product id: " + selectedProductId);
+
   }
 
   /* Convert WKT footprints to geojson Feature */

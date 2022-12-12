@@ -209,6 +209,9 @@ input:focus {
   border-radius: 0.25rem;
   box-shadow: $default-shadow;
 }
+.list-item-div:hover {
+  background-color: #fff;
+}
 
 /* Product Name */
 .product-name-div {

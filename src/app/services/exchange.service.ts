@@ -20,6 +20,8 @@ export class ExchangeService {
   private mapLayer = new BehaviorSubject<any>({});
   selectedMapLayer = this.mapLayer.asObservable();
 
+  private selectedProductId = new BehaviorSubject<any>({});
+  selectProductOnMapExchange = this.selectedProductId.asObservable();
 
   constructor() { }
 
@@ -41,5 +43,9 @@ export class ExchangeService {
 
   setMapLayer(mapLayer: string) {
     this.mapLayer.next(mapLayer);
+  }
+
+  selectProductOnMap(selectedProductId: string) {
+    this.selectedProductId.next(selectedProductId);
   }
 }
