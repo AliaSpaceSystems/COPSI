@@ -52,9 +52,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   mapLayerSubscription!: Subscription;
   showLabelsSubscription!: Subscription;
   productListSubscription!: Subscription;
+  showProductIndexSubscription!: Subscription;
   selectedProductIdSubscription!: Subscription;
 
   public defaultFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultColor);
+  public highlightedFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.highlightedColor);
 
   /* Base Map Layer */
   public mapLayerPlane: any;
@@ -72,10 +74,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMinPixels: 1,
     lineWidthMaxPixels: 1,
     getLineWidth: 1,
-    getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color,
+    getFillColor: (d:any) => d.properties.Color,
     /* updateTriggers: {
       getFillColor: (d: any) => [d.properties.SelectedColor, d.properties.Color]
     }, */
+    /* onHover: (info: any, event: any) => {
+      console.log("Hovering - info:");
+      console.log(info);
+    }, */
+    //autoHighlight: true,
+    highlightColor: this.highlightedFootprintColor,
     getLineColor: [0, 0, 0],
     getPolygonOffset: (d: any) => {
       return [-5000, 1]
@@ -93,10 +101,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMinPixels: 1,
     lineWidthMaxPixels: 1,
     getLineWidth: 1,
-    getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color,
+    getFillColor: (d:any) => d.properties.Color,
     /* updateTriggers: {
       getFillColor: (d: any) => [d.properties.SelectedColor, d.properties.Color]
     }, */
+    /* onHover: (info: any, event: any) => {
+      console.log("Hovering - info:");
+      console.log(info);
+    }, */
+    //autoHighlight: true,
+    highlightColor: this.highlightedFootprintColor,
     getLineColor: [0, 0, 0],
     getPolygonOffset: (d: any) => {
       return [-5000, 1]
@@ -137,9 +151,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.changeMapLayer(value);
       }
     });
+    this.showProductIndexSubscription = this.exchangeService.showProductOnMapExchange.subscribe((value) => {
+      if (typeof(value) === 'number') {
+        this.showProductFootprint(value);
+      }
+    });
     this.selectedProductIdSubscription = this.exchangeService.selectProductOnMapExchange.subscribe((value) => {
       if (typeof(value) === 'string') {
-        this.selectProductFootprint(value);
+        //this.selectProductFootprint(value);
+        console.log(value);
+
       }
     });
   }
@@ -304,7 +325,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       productList.value.forEach((product: any) => {
         if (product.GeoFootprint != null) {
           //console.log("GeoJSON Footprint is present.");
-          featureList.push(this.getGeojsonFromGeoFootprint(product.GeoFootprint));          
+          featureList.push(this.getGeojsonFromGeoFootprint(product.GeoFootprint));
         } else if (product.Footprint != null) {
           //console.log("Footprint is present.");
           featureList.push(this.getGeojsonFromWKT(product.Footprint));
@@ -322,8 +343,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           'Id': product.Id,
           'Name': product.Name,
           'Color': this.defaultFootprintColor,
-          'SelectedColor': [0, 0, 255, 150],
-          'Selected': false
         }
       });
       geojsonData = {
@@ -358,14 +377,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  selectProductFootprint(selectedProductId: string) {
+  showProductFootprint(showProductIndex: number) {
+    //  *S3B_SY_2_VG1____20220113T000000_20220113T235959_20220118T005003_SOUTH_AMERICA_____SVL_O_NT_002.SEN3.zip*
     //console.log("MAP - selected product id: " + selectedProductId);
-    geojsonData.features.forEach((feature: any) => {
+    /* geojsonData.features.forEach((feature: any) => {
       if(feature.properties.Id === selectedProductId) {
         console.log("Found product - name: " + feature.properties.Name);
         feature.properties.Selected = true;
       }
-    });
+    }); */
     /* let featureList: any[] = [];
     let tempList: any = this.productList;
     tempList.value.forEach((product: any) => {
@@ -400,15 +420,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       "features": featureList
     }; */
     //console.log(geojsonData);
+
     this.geojsonLayerGlobe = this.geojsonLayerGlobe.clone({
-      data: geojsonData,
-      getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color
+      //data: tempData
+      highlightedObjectIndex: showProductIndex
     })
     this.geojsonLayerPlane = this.geojsonLayerPlane.clone({
-      data: geojsonData,
-      getFillColor: (d:any) => d.properties.Selected ? d.properties.SelectedColor : d.properties.Color
+      //data: tempData
+      highlightedObjectIndex: showProductIndex
     })
-    console.log(geojsonData);
+    //console.log("Selected index: " + showProductIndex);
+
     const layersPlane =  [
       this.mapLayerPlane,
       this.geojsonLayerPlane

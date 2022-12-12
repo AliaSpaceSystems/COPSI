@@ -305,8 +305,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   selectProduct(e:any) {
-    let selectedProductId = $(e.currentTarget).data('productid');
-    this.exchangeService.selectProductOnMap(selectedProductId);
+    //let selectedProductId = $(e.currentTarget).data('productid');
+    //console.log("index: " + $(e.currentTarget).index());
+    //this.exchangeService.selectProductOnMap(selectedProductId);
+  }
+
+  hoverProduct(e: any) {
+    let hoveredProduct = $(e.currentTarget).index();
+    this.exchangeService.showProductOnMap(hoveredProduct);
   }
 
   loadPageFromButtons(page: number) {

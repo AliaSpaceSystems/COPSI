@@ -101,7 +101,8 @@
     }
   ],
   "footprints": {
-    "defaultColor": "#ff640096"
+    "defaultColor": "#ff640096",
+    "highlightedColor": "#00aeefff"
   },
   "styles": [
     {
