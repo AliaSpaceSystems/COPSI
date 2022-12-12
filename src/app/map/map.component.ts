@@ -296,7 +296,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       productList.value.forEach((product: any) => {
         if (product.GeoFootprint != null) {
           //console.log("GeoJSON Footprint is present.");
-          featureList.push(product.GeojsonFootprint);
+          featureList.push(this.getGeojsonFromGeoFootprint(product.GeoFootprint));          
         } else if (product.Footprint != null) {
           //console.log("Footprint is present.");
           featureList.push(this.getGeojsonFromWKT(product.Footprint));
@@ -366,6 +366,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     let geojsonFeature = {
       "type": "Feature",
       "geometry": geojsonCoords
+    };
+    //console.log(JSON.stringify(geojsonFeature, null, 2));
+
+    return geojsonFeature;
+  }
+
+  /* Convert GeoFootprint footprints to geojson Feature */
+  getGeojsonFromGeoFootprint(footprint: object) {
+
+    let geojsonFeature = {
+      "type": "Feature",
+      "geometry": footprint
     };
     //console.log(JSON.stringify(geojsonFeature, null, 2));
 
