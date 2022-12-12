@@ -50,16 +50,51 @@
         { "link": "https://www.serco.com/", "image": "./assets/images/logo-serco-grey_cut.png", "title": "Visit Serco website", "alt": "Serco logo"  },
         { "link": "http://www.alia-space.com/", "image": "./assets/images/logo_alia_white.png", "title": "Visit Alia website", "alt": "Alia Space logo"  }
     ],
-    "tags": [
+    "platformList": [
       {
-        "name": "productType",
-        "color": "#ff6400",
-        "title": "Product Type"
+        "name": "SENTINEL-1",
+        "tags": [
+          {
+            "name": "productType",
+            "color": "#ff6400",
+            "title": "Product Type"
+          }
+        ]
       },
       {
-        "name": "tileId",
-        "color": "#6400ff",
-        "title": "Tile Identifier"
+        "name": "SENTINEL-2",
+        "tags": [
+          {
+            "name": "productType",
+            "color": "#ff6400",
+            "title": "Product Type"
+          }
+        ]
+      },
+      {
+        "name": "SENTINEL-3",
+        "tags": [
+          {
+            "name": "productType",
+            "color": "#ff6400",
+            "title": "Product Type"
+          },
+          {
+            "name": "tileId",
+            "color": "#6400ff",
+            "title": "Tile Identifier"
+          }
+        ]
+      },
+      {
+        "name": "SENTINEL-5",
+        "tags": [
+          {
+            "name": "productType",
+            "color": "#ff6400",
+            "title": "Product Type"
+          }
+        ]
       }
     ],
     "footprints": {
@@ -91,5 +126,5 @@
           "url": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"
         }
       ]
-    
+
 }
