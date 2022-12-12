@@ -230,9 +230,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                 if (attribute.Name == "platformSerialIdentifier") {
                   product.platformSerialIdentifier = attribute.Value;
                 }
-                AppConfig.settings.tags.forEach((tag: any) => {
-                  if (attribute.Name == tag.name) {
-                    product.tags.push({name: tag.name, value: attribute.Value, color: tag.color, title: tag.title});
+              });
+              product.Attributes.forEach((attribute: any) => {
+                AppConfig.settings.platformList.forEach((platform: any) => {
+                  if (product.platformShortName == platform.name) {
+                    platform.tags.forEach((tag: any) => {
+                      if (attribute.Name == tag.name) {
+                        product.tags.push({name: tag.name, value: attribute.Value, color: tag.color, title: tag.title});
+                      }
+                    });
                   }
                 });
               });
