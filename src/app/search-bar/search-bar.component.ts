@@ -386,7 +386,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   beautifyTag(tag:string) {
-    return tag.replace(/_/g, " ");
+    return tag.toString().replace(/_/g, " ");
   }
 
   setListView(view: string) {

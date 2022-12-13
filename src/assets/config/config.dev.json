@@ -61,6 +61,26 @@
           "name": "productType",
           "color": "#ff6400",
           "title": "Product Type"
+        },
+        {
+          "name": "operationalMode",
+          "color": "#A64253",
+          "title": "Operational Mode"
+        },
+        {
+          "name": "polarisationChannels",
+          "color": "#0CCE6B",
+          "title": "Polarization"
+        },
+        {
+          "name": "orbitNumber",
+          "color": "#3b0d11",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "timeliness",
+          "color": "#C47AC0",
+          "title": "Timeliness"
         }
       ]
     },
@@ -71,6 +91,26 @@
           "name": "productType",
           "color": "#ff6400",
           "title": "Product Type"
+        },        
+        {
+          "name": "cloudCover",
+          "color": "#ff006e",
+          "title": "Cloud Cover Percentage"
+        },
+        {
+          "name": "tileId",
+          "color": "#6400ff",
+          "title": "Tile Identifier"
+        },
+        {
+          "name": "orbitNumber",
+          "color": "#3b0d11",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "datastripId",
+          "color": "#FF715B",
+          "title": "Datastrip Identifier"
         }
       ]
     },
@@ -83,9 +123,24 @@
           "title": "Product Type"
         },
         {
-          "name": "tileId",
-          "color": "#6400ff",
-          "title": "Tile Identifier"
+          "name": "orbitNumber",
+          "color": "#3b0d11",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "relativeOrbitNumber",
+          "color": "#48a9a6",
+          "title": "Relative Orbit Number"
+        },
+        {
+          "name": "timeliness",
+          "color": "#C47AC0",
+          "title": "Timeliness"
+        },
+        {
+          "name": "instrumentShortName",
+          "color": "#4B9CE7",
+          "title": "Instrument"
         }
       ]
     },
@@ -96,6 +151,21 @@
           "name": "productType",
           "color": "#ff6400",
           "title": "Product Type"
+        },
+        {
+          "name": "processingMode",
+          "color": "#5B486A",
+          "title": "Processing Mode"
+        },
+        {
+          "name": "orbitNumber",
+          "color": "#3b0d11",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "processingLevel",
+          "color": "#E71D36",
+          "title": "Processing Level"
         }
       ]
     }
