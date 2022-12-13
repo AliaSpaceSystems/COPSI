@@ -314,6 +314,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     let hoveredProduct = $(e.currentTarget).index();
     this.exchangeService.showProductOnMap(hoveredProduct);
   }
+  leaveProduct(e: any) {
+    let hoveredProduct = -1;
+    this.exchangeService.showProductOnMap(hoveredProduct);
+  }
 
   loadPageFromButtons(page: number) {
     if (page == 1) {

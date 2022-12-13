@@ -23,7 +23,7 @@
     </div>
     <div id="list-items-parent-container">
       <div id="list-items-container">
-        <div class="list-item-div" *ngFor="let product of productList.value; let idx=index;" [attr.data-productid]="product.Id" (mouseover)="hoverProduct($event)">
+        <div class="list-item-div" *ngFor="let product of productList.value; let idx=index;" [attr.data-productid]="product.Id" (mouseover)="hoverProduct($event)" (mouseleave)="leaveProduct($event)">
           <div class="product-name-div">
             <div class="product-name-value" *ngIf="product.Name != null && showDetailedView">{{product.Name}}</div>
           </div>
