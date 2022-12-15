@@ -532,8 +532,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   copyUrl(id: string) {
-    let copyUrl: any = AppConfig.settings.baseUrl + `/odata/v1/Products(${id})`;
-    this.clipboard.copy(window.location.origin + copyUrl);
+    let copyUrl: any = (AppConfig.settings.baseUrl) ? AppConfig.settings.baseUrl + `odata/v1/Products(${id})`: window.location.origin + `/odata/v1/Products(${id})`;
+    this.clipboard.copy(copyUrl);
     this.toast.showInfoToast('success', 'PRODUCT URL COPIED!');
   }
 }
