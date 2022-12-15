@@ -57,6 +57,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public defaultFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultColor);
   public highlightedFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.highlightedColor);
+  public footprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.borderColor);
 
   /* Base Map Layer */
   public mapLayerPlane: any;
@@ -76,7 +77,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: 1,
     getFillColor: (d:any) => d.properties.Color,
     highlightColor: this.highlightedFootprintColor,
-    getLineColor: [0, 0, 0],
+    getLineColor: this.footprintBorderColor,
     getPolygonOffset: (d: any) => {
       return [-5000, 1]
     },
@@ -96,7 +97,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: 1,
     getFillColor: (d:any) => d.properties.Color,
     highlightColor: this.highlightedFootprintColor,
-    getLineColor: [0, 0, 0],
+    getLineColor: this.footprintBorderColor,
     getPolygonOffset: (d: any) => {
       return [-5000, 1]
     },

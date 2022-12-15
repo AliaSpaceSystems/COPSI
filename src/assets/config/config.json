@@ -88,7 +88,7 @@
             "name": "productType",
             "color": "#ff6400",
             "title": "Product Type"
-          },        
+          },
           {
             "name": "cloudCover",
             "color": "#ff006e",
@@ -169,6 +169,7 @@
     ],
     "footprints": {
       "defaultColor": "#ff640096",
+      "borderColor": "#000000",
       "highlightedColor": "#00aeefcc"
     },
     "styles": [
