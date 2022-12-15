@@ -61,17 +61,17 @@
           },
           {
             "name": "operationalMode",
-            "color": "#A64253",
+            "color": "#00338D",
             "title": "Operational Mode"
           },
           {
             "name": "polarisationChannels",
             "color": "#0CCE6B",
-            "title": "Polarization"
+            "title": "Polarisation"
           },
           {
             "name": "orbitNumber",
-            "color": "#3b0d11",
+            "color": "#b81365",
             "title": "Orbit Number"
           },
           {
@@ -101,12 +101,12 @@
           },
           {
             "name": "orbitNumber",
-            "color": "#3b0d11",
+            "color": "#b81365",
             "title": "Orbit Number"
           },
           {
             "name": "datastripId",
-            "color": "#FF715B",
+            "color": "#0f7173",
             "title": "Datastrip Identifier"
           }
         ]
@@ -121,7 +121,7 @@
           },
           {
             "name": "orbitNumber",
-            "color": "#3b0d11",
+            "color": "#b81365",
             "title": "Orbit Number"
           },
           {
@@ -156,7 +156,7 @@
           },
           {
             "name": "orbitNumber",
-            "color": "#3b0d11",
+            "color": "#b81365",
             "title": "Orbit Number"
           },
           {
@@ -168,19 +168,19 @@
       }
     ],
     "footprints": {
-      "defaultColor": "#ff640096",
+      "defaultColor": "#ff640056",
       "borderColor": "#000000",
       "highlightedColor": "#00aeefcc"
     },
     "styles": [
         {
-          "name": "OSM",
-          "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        },
-        {
           "name": "Terrain",
           "url": "https://tiles.maps.eox.at/wmts/1.0.0/terrain_3857/default/g/{z}/{y}/{x}.jpg"
         },
+        {
+          "name": "OSM",
+          "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        },        
         {
           "name": "Terrain Light",
           "url": "https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg"

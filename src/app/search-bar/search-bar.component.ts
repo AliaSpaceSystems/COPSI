@@ -439,7 +439,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   downloadProduct(id: string, name: string) {
-    this.toast.showInfoToast('success', 'PRODUCT DOWNLOADING..');
+    this.toast.showInfoToast('success', 'DOWNLOADING PRODUCT...');
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
     this.productSearch.download(downloadUrl, name).subscribe({
       next: (res: any) => {
