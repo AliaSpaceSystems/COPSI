@@ -244,9 +244,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                 });
               });
             };
-            this.productSearch.getQL(product.Id).subscribe(
-              (res: any) => {
-                //console.log(res);
+            this.productSearch.getQL(product.Id).subscribe({
+              next: (res: any) => {
                 if ("type" in res) {
                   product.hasQL = true;
                   product.qlURL = this.sanitizeImageUrl(URL.createObjectURL(res));
@@ -254,8 +253,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                   product.hasQl = false;
                   product.qlURL = "";
                 }
-              }
-            );
+              },
+              error: (e) => {} 
+            });
           });
           this.exchangeService.setProductList(this.productList);
           this.listIsReady = true;
@@ -443,7 +443,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
     this.productSearch.download(downloadUrl, name).subscribe({
       next: (res: any) => {
-        console.log(res);
+        //console.log(res);
         this.productList.value.forEach((product: any) => {
           if (product.Id == id) {
             product.download = res;

@@ -133,11 +133,7 @@ export class ProductSearchService {
         responseType: 'blob'
       })
     .pipe(
-      catchError(err => {
-        //console.error(err);
-        return throwError(() => err);
-      }
-    ));
+      catchError(e => of(e)));
   }
 
   download(url: string, filename: string): Observable<Download> {

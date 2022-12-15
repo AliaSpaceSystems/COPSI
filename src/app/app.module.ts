@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +14,7 @@ import { LoginComponent } from './login/login.component';
 import { AppConfig } from './services/app.config';
 import { JwtInterceptor } from './util/jwt.interceptor';
 import { ErrorInterceptor } from './util/error.interceptor';
+import { CustomErrorHandler } from './util/error.handler';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { HomeComponent } from './home/home.component';
 import { SpinnerComponent } from './spinner/spinner.component';
@@ -63,6 +64,7 @@ export function initializeApp(
       useFactory: initializeApp,
       deps: [AppConfig], multi: true
     },
+    { provide: ErrorHandler, useClass: CustomErrorHandler},
     AppConfig,
     SpinnerComponent
   ],
