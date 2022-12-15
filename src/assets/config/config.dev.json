@@ -28,19 +28,15 @@
       "buttonText": "Sign in"
   },
   "keycloak": {
-      "issuer_": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-      "issuer": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
-      "redirectUri_": "http://localhost:4200/home",
-      "redirectUri": "http://192.168.0.109:4200/home",
-      "clientId_": "prip-api",
-      "clientId": "ivv-prip-client",
+      "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
+      "redirectUri": "http://localhost:4200/home",
+      "clientId": "prip-api",
       "responseType": "code",
       "scope": "openid profile email",
       "requireHttps": false,
       "showDebugInformation": false,
       "disableAtHashCheck": true,
       "useSilentRefresh": true,
-      "useSilentRefresh_": false
 
   },
   "quicklookURL": "<base_url>/test/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
