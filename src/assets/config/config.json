@@ -7,7 +7,7 @@
         "alt": "",
         "title": ""
     },
-    "baseUrl": "",
+    "baseUrl": "http(s)://<domain>/<api_context>/",
     "searchOptions": {
         "productsPerPage": 100,
         "orderBy": "PublicationDate",
@@ -18,7 +18,7 @@
             "longitude": 2.27,
             "latitude": 38.86,
             "zoom": 1.5,
-            "minZoom": 1,
+            "minZoom": 0.5,
             "maxZoom": 10
         },
         "projection": "globe"
