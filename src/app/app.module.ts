@@ -30,14 +30,14 @@ export function initializeApp(
 
 @NgModule({
   declarations: [
-    AppComponent,      
+    AppComponent,
     HomeComponent,
     MapComponent,
     FooterComponent,
     HeaderComponent,
     SearchBarComponent,
     LoginComponent,
-    SpinnerComponent,  
+    SpinnerComponent,
     ToastComponent,
     AlertComponent,
   ],
@@ -70,6 +70,6 @@ export function initializeApp(
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { 
-  
+export class AppModule {
+
 }

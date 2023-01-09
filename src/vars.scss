@@ -1,6 +1,5 @@
 /* Custom properties */
 $main-text-color: #fff;
-$main-buttons-bg-color-hover: #ababab;
 
 /* light theme */
 $main-light-bg-color: #ffffff;
@@ -9,7 +8,7 @@ $main-light-text-color: #000000;
 /* dark theme */
 /* main */
 $main-dark-bg-color: #202020cc;
-$main-dark-bg-color-opaque: #202020f6;
+$main-dark-bg-color-opaque: #202020ff;
 $main-dark-text-color: #ffffff;
 $main-dark-border: 0.5px solid darken($main-dark-bg-color, 5%);
 $main-light-border: 0.5px solid lighten($main-dark-bg-color, 50%);
@@ -49,6 +48,8 @@ $search-bar-font-size-small-mobile: 0.65rem;
 $search-bar-width: 26rem;
 $search-bar-width-mobile: 20rem;
 $search-bar-product-icons-dim: 1.0rem;
+$switch-width: 1.6rem;
+$switch-height: 0.8rem;
 
 /* toast */
 $toast-font-size: $footer-font-size;
@@ -61,10 +62,12 @@ $toast-error-color: #ff4141;
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);
 $login-shadow: 0 2px 50px rgba(0,0,0,1.0);
 $copsi-blue: #00aeef;
+$copsi-blue-hover: #007ebf;
 $default-title-div-height: 2rem;
 $font-family: "NotesESA-Reg";
 $scrollbar-bg-color: #0000;
 $main-buttons-bg-color: #dddddd;
+$main-buttons-bg-color-hover: #ababab;
 
 
 /* responsiveness */
@@ -72,5 +75,5 @@ $screen-width-threshold-medium: 48rem;
 $screen-width-threshold-little: 44rem;
 $screen-minimum-width: 37rem;
 
-/* progress bar download*/
+/* progress bar download */
 $progress-bar-product-download-dim: 2.0rem;

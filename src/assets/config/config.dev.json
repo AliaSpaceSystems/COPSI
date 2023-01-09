@@ -9,9 +9,27 @@
   },
   "baseUrl": "",
   "searchOptions": {
-      "productsPerPage": 100,
-      "orderBy": "PublicationDate",
-      "sort": "DESC"
+    "productsPerPage": 100,
+    "orderByOptions": [
+      {
+        "name": "Publication Date",
+        "value": "PublicationDate"
+      },
+      {
+        "name": "Sensing Date",
+        "value": "ContentDate/Start"
+      }
+    ],
+    "sortByOptions": [
+      {
+        "name": "Descending",
+        "value": "DESC"
+      },
+      {
+        "name": "Ascending",
+        "value": "ASC"
+      }
+    ]
   },
   "mapSettings": {
       "initialViewState": {
@@ -29,13 +47,17 @@
   },
   "keycloak": {
       "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-      "redirectUri": "http://localhost:4200/home",
+      "issuer_": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
+      "redirectUri_": "http://localhost:4200/home",
+      "redirectUri": "http://192.168.0.109:4200/home",
       "clientId": "prip-api",
+      "clientId_": "ivv-prip-client",
       "responseType": "code",
       "scope": "openid profile email",
       "requireHttps": false,
       "showDebugInformation": false,
       "disableAtHashCheck": true,
+      "useSilentRefresh_": true,
       "useSilentRefresh": false
   },
   "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
@@ -199,5 +221,189 @@
     {
         "name": "S2 Cloudless",
         "url": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"
-    }]
+    }
+  ],
+  "advancedSearchElements": [
+    {
+      "mission": "Sentinel-1",
+      "missionFilter": false,
+      "filters": [
+        {
+          "name": "Satellite Platform",
+          "value": [
+            "A",
+            "B"
+          ]
+        },
+        {
+          "name": "Product Type",
+          "value": [
+            "SLC",
+            "GRD",
+            "OCN",
+            "RAW"
+          ]
+        },
+        {
+          "name": "Polarisation",
+          "value": [
+            "HH",
+            "VV",
+            "HV",
+            "VH",
+            "HH+HV",
+            "VV+VH"
+          ]
+        },
+        {
+          "name": "Sensor Mode",
+          "value": [
+            "SM",
+            "IW",
+            "EW",
+            "WV"
+          ]
+        },
+        {
+          "name": "Relative Orbit Number",
+          "minValue": 1,
+          "maxValue": 175
+        }
+      ]
+    },
+    {
+      "mission": "Sentinel-2",
+      "missionFilter": false,
+      "filters": [
+        {
+          "name": "Satellite Platform",
+          "value": [
+            "A",
+            "B"
+          ]
+        },
+        {
+          "name": "Product Type",
+          "value": [
+            "S2MSI1C",
+            "S2MSI2A",
+            "S2MSI2Ap"
+          ]
+        },
+        {
+          "name": "Relative Orbit Number",
+          "minValue": 1,
+          "maxValue": 143
+        },
+        {
+          "name": "Cloud Cover %",
+          "minValue": 0,
+          "maxValue": 100
+        }
+      ]
+    },
+    {
+      "mission": "Sentinel-3",
+      "missionFilter": false,
+      "filters": [
+        {
+          "name": "Satellite Platform",
+          "value": [
+            "A",
+            "B"
+          ]
+        },
+        {
+          "name": "Product Type",
+          "value": [
+            "OL_1_EFR___",
+            "OL_1_ERR___",
+            "SL_1_RBT___",
+            "SR_1_SRA___",
+            "SR_1_SRA_A_",
+            "SR_1_SRA_BS",
+            "OL_2_LFR___",
+            "OL_2_LRR___",
+            "SL_2_LST___",
+            "SL_2_FRP___",
+            "SY_2_SYN___",
+            "SY_2_AOD___",
+            "SY_2_VGP___",
+            "SY_2_VG1___",
+            "SY_2_V10___",
+            "SR_2_LAN___",
+            "SR_2_LAN_HY",
+            "SR_2_LAN_LI",
+            "SR_2_LAN_SI"
+          ]
+        },
+        {
+          "name": "Timeliness",
+          "value": [
+            "Near Real Time",
+            "Short Time Critical",
+            "Non Time Critical"
+          ]
+        },
+        {
+          "name": "Instrument",
+          "value": [
+            "OLCI",
+            "SRAL",
+            "SLSTR",
+            "SYNERGY"
+          ]
+        },
+        {
+          "name": "Product Level",
+          "value": [
+            "L1",
+            "L2"
+          ]
+        },
+        {
+          "name": "Relative Orbit Start",
+          "minValue": 1,
+          "maxValue": 385
+        }
+      ]
+    },
+    {
+      "mission": "Sentinel-5P",
+      "missionFilter": false,
+      "filters": [
+        {
+          "name": "Product Type",
+          "value": [
+            "L1B_RA_BD1",
+            "L1B_RA_BD2",
+            "L1B_RA_BD3",
+            "L1B_RA_BD4",
+            "L1B_RA_BD5",
+            "L1B_RA_BD6",
+            "L1B_RA_BD7",
+            "L1B_RA_BD8",
+            "L1B_IR_UVN",
+            "L1B_IR_SIR",
+            "L2__O3____",
+            "L2__O3_TCL",
+            "L2__O3__PR",
+            "L2__NO2___",
+            "L2__SO2___",
+            "L2__CO____",
+            "L2__CH4___",
+            "L2__HCHO__",
+            "L2__CLOUD_",
+            "L2__AER_AI",
+            "L2__AER_LH",
+            "L2__NP_BD3",
+            "L2__NP_BD6",
+            "L2__NP_BD7",
+            "AUX_CTMANA",
+            "AUX_CTMFCT"
+          ]
+        }
+      ]
+    }
+  ]
 }

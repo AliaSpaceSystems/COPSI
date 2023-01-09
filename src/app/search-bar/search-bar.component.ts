@@ -1,14 +1,14 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
-import { Observable, Subscription, throwError } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProductSearchService } from '../services/product-search.service';
-import { saveAs } from 'file-saver';
 import { AppConfig } from '../services/app.config';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
 import { Download } from 'ngx-operators';
+
 
 declare let $: any;
 let listContainer: any;
@@ -51,6 +51,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public productListSubscription!: Subscription;
   public showProductList: boolean = false;
   public productListRolled: boolean = false;
+  public showAdvancedSearch: boolean = false;
+  public sortByOptions = AppConfig.settings.searchOptions.sortByOptions;
+  public sortBy: string = this.sortByOptions[0].value;
+  public orderByOptions = AppConfig.settings.searchOptions.orderByOptions;
+  public orderBy: string = this.orderByOptions[0].value;
+  public advancedSearchElements = AppConfig.settings.advancedSearchElements;
+  public advancedFilter: string = "";
 
   @Input()
   public filter: string = "";
@@ -176,6 +183,69 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
+  onShowAdvancedSearch(event: any) {
+    let advancedSearchMenu = document.getElementById('advanced-search-menu');
+    if (this.showAdvancedSearch) {
+      this.showAdvancedSearch = false;
+      this.productListRolled = true;
+      setTimeout(() => {
+        advancedSearchMenu!.style.visibility = 'hidden';
+      }, 250);
+    } else {
+      this.productListRolled = false;
+      advancedSearchMenu!.style.visibility = 'visible';
+      this.showAdvancedSearch = true;
+    }
+    this.onShowHideButtonClick(null);
+  }
+
+  onAdvancedSearchClear(event: any) {
+    let selectsToClear = document.getElementsByClassName("select");
+    let inputsToClear = document.getElementsByClassName("input");
+    let datesToClear = document.getElementsByClassName("date");
+    [].forEach.call(selectsToClear, (el:any) => {
+      el.innerText = "";
+    });
+    [].forEach.call(inputsToClear, (el:any) => {
+      el.value = "";
+    });
+    [].forEach.call(datesToClear, (el:any) => {
+      el.value = "";
+    });
+  }
+
+  onAdvancedSearchSubmit(event: any) {
+    this.onShowAdvancedSearch(event);
+    this.onSearch(event);
+  }
+
+  onMissionFilterButtonClicked(event: any) {
+    let header = event.target.closest(".collapsible-header-div");
+    header.classList.toggle("active");
+    var content = header.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  }
+
+  onSortByChanged(event: any) {
+    this.sortBy = AppConfig.settings.searchOptions.sortByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
+    console.log(this.sortBy);
+  }
+
+  onOrderByChanged(event: any) {
+    this.orderBy = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
+    console.log(this.orderBy);
+  }
+
+  onFilterChanged(event: any, mission: string,  filterName: string) {
+    let filterValue = (event.target as HTMLInputElement).value
+    console.log("Choosen mission: " + mission + " - filter: " + filterName + " - value: " + filterValue);
+    this.advancedFilter += (mission + "/" + filterName + "/" + filterValue);
+  }
+
   onSearch(event: any) {
     this.listIsReady = false;
     this.showProductList = true;
@@ -184,8 +254,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       filter: this.filter,
       top: AppConfig.settings.searchOptions.productsPerPage,
       skip: 0,
-      order: AppConfig.settings.searchOptions.orderBy,
-      sort: AppConfig.settings.searchOptions.sort
+      order: this.orderBy,
+      sort: this.sortBy
     }
     this.loadPage(this.currentPage);
     this.productListRolled = false;
@@ -344,6 +414,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       let listItemParentContainer = document.getElementById('list-items-parent-container');
       if (this.productListRolled) {
         this.productListRolled = false;
+        this.showAdvancedSearch = false;
         if (this.productTotalNumber > 0) {
           productListContainer.style.bottom = '0';
           listContainer.style.visibility = 'visible';

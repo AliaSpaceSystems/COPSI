@@ -1,8 +1,89 @@
 <div id="search-bar-main-div">
-  <img id="copsi-logo" src="./assets/images/COPSI_logo.svg" alt="Copsi logo">
+  <mat-icon id="advanced-search-icon" aria-hidden="false" aria-label="advanced search icon" fontIcon="menu" (click)="onShowAdvancedSearch($event)"></mat-icon>
   <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter"   (keydown.enter)="onSearch($event)" value="{{filter}}">
   <div id="search-magnifier-icon-div">
     <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" (click)="onSearch($event)"></mat-icon>
+  </div>
+</div>
+
+<div id="advanced-search-menu" [@searchMenuAnimation]="showAdvancedSearch ? 'open' : 'closed'">
+  <div id="advanced-search-title-div">
+    <p>Advanced Search</p>
+    <div id="advanced-search-title-buttons-div">
+      <mat-icon id="advanced-search-clear-icon" aria-hidden="false" aria-label="advanced search clear icon" (click)="onAdvancedSearchClear($event)">delete_outline</mat-icon>
+    <mat-icon id="advanced-search-hide-icon" aria-hidden="false" aria-label="advanced search hide icon" (click)="onAdvancedSearchSubmit($event)">done</mat-icon>
+    </div>
+  </div>
+  <!-- hr -->
+  <hr>
+  <div id="advanced-search-filter-output">
+    <p id="filter-output-title">
+      Filter: <span>{{advancedFilter}}</span>
+    </p>
+  </div>
+  <!-- hr -->
+  <hr>
+  <div class="advanced-search-main-filters">
+    <div class="advanced-search-item-div">
+      <label for="order-by">Order by:</label>
+      <select class="select" (change)="onOrderByChanged($event)">
+        <option *ngFor="let option of orderByOptions">{{option.name}}</option>
+      </select>
+    </div>
+    <div class="advanced-search-item-div">
+      <label for="sort-by">Sort by:</label>
+      <select class="select" (change)="onSortByChanged($event)">
+        <option *ngFor="let option of sortByOptions">{{option.name}}</option>
+      </select>
+    </div>
+    <!-- hr -->
+    <hr style="margin: 0.5rem 0;">
+    <div class="advanced-search-item-div">
+      <label for="sensing-start">Sensing date:</label>
+      <div class="datepicker-div">
+        <input type="date" class="date" name="sensing-start" min="2020-01-01" max="2023-01-03">
+        <span>-</span>
+        <input type="date" class="date" name="sensing-stop" min="2020-01-01" max="2023-01-03">
+      </div>
+    </div>
+    <div class="advanced-search-item-div">
+      <label for="publication-start">Publication date:</label>
+      <div class="datepicker-div">
+        <input type="date" class="date" name="publication-start" min="2020-01-01" max="2023-01-03">
+        <span>-</span>
+        <input type="date" class="date" name="publication-stop" min="2020-01-01" max="2023-01-03">
+      </div>
+    </div>
+  </div>
+  <!-- hr -->
+  <hr>
+  <div class="collapsible-section" *ngFor="let el of advancedSearchElements">
+    <div class="collapsible-header-div">
+      <button type="button" class="collapsible-header">Mission: {{el.mission}}</button>
+      <!-- <mat-icon class="collapse-icon" aria-hidden="false" aria-label="Collapse icon">add</mat-icon> -->
+      <div class="mission-filter">
+        <label class="switch">
+          <input type="checkbox" (click)="onMissionFilterButtonClicked($event)">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="content">
+      <div *ngFor="let filter of el.filters" class="advanced-search-filter-div">
+        <label for="filter">{{filter.name}}:</label>
+        <!-- <label *ngIf="filter.hasOwnProperty('booleanValue')" class="switch">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label> -->
+        <select *ngIf="filter.hasOwnProperty('value')" class="select" name="filter" (change)="onFilterChanged($event, el.mission, filter.name)">
+          <option hidden disabled selected value></option>
+          <option *ngFor="let value of filter.value">{{value}}</option>
+        </select>
+        <input *ngIf="filter.hasOwnProperty('maxValue')" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue">
+      </div>
+    </div>
+    <!-- hr -->
+    <hr>
   </div>
 </div>
 
