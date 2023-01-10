@@ -78,6 +78,7 @@ export class ProductSearchService {
   */
   //search(filter: string, top: number, skip: number = 0, order: string='PublicationDate', sort: string='desc') {
   search(searchOptions: any) {
+    console.log(searchOptions);
     // return odata/v1/Products?$count=true with additional optional filters response in JSON Format
     let order = 'PublicationDate';
     let sort = 'desc';
@@ -86,10 +87,20 @@ export class ProductSearchService {
     let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$expand=Attributes';
     //The option $count=true requires only the $filter parameter. No $orderby or $skip is needed for the count.
     //The $top is fixed to 1
+    let filter = "";    
     let checkWildcard = (searchOptions && searchOptions.filter) ? searchOptions.filter.replace(/\*/g, '') : '';
     if(searchOptions && searchOptions.filter && searchOptions.filter.trim() && checkWildcard) {
-      productsUrl+='&$filter=' + this.parseFilter(searchOptions.filter);
-      productsCountUrl+='&$filter=' + this.parseFilter(searchOptions.filter);
+      filter = this.parseFilter(searchOptions.filter);
+    }
+    if(searchOptions && searchOptions.productFilter) {
+      filter = (filter) ? filter + ' and ' + searchOptions.productFilter : searchOptions.productFilter
+    }
+    if(searchOptions && searchOptions.attributeFilter) {
+      filter = (filter) ? filter + ' and ' + searchOptions.attributeFilter : searchOptions.attributeFilter
+    }
+    if(filter) {
+      productsUrl+='&$filter=' + filter;
+      productsCountUrl+='&$filter=' + filter;
     }
     if(searchOptions && searchOptions.top) {
       productsUrl+='&$top=' + searchOptions.top;
