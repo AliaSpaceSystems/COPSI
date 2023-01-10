@@ -14,13 +14,17 @@ declare let $: any;
 let listContainer: any;
 let productListContainer: any;
 let productListHeader: any;
-let listItemDiv: HTMLCollectionOf<Element>;
 let scrollThumb: any;
 let detailedView: any;
 let simpleView: any;
 let minimalView: any;
 let prevPageButton: any;
 let nextPageButton: any;
+let sensingStartEl: any;
+let sensingStopEl: any;
+let publicationStartEl: any;
+let publicationStopEl: any;
+let missionEl: any;
 let copsyBlueColor: string = '#00aeef';
 let copsyBlueColor_RED: number = parseInt(copsyBlueColor.slice(1, 3), 16);
 let copsyBlueColor_GREEN: number = parseInt(copsyBlueColor.slice(3, 5), 16);
@@ -61,6 +65,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @Input()
   public filter: string = "";
+  public productFilter: string = "";
+  public attributeFilter: string = "";
 
   public productList: any = {
     "@odata.count": 0,
@@ -118,6 +124,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     listContainer = document.getElementById('list-items-container')!;
     productListHeader = document.getElementById('product-list-header')!;
     productListContainer = document.getElementById('product-list-container')!;
+
+    sensingStartEl = document.getElementById('sensing-start')!;
+    sensingStopEl = document.getElementById('sensing-stop')!;
+    publicationStartEl = document.getElementById('publication-start')!;
+    publicationStopEl = document.getElementById('publication-stop')!;
+    missionEl = document.getElementsByClassName('collapsible-section')!;
 
     let askNextPage: boolean = false;
     let askPrevPage: boolean = false;
@@ -215,7 +227,116 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onAdvancedSearchSubmit(event: any) {
+    /* Parse Product Filter (Content and Publication Periods) */
+    this.productFilter = "";
+    let bracketOpen: boolean = false;
+    if (sensingStartEl.value !== "") {
+      if (!bracketOpen) {
+        this.productFilter += "(";
+        bracketOpen = true;
+      }
+      this.productFilter += "ContentDate/Start gt " + sensingStartEl.value + "T00:00:00.000Z";
+    }
+    if (sensingStopEl.value !== "") {
+      if (this.productFilter !== "") {
+        this.productFilter += " and ";
+      } else if (!bracketOpen) {
+        this.productFilter += "(";
+        bracketOpen = true;
+      }
+      this.productFilter += "ContentDate/End lt " + sensingStopEl.value + "T23:59:59.999Z";
+    }
+    if (publicationStartEl.value !== "") {
+      if (this.productFilter !== "") {
+        this.productFilter += " and ";
+      } else if (!bracketOpen) {
+        this.productFilter += "(";
+        bracketOpen = true;
+      }
+      this.productFilter += "PublicationDate/Start gt " + publicationStopEl.value + "T00:00:00.000Z";
+    }
+    if (publicationStopEl.value !== "") {
+      if (this.productFilter !== "") {
+        this.productFilter += " and ";
+      } else if (!bracketOpen) {
+        this.productFilter += "(";
+        bracketOpen = true;
+      }
+      this.productFilter += "PublicationDate/End lt " + publicationStopEl.value + "T23:59:59.999Z";
+    }
+    if (bracketOpen) {
+      this.productFilter += ")";
+      bracketOpen = false;
+    }
+    console.log("ProductFilter: " + this.productFilter);
+
+    /* Parse Attribute Filter */
+    this.attributeFilter = "";
+    [].forEach.call(missionEl, (el:any, i:any) => {
+      let bracketOpen0: boolean = false;
+      if (el.getElementsByTagName('input')[0].checked) {
+        if (this.attributeFilter !== "") {
+          this.attributeFilter += " or "
+        }
+        this.attributeFilter += "(";
+        bracketOpen0 = true;
+        this.attributeFilter += "Attributes/" + this.advancedSearchElements[i].attributeType +
+          "/any(att:att/Name eq '" + this.advancedSearchElements[i].attributeName +
+          "' and att/" + this.advancedSearchElements[i].attributeType + "/Value eq '" + this.advancedSearchElements[i].mission + "')";
+      }
+      let contentDiv = el.getElementsByClassName('content');
+      let andAdded: boolean = false;
+      [].forEach.call(contentDiv, (missionDiv:any) => {
+        let bracketOpen1: boolean = false;
+        let missionItems = missionDiv.getElementsByClassName('advanced-search-filter-div');
+        [].forEach.call(missionItems, (item:any, k:any) => {
+          let select = item.getElementsByTagName('select')[0];
+          let gotValue: boolean = false;
+          let value: string = "";
+          if (select !== undefined) {
+            value = select.value;
+            if (value !== "") {
+              gotValue = true;
+            }
+          }
+          let input = item.getElementsByTagName('input')[0];
+          if (input !== undefined) {
+            value = input.value;
+            if (value !== "") {
+              gotValue = true;
+            }
+          }
+          if (gotValue) {
+            if (!andAdded) {
+              this.attributeFilter += " and ";
+              this.attributeFilter += "(";
+              bracketOpen1 = true;
+              andAdded = true;
+            } else if (this.attributeFilter !== "") {
+              this.attributeFilter += " or "
+            }
+            this.attributeFilter += "Attributes/" + this.advancedSearchElements[i].filters[k].attributeType +
+              "/any(att:att/Name eq '" + this.advancedSearchElements[i].filters[k].attributeName +
+              "' and att/" + this.advancedSearchElements[i].filters[k].attributeType + "/Value eq " +
+              (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "')" : value);
+          }
+        });
+        if (bracketOpen1) {
+          this.attributeFilter += ")";
+          bracketOpen1 = false;
+        }
+      });
+      if (bracketOpen0) {
+        this.attributeFilter += ")";
+        bracketOpen0 = false;
+      }
+    });
+    console.log("AttributeFilter: " + this.attributeFilter);
+
+    /* Hide Advanced Search Panel */
     this.onShowAdvancedSearch(event);
+
+    /* Send Search */
     this.onSearch(event);
   }
 
@@ -252,6 +373,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.currentPage = this.prevPage = 0;
     this.searchOptions = {
       filter: this.filter,
+      productFilter: this.productFilter,
+      attributeFilter: this.attributeFilter,
       top: AppConfig.settings.searchOptions.productsPerPage,
       skip: 0,
       order: this.orderBy,

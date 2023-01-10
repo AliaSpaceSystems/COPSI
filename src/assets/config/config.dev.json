@@ -225,11 +225,15 @@
   ],
   "advancedSearchElements": [
     {
+      "name": "Mission",
       "mission": "Sentinel-1",
-      "missionFilter": false,
+      "attributeName": "platformShortName",
+      "attributeType": "OData.CSC.StringAttribute",
       "filters": [
         {
-          "name": "Satellite Platform",
+          "name": "Platform Identifier",
+          "attributeName": "platformSerialIdentifier",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "A",
             "B"
@@ -237,6 +241,8 @@
         },
         {
           "name": "Product Type",
+          "attributeName": "productType",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "SLC",
             "GRD",
@@ -246,17 +252,19 @@
         },
         {
           "name": "Polarisation",
+          "attributeName": "polarisationChannels",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "HH",
             "VV",
             "HV",
-            "VH",
-            "HH+HV",
-            "VV+VH"
+            "VH"
           ]
         },
         {
-          "name": "Sensor Mode",
+          "name": "Operational Mode",
+          "attributeName": "operationalMode",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "SM",
             "IW",
@@ -266,17 +274,24 @@
         },
         {
           "name": "Relative Orbit Number",
+          "attributeName": "relativeOrbitNumber",
+          "attributeType": "OData.CSC.IntegerAttribute",
           "minValue": 1,
-          "maxValue": 175
+          "maxValue": 175,
+          "step": 1
         }
       ]
     },
     {
+      "name": "Mission",
       "mission": "Sentinel-2",
-      "missionFilter": false,
+      "attributeName": "platformShortName",
+      "attributeType": "OData.CSC.StringAttribute",
       "filters": [
         {
-          "name": "Satellite Platform",
+          "name": "Platform Identifier",
+          "attributeName": "platformSerialIdentifier",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "A",
             "B"
@@ -284,6 +299,8 @@
         },
         {
           "name": "Product Type",
+          "attributeName": "productType",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "S2MSI1C",
             "S2MSI2A",
@@ -292,22 +309,32 @@
         },
         {
           "name": "Relative Orbit Number",
+          "attributeName": "relativeOrbitNumber",
+          "attributeType": "OData.CSC.IntegerAttribute",
           "minValue": 1,
-          "maxValue": 143
+          "maxValue": 143,
+          "step": 1
         },
         {
           "name": "Cloud Cover %",
+          "attributeName": "cloudCover",
+          "attributeType": "OData.CSC.DoubleAttribute",
           "minValue": 0,
-          "maxValue": 100
+          "maxValue": 100,
+          "step": 0.01
         }
       ]
     },
     {
+      "name": "Mission",
       "mission": "Sentinel-3",
-      "missionFilter": false,
+      "attributeName": "platformShortName",
+      "attributeType": "OData.CSC.StringAttribute",
       "filters": [
         {
-          "name": "Satellite Platform",
+          "name": "Platform Identifier",
+          "attributeName": "platformSerialIdentifier",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "A",
             "B"
@@ -315,6 +342,8 @@
         },
         {
           "name": "Product Type",
+          "attributeName": "productType",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "OL_1_EFR___",
             "OL_1_ERR___",
@@ -339,6 +368,8 @@
         },
         {
           "name": "Timeliness",
+          "attributeName": "timeliness",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "Near Real Time",
             "Short Time Critical",
@@ -347,6 +378,8 @@
         },
         {
           "name": "Instrument",
+          "attributeName": "instrumentShortName",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "OLCI",
             "SRAL",
@@ -355,25 +388,34 @@
           ]
         },
         {
-          "name": "Product Level",
+          "name": "Processing Level",
+          "attributeName": "processingLevel",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
-            "L1",
-            "L2"
+            "1",
+            "2"
           ]
         },
         {
-          "name": "Relative Orbit Start",
+          "name": "Relative Orbit Number",
+          "attributeName": "relativeOrbitNumber",
+          "attributeType": "OData.CSC.IntegerAttribute",
           "minValue": 1,
-          "maxValue": 385
+          "maxValue": 385,
+          "step": 1
         }
       ]
     },
     {
+      "name": "Mission",
       "mission": "Sentinel-5P",
-      "missionFilter": false,
+      "attributeName": "platformShortName",
+      "attributeType": "OData.CSC.StringAttribute",
       "filters": [
         {
           "name": "Product Type",
+          "attributeName": "productType",
+          "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "L1B_RA_BD1",
             "L1B_RA_BD2",

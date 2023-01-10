@@ -11,7 +11,7 @@
     <p>Advanced Search</p>
     <div id="advanced-search-title-buttons-div">
       <mat-icon id="advanced-search-clear-icon" aria-hidden="false" aria-label="advanced search clear icon" (click)="onAdvancedSearchClear($event)">delete_outline</mat-icon>
-    <mat-icon id="advanced-search-hide-icon" aria-hidden="false" aria-label="advanced search hide icon" (click)="onAdvancedSearchSubmit($event)">done</mat-icon>
+      <mat-icon id="advanced-search-submit-icon" aria-hidden="false" aria-label="advanced search submit icon" (click)="onAdvancedSearchSubmit($event)">done</mat-icon>
     </div>
   </div>
   <!-- hr -->
@@ -41,17 +41,17 @@
     <div class="advanced-search-item-div">
       <label for="sensing-start">Sensing date:</label>
       <div class="datepicker-div">
-        <input type="date" class="date" name="sensing-start" min="2020-01-01" max="2023-01-03">
+        <input type="date" class="date" id="sensing-start" name="sensing-start" min="2020-01-01" max="2023-01-03">
         <span>-</span>
-        <input type="date" class="date" name="sensing-stop" min="2020-01-01" max="2023-01-03">
+        <input type="date" class="date" id="sensing-stop" name="sensing-stop" min="2020-01-01" max="2023-01-03">
       </div>
     </div>
     <div class="advanced-search-item-div">
       <label for="publication-start">Publication date:</label>
       <div class="datepicker-div">
-        <input type="date" class="date" name="publication-start" min="2020-01-01" max="2023-01-03">
+        <input type="date" class="date" id="publication-start" name="publication-start" min="2020-01-01" max="2023-01-03">
         <span>-</span>
-        <input type="date" class="date" name="publication-stop" min="2020-01-01" max="2023-01-03">
+        <input type="date" class="date" id="publication-stop" name="publication-stop" min="2020-01-01" max="2023-01-03">
       </div>
     </div>
   </div>
@@ -59,7 +59,7 @@
   <hr>
   <div class="collapsible-section" *ngFor="let el of advancedSearchElements">
     <div class="collapsible-header-div">
-      <button type="button" class="collapsible-header">Mission: {{el.mission}}</button>
+      <button type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</button>
       <!-- <mat-icon class="collapse-icon" aria-hidden="false" aria-label="Collapse icon">add</mat-icon> -->
       <div class="mission-filter">
         <label class="switch">
@@ -79,7 +79,7 @@
           <option hidden disabled selected value></option>
           <option *ngFor="let value of filter.value">{{value}}</option>
         </select>
-        <input *ngIf="filter.hasOwnProperty('maxValue')" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue">
+        <input *ngIf="filter.hasOwnProperty('maxValue')" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step">
       </div>
     </div>
     <!-- hr -->
