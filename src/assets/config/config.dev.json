@@ -321,8 +321,8 @@
           "name": "Cloud Cover %",
           "attributeName": "cloudCover",
           "attributeType": "OData.CSC.DoubleAttribute",
-          "minValue": 0,
-          "maxValue": 100,
+          "minValue": 0.00,
+          "maxValue": 100.00,
           "step": 0.01
         }
       ]

@@ -1,9 +1,9 @@
 <div id="search-bar-main-div">
-  <mat-icon *ngIf="advancedFilterIsActive == false" id="advanced-search-icon" aria-hidden="false" aria-label="advanced search icon" fontIcon="menu" (click)="onShowAdvancedSearch($event)"></mat-icon>
-  <mat-icon *ngIf="advancedFilterIsActive == true" id="advanced-search-icon-filtered" aria-hidden="false" aria-label="advanced search icon" fontIcon="filter_list" (click)="onShowAdvancedSearch($event)"></mat-icon>
+  <mat-icon *ngIf="advancedFilterIsActive == false" id="advanced-search-icon" aria-hidden="false" aria-label="advanced search icon" fontIcon="menu" title="Show advanced filter" (click)="onShowAdvancedSearch($event)"></mat-icon>
+  <mat-icon *ngIf="advancedFilterIsActive == true" id="advanced-search-icon-filtered" aria-hidden="false" aria-label="advanced search icon" fontIcon="filter_list" title="Show advanced filter" (click)="onShowAdvancedSearch($event)"></mat-icon>
   <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter"   (keydown.enter)="onSearch($event)" value="{{filter}}">
   <div id="search-magnifier-icon-div">
-    <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" (click)="onAdvancedSearchSubmit($event)"></mat-icon>
+    <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" title="Perform search" (click)="onAdvancedSearchSubmit($event)"></mat-icon>
   </div>
 </div>
 
@@ -11,8 +11,8 @@
   <div id="advanced-search-title-div">
     <p>Advanced Search</p>
     <div id="advanced-search-title-buttons-div">
-      <mat-icon id="advanced-search-clear-icon" aria-hidden="false" aria-label="advanced search clear icon" (click)="onAdvancedSearchClear($event)">delete_outline</mat-icon>
-      <mat-icon id="advanced-search-submit-icon" aria-hidden="false" aria-label="advanced search submit icon" (click)="onAdvancedSearchSubmit($event)">done</mat-icon>
+      <mat-icon id="advanced-search-clear-icon" aria-hidden="false" aria-label="advanced search clear icon" title="Clear all filters" (click)="onAdvancedSearchClear($event)">delete_outline</mat-icon>
+      <mat-icon id="advanced-search-submit-icon" aria-hidden="false" aria-label="advanced search submit icon" title="Perform search" (click)="onAdvancedSearchSubmit($event)">done</mat-icon>
     </div>
   </div>
   <!-- hr -->
@@ -28,13 +28,13 @@
   <div class="advanced-search-main-filters">
     <div class="advanced-search-item-div">
       <label for="order-by">Order by:</label>
-      <select class="select" (change)="onOrderByChanged($event)">
+      <select class="select" title="Change order value" (change)="onOrderByChanged($event)">
         <option *ngFor="let option of orderByOptions">{{option.name}}</option>
       </select>
     </div>
     <div class="advanced-search-item-div">
       <label for="sort-by">Sort by:</label>
-      <select class="select" (change)="onSortByChanged($event)">
+      <select class="select" title="Change sort value" (change)="onSortByChanged($event)">
         <option *ngFor="let option of sortByOptions">{{option.name}}</option>
       </select>
     </div>
@@ -43,17 +43,17 @@
     <div class="advanced-search-item-div">
       <label for="sensing-start">Sensing date:</label>
       <div class="datepicker-div">
-        <input type="date" class="date" id="sensing-start" name="sensing-start" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+        <input type="date" class="date" id="sensing-start" name="sensing-start" min="2020-01-01" max="2023-01-03" title="Sensing start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         <span>-</span>
-        <input type="date" class="date" id="sensing-stop" name="sensing-stop" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+        <input type="date" class="date" id="sensing-stop" name="sensing-stop" min="2020-01-01" max="2023-01-03" title="Sensing stop date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
       </div>
     </div>
     <div class="advanced-search-item-div">
       <label for="publication-start">Publication date:</label>
       <div class="datepicker-div">
-        <input type="date" class="date" id="publication-start" name="publication-start" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+        <input type="date" class="date" id="publication-start" name="publication-start" min="2020-01-01" max="2023-01-03" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         <span>-</span>
-        <input type="date" class="date" id="publication-stop" name="publication-stop" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+        <input type="date" class="date" id="publication-stop" name="publication-stop" min="2020-01-01" max="2023-01-03" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
       </div>
     </div>
   </div>
@@ -64,7 +64,7 @@
       <button type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</button>
       <div class="mission-filter">
         <label class="switch">
-          <input type="checkbox" class="checkbox" (click)="onMissionFilterButtonClicked($event)">
+          <input type="checkbox" class="checkbox" title="Toggle mission filter" (click)="onMissionFilterButtonClicked($event)">
           <span class="slider"></span>
         </label>
       </div>
@@ -72,11 +72,11 @@
     <div class="content">
       <div *ngFor="let filter of el.filters" class="advanced-search-filter-div">
         <label for="filter">{{filter.name}}:</label>
-        <select *ngIf="filter.hasOwnProperty('value')" class="select" name="filter" (change)="parseAdvancedFilter()">
+        <select *ngIf="filter.hasOwnProperty('value')" class="select" name="filter" title="Select {{filter.name}}" (change)="parseAdvancedFilter()">
           <option selected value="">---</option>
           <option *ngFor="let value of filter.value">{{value}}</option>
         </select>
-        <input *ngIf="filter.hasOwnProperty('maxValue')" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" (change)="parseAdvancedFilter()">
+        <input *ngIf="filter.hasOwnProperty('maxValue')" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
       </div>
     </div>
     <!-- hr -->
@@ -88,15 +88,15 @@
   <div id="product-list-div">
     <div id="product-list-header">
       <div id="page-buttons-div" *ngIf="productTotalNumber > 0">
-        <mat-icon id="load-prev" class="load-page-icon" aria-hidden="false" aria-label="load prev page" title="load prev page" fontIcon="navigate_before" (click)="loadPageFromButtons(-1)"></mat-icon>
-        <mat-icon id="load-next" class="load-page-icon" aria-hidden="false" aria-label="load next page" title="load next page" fontIcon="navigate_next" (click)="loadPageFromButtons(1)"></mat-icon>
+        <mat-icon id="load-prev" class="load-page-icon" aria-hidden="false" aria-label="load prev page" title="Load prev page" fontIcon="navigate_before" (click)="loadPageFromButtons(-1)"></mat-icon>
+        <mat-icon id="load-next" class="load-page-icon" aria-hidden="false" aria-label="load next page" title="Load next page" fontIcon="navigate_next" (click)="loadPageFromButtons(1)"></mat-icon>
       </div>
       <div id="product-list-header-text" *ngIf="productTotalNumber > 0">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products</div>
       <div id="product-list-header-text" *ngIf="productTotalNumber == 0">No products found..</div>
       <div id="product-list-header-icons-div" *ngIf="productTotalNumber > 0">
-        <mat-icon id="detailed-view" class="view-style-icon" aria-hidden="false" aria-label="detailed view" title="detailed view" fontIcon="format_align_justify" (click)="setListView('detailed')"></mat-icon>
-        <mat-icon id="simple-view" class="view-style-icon" aria-hidden="false" aria-label="simple view" title="simple view" fontIcon="notes" (click)="setListView('simple')"></mat-icon>
-        <mat-icon id="minimal-view" class="view-style-icon" aria-hidden="false" aria-label="minimal view" title="minimal view" fontIcon="short_text" (click)="setListView('minimal')"></mat-icon>
+        <mat-icon id="detailed-view" class="view-style-icon" aria-hidden="false" aria-label="detailed view" title="Detailed view" fontIcon="format_align_justify" (click)="setListView('detailed')"></mat-icon>
+        <mat-icon id="simple-view" class="view-style-icon" aria-hidden="false" aria-label="simple view" title="Simple view" fontIcon="notes" (click)="setListView('simple')"></mat-icon>
+        <mat-icon id="minimal-view" class="view-style-icon" aria-hidden="false" aria-label="minimal view" title="Minimal view" fontIcon="short_text" (click)="setListView('minimal')"></mat-icon>
       </div>
     </div>
     <div id="list-items-parent-container">
@@ -167,8 +167,8 @@
         </div>
         <div id="scroll-thumb"></div>
       </div>
-      <button id="show-hide-button" *ngIf="productTotalNumber > 0" (click)="onShowHideButtonClick($event)">
-        <mat-icon id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList" title="showHideList">keyboard_arrow_left</mat-icon>
+      <button id="show-hide-button" *ngIf="productTotalNumber > 0" title="Show/Hide list" (click)="onShowHideButtonClick($event)">
+        <mat-icon id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
       </button>
     </div>
   </div>
