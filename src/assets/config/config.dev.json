@@ -448,6 +448,32 @@
             "AUX_CTMANA",
             "AUX_CTMFCT"
           ]
+        },
+        {
+          "name": "Processing Mode",
+          "attributeName": "processingMode",
+          "attributeType": "OData.CSC.StringAttribute",
+          "value": [
+            "NRTI",
+            "OFFL",
+            "RPRO"
+          ]
+        },
+        {
+          "name": "Processing Level",
+          "attributeName": "processingLevel",
+          "attributeType": "OData.CSC.StringAttribute",
+          "value": [
+            "L1b"
+          ]
+        },
+        {
+          "name": "Orbit Number",
+          "attributeName": "orbitNumber",
+          "attributeType": "OData.CSC.IntegerAttribute",
+          "minValue": 0,
+          "maxValue": 99999,
+          "step": 1
         }
       ]
     }

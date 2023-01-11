@@ -61,7 +61,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public orderByOptions = AppConfig.settings.searchOptions.orderByOptions;
   public orderBy: string = this.orderByOptions[0].value;
   public advancedSearchElements = AppConfig.settings.advancedSearchElements;
-  public advancedFilter: string = "";
+  public advancedFilterIsActive: boolean = false;
 
   @Input()
   public filter: string = "";
@@ -232,9 +232,47 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     });
     this.productFilter = "";
     this.attributeFilter = "";
+    this.advancedFilterIsActive = false;
   }
 
   onAdvancedSearchSubmit(event: any) {
+    this.parseAdvancedFilter();
+
+    if (this.productFilter === "" && this.attributeFilter === "") {
+      this.advancedFilterIsActive = false;
+    } else {
+      this.advancedFilterIsActive = true;
+    }
+    /* Hide Advanced Search Panel */
+    this.onShowAdvancedSearch(event);
+
+    /* Send Search */
+    this.onSearch(event);
+  }
+
+  onMissionFilterButtonClicked(event: any) {
+    let header = event.target.closest(".collapsible-header-div");
+    header.classList.toggle("active");
+    var content = header.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+    this.parseAdvancedFilter();
+  }
+
+  onSortByChanged(event: any) {
+    this.sortBy = AppConfig.settings.searchOptions.sortByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
+    console.log(this.sortBy);
+  }
+
+  onOrderByChanged(event: any) {
+    this.orderBy = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
+    console.log(this.orderBy);
+  }
+
+  parseAdvancedFilter() {
     /* Parse Product Filter (Content and Publication Periods) */
     this.productFilter = "";
     let bracketOpen: boolean = false;
@@ -276,7 +314,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.productFilter += ")";
       bracketOpen = false;
     }
-    console.log("ProductFilter: " + this.productFilter);
+    //console.log("ProductFilter: " + this.productFilter);
 
     /* Parse Attribute Filter */
     this.attributeFilter = "";
@@ -321,12 +359,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
               bracketOpen1 = true;
               andAdded = true;
             } else if (this.attributeFilter !== "") {
-              this.attributeFilter += " or "
+              this.attributeFilter += " and "
             }
             this.attributeFilter += "Attributes/" + this.advancedSearchElements[i].filters[k].attributeType +
               "/any(att:att/Name eq '" + this.advancedSearchElements[i].filters[k].attributeName +
               "' and att/" + this.advancedSearchElements[i].filters[k].attributeType + "/Value eq " +
-              (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "')" : value);
+              (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
           }
         });
         if (bracketOpen1) {
@@ -339,40 +377,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         bracketOpen0 = false;
       }
     });
-    console.log("AttributeFilter: " + this.attributeFilter);
-
-    /* Hide Advanced Search Panel */
-    this.onShowAdvancedSearch(event);
-
-    /* Send Search */
-    this.onSearch(event);
-  }
-
-  onMissionFilterButtonClicked(event: any) {
-    let header = event.target.closest(".collapsible-header-div");
-    header.classList.toggle("active");
-    var content = header.nextElementSibling;
-    if (content.style.maxHeight){
-      content.style.maxHeight = null;
-    } else {
-      content.style.maxHeight = content.scrollHeight + "px";
-    }
-  }
-
-  onSortByChanged(event: any) {
-    this.sortBy = AppConfig.settings.searchOptions.sortByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
-    console.log(this.sortBy);
-  }
-
-  onOrderByChanged(event: any) {
-    this.orderBy = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
-    console.log(this.orderBy);
-  }
-
-  onFilterChanged(event: any, mission: string,  filterName: string) {
-    let filterValue = (event.target as HTMLInputElement).value
-    console.log("Choosen mission: " + mission + " - filter: " + filterName + " - value: " + filterValue);
-    this.advancedFilter += (mission + "/" + filterName + "/" + filterValue);
+    //console.log("AttributeFilter: " + this.attributeFilter);
   }
 
   onSearch(event: any) {

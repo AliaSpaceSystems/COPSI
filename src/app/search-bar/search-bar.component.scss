@@ -43,6 +43,11 @@ hr {
 
 
 #advanced-search-icon {
+  color: white;
+  transition: opacity 0.15s ease-in-out;
+}
+#advanced-search-icon-filtered {
+  color: $copsi-blue;
   transition: opacity 0.15s ease-in-out;
 }
 
