@@ -227,6 +227,7 @@
     {
       "name": "Mission",
       "mission": "Sentinel-1",
+      "value": "SENTINEL-1",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "filters": [
@@ -285,6 +286,7 @@
     {
       "name": "Mission",
       "mission": "Sentinel-2",
+      "value": "SENTINEL-2",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "filters": [
@@ -328,6 +330,7 @@
     {
       "name": "Mission",
       "mission": "Sentinel-3",
+      "value": "SENTINEL-3",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "filters": [
@@ -408,7 +411,8 @@
     },
     {
       "name": "Mission",
-      "mission": "Sentinel-5P",
+      "mission": "Sentinel-5p",
+      "value": "Sentinel-5p",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "filters": [

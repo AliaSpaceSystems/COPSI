@@ -60,10 +60,9 @@
   <div class="collapsible-section" *ngFor="let el of advancedSearchElements">
     <div class="collapsible-header-div">
       <button type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</button>
-      <!-- <mat-icon class="collapse-icon" aria-hidden="false" aria-label="Collapse icon">add</mat-icon> -->
       <div class="mission-filter">
         <label class="switch">
-          <input type="checkbox" (click)="onMissionFilterButtonClicked($event)">
+          <input type="checkbox" class="checkbox" (click)="onMissionFilterButtonClicked($event)">
           <span class="slider"></span>
         </label>
       </div>
@@ -71,12 +70,8 @@
     <div class="content">
       <div *ngFor="let filter of el.filters" class="advanced-search-filter-div">
         <label for="filter">{{filter.name}}:</label>
-        <!-- <label *ngIf="filter.hasOwnProperty('booleanValue')" class="switch">
-          <input type="checkbox">
-          <span class="slider"></span>
-        </label> -->
         <select *ngIf="filter.hasOwnProperty('value')" class="select" name="filter" (change)="onFilterChanged($event, el.mission, filter.name)">
-          <option hidden disabled selected value></option>
+          <option selected value="">---</option>
           <option *ngFor="let value of filter.value">{{value}}</option>
         </select>
         <input *ngIf="filter.hasOwnProperty('maxValue')" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step">

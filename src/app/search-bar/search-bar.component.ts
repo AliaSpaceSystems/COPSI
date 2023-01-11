@@ -212,11 +212,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   onAdvancedSearchClear(event: any) {
+    let checkboxToClear = document.getElementsByClassName("checkbox");
     let selectsToClear = document.getElementsByClassName("select");
     let inputsToClear = document.getElementsByClassName("input");
     let datesToClear = document.getElementsByClassName("date");
+    [].forEach.call(checkboxToClear, (el:any) => {
+      if (el.checked) {
+        el.click();
+      }
+    });
     [].forEach.call(selectsToClear, (el:any) => {
-      el.innerText = "";
+      el.selectedIndex = 0;
     });
     [].forEach.call(inputsToClear, (el:any) => {
       el.value = "";
@@ -224,6 +230,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     [].forEach.call(datesToClear, (el:any) => {
       el.value = "";
     });
+    this.productFilter = "";
+    this.attributeFilter = "";
   }
 
   onAdvancedSearchSubmit(event: any) {
@@ -282,7 +290,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         bracketOpen0 = true;
         this.attributeFilter += "Attributes/" + this.advancedSearchElements[i].attributeType +
           "/any(att:att/Name eq '" + this.advancedSearchElements[i].attributeName +
-          "' and att/" + this.advancedSearchElements[i].attributeType + "/Value eq '" + this.advancedSearchElements[i].mission + "')";
+          "' and att/" + this.advancedSearchElements[i].attributeType + "/Value eq '" + this.advancedSearchElements[i].value + "')";
       }
       let contentDiv = el.getElementsByClassName('content');
       let andAdded: boolean = false;
