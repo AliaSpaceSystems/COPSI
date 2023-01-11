@@ -244,10 +244,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.advancedFilterIsActive = true;
     }
     /* Hide Advanced Search Panel */
-    this.onShowAdvancedSearch(event);
+    let advancedSearchMenu = document.getElementById('advanced-search-menu');
+    if (advancedSearchMenu!.style.visibility == 'visible') {
+      this.onShowAdvancedSearch(event);
+    }
 
     /* Send Search */
     this.onSearch(event);
+  }
+
+  onDateClicked(event: any) {
+    event.target.showPicker();
   }
 
   onMissionFilterButtonClicked(event: any) {
@@ -256,6 +263,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     var content = header.nextElementSibling;
     if (content.style.maxHeight){
       content.style.maxHeight = null;
+      let contentDiv = header.nextElementSibling;
+      let selectsToClear = contentDiv.getElementsByTagName("select");
+      let inputsToClear = contentDiv.getElementsByTagName("input");
+      [].forEach.call(selectsToClear, (el:any) => {
+        el.selectedIndex = 0;
+      });
+      [].forEach.call(inputsToClear, (el:any) => {
+        el.value = "";
+      });
     } else {
       content.style.maxHeight = content.scrollHeight + "px";
     }

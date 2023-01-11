@@ -184,6 +184,10 @@ hr {
   color-scheme: dark;
 }
 
+::-webkit-datetime-edit-text {
+  font-family: "NotesESA-Reg";
+}
+
 .advanced-search-filter-div {
   z-index: 10;
   display: flex;

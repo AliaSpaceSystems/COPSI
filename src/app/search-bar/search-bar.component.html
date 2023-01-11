@@ -43,17 +43,17 @@
     <div class="advanced-search-item-div">
       <label for="sensing-start">Sensing date:</label>
       <div class="datepicker-div">
-        <input type="date" class="date" id="sensing-start" name="sensing-start" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()">
+        <input type="date" class="date" id="sensing-start" name="sensing-start" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         <span>-</span>
-        <input type="date" class="date" id="sensing-stop" name="sensing-stop" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()">
+        <input type="date" class="date" id="sensing-stop" name="sensing-stop" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
       </div>
     </div>
     <div class="advanced-search-item-div">
       <label for="publication-start">Publication date:</label>
       <div class="datepicker-div">
-        <input type="date" class="date" id="publication-start" name="publication-start" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()">
+        <input type="date" class="date" id="publication-start" name="publication-start" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         <span>-</span>
-        <input type="date" class="date" id="publication-stop" name="publication-stop" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()">
+        <input type="date" class="date" id="publication-stop" name="publication-stop" min="2020-01-01" max="2023-01-03" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
       </div>
     </div>
   </div>
