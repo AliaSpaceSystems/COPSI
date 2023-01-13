@@ -17,9 +17,11 @@
   </div>
   <!-- hr -->
   <hr>
-  <div id="advanced-search-filter-output">
+  <div id="advanced-search-filter-output" [title]="(productFilter !== '' && attributeFilter !== '') ? productFilter + ' and ' + attributeFilter : ''">
     <p id="filter-output-title">
-      Product Filter: <span>{{productFilter}}</span><br>
+      Product Filter: <span>{{productFilter}}</span>
+    </p>
+    <p>
       Attribute Filter: <span>{{attributeFilter}}</span>
     </p>
   </div>
@@ -63,8 +65,8 @@
     <div class="collapsible-header-div">
       <button type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</button>
       <div class="mission-filter">
-        <label class="switch">
-          <input type="checkbox" class="checkbox" title="Toggle mission filter" (click)="onMissionFilterButtonClicked($event)">
+        <label class="switch" title="Toggle mission filter">
+          <input type="checkbox" class="checkbox" (click)="onMissionFilterButtonClicked($event)">
           <span class="slider"></span>
         </label>
       </div>
@@ -76,7 +78,12 @@
           <option selected value="">---</option>
           <option *ngFor="let value of filter.value">{{value}}</option>
         </select>
-        <input *ngIf="filter.hasOwnProperty('maxValue')" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
+        <input *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == false" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
+        <div *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == true" class="min-max-input-div">
+          <input class="input-min" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Min value - Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
+          <span>-</span>
+          <input class="input-max" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Max value - Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
+        </div>
       </div>
     </div>
     <!-- hr -->

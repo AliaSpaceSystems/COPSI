@@ -297,7 +297,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productFilter += "(";
         bracketOpen = true;
       }
-      this.productFilter += "ContentDate/Start gt " + sensingStartEl.value + "T00:00:00.000Z";
+      this.productFilter += "ContentDate/Start ge " + sensingStartEl.value + "T00:00:00.000Z";
     }
     if (sensingStopEl.value !== "") {
       if (this.productFilter !== "") {
@@ -306,7 +306,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productFilter += "(";
         bracketOpen = true;
       }
-      this.productFilter += "ContentDate/End lt " + sensingStopEl.value + "T23:59:59.999Z";
+      this.productFilter += "ContentDate/End le " + sensingStopEl.value + "T23:59:59.999Z";
     }
     if (publicationStartEl.value !== "") {
       if (this.productFilter !== "") {
@@ -315,7 +315,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productFilter += "(";
         bracketOpen = true;
       }
-      this.productFilter += "PublicationDate/Start gt " + publicationStopEl.value + "T00:00:00.000Z";
+      this.productFilter += "PublicationDate/Start ge " + publicationStopEl.value + "T00:00:00.000Z";
     }
     if (publicationStopEl.value !== "") {
       if (this.productFilter !== "") {
@@ -324,13 +324,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productFilter += "(";
         bracketOpen = true;
       }
-      this.productFilter += "PublicationDate/End lt " + publicationStopEl.value + "T23:59:59.999Z";
+      this.productFilter += "PublicationDate/End le " + publicationStopEl.value + "T23:59:59.999Z";
     }
     if (bracketOpen) {
       this.productFilter += ")";
       bracketOpen = false;
     }
-    //console.log("ProductFilter: " + this.productFilter);
 
     /* Parse Attribute Filter */
     this.attributeFilter = "";
@@ -347,53 +346,55 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           "' and att/" + this.advancedSearchElements[i].attributeType + "/Value eq '" + this.advancedSearchElements[i].value + "')";
       }
       let contentDiv = el.getElementsByClassName('content');
-      let andAdded: boolean = false;
       [].forEach.call(contentDiv, (missionDiv:any) => {
-        let bracketOpen1: boolean = false;
         let missionItems = missionDiv.getElementsByClassName('advanced-search-filter-div');
         [].forEach.call(missionItems, (item:any, k:any) => {
           let select = item.getElementsByTagName('select')[0];
-          let gotValue: boolean = false;
           let value: string = "";
           if (select !== undefined) {
             value = select.value;
             if (value !== "") {
-              gotValue = true;
+              this.attributeFilter += " and Attributes/" + this.advancedSearchElements[i].filters[k].attributeType +
+                "/any(att:att/Name eq '" + this.advancedSearchElements[i].filters[k].attributeName +
+                "' and att/" + this.advancedSearchElements[i].filters[k].attributeType + "/Value eq " +
+                (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
             }
           }
-          let input = item.getElementsByTagName('input')[0];
-          if (input !== undefined) {
-            value = input.value;
-            if (value !== "") {
-              gotValue = true;
+
+          let inputs = item.getElementsByTagName('input');
+          [].forEach.call(inputs, (input:any) => {
+            let gotValue: boolean = false;
+            let value: string = "";
+            let gotMinValue: boolean = false;
+            let gotMaxValue: boolean = false;
+            if (input !== undefined) {
+              value = input.value;
+              if (value !== "") {
+                if (input.classList.contains("input-min")) {
+                  console.log("Min"+input.value);
+                  gotMinValue = true;
+                }
+                if (input.classList.contains("input-max")) {
+                  console.log("Max"+input.value);
+                  gotMaxValue = true;
+                }
+                gotValue = true;
+              }
             }
-          }
-          if (gotValue) {
-            if (!andAdded) {
-              this.attributeFilter += " and ";
-              this.attributeFilter += "(";
-              bracketOpen1 = true;
-              andAdded = true;
-            } else if (this.attributeFilter !== "") {
-              this.attributeFilter += " and "
+            if (gotValue) {
+              this.attributeFilter += " and Attributes/" + this.advancedSearchElements[i].filters[k].attributeType +
+                "/any(att:att/Name eq '" + this.advancedSearchElements[i].filters[k].attributeName +
+                "' and att/" + this.advancedSearchElements[i].filters[k].attributeType + (gotMinValue ? "/Value ge " : (gotMaxValue ? "/Value le " : "/Value eq ")) +
+                (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
             }
-            this.attributeFilter += "Attributes/" + this.advancedSearchElements[i].filters[k].attributeType +
-              "/any(att:att/Name eq '" + this.advancedSearchElements[i].filters[k].attributeName +
-              "' and att/" + this.advancedSearchElements[i].filters[k].attributeType + "/Value eq " +
-              (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
-          }
+          });
         });
-        if (bracketOpen1) {
-          this.attributeFilter += ")";
-          bracketOpen1 = false;
-        }
       });
       if (bracketOpen0) {
         this.attributeFilter += ")";
         bracketOpen0 = false;
       }
     });
-    //console.log("AttributeFilter: " + this.attributeFilter);
   }
 
   onSearch(event: any) {

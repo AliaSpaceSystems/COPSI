@@ -279,7 +279,8 @@
           "attributeType": "OData.CSC.IntegerAttribute",
           "minValue": 1,
           "maxValue": 175,
-          "step": 1
+          "step": 1,
+          "needsMinMaxValues": false
         }
       ]
     },
@@ -315,7 +316,8 @@
           "attributeType": "OData.CSC.IntegerAttribute",
           "minValue": 1,
           "maxValue": 143,
-          "step": 1
+          "step": 1,
+          "needsMinMaxValues": false
         },
         {
           "name": "Cloud Cover %",
@@ -323,7 +325,8 @@
           "attributeType": "OData.CSC.DoubleAttribute",
           "minValue": 0.00,
           "maxValue": 100.00,
-          "step": 0.01
+          "step": 0.01,
+          "needsMinMaxValues": true
         }
       ]
     },
@@ -405,14 +408,15 @@
           "attributeType": "OData.CSC.IntegerAttribute",
           "minValue": 1,
           "maxValue": 385,
-          "step": 1
+          "step": 1,
+          "needsMinMaxValues": false
         }
       ]
     },
     {
       "name": "Mission",
       "mission": "Sentinel-5p",
-      "value": "Sentinel-5p",
+      "value": "SENTINEL-5P",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "filters": [
@@ -473,7 +477,8 @@
           "attributeType": "OData.CSC.IntegerAttribute",
           "minValue": 0,
           "maxValue": 99999,
-          "step": 1
+          "step": 1,
+          "needsMinMaxValues": false
         }
       ]
     }
