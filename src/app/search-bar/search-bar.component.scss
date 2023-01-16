@@ -96,10 +96,13 @@ input:focus {
   top: 2.5rem;
   left: 0;
   width: $search-bar-width;
+  height: auto;
   padding: 0;
   bottom: 0;
   border-radius: 0.25rem;
   color: $main-dark-text-color;
+
+  pointer-events: none;
 }
 
 #product-list-div {
@@ -121,6 +124,8 @@ input:focus {
   border-radius: 0.25rem;
   border-bottom: 1px solid black;
   transition: visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
+
+  pointer-events: visible;
 }
 #product-list-header-text {
   font-size: $search-bar-font-size;
@@ -160,6 +165,8 @@ input:focus {
   overflow: hidden;
   padding: 0.1rem 0 0.5rem 0;
   gap: 0 0.5rem;
+
+  pointer-events: none;
 }
 
 #list-items-container {
@@ -174,6 +181,8 @@ input:focus {
   padding: 0 0 0 0;
   gap: 0.1rem;
   transition: visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
+
+  pointer-events: visible;
 }
 
 /* Scrollbar hiding */
@@ -390,6 +399,8 @@ input:focus {
   margin: 0;
   align-self: center;
   box-shadow: $default-shadow;
+
+  pointer-events: visible;
 }
 #show-hide-list-icon {
   font-size: 1rem;
