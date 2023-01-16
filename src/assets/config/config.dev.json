@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-SNAPSHOT",
+  "version": "1.0.1",
   "centreInfo": {
       "name": "",
       "image": "",
@@ -180,7 +180,7 @@
     {
         "name": "OSM",
         "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    },    
+    },
     {
         "name": "Terrain Light",
         "url": "https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg"
