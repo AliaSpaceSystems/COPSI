@@ -198,6 +198,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onShowAdvancedSearch(event: any) {
     let advancedSearchMenu = document.getElementById('advanced-search-menu');
     if (this.showAdvancedSearch) {
+
       this.showAdvancedSearch = false;
       this.productListRolled = true;
       setTimeout(() => {
@@ -248,7 +249,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (advancedSearchMenu!.style.visibility == 'visible') {
       this.onShowAdvancedSearch(event);
     }
-
     /* Send Search */
     this.onSearch(event);
   }
@@ -280,12 +280,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   onSortByChanged(event: any) {
     this.sortBy = AppConfig.settings.searchOptions.sortByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
-    console.log(this.sortBy);
   }
 
   onOrderByChanged(event: any) {
     this.orderBy = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
-    console.log(this.orderBy);
   }
 
   parseAdvancedFilter() {
@@ -330,6 +328,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.productFilter += ")";
       bracketOpen = false;
     }
+    //console.log("ProductFilter: " + this.productFilter);
 
     /* Parse Attribute Filter */
     this.attributeFilter = "";
@@ -371,11 +370,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
               value = input.value;
               if (value !== "") {
                 if (input.classList.contains("input-min")) {
-                  console.log("Min"+input.value);
                   gotMinValue = true;
                 }
                 if (input.classList.contains("input-max")) {
-                  console.log("Max"+input.value);
                   gotMaxValue = true;
                 }
                 gotValue = true;
@@ -395,6 +392,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         bracketOpen0 = false;
       }
     });
+    //console.log("AttributeFilter: " + this.attributeFilter);
+
   }
 
   onSearch(event: any) {
@@ -422,8 +421,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       (res: any) => {
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
-        //console.log(res);
-
         if ("status" in res) {
           /* response error */
           this.productList = {
@@ -563,8 +560,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   onShowHideButtonClick(event: any) {
     if (this.listIsReady) {
-      let arrowIcon = document.getElementById('show-hide-list-icon')!;
-      let listItemParentContainer = document.getElementById('list-items-parent-container');
+
+      let listItemParentContainer = document.getElementById('list-items-parent-container')!;
       if (this.productListRolled) {
         this.productListRolled = false;
         this.showAdvancedSearch = false;
@@ -581,7 +578,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         productListContainer.style.left = '0.5rem';
         this.calcThumbSize();
         listItemParentContainer!.style.gap = '0 0.5rem';
-        arrowIcon.innerText =  "keyboard_arrow_left";
       } else {
         this.productListRolled = true;
         listContainer.style.visibility = 'hidden';
@@ -591,7 +587,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         productListContainer.style.left = (-productListContainer.clientWidth - scrollThumb.clientWidth - 2).toString() + 'px';
         scrollThumb.style.visibility = 'hidden';
         listItemParentContainer!.style.gap = '0 1.0rem';
-        arrowIcon.innerText =  "keyboard_arrow_right";
       }
     }
     if (event != null) event.stopPropagation();
@@ -713,7 +708,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                           .clone()
                           .css({display: 'inline', height: 'auto', visibility: 'hidden'})
                           .appendTo('body');
-
     if ($listContainerCopy.height() > $listContainer.height() && this.productTotalNumber > 0) {
       scrollThumb.style.visibility = 'visible';
       this.scrollSize = $listContainer.height() * $listContainer.height() / $listContainerCopy.height();
