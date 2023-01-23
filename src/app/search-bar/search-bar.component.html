@@ -54,6 +54,8 @@
                 <div class="progress-value" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">
                   {{product.download.progress}}%
                 </div>
+                <mat-icon class="progress-cancel" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear" (click)="unsubscribeDownload(product.Id)"></mat-icon>
+                <mat-icon class="progress-done" *ngIf="product.download && (product.download.state == 'DONE')" aria-hidden="false" aria-label="done-download" title="Download done" fontIcon="done"></mat-icon>
               </div>
             </div>
             <div class="tag-ql-div">

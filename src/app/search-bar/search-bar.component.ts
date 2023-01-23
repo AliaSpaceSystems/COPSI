@@ -48,7 +48,7 @@ let copsyBlueColor_BLUE: number = parseInt(copsyBlueColor.slice(5, 7), 16);
   ]
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
-  productListSubscription!: Subscription;
+  public productListSubscription!: Subscription;
   public showProductList: boolean = false;
   public productListRolled: boolean = false;
 
@@ -87,6 +87,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public thumbColorTimeout: any;
 
   download$: Observable<Download> | undefined
+  public downloadSubscription!: Subscription;
 
   constructor(
     private exchangeService: ExchangeService,
@@ -168,6 +169,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.productListSubscription.unsubscribe();
+    if (this.downloadSubscription != null) {
+      this.downloadSubscription.unsubscribe();
+    }
   }
 
   onSearch(event: any) {
@@ -441,12 +445,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   downloadProduct(id: string, name: string) {
     this.toast.showInfoToast('success', 'DOWNLOADING PRODUCT...');
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
-    this.productSearch.download(downloadUrl, name).subscribe({
+    this.downloadSubscription = this.productSearch.download(downloadUrl, name).subscribe({
       next: (res: any) => {
         //console.log(res);
         this.productList.value.forEach((product: any) => {
           if (product.Id == id) {
             product.download = res;
+            console.log(res);
+
           }
         });
         //this.exchangeService.setProductList(this.productList);
@@ -461,6 +467,18 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
     });
     /**/
+  }
+
+  unsubscribeDownload(id: string) {
+    if (this.downloadSubscription != null) {
+      this.productList.value.forEach((product: any) => {
+        if (product.Id == id) {
+          product.download = null;
+          this.downloadSubscription.unsubscribe();
+          this.toast.showInfoToast('error', 'DOWNLOAD STOPPED!');
+        }
+      });
+    }
   }
 
   calcThumbPos() {

@@ -275,9 +275,21 @@ input:focus {
   width: 100%;
 }
 .progress-value {
-  text-align: left;
   font-weight: normal;
   font-size: $search-bar-font-size-small;
+}
+.progress-cancel {
+  cursor: pointer;
+  margin-left: -0.5rem;
+  font-size: $search-bar-product-icons-dim;
+  width: $search-bar-product-icons-dim;
+  height: $search-bar-product-icons-dim;
+  transition: opacity 0.15s ease-in-out;
+}
+.progress-done {
+  font-size: $search-bar-product-icons-dim;
+  width: $search-bar-product-icons-dim;
+  height: $search-bar-product-icons-dim;
 }
 
 /* metadata */
