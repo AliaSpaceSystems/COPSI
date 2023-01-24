@@ -280,11 +280,12 @@ input:focus {
 }
 .progress-cancel {
   cursor: pointer;
-  margin-left: -0.5rem;
   font-size: $search-bar-product-icons-dim;
   width: $search-bar-product-icons-dim;
   height: $search-bar-product-icons-dim;
   transition: opacity 0.15s ease-in-out;
+
+  color: red;
 }
 .progress-done {
   font-size: $search-bar-product-icons-dim;
@@ -392,8 +393,8 @@ input:focus {
   height: $search-bar-product-icons-dim;
   transition: opacity 0.15s ease-in-out;
 }
-.item-button-icon:hover {
-  opacity: 0.7;
+.downloaded {
+  color: $copsi-blue;
 }
 
 /* Show/Hide button */

@@ -308,12 +308,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     );
   }
 
-  selectProduct(e:any) {
-    //let selectedProductId = $(e.currentTarget).data('productid');
-    //console.log("index: " + $(e.currentTarget).index());
-    //this.exchangeService.selectProductOnMap(selectedProductId);
-  }
-
   hoverProduct(e: any) {
     let hoveredProduct = $(e.currentTarget).index();
     this.exchangeService.showProductOnMap(hoveredProduct);
@@ -455,7 +449,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
           }
         });
-        //this.exchangeService.setProductList(this.productList);
       }
       , error: (e) => {
         this.productList.value.forEach((product: any) => {
@@ -463,17 +456,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             product.download = {};
           }
         });
-        //this.exchangeService.setProductList(this.productList);
       }
     });
-    /**/
   }
 
   unsubscribeDownload(id: string) {
     if (this.downloadSubscription != null) {
       this.productList.value.forEach((product: any) => {
         if (product.Id == id) {
-          product.download = null;
+          product.download.state = null;
           this.downloadSubscription.unsubscribe();
           this.toast.showInfoToast('error', 'DOWNLOAD STOPPED!');
         }

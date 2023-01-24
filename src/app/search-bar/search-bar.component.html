@@ -54,8 +54,6 @@
                 <div class="progress-value" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">
                   {{product.download.progress}}%
                 </div>
-                <mat-icon class="progress-cancel" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear" (click)="unsubscribeDownload(product.Id)"></mat-icon>
-                <mat-icon class="progress-done" *ngIf="product.download && (product.download.state == 'DONE')" aria-hidden="false" aria-label="done-download" title="Download done" fontIcon="done"></mat-icon>
               </div>
             </div>
             <div class="tag-ql-div">
@@ -71,15 +69,20 @@
                   <img class="quicklook" src="./assets/images/no-preview-1.png">
                 </div>
 
-                <!-- <div> -->
                 <div class="ql-buttons-div">
-                  <!-- <mat-icon id="info" class="item-button-icon" aria-hidden="false" aria-label="Info" title="Info" fontIcon="info"></mat-icon> -->
                   <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
                   (click)="copyUrl(product.Id)"></mat-icon>
-                  <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
-                  (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                  <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
+                    <mat-icon *ngIf="product.download.state == 'DONE'" id="download" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                      (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                    <mat-icon *ngIf="(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
+                      (click)="unsubscribeDownload(product.Id)"></mat-icon>
+                  </ng-template>
+                  <ng-template #downloadDefault>
+                    <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                      (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                  </ng-template>
                 </div>
-                <!-- </div> -->
               </div>
             </div>
           </div>
