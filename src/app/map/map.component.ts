@@ -392,7 +392,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       filled: true,
       extruded: false,
       lineWidthMinPixels: 1,
-      lineWidthMaxPixels: 50000,
+      lineWidthMaxPixels: 100000,
       getLineWidth: (d: any, f:any) => {
         let ret: number = 0;
         if (f.index == this.highlightedFootprintIndex) ret = 50000;
@@ -400,13 +400,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       getFillColor: (d:any, f:any) => {
         let tempCol = d.properties.Color;
-        if (f.index == this.highlightedFootprintIndex) tempCol = [255, 255, 0, 255];
+        if (f.index == this.highlightedFootprintIndex) tempCol = [255, 125, 0, 25];
         return tempCol;
       },
       highlightColor: this.highlightedFootprintColor,
       getLineColor: (d:any, f:any) => {
         let tempCol = this.footprintBorderColor;
-        if (f.index == this.highlightedFootprintIndex) tempCol = [255, 0, 0, 255];
+        if (f.index == this.highlightedFootprintIndex) tempCol = [0, 0, 0, 255];
         return tempCol;
       },
       getPolygonOffset: (layerIndex:any) => {

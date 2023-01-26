@@ -29,7 +29,7 @@
   },
   "keycloak": {
       "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-      "redirectUri": "http://192.168.0.109:4200/home",
+      "redirectUri": "http://localhost:4200/home",
       "clientId": "prip-api",
       "responseType": "code",
       "scope": "openid profile email",
@@ -168,7 +168,7 @@
     }
   ],
   "footprints": {
-    "defaultColor": "#ff640056",
+    "defaultColor": "#ff640010",
     "borderColor": "#000000ff",
     "highlightedColor": "#00aeefcc"
   },
