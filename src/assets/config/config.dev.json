@@ -168,9 +168,9 @@
     }
   ],
   "footprints": {
-    "defaultColor": "#ff640010",
-    "borderColor": "#000000ff",
-    "highlightedColor": "#00aeefcc"
+    "defaultColor": "#ff640020",
+    "borderColor": "#00000050",
+    "borderWidth": 5
   },
   "styles": [
     {
