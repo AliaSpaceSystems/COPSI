@@ -87,7 +87,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public thumbColorTimeout: any;
 
   download$: Observable<Download> | undefined
-  public downloadSubscription!: Subscription;
+  public downloadSubscription: Map<String, Subscription> = new Map();
 
   constructor(
     private exchangeService: ExchangeService,
@@ -169,8 +169,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.productListSubscription.unsubscribe();
-    if (this.downloadSubscription != null) {
-      this.downloadSubscription.unsubscribe();
+    if (this.downloadSubscription.size > 0) {
+      this.downloadSubscription.forEach(sub => {
+        sub.unsubscribe();
+      });
     }
   }
 
@@ -258,7 +260,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
                   product.qlURL = "";
                 }
               },
-              error: (e) => {} 
+              error: (e) => {}
             });
           });
           this.exchangeService.setProductList(this.productList);
@@ -439,25 +441,26 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   downloadProduct(id: string, name: string) {
     this.toast.showInfoToast('success', 'DOWNLOADING PRODUCT...');
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
-    this.downloadSubscription = this.productSearch.download(downloadUrl, name).subscribe({
-      next: (res: any) => {
-        //console.log(res);
-        this.productList.value.forEach((product: any) => {
-          if (product.Id == id) {
-            product.download = res;
-            console.log(res);
 
-          }
-        });
-      }
-      , error: (e) => {
-        this.productList.value.forEach((product: any) => {
-          if (product.Id == id) {
-            product.download = {};
-          }
-        });
-      }
-    });
+    this.downloadSubscription.set(id ,this.productSearch.download(downloadUrl, name).subscribe({
+        next: (res: any) => {
+          this.productList.value.forEach((product: any) => {
+            if (product.Id == id) {
+              product.download = res;
+              console.log(res);
+
+            }
+          });
+        }
+        , error: (e) => {
+          this.productList.value.forEach((product: any) => {
+            if (product.Id == id) {
+              product.download = {};
+            }
+          });
+        }
+      })
+    );
   }
 
   unsubscribeDownload(id: string) {
@@ -465,7 +468,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.productList.value.forEach((product: any) => {
         if (product.Id == id) {
           product.download.state = null;
-          this.downloadSubscription.unsubscribe();
+          this.downloadSubscription.get(id)!.unsubscribe();
           this.toast.showInfoToast('error', 'DOWNLOAD STOPPED!');
         }
       });
