@@ -54,9 +54,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedProductIdSubscription!: Subscription;
 
   public defaultFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultColor);
-  public footprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.borderColor);
-  public highlightedFootprintIndex: number = -1;
-  public highlightedFootprintBorderWidth: number = AppConfig.settings.footprints.borderWidth;
+  public defaultFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultBorderColor);
+  public defaultFootprintBorderWidth: number = AppConfig.settings.footprints.defaultBorderWidth;
+  public selectedFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.selectedColor);
+  public selectedFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.selectedBorderColor);
+  public selectedFootprintBorderWidth: number = AppConfig.settings.footprints.selectedBorderWidth;
+  public selectedFootprintIndex: number = -1;
 
   /* Base Map Layer */
   public mapLayerPlane: any;
@@ -72,12 +75,34 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     extruded: false,
     lineWidthUnits: 'pixels',
     lineWidthMinPixels: 1,
-    lineWidthMaxPixels: 100,
-    getLineWidth: 1,
+    lineWidthMaxPixels: this.defaultFootprintBorderWidth,
+    getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
-    getLineColor: this.footprintBorderColor,
+    getLineColor: this.defaultFootprintBorderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -layerIndex * 100]
+    },
+    wrapLongitude: true,
+    highlightedObjectIndex: -1,
+    fp64: true
+  })
+
+  public geojsonLayerPlaneSelected = new GeoJsonLayer({
+    id: 'geojson-layer-selected',
+    data: geojsonData,
+    pickable: true,
+    stroked: true,
+    visible: true,
+    filled: true,
+    extruded: false,
+    lineWidthUnits: 'pixels',
+    lineWidthMinPixels: 1,
+    lineWidthMaxPixels: this.selectedFootprintBorderWidth,
+    getLineWidth: this.selectedFootprintBorderWidth,
+    getFillColor: [0, 0, 0, 0],
+    getLineColor: [0, 0, 0, 0],
+    getPolygonOffset: (layerIndex:any) => {
+      return [0, -layerIndex * 1000]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -94,12 +119,34 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     extruded: false,
     lineWidthUnits: 'pixels',
     lineWidthMinPixels: 1,
-    lineWidthMaxPixels: 100,
-    getLineWidth: 1,
+    lineWidthMaxPixels: this.defaultFootprintBorderWidth,
+    getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
-    getLineColor: this.footprintBorderColor,
+    getLineColor: this.defaultFootprintBorderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -layerIndex * 100]
+    },
+    wrapLongitude: true,
+    highlightedObjectIndex: -1,
+    fp64: true
+  })
+
+  public geojsonLayerGlobeSelected = new GeoJsonLayer({
+    id: 'geojson-layer-selected',
+    data: geojsonData,
+    pickable: true,
+    stroked: true,
+    visible: true,
+    filled: true,
+    extruded: false,
+    lineWidthUnits: 'pixels',
+    lineWidthMinPixels: 1,
+    lineWidthMaxPixels: this.selectedFootprintBorderWidth,
+    getLineWidth: this.selectedFootprintBorderWidth,
+    getFillColor: [0, 0, 0, 0],
+    getLineColor: [0, 0, 0, 0],
+    getPolygonOffset: (layerIndex:any) => {
+      return [0, -layerIndex * 1000]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -230,7 +277,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Base Map Layer */
         this.mapLayerGlobe,
         /* Footprint geojson layer */
-        this.geojsonLayerGlobe
+        this.geojsonLayerGlobe,
+        /* Selected footprint layer */
+        this.geojsonLayerGlobeSelected
       ],
       wrapLongitude: true
     });
@@ -254,7 +303,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Base Map Layer */
         this.mapLayerPlane,
         /* Footprint geojson layer */
-        this.geojsonLayerPlane
+        this.geojsonLayerPlane,
+        /* Selected footprint layer */
+        this.geojsonLayerPlaneSelected
       ]
     });
   }
@@ -290,7 +341,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       /* Base Map Layer */
       this.mapLayerPlane,
       /* Footprint geojson layer */
-      this.geojsonLayerPlane
+      this.geojsonLayerPlane,
+      this.geojsonLayerPlaneSelected
     ]
     deckPlane.setProps({layers: layersPlane});
 
@@ -300,6 +352,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.mapLayerGlobe,
       /* Footprint geojson layer */
       this.geojsonLayerGlobe.clone({
+        visible: true
+      }),
+      this.geojsonLayerGlobeSelected.clone({
         visible: true
       })
     ]
@@ -350,7 +405,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerGlobe = this.geojsonLayerGlobe.clone({
         data: geojsonData
       })
+      this.geojsonLayerGlobeSelected = this.geojsonLayerGlobeSelected.clone({
+        data: geojsonData
+      })
       this.geojsonLayerPlane = this.geojsonLayerPlane.clone({
+        data: geojsonData
+      })
+      this.geojsonLayerPlaneSelected = this.geojsonLayerPlaneSelected.clone({
         data: geojsonData
       })
       /* Update Plane View */
@@ -358,7 +419,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Base Map Layer */
         this.mapLayerPlane,
         /* Footprint geojson layer */
-        this.geojsonLayerPlane
+        this.geojsonLayerPlane,
+        /* Selected footprints layer */
+        this.geojsonLayerPlaneSelected
       ]
       deckPlane.setProps({layers: layersPlane});
 
@@ -367,14 +430,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Base Map Layer */
         this.mapLayerGlobe,
         /* Footprint geojson layer */
-        this.geojsonLayerGlobe
+        this.geojsonLayerGlobe,
+        /* Selected footprints layer */
+        this.geojsonLayerGlobeSelected
       ]
       deckGlobe.setProps({layers: layersGlobe});
     }
   }
 
   showProductFootprint(showProductIndex: number) {
-    this.highlightedFootprintIndex = showProductIndex;
+    this.selectedFootprintIndex = showProductIndex;
     this.geojsonLayerGlobe = this.geojsonLayerGlobe.clone({
       id: 'geojson-layer',
       data: geojsonData,
@@ -385,26 +450,52 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       extruded: false,
       lineWidthUnits: 'pixels',
       lineWidthMinPixels: 1,
-      lineWidthMaxPixels: 100,
-      getLineWidth: (d: any, f:any) => {
-        let ret: number = 1;
-        if (f.index == this.highlightedFootprintIndex) ret = this.highlightedFootprintBorderWidth;
-        return ret;
-      },
-      getFillColor: (d:any, f:any) => {
-        let tempCol = d.properties.Color;
-        if (f.index == this.highlightedFootprintIndex) tempCol = this.defaultFootprintColor;
-        return tempCol;
-      },
-      getLineColor: this.footprintBorderColor,
+      lineWidthMaxPixels: this.defaultFootprintBorderWidth,
+      getLineWidth: this.defaultFootprintBorderWidth,
+      getFillColor: this.defaultFootprintColor,
+      getLineColor: this.defaultFootprintBorderColor,
       getPolygonOffset: (layerIndex:any) => {
         return [0, -layerIndex * 100]
       },
       wrapLongitude: true,
+      fp64: true
+    })
+
+    this.geojsonLayerGlobeSelected = this.geojsonLayerGlobeSelected.clone({
+      id: 'geojson-layer-selected',
+      data: geojsonData,
+      pickable: true,
+      stroked: true,
+      visible: true,
+      filled: true,
+      extruded: false,
+      lineWidthUnits: 'pixels',
+      lineWidthMinPixels: 1,
+      lineWidthMaxPixels: this.selectedFootprintBorderWidth,
+      getLineWidth: (d: any, f:any) => {
+        let ret: number = 1;
+        if (f.index == this.selectedFootprintIndex) ret = this.selectedFootprintBorderWidth;
+        return ret;
+      },
+      getFillColor: (d:any, f:any) => {
+        let tempCol = [0, 0, 0, 0];
+        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintColor;
+        return tempCol;
+      },
+      getLineColor: (d:any, f:any) => {
+        let tempCol = [0, 0, 0, 0];
+        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintBorderColor;
+        return tempCol;
+      },
+      getPolygonOffset: (layerIndex:any) => {
+        return [0, -layerIndex * 1000]
+      },
+      wrapLongitude: true,
       fp64: true,
       updateTriggers: {
-        getFillColor: [this.highlightedFootprintIndex],
-        getLineWidth: [this.highlightedFootprintIndex]
+        getFillColor: [this.selectedFootprintIndex],
+        getLineWidth: [this.selectedFootprintIndex],
+        getLineColor: [this.selectedFootprintIndex]
       }
     })
 
@@ -418,38 +509,66 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       extruded: false,
       lineWidthUnits: 'pixels',
       lineWidthMinPixels: 1,
-      lineWidthMaxPixels: 100,
-      getLineWidth: (d: any, f:any) => {
-        let ret: number = 1;
-        if (f.index == this.highlightedFootprintIndex) ret = this.highlightedFootprintBorderWidth;
-        return ret;
-      },
-      getFillColor: (d:any, f:any) => {
-        let tempCol = d.properties.Color;
-        if (f.index == this.highlightedFootprintIndex) tempCol = this.defaultFootprintColor;
-        return tempCol;
-      },
-      getLineColor: this.footprintBorderColor,
+      lineWidthMaxPixels: this.defaultFootprintBorderWidth,
+      getLineWidth: this.defaultFootprintBorderWidth,
+      getFillColor: this.defaultFootprintColor,
+      getLineColor: this.defaultFootprintBorderColor,
       getPolygonOffset: (layerIndex:any) => {
         return [0, -layerIndex * 100]
       },
       wrapLongitude: true,
+      fp64: true
+    })
+
+    this.geojsonLayerPlaneSelected = this.geojsonLayerPlaneSelected.clone({
+      id: 'geojson-layer-selected',
+      data: geojsonData,
+      pickable: true,
+      stroked: true,
+      visible: true,
+      filled: true,
+      extruded: false,
+      lineWidthUnits: 'pixels',
+      lineWidthMinPixels: 1,
+      lineWidthMaxPixels: this.selectedFootprintBorderWidth,
+      getLineWidth: (d: any, f:any) => {
+        let ret: number = 1;
+        if (f.index == this.selectedFootprintIndex) ret = this.selectedFootprintBorderWidth;
+        return ret;
+      },
+      getFillColor: (d:any, f:any) => {
+        let tempCol = [0, 0, 0, 0];
+        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintColor;
+        return tempCol;
+      },
+      getLineColor: (d:any, f:any) => {
+        let tempCol = [0, 0, 0, 0];
+        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintBorderColor;
+        return tempCol;
+      },
+      getPolygonOffset: (layerIndex:any) => {
+        return [0, -layerIndex * 1000]
+      },
+      wrapLongitude: true,
       fp64: true,
       updateTriggers: {
-        getFillColor: [this.highlightedFootprintIndex],
-        getLineWidth: [this.highlightedFootprintIndex]
+        getFillColor: [this.selectedFootprintIndex],
+        getLineWidth: [this.selectedFootprintIndex],
+        getLineColor: [this.selectedFootprintIndex]
       }
     })
 
     const layersPlane =  [
       this.mapLayerPlane,
-      this.geojsonLayerPlane
+      this.geojsonLayerPlane,
+      this.geojsonLayerPlaneSelected
     ]
     deckPlane.setProps({layers: layersPlane});
 
     const layersGlobe =  [
       this.mapLayerGlobe,
-      this.geojsonLayerGlobe
+      this.geojsonLayerGlobe,
+      this.geojsonLayerGlobeSelected
     ]
     deckGlobe.setProps({layers: layersGlobe});
   }

@@ -29,7 +29,7 @@
   },
   "keycloak": {
       "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-      "redirectUri": "http://localhost:4200/home",
+      "redirectUri": "http://192.168.0.109:4200/home",
       "clientId": "prip-api",
       "responseType": "code",
       "scope": "openid profile email",
@@ -38,7 +38,7 @@
       "disableAtHashCheck": true,
       "useSilentRefresh": false
   },
-  "quicklookURL": "<base_url>/test/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
+  "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
   "infoLogosLeft": [
       { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
       { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },
@@ -169,8 +169,11 @@
   ],
   "footprints": {
     "defaultColor": "#ff640020",
-    "borderColor": "#00000050",
-    "borderWidth": 5
+    "defaultBorderColor": "#000000dd",
+    "defaultBorderWidth": 1,
+    "selectedColor": "#00aeefff",
+    "selectedBorderColor": "#00ff00bb",
+    "selectedBorderWidth": 5
   },
   "styles": [
     {
