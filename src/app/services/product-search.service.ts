@@ -78,7 +78,7 @@ export class ProductSearchService {
   */
   //search(filter: string, top: number, skip: number = 0, order: string='PublicationDate', sort: string='desc') {
   search(searchOptions: any) {
-    console.log(searchOptions);
+    //console.log(searchOptions);
     // return odata/v1/Products?$count=true with additional optional filters response in JSON Format
     let order = 'PublicationDate';
     let sort = 'desc';
@@ -87,7 +87,7 @@ export class ProductSearchService {
     let productsUrl = AppConfig.settings.baseUrl + 'odata/v1/Products?$expand=Attributes';
     //The option $count=true requires only the $filter parameter. No $orderby or $skip is needed for the count.
     //The $top is fixed to 1
-    let filter = "";    
+    let filter = "";
     let checkWildcard = (searchOptions && searchOptions.filter) ? searchOptions.filter.replace(/\*/g, '') : '';
     if(searchOptions && searchOptions.filter && searchOptions.filter.trim() && checkWildcard) {
       filter = this.parseFilter(searchOptions.filter);
@@ -138,7 +138,7 @@ export class ProductSearchService {
   /* getQL(uuid: string) is used to check if there is a quicklook for that product id */
   getQL(uuid: string) {
     let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', AppConfig.settings.baseUrl).replace('<uuid>', uuid);
-    
+
     return this.http.get(
       uuidURL, {
         responseType: 'blob'
