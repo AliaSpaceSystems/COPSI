@@ -18,7 +18,6 @@ let productListScrollThumb: any;
 let advancedSearchContainer: any;
 let advancedSearchScrollThumb: any;
 let filterOutputContainer: any;
-let filterOutputScrollBar: any;
 let filterOutputScrollThumb: any;
 let detailedView: any;
 let simpleView: any;
@@ -30,10 +29,10 @@ let sensingStopEl: any;
 let publicationStartEl: any;
 let publicationStopEl: any;
 let missionEl: any;
-let copsyBlueColor: string = '#00aeef';
-let copsyBlueColor_RED: number = parseInt(copsyBlueColor.slice(1, 3), 16);
-let copsyBlueColor_GREEN: number = parseInt(copsyBlueColor.slice(3, 5), 16);
-let copsyBlueColor_BLUE: number = parseInt(copsyBlueColor.slice(5, 7), 16);
+let copsyBlueColor: any;
+let copsyBlueColor_RED: number;
+let copsyBlueColor_GREEN: number;
+let copsyBlueColor_BLUE: number;
 
 @Component({
   selector: 'app-search-bar',
@@ -87,6 +86,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public prevPage: number = 0;
   public searchOptions: any;
 
+  public searchBarWidth: number = 0;
   public listContainerTempWidth: any;
   public listIsReady: boolean = false;
 
@@ -150,7 +150,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       tempTodayDate.getDate().toString().padStart(2, '0')
     ].join('-');
 
-
+    this.searchBarWidth = document.getElementById('search-bar-main-div')!.offsetWidth;
+    copsyBlueColor = window.getComputedStyle(document.getElementById('get-properties-div')!).backgroundColor;
+    let colorsOnly = copsyBlueColor.substring(
+      copsyBlueColor.indexOf('(') + 1,
+      copsyBlueColor.lastIndexOf(')')
+    ).split(/,\s*/)
+    copsyBlueColor_RED = colorsOnly[0];
+    copsyBlueColor_GREEN = colorsOnly[1];
+    copsyBlueColor_BLUE = colorsOnly[2];
 
     /* Product list scroll thumb */
     let askNextPage: boolean = false;
@@ -772,14 +780,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcFilterThumbSize() {
-    var $filterContainer = $('#advanced-search-filter-output-scrollable-container');
-    var $filterContainerCopy = $filterContainer
-                          .clone()
-                          .css({display: 'inline', height: 'auto', visibility: 'hidden'})
-                          .appendTo('body');
-    if ($filterContainerCopy.height() > $filterContainer.height()) {
+    var $filterScrollableContainer = $('#advanced-search-filter-output-scrollable-container');
+    var $filterContainer = $('#advanced-search-filter-output');
+    var $filterContainerCopy = $filterContainer.clone()
+                                              .css({display: 'inline', height: 'auto', visibility: 'hidden', width: this.searchBarWidth, position: 'absolute'})
+                                              .appendTo('body');
+    console.log("$filterContainerCopy.height(): " + $filterContainerCopy.height());
+    console.log("$filterScrollableContainer.height(): " + $filterScrollableContainer.height());
+
+    if ($filterContainerCopy.height() > $filterScrollableContainer.height()) {
       filterOutputScrollThumb.style.visibility = 'visible';
-      this.scrollFilterSize = $filterContainer.height() * $filterContainer.height() / $filterContainerCopy.height();
+      this.scrollFilterSize = $filterScrollableContainer.height() * $filterScrollableContainer.height() / $filterContainerCopy.height();
     } else {
       filterOutputScrollThumb.style.visibility = 'hidden';
     }
