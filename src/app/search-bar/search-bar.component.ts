@@ -14,7 +14,12 @@ declare let $: any;
 let listContainer: any;
 let productListContainer: any;
 let productListHeader: any;
-let scrollThumb: any;
+let productListScrollThumb: any;
+let advancedSearchContainer: any;
+let advancedSearchScrollThumb: any;
+let filterOutputContainer: any;
+let filterOutputScrollBar: any;
+let filterOutputScrollThumb: any;
 let detailedView: any;
 let simpleView: any;
 let minimalView: any;
@@ -62,6 +67,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public orderBy: string = this.orderByOptions[0].value;
   public advancedSearchElements = AppConfig.settings.advancedSearchElements;
   public advancedFilterIsActive: boolean = false;
+  public todayDate: string = '';
 
   @Input()
   public filter: string = "";
@@ -91,13 +97,18 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public lastQlDivBGColor: string = "";
   public lastQlDivBorderColor: string = "";
 
-  public scrollThumbPos: number = 0;
-  public scrollCounter: number = 0;
-  public scrollCounterThreshold: number = 750;
-  public scrollThumbTempPos: number = 0;
-  public scrollSize: number = 0;
+  public scrollListThumbPos: number = 0;
+  public scrollListCounter: number = 0;
+  public scrollListCounterThreshold: number = 750;
+  public scrollListThumbTempPos: number = 0;
+  public scrollListSize: number = 0;
+  public listThumbColorTimeout: any;
 
-  public thumbColorTimeout: any;
+  public scrollSearchThumbPos: number = 0;
+  public scrollSearchSize: number = 0;
+
+  public scrollFilterThumbPos: number = 0;
+  public scrollFilterSize: number = 0;
 
   download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
@@ -124,6 +135,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     listContainer = document.getElementById('list-items-container')!;
     productListHeader = document.getElementById('product-list-header')!;
     productListContainer = document.getElementById('product-list-container')!;
+    advancedSearchContainer = document.getElementById('advanced-search-scrollable-container')!;
+    filterOutputContainer = document.getElementById('advanced-search-filter-output-scrollable-container')!;
 
     sensingStartEl = document.getElementById('sensing-start')!;
     sensingStopEl = document.getElementById('sensing-stop')!;
@@ -131,37 +144,46 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     publicationStopEl = document.getElementById('publication-stop')!;
     missionEl = document.getElementsByClassName('collapsible-section')!;
 
+    let tempTodayDate = new Date();
+    this.todayDate = [tempTodayDate.getFullYear(),
+      (tempTodayDate.getMonth() + 1).toString().padStart(2, '0'),
+      tempTodayDate.getDate().toString().padStart(2, '0')
+    ].join('-');
+
+
+
+    /* Product list scroll thumb */
     let askNextPage: boolean = false;
     let askPrevPage: boolean = false;
-    let wheelDeltaY: number = 0;
-    scrollThumb = document.getElementById('scroll-thumb')!;
-    this.dragElement(scrollThumb);
+    let wheelListDeltaY: number = 0;
+    productListScrollThumb = document.getElementById('product-list-scroll-thumb')!;
+    this.dragElement(productListScrollThumb);
 
     listContainer!.addEventListener('wheel', (e: any) => {
-      wheelDeltaY = e.deltaY;
+      wheelListDeltaY = e.deltaY;
       if (askNextPage) {
-        if (wheelDeltaY < 0) {
+        if (wheelListDeltaY < 0) {
           askNextPage = false;
         } else {
-          this.scrollCounter += wheelDeltaY;
-          this.calcColorThumb();
-          if (this.scrollCounter > this.scrollCounterThreshold) {
+          this.scrollListCounter += wheelListDeltaY;
+          this.calcListThumbColor();
+          if (this.scrollListCounter > this.scrollListCounterThreshold) {
             this.currentPage += 1;
-            this.scrollCounter = 0;
+            this.scrollListCounter = 0;
             askNextPage = false;
             this.loadPage(this.currentPage);
           }
         }
       }
       if (askPrevPage) {
-        if (wheelDeltaY > 0) {
+        if (wheelListDeltaY > 0) {
           askPrevPage = false;
         } else {
-          this.scrollCounter += wheelDeltaY;
-          this.calcColorThumb();
-          if (this.scrollCounter < -this.scrollCounterThreshold) {
+          this.scrollListCounter += wheelListDeltaY;
+          this.calcListThumbColor();
+          if (this.scrollListCounter < -this.scrollListCounterThreshold) {
             this.currentPage -= 1;
-            this.scrollCounter = 0;
+            this.scrollListCounter = 0;
             askPrevPage = false;
             this.loadPage(this.currentPage);
           }
@@ -181,8 +203,26 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           askPrevPage = true;
         }
       }
-      this.calcThumbPos();
-      this.setThumbPos(this.scrollThumbPos);
+      this.scrollListThumbPos = this.calcThumbPos(listContainer, this.scrollListSize);
+      this.setThumbPos(productListScrollThumb, this.scrollListThumbPos);
+    });
+
+    /* Advanced search scroll thumb */
+    advancedSearchScrollThumb = document.getElementById('advanced-search-scroll-thumb')!;
+    this.dragElement(advancedSearchScrollThumb);
+
+    advancedSearchContainer!.addEventListener('scroll', (e: any) => {
+      this.scrollSearchThumbPos = this.calcThumbPos(advancedSearchContainer, this.scrollSearchSize);
+      this.setThumbPos(advancedSearchScrollThumb, this.scrollSearchThumbPos);
+    });
+
+    /* Filter Output scroll thumb */
+    filterOutputScrollThumb = document.getElementById('filter-output-scroll-thumb')!;
+    this.dragElement(filterOutputScrollThumb);
+
+    filterOutputContainer!.addEventListener('scroll', (e: any) => {
+      this.scrollFilterThumbPos = this.calcThumbPos(filterOutputContainer, this.scrollFilterSize);
+      this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
     });
   }
 
@@ -208,6 +248,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.productListRolled = false;
       advancedSearchMenu!.style.visibility = 'visible';
       this.showAdvancedSearch = true;
+      this.calcSearchThumbSize();
+      this.calcFilterThumbSize();
     }
     this.onShowHideButtonClick(null);
   }
@@ -393,7 +435,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
     });
     //console.log("AttributeFilter: " + this.attributeFilter);
-
+    setTimeout(() => {
+      this.calcSearchThumbSize();
+      this.setThumbSize(advancedSearchScrollThumb, this.scrollSearchSize);
+      this.calcFilterThumbSize();
+      this.setThumbSize(filterOutputScrollThumb, this.scrollFilterSize);
+    }, 200);
   }
 
   onSearch(event: any) {
@@ -576,7 +623,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         productListHeader.style.visibility = 'visible';
         productListHeader.style.opacity = '1.0';
         productListContainer.style.left = '0.5rem';
-        this.calcThumbSize();
+        this.calcListThumbSize();
         listItemParentContainer!.style.gap = '0 0.5rem';
       } else {
         this.productListRolled = true;
@@ -584,8 +631,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         listContainer.style.opacity = '0.0';
         productListHeader.style.visibility = 'hidden';
         productListHeader.style.opacity = '0.0';
-        productListContainer.style.left = (-productListContainer.clientWidth - scrollThumb.clientWidth - 2).toString() + 'px';
-        scrollThumb.style.visibility = 'hidden';
+        productListContainer.style.left = (-productListContainer.clientWidth - productListScrollThumb.clientWidth - 2).toString() + 'px';
+        productListScrollThumb.style.visibility = 'hidden';
         listItemParentContainer!.style.gap = '0 1.0rem';
       }
     }
@@ -649,10 +696,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
       this.lastViewStyle = view;
       setTimeout(() => {
-        this.calcThumbSize();
-        this.calcThumbPos();
-        this.setThumbSize(this.scrollSize);
-        this.setThumbPos(this.scrollThumbPos);
+        this.calcListThumbSize();
+        this.scrollListThumbPos = this.calcThumbPos(listContainer, this.scrollListSize);
+        this.setThumbSize(productListScrollThumb, this.scrollListSize);
+        this.setThumbPos(productListScrollThumb, this.scrollListThumbPos);
       }, 10);
     }
   }
@@ -694,45 +741,75 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  calcThumbPos() {
-    this.scrollThumbPos = listContainer.scrollTop * (listContainer.clientHeight - this.scrollSize) / (listContainer.scrollHeight - listContainer.clientHeight);
-  }
-
-  setThumbPos(pos: number) {
-    scrollThumb!.style.top = pos.toString() + 'px';
-  }
-
-  calcThumbSize() {
+  calcListThumbSize() {
     var $listContainer = $('#list-items-container');
     var $listContainerCopy = $listContainer
                           .clone()
                           .css({display: 'inline', height: 'auto', visibility: 'hidden'})
                           .appendTo('body');
     if ($listContainerCopy.height() > $listContainer.height() && this.productTotalNumber > 0) {
-      scrollThumb.style.visibility = 'visible';
-      this.scrollSize = $listContainer.height() * $listContainer.height() / $listContainerCopy.height();
+      productListScrollThumb.style.visibility = 'visible';
+      this.scrollListSize = $listContainer.height() * $listContainer.height() / $listContainerCopy.height();
     } else {
-      scrollThumb.style.visibility = 'hidden';
+      productListScrollThumb.style.visibility = 'hidden';
     }
     $listContainerCopy.remove();
   }
 
-  setThumbSize(size: number) {
-    scrollThumb.style.height = size.toString() + "px";
+  calcSearchThumbSize() {
+    var $searchContainer = $('#advanced-search-scrollable-container');
+    var $searchContainerCopy = $searchContainer
+                          .clone()
+                          .css({display: 'inline', height: 'auto', visibility: 'hidden'})
+                          .appendTo('body');
+    if ($searchContainerCopy.height() > $searchContainer.height()) {
+      advancedSearchScrollThumb.style.visibility = 'visible';
+      this.scrollSearchSize = $searchContainer.height() * $searchContainer.height() / $searchContainerCopy.height();
+    } else {
+      advancedSearchScrollThumb.style.visibility = 'hidden';
+    }
+    $searchContainerCopy.remove();
   }
 
-  calcColorThumb() {
-    clearTimeout(this.thumbColorTimeout);
-    this.thumbColorTimeout = setTimeout(() => {
-      this.scrollCounter = 0;
-      scrollThumb!.style.backgroundColor = '#fff';
+  calcFilterThumbSize() {
+    var $filterContainer = $('#advanced-search-filter-output-scrollable-container');
+    var $filterContainerCopy = $filterContainer
+                          .clone()
+                          .css({display: 'inline', height: 'auto', visibility: 'hidden'})
+                          .appendTo('body');
+    if ($filterContainerCopy.height() > $filterContainer.height()) {
+      filterOutputScrollThumb.style.visibility = 'visible';
+      this.scrollFilterSize = $filterContainer.height() * $filterContainer.height() / $filterContainerCopy.height();
+    } else {
+      filterOutputScrollThumb.style.visibility = 'hidden';
+    }
+    $filterContainerCopy.remove();
+  }
+
+  calcListThumbColor() {
+    clearTimeout(this.listThumbColorTimeout);
+    this.listThumbColorTimeout = setTimeout(() => {
+      this.scrollListCounter = 0;
+      productListScrollThumb!.style.backgroundColor = '#fff';
     }, 500);
 
-    let red = (255 - Math.round(Math.abs(this.scrollCounter) * (255 - copsyBlueColor_RED) / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
-    let green = (255 - Math.round(Math.abs(this.scrollCounter) * (255 - copsyBlueColor_GREEN) / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
-    let blue = (255 - Math.round(Math.abs(this.scrollCounter) * (255 - copsyBlueColor_BLUE) / this.scrollCounterThreshold)).toString(16).padStart(2, "0");
+    let red = (255 - Math.round(Math.abs(this.scrollListCounter) * (255 - copsyBlueColor_RED) / this.scrollListCounterThreshold)).toString(16).padStart(2, "0");
+    let green = (255 - Math.round(Math.abs(this.scrollListCounter) * (255 - copsyBlueColor_GREEN) / this.scrollListCounterThreshold)).toString(16).padStart(2, "0");
+    let blue = (255 - Math.round(Math.abs(this.scrollListCounter) * (255 - copsyBlueColor_BLUE) / this.scrollListCounterThreshold)).toString(16).padStart(2, "0");
     let color: string = '#' + red + green + blue;
-    scrollThumb!.style.backgroundColor = color;
+    productListScrollThumb!.style.backgroundColor = color;
+  }
+
+  calcThumbPos(container: any, scrollSize: any) {
+     return container.scrollTop * (container.clientHeight - scrollSize) / (container.scrollHeight - container.clientHeight);
+  }
+
+  setThumbPos(el: any, pos: number) {
+    el!.style.top = pos.toString() + 'px';
+  }
+
+  setThumbSize(el: any, size: number) {
+    el.style.height = size.toString() + "px";
   }
 
   dragElement(elmnt: any) {

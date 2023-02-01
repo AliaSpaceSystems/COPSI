@@ -27,7 +27,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               private spinner: SpinnerComponent,
               private exchangeService: ExchangeService,
               private alert: AlertComponent
-  ) { 
+  ) {
     if (AppConfig.settings && AppConfig.settings.quicklookSubPath) {
       this.QL_SUBPATH = AppConfig.settings.quicklookSubPath;
     }
@@ -37,31 +37,31 @@ export class ErrorInterceptor implements HttpInterceptor {
     /* Spinner Service On */
     const now = moment.now().toLocaleString();
     if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
-      this.spinner.setOn(now);    
+      this.spinner.setOn(now);
     }
     return next.handle(request).pipe(
       tap(evt => {
         if (evt instanceof HttpResponse) {
           /* Spinner Service Off */
           if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
-            this.spinner.setOff(now);    
+            this.spinner.setOff(now);
           }
         }
       }),
       catchError(err => {
         /* Spinner Service Off */
         if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
-          this.spinner.setOff(now);    
+          this.spinner.setOff(now);
         }
-        //console.log('Error Interceptor: ', err);        
+        //console.log('Error Interceptor: ', err);
 
         switch (err.status) {
           case 401: {
             /* auto logout if 401 response returned from api */
             console.log("ERROR 401: Not Authorized");
-            //this.oauthService.logOut();       
-            this.exchangeService.setIsLogged(false);  
-            break;  
+            //this.oauthService.logOut();
+            this.exchangeService.setIsLogged(false);
+            break;
           }
           case 400: {
             if(request.url.indexOf(this.QL_SUBPATH) < 0) {
@@ -83,14 +83,14 @@ export class ErrorInterceptor implements HttpInterceptor {
           }
           case 404: {
             if(request.url.indexOf(this.QL_SUBPATH) < 0) {
-              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_FOUND_MSG);    
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.NOT_FOUND_MSG);
             }
             this.reloadCurrentRoute();
             break;
           }
           case 429: {
             if(request.url.indexOf(this.QL_SUBPATH) < 0) {
-              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.TOO_MANY_MSG);    
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.TOO_MANY_MSG);
             }
             break;
           }
@@ -100,7 +100,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             }
             break;
           }
-          case 503: 
+          case 503:
           case 504: {
             if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.SERVICE_GATEWAY_TIMEOUT_MSG);
@@ -112,14 +112,13 @@ export class ErrorInterceptor implements HttpInterceptor {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
             }
             break;
-          }      
-        } 
+          }
+        }
         return throwError(() => err);
       }));
   }
 
   reloadCurrentRoute() {
-    console.log('reloadCurrentRoute');
     const currentUrl = this.router.url;
     this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
         this.router.navigate([currentUrl]);
