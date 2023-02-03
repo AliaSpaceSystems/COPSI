@@ -80,7 +80,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: (d:any, f:any) => d.properties.Color,
     getLineColor: this.defaultFootprintBorderColor,
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -layerIndex * 100]
+      return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -102,7 +102,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -layerIndex * 1000]
+      return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -124,7 +124,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: (d:any, f:any) => d.properties.Color,
     getLineColor: this.defaultFootprintBorderColor,
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -layerIndex * 100]
+      console.log(layerIndex.layerIndex);
+
+      return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -146,7 +148,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -layerIndex * 1000]
+      return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -455,7 +457,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       getFillColor: this.defaultFootprintColor,
       getLineColor: this.defaultFootprintBorderColor,
       getPolygonOffset: (layerIndex:any) => {
-        return [0, -layerIndex * 100]
+        return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
       },
       wrapLongitude: true,
       fp64: true
@@ -488,7 +490,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         return tempCol;
       },
       getPolygonOffset: (layerIndex:any) => {
-        return [0, -layerIndex * 1000]
+        return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
       },
       wrapLongitude: true,
       fp64: true,
@@ -514,7 +516,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       getFillColor: this.defaultFootprintColor,
       getLineColor: this.defaultFootprintBorderColor,
       getPolygonOffset: (layerIndex:any) => {
-        return [0, -layerIndex * 100]
+        return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
       },
       wrapLongitude: true,
       fp64: true
@@ -547,7 +549,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         return tempCol;
       },
       getPolygonOffset: (layerIndex:any) => {
-        return [0, -layerIndex * 1000]
+        return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
       },
       wrapLongitude: true,
       fp64: true,
