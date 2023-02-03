@@ -124,8 +124,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: (d:any, f:any) => d.properties.Color,
     getLineColor: this.defaultFootprintBorderColor,
     getPolygonOffset: (layerIndex:any) => {
-      console.log(layerIndex.layerIndex);
-
       return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
     },
     wrapLongitude: true,
