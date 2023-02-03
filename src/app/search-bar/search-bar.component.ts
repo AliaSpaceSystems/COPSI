@@ -129,7 +129,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     window.addEventListener("resize", () => {
-      this.setListView(this.lastViewStyle)
+      this.setListView(this.lastViewStyle);
+      this.checkAdvancedSearchThumbSize();
     });
 
     listContainer = document.getElementById('list-items-container')!;
@@ -256,8 +257,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.productListRolled = false;
       advancedSearchMenu!.style.visibility = 'visible';
       this.showAdvancedSearch = true;
-      this.calcSearchThumbSize();
-      this.calcFilterThumbSize();
+      this.checkAdvancedSearchThumbSize();
     }
     this.onShowHideButtonClick(null);
   }
@@ -444,11 +444,20 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     });
     //console.log("AttributeFilter: " + this.attributeFilter);
     setTimeout(() => {
-      this.calcSearchThumbSize();
-      this.setThumbSize(advancedSearchScrollThumb, this.scrollSearchSize);
-      this.calcFilterThumbSize();
-      this.setThumbSize(filterOutputScrollThumb, this.scrollFilterSize);
+      this.checkAdvancedSearchThumbSize();
     }, 200);
+  }
+
+  checkAdvancedSearchThumbSize() {
+    this.calcSearchThumbSize();
+    this.scrollSearchThumbPos = this.calcThumbPos(advancedSearchContainer, this.scrollSearchSize);
+    this.setThumbSize(advancedSearchScrollThumb, this.scrollSearchSize);
+    this.setThumbPos(advancedSearchScrollThumb, this.scrollSearchThumbPos);
+
+    this.calcFilterThumbSize();
+    this.scrollFilterThumbPos = this.calcThumbPos(filterOutputContainer, this.scrollFilterSize);
+    this.setThumbSize(filterOutputScrollThumb, this.scrollFilterSize);
+    this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
   }
 
   onSearch(event: any) {
@@ -721,8 +730,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           this.productList.value.forEach((product: any) => {
             if (product.Id == id) {
               product.download = res;
-              console.log(res);
-
             }
           });
         }
@@ -750,51 +757,30 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcListThumbSize() {
-    var $listContainer = $('#list-items-container');
-    var $listContainerCopy = $listContainer
-                          .clone()
-                          .css({display: 'inline', height: 'auto', visibility: 'hidden'})
-                          .appendTo('body');
-    if ($listContainerCopy.height() > $listContainer.height() && this.productTotalNumber > 0) {
+    if (listContainer.scrollHeight > listContainer.clientHeight) {
       productListScrollThumb.style.visibility = 'visible';
-      this.scrollListSize = $listContainer.height() * $listContainer.height() / $listContainerCopy.height();
+      this.scrollListSize = listContainer.clientHeight * listContainer.clientHeight / listContainer.scrollHeight;
     } else {
       productListScrollThumb.style.visibility = 'hidden';
     }
-    $listContainerCopy.remove();
   }
 
   calcSearchThumbSize() {
-    var $searchContainer = $('#advanced-search-scrollable-container');
-    var $searchContainerCopy = $searchContainer
-                          .clone()
-                          .css({display: 'inline', height: 'auto', visibility: 'hidden'})
-                          .appendTo('body');
-    if ($searchContainerCopy.height() > $searchContainer.height()) {
+    if (advancedSearchContainer.scrollHeight > advancedSearchContainer.clientHeight) {
       advancedSearchScrollThumb.style.visibility = 'visible';
-      this.scrollSearchSize = $searchContainer.height() * $searchContainer.height() / $searchContainerCopy.height();
+      this.scrollSearchSize = advancedSearchContainer.clientHeight * advancedSearchContainer.clientHeight / advancedSearchContainer.scrollHeight;
     } else {
       advancedSearchScrollThumb.style.visibility = 'hidden';
     }
-    $searchContainerCopy.remove();
   }
 
   calcFilterThumbSize() {
-    var $filterScrollableContainer = $('#advanced-search-filter-output-scrollable-container');
-    var $filterContainer = $('#advanced-search-filter-output');
-    var $filterContainerCopy = $filterContainer.clone()
-                                              .css({display: 'inline', height: 'auto', visibility: 'hidden', width: this.searchBarWidth, position: 'absolute'})
-                                              .appendTo('body');
-    console.log("$filterContainerCopy.height(): " + $filterContainerCopy.height());
-    console.log("$filterScrollableContainer.height(): " + $filterScrollableContainer.height());
-
-    if ($filterContainerCopy.height() > $filterScrollableContainer.height()) {
+    if (filterOutputContainer.scrollHeight > filterOutputContainer.clientHeight) {
       filterOutputScrollThumb.style.visibility = 'visible';
-      this.scrollFilterSize = $filterScrollableContainer.height() * $filterScrollableContainer.height() / $filterContainerCopy.height();
+      this.scrollFilterSize = filterOutputContainer.clientHeight * filterOutputContainer.clientHeight / filterOutputContainer.scrollHeight;
     } else {
       filterOutputScrollThumb.style.visibility = 'hidden';
     }
-    $filterContainerCopy.remove();
   }
 
   calcListThumbColor() {
