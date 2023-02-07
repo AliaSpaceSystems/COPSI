@@ -81,6 +81,7 @@
             <option selected value="">---</option>
             <option *ngFor="let value of filter.value">{{value}}</option>
           </select>
+          <input *ngIf="filter.hasOwnProperty('manualInput')" class="input" type="string" name="filter" title="Write a {{filter.name}}" (change)="parseAdvancedFilter()">
           <input *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == false" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
           <div *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == true" class="min-max-input-div">
             <input class="input-min" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Min value - Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">

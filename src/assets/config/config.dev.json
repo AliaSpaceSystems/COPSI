@@ -48,8 +48,8 @@
   "keycloak": {
       "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
       "issuer_": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
-      "redirectUri_": "http://localhost:4200/home",
-      "redirectUri": "http://192.168.0.109:4200/home",
+      "redirectUri": "http://localhost:4200/home",
+      "redirectUri_": "http://192.168.0.109:4200/home",
       "clientId": "prip-api",
       "clientId_": "ivv-prip-client",
       "responseType": "code",
@@ -245,10 +245,49 @@
           "attributeName": "productType",
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
-            "SLC",
-            "GRD",
-            "OCN",
-            "RAW"
+            "S1_RAW__0S",
+            "S2_RAW__0S",
+            "S3_RAW__0S",
+            "S4_RAW__0S",
+            "S5_RAW__0S",
+            "S6_RAW__0S",
+            "IW_RAW__0S",
+            "EW_RAW__0S",
+            "WV_RAW__0S",
+            "S1_SLC__1S",
+            "S2_SLC__1S",
+            "S3_SLC__1S",
+            "S4_SLC__1S",
+            "S5_SLC__1S",
+            "S6_SLC__1S",
+            "IW_SLC__1S",
+            "EW_SLC__1S",
+            "WV_SLC__1S",
+            "S1_GRDH_1S",
+            "S2_GRDH_1S",
+            "S3_GRDH_1S",
+            "S4_GRDH_1S",
+            "S5_GRDH_1S",
+            "S6_GRDH_1S",
+            "IW_GRDH_1S",
+            "EW_GRDH_1S",
+            "S1_GRDM_1S",
+            "S2_GRDM_1S",
+            "S3_GRDM_1S",
+            "S4_GRDM_1S",
+            "S5_GRDM_1S",
+            "S6_GRDM_1S",
+            "IW_GRDM_1S",
+            "EW_GRDM_1S",
+            "S1_OCN__2S",
+            "S2_OCN__2S",
+            "S3_OCN__2S",
+            "S4_OCN__2S",
+            "S5_OCN__2S",
+            "S6_OCN__2S",
+            "IW_OCN__2S",
+            "WV_OCN__2S",
+            "EW_OCN__2S"
           ]
         },
         {
@@ -258,8 +297,14 @@
           "value": [
             "HH",
             "VV",
-            "HV",
-            "VH"
+            "HH,VH",
+            "VV,VH",
+            "VH,VV",
+            "VH,HH",
+            "HH,HV",
+            "VV,HV",
+            "HV,HH",
+            "HV,VV"
           ]
         },
         {
@@ -271,6 +316,29 @@
             "IW",
             "EW",
             "WV"
+          ]
+        },
+        {
+          "name": "Orbit Direction",
+          "attributeName": "orbitDirection",
+          "attributeType": "OData.CSC.StringAttribute",
+          "value": [
+            "ASCENDING",
+            "DESCENDING",
+            "UNKNOWN"
+          ]
+        },
+        {
+          "name": "Timeliness",
+          "attributeName": "timeliness",
+          "attributeType": "OData.CSC.StringAttribute",
+          "value": [
+            "NRT-10m",
+            "NRT-1h",
+            "NRT-3h",
+            "Fast-24h",
+            "Off-line",
+            "Reprocessing"
           ]
         },
         {
@@ -306,8 +374,7 @@
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "S2MSI1C",
-            "S2MSI2A",
-            "S2MSI2Ap"
+            "S2MSI2A"
           ]
         },
         {
@@ -318,6 +385,18 @@
           "maxValue": 143,
           "step": 1,
           "needsMinMaxValues": false
+        },
+        {
+          "name": "Tile ID",
+          "attributeName": "tileId",
+          "attributeType": "OData.CSC.StringAttribute",
+          "manualInput": true
+        },
+        {
+          "name": "Data Strip Identifier",
+          "attributeName": "dataStripIdentifier",
+          "attributeType": "OData.CSC.StringAttribute",
+          "manualInput": true
         },
         {
           "name": "Cloud Cover %",
@@ -353,23 +432,23 @@
           "value": [
             "OL_1_EFR___",
             "OL_1_ERR___",
-            "SL_1_RBT___",
+            "OL_2_LFR___",
+            "OL_2_LRR___",
             "SR_1_SRA___",
             "SR_1_SRA_A_",
             "SR_1_SRA_BS",
-            "OL_2_LFR___",
-            "OL_2_LRR___",
-            "SL_2_LST___",
-            "SL_2_FRP___",
-            "SY_2_SYN___",
-            "SY_2_AOD___",
-            "SY_2_VGP___",
-            "SY_2_VG1___",
-            "SY_2_V10___",
             "SR_2_LAN___",
             "SR_2_LAN_HY",
             "SR_2_LAN_LI",
-            "SR_2_LAN_SI"
+            "SR_2_LAN_SI",
+            "SL_1_RBT___",
+            "SL_2_LST___",
+            "SL_2_FRP___",
+            "SY_2_SYN___",
+            "SY_2_VGP___",
+            "SY_2_VG1___",
+            "SY_2_V10___",
+            "SY_2_AOD___"
           ]
         },
         {
@@ -377,9 +456,20 @@
           "attributeName": "timeliness",
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
-            "Near Real Time",
-            "Short Time Critical",
-            "Non Time Critical"
+            "NR",
+            "NT",
+            "ST"
+          ]
+        },
+        {
+          "name": "Orbit Direction",
+          "attributeName": "orbitDirection",
+          "attributeType": "OData.CSC.StringAttribute",
+          "value": [
+            "ASCENDING",
+            "DESCENDING",
+            "ascending",
+            "descending"
           ]
         },
         {
@@ -403,6 +493,15 @@
           ]
         },
         {
+          "name": "Orbit Number",
+          "attributeName": "orbitNumber",
+          "attributeType": "OData.CSC.IntegerAttribute",
+          "minValue": 0,
+          "maxValue": 99999,
+          "step": 1,
+          "needsMinMaxValues": false
+        },
+        {
           "name": "Relative Orbit Number",
           "attributeName": "relativeOrbitNumber",
           "attributeType": "OData.CSC.IntegerAttribute",
@@ -410,6 +509,15 @@
           "maxValue": 385,
           "step": 1,
           "needsMinMaxValues": false
+        },
+        {
+          "name": "Cloud Cover %",
+          "attributeName": "cloudCover",
+          "attributeType": "OData.CSC.DoubleAttribute",
+          "minValue": 0.00,
+          "maxValue": 100.00,
+          "step": 0.01,
+          "needsMinMaxValues": true
         }
       ]
     },
@@ -425,6 +533,8 @@
           "attributeName": "productType",
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
+            "L1B_IR_SIR",
+            "L1B_IR_UVN",
             "L1B_RA_BD1",
             "L1B_RA_BD2",
             "L1B_RA_BD3",
@@ -433,24 +543,22 @@
             "L1B_RA_BD6",
             "L1B_RA_BD7",
             "L1B_RA_BD8",
-            "L1B_IR_UVN",
-            "L1B_IR_SIR",
-            "L2__O3____",
-            "L2__O3_TCL",
-            "L2__O3__PR",
-            "L2__NO2___",
-            "L2__SO2___",
-            "L2__CO____",
-            "L2__CH4___",
-            "L2__HCHO__",
-            "L2__CLOUD_",
             "L2__AER_AI",
             "L2__AER_LH",
+            "L2__CH4___",
+            "L2__CLOUD_",
+            "L2__CO____",
+            "L2__HCHO__",
+            "L2__NO2___",
             "L2__NP_BD3",
             "L2__NP_BD6",
             "L2__NP_BD7",
-            "AUX_CTMANA",
-            "AUX_CTMFCT"
+            "L2__O3_TCL",
+            "L2__O3____",
+            "L2__O3__PR",
+            "L2__SO2___",
+            "AUX_CTMFCT",
+            "AUX_CTMANA"
           ]
         },
         {
@@ -468,7 +576,8 @@
           "attributeName": "processingLevel",
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
-            "L1b"
+            "L1b",
+            "L2"
           ]
         },
         {
