@@ -93,10 +93,10 @@ export class ProductSearchService {
       filter = this.parseFilter(searchOptions.filter);
     }
     if(searchOptions && searchOptions.productFilter) {
-      filter = (filter) ? filter + ' and ' + searchOptions.productFilter : searchOptions.productFilter
+      filter = (filter) ? filter + ' and (' + searchOptions.productFilter + ')' : searchOptions.productFilter
     }
     if(searchOptions && searchOptions.attributeFilter) {
-      filter = (filter) ? filter + ' and ' + searchOptions.attributeFilter : searchOptions.attributeFilter
+      filter = (filter) ? filter + ' and (' + searchOptions.attributeFilter + ')': searchOptions.attributeFilter
     }
     if(filter) {
       productsUrl+='&$filter=' + filter;

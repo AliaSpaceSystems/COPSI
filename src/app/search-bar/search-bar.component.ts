@@ -382,13 +382,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     /* Parse Attribute Filter */
     this.attributeFilter = "";
     [].forEach.call(missionEl, (el:any, i:any) => {
-      let bracketOpen0: boolean = false;
+      let bracketOpenInner: boolean = false;
       if (el.getElementsByTagName('input')[0].checked) {
         if (this.attributeFilter !== "") {
           this.attributeFilter += " or "
         }
         this.attributeFilter += "(";
-        bracketOpen0 = true;
+        bracketOpenInner = true;
         this.attributeFilter += "Attributes/" + this.advancedSearchElements[i].attributeType +
           "/any(att:att/Name eq '" + this.advancedSearchElements[i].attributeName +
           "' and att/" + this.advancedSearchElements[i].attributeType + "/Value eq '" + this.advancedSearchElements[i].value + "')";
@@ -436,9 +436,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           });
         });
       });
-      if (bracketOpen0) {
+      if (bracketOpenInner) {
         this.attributeFilter += ")";
-        bracketOpen0 = false;
+        bracketOpenInner = false;
       }
     });
     //console.log("AttributeFilter: " + this.attributeFilter);
