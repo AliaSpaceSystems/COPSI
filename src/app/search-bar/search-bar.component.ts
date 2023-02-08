@@ -127,7 +127,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     window.addEventListener("resize", () => {
       this.setListView(this.lastViewStyle);
       this.checkAdvancedSearchThumbSize();
@@ -166,7 +165,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     let askPrevPage: boolean = false;
     let wheelListDeltaY: number = 0;
     productListScrollThumb = document.getElementById('product-list-scroll-thumb')!;
-    this.dragElement(productListScrollThumb);
+    this.dragElement(productListScrollThumb, listContainer);
 
     listContainer!.addEventListener('wheel', (e: any) => {
       wheelListDeltaY = e.deltaY;
@@ -218,7 +217,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     /* Advanced search scroll thumb */
     advancedSearchScrollThumb = document.getElementById('advanced-search-scroll-thumb')!;
-    this.dragElement(advancedSearchScrollThumb);
+    this.dragElement(advancedSearchScrollThumb, advancedSearchContainer);
 
     advancedSearchContainer!.addEventListener('scroll', (e: any) => {
       this.scrollSearchThumbPos = this.calcThumbPos(advancedSearchContainer, this.scrollSearchSize);
@@ -227,7 +226,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     /* Filter Output scroll thumb */
     filterOutputScrollThumb = document.getElementById('filter-output-scroll-thumb')!;
-    this.dragElement(filterOutputScrollThumb);
+    this.dragElement(filterOutputScrollThumb, filterOutputContainer);
 
     filterOutputContainer!.addEventListener('scroll', (e: any) => {
       this.scrollFilterThumbPos = this.calcThumbPos(filterOutputContainer, this.scrollFilterSize);
@@ -809,7 +808,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     el.style.height = size.toString() + "px";
   }
 
-  dragElement(elmnt: any) {
+  dragElement(elmnt: any, container: any) {
     var yDiff = 0, yPos = 0;
     elmnt.onmousedown = dragMouseDown;
 
@@ -826,7 +825,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       e.preventDefault();
       yDiff = yPos - e.clientY;
       yPos = e.clientY;
-      listContainer.scrollTop = listContainer.scrollTop - (yDiff * listContainer.scrollHeight / listContainer.clientHeight);
+      container.scrollTop = container.scrollTop - (yDiff * container.scrollHeight / container.clientHeight);
     }
 
     function closeDragElement() {

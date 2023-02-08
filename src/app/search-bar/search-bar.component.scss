@@ -152,7 +152,7 @@ hr {
   margin: 2.4rem 0 0 0;
   top: 0;
   opacity: 1.0;
-
+  pointer-events: visible;
   transition: background-color 0.1s linear;
 }
 
@@ -197,7 +197,7 @@ hr {
   margin: 8.4rem 0 0 0;
   top: 0;
   opacity: 1.0;
-
+  pointer-events: visible;
   transition: background-color 0.1s linear;
 }
 
@@ -530,7 +530,7 @@ input:focus {
   margin: 2.4rem 0 0 0;
   top: 0;
   opacity: 1.0;
-
+  pointer-events: visible;
   transition: background-color 0.1s linear;
 }
 
