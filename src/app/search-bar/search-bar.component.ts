@@ -362,7 +362,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productFilter += "(";
         bracketOpen = true;
       }
-      this.productFilter += "PublicationDate/Start ge " + publicationStopEl.value + "T00:00:00.000Z";
+      this.productFilter += "PublicationDate ge " + publicationStopEl.value + "T00:00:00.000Z";
     }
     if (publicationStopEl.value !== "") {
       if (this.productFilter !== "") {
@@ -371,7 +371,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productFilter += "(";
         bracketOpen = true;
       }
-      this.productFilter += "PublicationDate/End le " + publicationStopEl.value + "T23:59:59.999Z";
+      this.productFilter += "PublicationDate le " + publicationStopEl.value + "T23:59:59.999Z";
     }
     if (bracketOpen) {
       this.productFilter += ")";
