@@ -452,6 +452,26 @@
           ]
         },
         {
+          "name": "Instrument",
+          "attributeName": "instrumentShortName",
+          "attributeType": "OData.CSC.StringAttribute",
+          "value": [
+            "OLCI",
+            "SRAL",
+            "SLSTR",
+            "SYNERGY"
+          ]
+        },
+        {
+          "name": "Processing Level",
+          "attributeName": "processingLevel",
+          "attributeType": "OData.CSC.StringAttribute",
+          "value": [
+            "1",
+            "2"
+          ]
+        },
+        {
           "name": "Timeliness",
           "attributeName": "timeliness",
           "attributeType": "OData.CSC.StringAttribute",
@@ -470,26 +490,6 @@
             "DESCENDING",
             "ascending",
             "descending"
-          ]
-        },
-        {
-          "name": "Instrument",
-          "attributeName": "instrumentShortName",
-          "attributeType": "OData.CSC.StringAttribute",
-          "value": [
-            "OLCI",
-            "SRAL",
-            "SLSTR",
-            "SYNERGY"
-          ]
-        },
-        {
-          "name": "Processing Level",
-          "attributeName": "processingLevel",
-          "attributeType": "OData.CSC.StringAttribute",
-          "value": [
-            "1",
-            "2"
           ]
         },
         {
