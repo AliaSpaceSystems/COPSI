@@ -378,15 +378,6 @@
           ]
         },
         {
-          "name": "Relative Orbit Number",
-          "attributeName": "relativeOrbitNumber",
-          "attributeType": "OData.CSC.IntegerAttribute",
-          "minValue": 1,
-          "maxValue": 143,
-          "step": 1,
-          "needsMinMaxValues": false
-        },
-        {
           "name": "Tile ID",
           "attributeName": "tileId",
           "attributeType": "OData.CSC.StringAttribute",
@@ -397,6 +388,15 @@
           "attributeName": "dataStripIdentifier",
           "attributeType": "OData.CSC.StringAttribute",
           "manualInput": true
+        },
+        {
+          "name": "Relative Orbit Number",
+          "attributeName": "relativeOrbitNumber",
+          "attributeType": "OData.CSC.IntegerAttribute",
+          "minValue": 1,
+          "maxValue": 143,
+          "step": 1,
+          "needsMinMaxValues": false
         },
         {
           "name": "Cloud Cover %",
