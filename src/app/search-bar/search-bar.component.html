@@ -9,6 +9,8 @@
 
 <div id="advanced-search-menu" [@searchMenuAnimation]="showAdvancedSearch ? 'open' : 'closed'">
   <div id="advanced-search-title-div">
+    <mat-icon *ngIf="advancedFilterOutputIsActive == false" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">view_day</mat-icon>
+    <mat-icon *ngIf="advancedFilterOutputIsActive == true" id="advanced-search-filter-output-icon-filtered" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">view_day</mat-icon>
     <p>Advanced Search</p>
     <div id="advanced-search-title-buttons-div">
       <mat-icon id="advanced-search-clear-icon" aria-hidden="false" aria-label="advanced search clear icon" title="Clear all filters" (click)="onAdvancedSearchClear($event)">delete_outline</mat-icon>
@@ -17,7 +19,7 @@
   </div>
   <!-- hr -->
   <hr>
-  <div id="advanced-search-filter-output-scrollable-container">
+  <div id="advanced-search-filter-output-scrollable-container" class="filter-output-hidden">
     <div id="advanced-search-filter-output" [title]="(productFilter !== '' && attributeFilter !== '') ? productFilter + ' and ' + attributeFilter : ''">
       <p>
         Product Filter: <span>{{productFilter}}</span>

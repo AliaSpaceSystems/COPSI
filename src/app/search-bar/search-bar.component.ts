@@ -66,6 +66,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public orderBy: string = this.orderByOptions[0].value;
   public advancedSearchElements = AppConfig.settings.advancedSearchElements;
   public advancedFilterIsActive: boolean = false;
+  public advancedFilterOutputIsActive: boolean = false;
   public todayDate: string = '';
 
   @Input()
@@ -261,6 +262,25 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.onShowHideButtonClick(null);
   }
 
+  onFilterOutputToggle(event: any) {
+    let filterOutput = document.getElementById('advanced-search-filter-output-scrollable-container')!;
+    console.log(filterOutput);
+
+    if (filterOutput.classList.contains('filter-output-hidden')) {
+      filterOutput.classList.replace('filter-output-hidden', 'filter-output-visible');
+      setTimeout(() => {
+        this.checkAdvancedSearchThumbSize();
+        filterOutputScrollThumb.style.visibility = 'visible';
+        advancedSearchScrollThumb.style.marginTop = '8.75rem';
+      }, 300);
+
+    } else {
+      filterOutput.classList.replace('filter-output-visible', 'filter-output-hidden');
+      filterOutputScrollThumb.style.visibility = 'hidden';
+      advancedSearchScrollThumb.style.marginTop = '2.75rem';
+    }
+  }
+
   onAdvancedSearchClear(event: any) {
     let checkboxToClear = document.getElementsByClassName("checkbox");
     let selectsToClear = document.getElementsByClassName("select");
@@ -282,7 +302,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     });
     this.productFilter = "";
     this.attributeFilter = "";
-    this.advancedFilterIsActive = false;
+    /* this.advancedFilterIsActive = false; */
+    this.advancedFilterOutputIsActive = false;
   }
 
   onAdvancedSearchSubmit(event: any) {
@@ -441,6 +462,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         bracketOpenInner = false;
       }
     });
+    if (this.productFilter === "" && this.attributeFilter === "") {
+      this.advancedFilterOutputIsActive = false;
+    } else {
+      this.advancedFilterOutputIsActive = true;
+    }
     //console.log("AttributeFilter: " + this.attributeFilter);
     setTimeout(() => {
       this.checkAdvancedSearchThumbSize();

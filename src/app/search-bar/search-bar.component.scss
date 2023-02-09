@@ -90,16 +90,7 @@ hr {
   padding: 0.5rem;
   margin: 0;
   align-items: center;
-  justify-content: center;
-}
-
-#advanced-search-title-buttons-div {
-  position: absolute;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
-  right: 0.5rem;
 }
 
 #advanced-search-title-div mat-icon {
@@ -107,18 +98,36 @@ hr {
 }
 
 #advanced-search-title-div p {
-  color: darken($main-dark-text-color, 15);
+  color: white; //darken($main-dark-text-color, 15);
   font-size: 1rem;
   padding: 0;
   margin: 0;
 }
 
-#advanced-search-filter-output-scrollable-container {
+#advanced-search-filter-output-icon {
+  color: $main-dark-text-color;
+}
+#advanced-search-filter-output-icon-filtered {
+  color: $copsi-blue;
+}
+
+
+.filter-output-hidden {
+  width: 100%;
+  height: 0; //6rem;
+  min-height: 0; //6rem;
+  max-height: 6rem;
+  overflow-y: auto;
+  transition: 0.25s;
+}
+
+.filter-output-visible {
   width: 100%;
   height: 6rem;
   min-height: 6rem;
   max-height: 6rem;
   overflow-y: auto;
+  transition: 0.25s;
 }
 
 #advanced-search-filter-output {
@@ -139,7 +148,7 @@ hr {
 }
 
 #filter-output-scroll-thumb {
-  visibility: visible;
+  visibility: hidden;
   position: absolute;
   z-index: 99;
   width: 0.5rem;
@@ -149,7 +158,7 @@ hr {
   background-color: $main-dark-text-color;
   border-radius: 0.25rem;
   right: -0.5rem;
-  margin: 2.4rem 0 0 0;
+  margin: 2.75rem 0 0 0;
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
@@ -194,7 +203,8 @@ hr {
   background-color: $main-dark-text-color;
   border-radius: 0.25rem;
   right: -0.5rem;
-  margin: 8.4rem 0 0 0;
+  margin: 0;
+  margin-top: 2.75rem; //8.75rem when filter output is visible;
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
@@ -217,7 +227,7 @@ hr {
 }
 
 .advanced-search-item-div label {
-  color: darken($main-dark-text-color, 15);
+  color: white; //darken($main-dark-text-color, 15);
 }
 
 .advanced-search-item-div .select {
@@ -264,7 +274,7 @@ hr {
 }
 
 .advanced-search-filter-div label {
-  color: darken($main-dark-text-color, 15);
+  color: white; //darken($main-dark-text-color, 15);
 }
 
 .advanced-search-filter-div .select {
@@ -297,7 +307,7 @@ hr {
 
 .collapsible-header {
   background-color: transparent;
-  color: darken($main-dark-text-color, 15);
+  color: white; //darken($main-dark-text-color, 15);
   font-family: "NotesESA-Reg", Arial, Helvetica, sans-serif;
   font-size: 1rem;
   padding: 0.5rem 1rem;
