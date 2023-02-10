@@ -9,8 +9,10 @@
 
 <div id="advanced-search-menu" [@searchMenuAnimation]="showAdvancedSearch ? 'open' : 'closed'">
   <div id="advanced-search-title-div">
-    <mat-icon *ngIf="advancedFilterOutputIsActive == false" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">view_day</mat-icon>
-    <mat-icon *ngIf="advancedFilterOutputIsActive == true" id="advanced-search-filter-output-icon-filtered" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">view_day</mat-icon>
+    <mat-icon *ngIf="advancedFilterOutputIsActive == false && filterOutputIsVisible == true" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_up</mat-icon>
+    <mat-icon *ngIf="advancedFilterOutputIsActive == true && filterOutputIsVisible == true" id="advanced-search-filter-output-icon-filtered" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_up</mat-icon>
+    <mat-icon *ngIf="advancedFilterOutputIsActive == false && filterOutputIsVisible == false" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_down</mat-icon>
+    <mat-icon *ngIf="advancedFilterOutputIsActive == true && filterOutputIsVisible == false" id="advanced-search-filter-output-icon-filtered" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_down</mat-icon>
     <p>Advanced Search</p>
     <div id="advanced-search-title-buttons-div">
       <mat-icon id="advanced-search-clear-icon" aria-hidden="false" aria-label="advanced search clear icon" title="Clear all filters" (click)="onAdvancedSearchClear($event)">delete_outline</mat-icon>
@@ -21,6 +23,7 @@
   <hr>
   <div id="advanced-search-filter-output-scrollable-container" class="filter-output-hidden">
     <div id="advanced-search-filter-output" [title]="(productFilter !== '' && attributeFilter !== '') ? productFilter + ' and ' + attributeFilter : ''">
+      <label id="filter-output-label">Filter Output</label>
       <p>
         Product Filter: <span>{{productFilter}}</span>
       </p>
@@ -68,8 +71,8 @@
     <hr>
     <div class="collapsible-section" *ngFor="let el of advancedSearchElements">
       <div class="collapsible-header-div">
-        <button type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</button>
-        <div class="mission-filter">
+        <div type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</div>
+        <div class="mission-filter-slider-div">
           <label class="switch" title="Toggle mission filter">
             <input type="checkbox" class="checkbox" (click)="onMissionFilterButtonClicked($event)">
             <span class="slider"></span>
@@ -95,6 +98,7 @@
       <!-- hr -->
       <hr>
     </div>
+    <div id="advanced-search-footer"></div>
   </div>
   <div id="filter-output-scroll-thumb"></div>
   <div id="advanced-search-scroll-thumb"></div>
@@ -107,7 +111,7 @@
         <mat-icon id="load-prev" class="load-page-icon" aria-hidden="false" aria-label="load prev page" title="Load prev page" fontIcon="navigate_before" (click)="loadPageFromButtons(-1)"></mat-icon>
         <mat-icon id="load-next" class="load-page-icon" aria-hidden="false" aria-label="load next page" title="Load next page" fontIcon="navigate_next" (click)="loadPageFromButtons(1)"></mat-icon>
       </div>
-      <div id="product-list-header-text" *ngIf="productTotalNumber > 0">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products</div>
+      <div id="product-list-header-text" *ngIf="productTotalNumber > 0" title="Order By: {{returnOptionNameFromValue(orderBy, orderByOptions)}} - {{returnOptionNameFromValue(sortBy, sortByOptions)}}">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products</div>
       <div id="product-list-header-text" *ngIf="productTotalNumber == 0">No products found..</div>
       <div id="product-list-header-icons-div" *ngIf="productTotalNumber > 0">
         <mat-icon id="detailed-view" class="view-style-icon" aria-hidden="false" aria-label="detailed view" title="Detailed view" fontIcon="format_align_justify" (click)="setListView('detailed')"></mat-icon>
@@ -118,10 +122,16 @@
     <div id="list-items-parent-container">
       <div id="list-items-container">
         <div class="list-item-div" *ngFor="let product of productList.value; let idx=index;" [attr.data-productid]="product.Id" (mouseover)="hoverProduct($event)" (mouseleave)="leaveProduct($event)">
-          <div class="product-name-div">
-            <div class="product-name-value" *ngIf="product.Name != null && showDetailedView">{{product.Name}}</div>
+          <div class="product-name-div" *ngIf="product.Name != null && (showSimpleView == showDetailedView)">
+            <div class="minimal-column-div">
+              <div class="product-name-value">{{product.Name}}</div>
+              <div class="minimal-buttons-div">
+                <ng-template *ngIf="(showSimpleView == false && showDetailedView == false)" [ngTemplateOutlet]="progressBar"></ng-template>
+                <ng-template *ngIf="(showSimpleView == false && showDetailedView == false)" [ngTemplateOutlet]="qlButtons"></ng-template>
+              </div>
+            </div>
           </div>
-          <div class="product-data-row-div">
+          <div class="product-data-row-div" *ngIf="product.Name != null && (showSimpleView)">
             <div class="product-data-column-div">
               <div class="product-metadata-column-div">
                 <div class="metadata-row">
@@ -136,19 +146,10 @@
                   <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="Size" fontIcon="dns"></mat-icon>
                   <div class="metadata-value" *ngIf="product.ContentLength != null">{{product.ContentLength}}</div>
                   <div class="metadata-value-italic">bytes</div>
-                  <div class="metadata-value" *ngIf="product.ContentLength != null">( {{simplifyBytes(product.ContentLength)}} )</div>
+                  <div class="metadata-value-simplified" *ngIf="product.ContentLength != null">({{simplifyBytes(product.ContentLength)}})</div>
                 </div>
               </div>
-              <div class="progress-div">
-                <mat-progress-bar class="progress-bar"
-                  *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )"
-                  [mode]="product.download.state == 'PENDING' ? 'determinate' : 'determinate'"
-                  [value]="product.download.progress">
-                </mat-progress-bar>
-                <div class="progress-value" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">
-                  {{product.download.progress}}%
-                </div>
-              </div>
+              <ng-template [ngTemplateOutlet]="progressBar"></ng-template>
             </div>
             <div class="tag-ql-div">
               <div class="tag-div">
@@ -163,23 +164,43 @@
                   <img class="quicklook" src="./assets/images/no-preview-1.png">
                 </div>
 
-                <div class="ql-buttons-div">
-                  <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
-                  (click)="copyUrl(product.Id)"></mat-icon>
-                  <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
-                    <mat-icon *ngIf="product.download.state == 'DONE'" id="download" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
-                      (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
-                    <mat-icon *ngIf="(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
-                      (click)="unsubscribeDownload(product.Id)"></mat-icon>
-                  </ng-template>
-                  <ng-template #downloadDefault>
-                    <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
-                      (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
-                  </ng-template>
-                </div>
+                <ng-template [ngTemplateOutlet]="qlButtons"></ng-template>
               </div>
             </div>
           </div>
+
+          <!-- Product Action Buttons Template -->
+          <ng-template #qlButtons>
+            <div class="ql-buttons-div">
+              <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
+              (click)="copyUrl(product.Id)"></mat-icon>
+              <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
+                <mat-icon *ngIf="product.download.state == 'DONE'" id="download" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                  (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                <mat-icon *ngIf="(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
+                  (click)="unsubscribeDownload(product.Id)"></mat-icon>
+              </ng-template>
+              <ng-template #downloadDefault>
+                <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                  (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+              </ng-template>
+            </div>
+          </ng-template>
+
+          <!-- Download Progress Bar Template -->
+          <ng-template #progressBar>
+            <div class="progress-div">
+              <mat-progress-bar class="progress-bar"
+                *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )"
+                [mode]="product.download.state == 'PENDING' ? 'determinate' : 'determinate'"
+                [value]="product.download.progress">
+              </mat-progress-bar>
+              <div class="progress-value" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">
+                {{product.download.progress}}%
+              </div>
+            </div>
+          </ng-template>
+
         </div>
       </div>
       <div id="product-list-scroll-thumb"></div>

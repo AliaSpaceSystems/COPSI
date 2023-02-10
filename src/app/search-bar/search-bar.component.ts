@@ -73,6 +73,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public filter: string = "";
   public productFilter: string = "";
   public attributeFilter: string = "";
+  public filterOutputIsVisible: boolean = false;
 
   public productList: any = {
     "@odata.count": 0,
@@ -264,20 +265,23 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   onFilterOutputToggle(event: any) {
     let filterOutput = document.getElementById('advanced-search-filter-output-scrollable-container')!;
-    console.log(filterOutput);
-
     if (filterOutput.classList.contains('filter-output-hidden')) {
       filterOutput.classList.replace('filter-output-hidden', 'filter-output-visible');
+      this.filterOutputIsVisible = true;
       setTimeout(() => {
         this.checkAdvancedSearchThumbSize();
         filterOutputScrollThumb.style.visibility = 'visible';
-        advancedSearchScrollThumb.style.marginTop = '8.75rem';
+        advancedSearchScrollThumb.style.marginTop = '8.0rem';
       }, 300);
 
     } else {
       filterOutput.classList.replace('filter-output-visible', 'filter-output-hidden');
       filterOutputScrollThumb.style.visibility = 'hidden';
-      advancedSearchScrollThumb.style.marginTop = '2.75rem';
+      this.filterOutputIsVisible = false;
+      setTimeout(() => {
+        this.checkAdvancedSearchThumbSize();
+        advancedSearchScrollThumb.style.marginTop = '1.85rem';
+      }, 300);
     }
   }
 
@@ -302,7 +306,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     });
     this.productFilter = "";
     this.attributeFilter = "";
-    /* this.advancedFilterIsActive = false; */
     this.advancedFilterOutputIsActive = false;
   }
 
@@ -597,19 +600,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
             /* Check if page buttons should be visible */
             if (this.currentPage == 0) {
-              prevPageButton.style.visibility = 'hidden';
+              prevPageButton.style.opacity = '0.4';
               if (this.currentPage < this.lastPage) {
-                nextPageButton.style.visibility = 'visible';
+                nextPageButton.style.opacity = '1.0';
               } else {
-                nextPageButton.style.visibility = 'hidden';
+                nextPageButton.style.opacity = '0.4';
               }
             } else if (this.currentPage == this.lastPage) {
-              nextPageButton.style.visibility = 'hidden';
+              nextPageButton.style.opacity = '0.4';
               if (this.currentPage > 0) {
-                prevPageButton.style.visibility = 'visible';
+                prevPageButton.style.opacity = '1.0';
               }
             } else {
-              prevPageButton.style.visibility = nextPageButton.style.visibility = 'visible';
+              prevPageButton.style.opacity = nextPageButton.style.opacity = '1.0';
             }
             this.onShowHideButtonClick(null);
             this.setListView(this.lastViewStyle);
@@ -864,5 +867,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     let copyUrl: any = (AppConfig.settings.baseUrl) ? AppConfig.settings.baseUrl + `odata/v1/Products(${id})`: window.location.origin + `/odata/v1/Products(${id})`;
     this.clipboard.copy(copyUrl);
     this.toast.showInfoToast('success', 'PRODUCT URL COPIED!');
+  }
+
+  returnOptionNameFromValue(val: any, options: any) {
+    return options.filter((option: any) => option.value === val)[0].name;
   }
 }

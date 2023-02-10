@@ -38,6 +38,7 @@ hr {
   width: 100%;
   margin: 0;
   padding: 0;
+  border-color: darken($main-dark-text-color, 35);
 }
 
 
@@ -69,7 +70,7 @@ hr {
   visibility: hidden;
   flex-direction: column;
   align-items: center;
-  padding: 0 0 1rem 0;
+  padding: 0;
   gap: 0;
   top: 2.5rem;
   left: 0.5rem;
@@ -78,16 +79,17 @@ hr {
   border-radius: 0.25rem;
   border: $main-dark-border;
   box-shadow: $default-shadow;
-  background-color: $main-dark-bg-color-opaque;
+  background-color: transparent;
   color: $main-dark-text-color;
 }
 
 #advanced-search-title-div {
   display: flex;
   flex-direction: row;
+  background-color: $main-dark-bg-color;
   width: 100%;
-  font-size: 0.75rem;
-  padding: 0.5rem;
+  font-size: $search-bar-font-size;
+  padding: 0 0.5rem;
   margin: 0;
   align-items: center;
   justify-content: space-between;
@@ -98,24 +100,33 @@ hr {
 }
 
 #advanced-search-title-div p {
-  color: white; //darken($main-dark-text-color, 15);
-  font-size: 1rem;
+  color: white;
+  font-size: $search-bar-font-size;
   padding: 0;
   margin: 0;
 }
 
 #advanced-search-filter-output-icon {
   color: $main-dark-text-color;
+  font-size: 2.2rem;
+  line-height: 1.5rem;
+  margin: 0 1.5rem 0 -0.25rem;
 }
 #advanced-search-filter-output-icon-filtered {
   color: $copsi-blue;
+  font-size: 2.2rem;
+  line-height: 1.5rem;
+  margin: 0 1.5rem 0 -0.25rem;
 }
-
+#advanced-search-clear-icon, #advanced-search-submit-icon {
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+}
 
 .filter-output-hidden {
   width: 100%;
-  height: 0; //6rem;
-  min-height: 0; //6rem;
+  height: 0; //6rem when visible;
+  min-height: 0; //6rem when visible;
   max-height: 6rem;
   overflow-y: auto;
   transition: 0.25s;
@@ -130,12 +141,36 @@ hr {
   transition: 0.25s;
 }
 
+#advanced-search-filter-output-scrollable-container {
+  background-color: $main-dark-bg-color;
+}
 #advanced-search-filter-output {
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 0.5rem;
   gap: 0;
+}
+
+#filter-output-label {
+  align-self: center;
+  justify-self: center;
+  font-size: $search-bar-font-size-small;
+  color: white;
+  margin: 0 0 0.25rem 0;
+}
+
+#advanced-search-filter-output p {
+  color: darken($main-dark-text-color, 35);
+  font-size: $search-bar-font-size-small;
+  padding: 0;
+  margin: 0;
+}
+#advanced-search-filter-output span {
+  color: darken($main-dark-text-color, 15);
+  font-size: $search-bar-font-size-small;
+  padding: 0;
+  margin: 0;
 }
 
 /* Scrollbar hiding */
@@ -158,29 +193,17 @@ hr {
   background-color: $main-dark-text-color;
   border-radius: 0.25rem;
   right: -0.5rem;
-  margin: 2.75rem 0 0 0;
+  margin: 1.85rem 0 0 0;
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
   transition: background-color 0.1s linear;
 }
 
-#advanced-search-filter-output p {
-  color: darken($main-dark-text-color, 35);
-  font-size: 0.75rem;
-  padding: 0;
-  margin: 0;
-}
-#advanced-search-filter-output span {
-  color: darken($main-dark-text-color, 15);
-  font-size: 0.75rem;
-  padding: 0;
-  margin: 0;
-}
-
 #advanced-search-scrollable-container {
   width: 100%;
   overflow-y: auto;
+  background-color: transparent;
 }
 
 /* Scrollbar hiding */
@@ -204,7 +227,7 @@ hr {
   border-radius: 0.25rem;
   right: -0.5rem;
   margin: 0;
-  margin-top: 2.75rem; //8.75rem when filter output is visible;
+  margin-top: 1.85rem; //7.85rem when filter output is visible;
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
@@ -223,19 +246,21 @@ hr {
   flex-direction: row;
   width: 100%;
   padding: 0.25rem 1rem;
+  background-color: transparent;
   justify-content: space-between;
 }
 
 .advanced-search-item-div label {
-  color: white; //darken($main-dark-text-color, 15);
+  color: darken($main-dark-text-color, 35);
+  font-size: $search-bar-font-size;
 }
 
 .advanced-search-item-div .select {
   width: 60%;
   --webkit-appearance: none;
-  color: $main-dark-text-color;
-  background-color: #0000;
-  font-size: 0.75rem;
+  color: $main-dark-text-color-select;
+  background-color: transparent;
+  font-size: $search-bar-font-size-small;
   border: 0;
   border-bottom: $main-light-border;
   text-align: right;
@@ -250,18 +275,15 @@ hr {
 
 .advanced-search-item-div .date {
   --webkit-appearance: none;
-  color: $main-dark-text-color;
-  background-color: #0000;
-  font-size: 0.75rem;
+  color: $main-dark-text-color-select;
+  background-color: transparent;
+  font-family: "NotesESA-Reg";
+  font-size: $search-bar-font-size-small;
   padding: 0;
   border: 0;
   border-bottom: $main-light-border;
   text-align: right;
   color-scheme: dark;
-}
-
-::-webkit-datetime-edit-text {
-  font-family: "NotesESA-Reg";
 }
 
 .advanced-search-filter-div {
@@ -270,32 +292,35 @@ hr {
   flex-direction: row;
   width: 100%;
   padding: 0.25rem 1rem;
+  background-color: transparent;
   justify-content: space-between;
 }
 
 .advanced-search-filter-div label {
-  color: white; //darken($main-dark-text-color, 15);
+  color: darken($main-dark-text-color, 35);
+  font-size: $search-bar-font-size;
 }
 
 .advanced-search-filter-div .select {
   width: 60%;
   --webkit-appearance: none;
-  color: $main-dark-text-color;
-  background-color: #0000;
-  font-size: 0.75rem;
+  color: $main-dark-text-color-select;
+  background-color: transparent;
+  font-size: $search-bar-font-size-small;
   border: 0;
   border-bottom: $main-light-border;
   text-align: right;
 }
 
-.advanced-search-filter-div .input {
+.advanced-search-filter-div .input, .input-min, .input-max {
   width: 60%;
-  color: $main-dark-text-color;
-  font-size: 0.75rem;
+  color: $main-dark-text-color-select;
+  font-size: $search-bar-font-size-small;
 }
 
 .collapsible-section {
   width: 100%;
+  background-color: transparent;
 }
 
 .collapsible-header-div {
@@ -303,14 +328,15 @@ hr {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  background-color: $main-dark-bg-color;
 }
 
 .collapsible-header {
   background-color: transparent;
-  color: white; //darken($main-dark-text-color, 15);
+  color: white;
   font-family: "NotesESA-Reg", Arial, Helvetica, sans-serif;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
+  font-size: $search-bar-font-size;
+  padding: 0.5rem 0.5rem;
   margin: 0;
   width: 100%;
   border: none;
@@ -318,10 +344,10 @@ hr {
 }
 
 /* Sliding checkboxes */
-.mission-filter {
+.mission-filter-slider-div {
   margin: 0 0 0.5rem 0;
 }
-.mission-filter:hover {
+.mission-filter-slider-div:hover {
   opacity: 0.7;
 }
 .switch input {
@@ -396,7 +422,7 @@ input {
   margin: 0;
   padding: 0 0.5rem;
   color: $main-dark-text-color;
-  background-color: #0000;
+  background-color: transparent;
   border: 0;
   border-bottom: $main-light-border;
   border-radius: 0;
@@ -422,6 +448,11 @@ input:focus {
 #search-input {
   flex-grow: 10;
   margin: 0 1.0rem;
+}
+
+#advanced-search-footer {
+  height: 1.0rem;
+  background-color: $main-dark-bg-color;
 }
 
 
@@ -468,6 +499,7 @@ input:focus {
 }
 #product-list-header-text {
   font-size: $search-bar-font-size;
+  cursor: default;
 }
 #page-buttons-div {
   display: flex;
@@ -479,6 +511,24 @@ input:focus {
   height: $search-bar-product-icons-dim;
   transition: opacity 0.15s ease-in-out, color 0.25s linear;
 }
+#sort-order-div {
+  display: flex;
+  flex-direction: row;
+  margin-left: 1.0rem;
+}
+#sort-order-div p {
+  font-size: $search-bar-font-size-small;
+  color: darken($main-dark-text-color, 25);
+  margin: 0;
+  cursor: default;
+}
+.order-by-icon {
+  font-size: 1.0rem;
+  line-height: 1rem;
+  height: 1.0rem;
+  color: darken($main-dark-text-color, 25);
+}
+
 #product-list-header-icons-div {
   display: flex;
   flex-direction: row;
@@ -505,13 +555,12 @@ input:focus {
   display: flex;
   flex-direction: column;
   width: $search-bar-width;
-  box-shadow: $default-shadow;
-  overflow-y: auto; //overlay
+  overflow-y: auto;
   overflow-x: hidden;
   border-radius: 0.25rem;
   margin: 0;
   padding: 0 0 0 0;
-  gap: 0.1rem;
+  gap: 0.25rem;
   transition: visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
 
   pointer-events: visible;
@@ -537,7 +586,7 @@ input:focus {
   background-color: $main-dark-text-color;
   border-radius: 0.25rem;
   right: -0.5rem;
-  margin: 2.4rem 0 0 0;
+  margin: 2.2rem 0 0 0;
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
@@ -560,16 +609,26 @@ input:focus {
 .product-name-div {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
-  background-color: $main-dark-bg-color-opaque;
+  padding: 0.25rem;
+  background-color: $main-dark-bg-color;
   align-items: center;
 }
-.product-name-value{
-  margin: 0.25rem 0.25rem 0.4rem 0.25rem;
+.product-name-value {
   word-break: break-all;
   text-align: left;
-  font-weight: bold;
+  color: $product-name-color;
   font-size: $search-bar-font-size-small;
+}
+.minimal-column-div {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.minimal-buttons-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.25rem;
 }
 
 /* Product data */
@@ -578,7 +637,7 @@ input:focus {
   flex-direction: row;
   justify-content: space-between;
   padding: 0.25rem;
-  background-color: $menu-dark-bg-color-opaque;
+  background-color: $menu-dark-bg-color;
 }
 .product-data-column-div {
   display: flex;
@@ -598,17 +657,16 @@ input:focus {
   border-radius: 2px;
 }
 .progress-div {
+  width: 100%;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
-  padding: 0.25rem;
   align-items: center;
 }
 .progress-bar {
   width: 100%;
 }
 .progress-value {
-  font-weight: normal;
   font-size: $search-bar-font-size-small;
 }
 .progress-cancel {
@@ -636,7 +694,7 @@ input:focus {
 .metadata-row {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 0.15rem;
   align-items: center;
 }
 .metadata-icon {
@@ -652,12 +710,16 @@ input:focus {
 .metadata-value-italic{
   color: darken($main-dark-text-color, 20%);
   font-style: italic;
-  font-weight: normal;
   font-size: $search-bar-font-size-small;
 }
 .metadata-value{
   text-align: left;
-  font-weight: normal;
+  font-size: $search-bar-font-size-small;
+}
+.metadata-value-simplified {
+  color: darken($main-dark-text-color, 20%);
+  font-style: italic;
+  text-align: left;
   font-size: $search-bar-font-size-small;
 }
 
@@ -691,10 +753,10 @@ input:focus {
 .ql-div {
   display: flex;
   flex-direction: column;
-  align-items: space-between;
-  justify-content: flex-end;
-  gap: 0.2rem;
-  background-color: $main-dark-bg-color-opaque;
+  align-items: stretch;
+  justify-content: space-evenly;
+  padding: 0 0.2rem;
+  background-color: $main-dark-bg-color;
   border: $main-dark-border;
   border-radius: 3px;
 }
@@ -703,7 +765,6 @@ input:focus {
   width: 5.5rem;
   height: 4.5rem;
   justify-content: center;
-  margin-bottom: -4px;
 }
 
 .quicklook{
@@ -715,8 +776,6 @@ input:focus {
   display: flex;
   flex-direction: row;
   margin: 0;
-  padding: 0.2rem;
-  gap: 0.2rem;
   justify-content: space-evenly;
 }
 .item-button-icon{
@@ -765,7 +824,7 @@ input:focus {
     width: $search-bar-width-mobile;
   }
   .advanced-search-item-div .date {
-    font-size: 0.5rem;
+    font-size: $search-bar-font-size-small-mobile;
   }
   #product-list-header-text {
     font-size: $search-bar-font-size-mobile;
@@ -773,7 +832,7 @@ input:focus {
   .product-name-value{
     font-size: $search-bar-font-size-small-mobile;
   }
-  .metadata-value {
+  .metadata-value, .metadata-value-italic, .metadata-value-simplified {
     font-size: $search-bar-font-size-small-mobile;
   }
   .tag {
@@ -781,9 +840,8 @@ input:focus {
     font-size: $search-bar-font-size-small-mobile;
   }
   .ql{
-    width: 4.0rem;
-    height: 2.5rem;
-    margin-bottom: -4px;
+    width: 5.0rem;
+    height: 4.0rem;
   }
   #scroll-thumb {
     margin: 2.2rem 0 0 0;

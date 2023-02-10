@@ -297,14 +297,10 @@
           "value": [
             "HH",
             "VV",
-            "HH,VH",
             "VV,VH",
             "VH,VV",
-            "VH,HH",
             "HH,HV",
-            "VV,HV",
-            "HV,HH",
-            "HV,VV"
+            "HV,HH"
           ]
         },
         {
@@ -340,15 +336,6 @@
             "Off-line",
             "Reprocessing"
           ]
-        },
-        {
-          "name": "Relative Orbit Number",
-          "attributeName": "relativeOrbitNumber",
-          "attributeType": "OData.CSC.IntegerAttribute",
-          "minValue": 1,
-          "maxValue": 175,
-          "step": 1,
-          "needsMinMaxValues": false
         }
       ]
     },
@@ -388,15 +375,6 @@
           "attributeName": "dataStripIdentifier",
           "attributeType": "OData.CSC.StringAttribute",
           "manualInput": true
-        },
-        {
-          "name": "Relative Orbit Number",
-          "attributeName": "relativeOrbitNumber",
-          "attributeType": "OData.CSC.IntegerAttribute",
-          "minValue": 1,
-          "maxValue": 143,
-          "step": 1,
-          "needsMinMaxValues": false
         },
         {
           "name": "Cloud Cover %",
@@ -493,24 +471,6 @@
           ]
         },
         {
-          "name": "Orbit Number",
-          "attributeName": "orbitNumber",
-          "attributeType": "OData.CSC.IntegerAttribute",
-          "minValue": 0,
-          "maxValue": 99999,
-          "step": 1,
-          "needsMinMaxValues": false
-        },
-        {
-          "name": "Relative Orbit Number",
-          "attributeName": "relativeOrbitNumber",
-          "attributeType": "OData.CSC.IntegerAttribute",
-          "minValue": 1,
-          "maxValue": 385,
-          "step": 1,
-          "needsMinMaxValues": false
-        },
-        {
           "name": "Cloud Cover %",
           "attributeName": "cloudCover",
           "attributeType": "OData.CSC.DoubleAttribute",
@@ -579,15 +539,6 @@
             "L1b",
             "L2"
           ]
-        },
-        {
-          "name": "Orbit Number",
-          "attributeName": "orbitNumber",
-          "attributeType": "OData.CSC.IntegerAttribute",
-          "minValue": 0,
-          "maxValue": 99999,
-          "step": 1,
-          "needsMinMaxValues": false
         }
       ]
     }

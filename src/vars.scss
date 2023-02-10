@@ -10,6 +10,7 @@ $main-light-text-color: #000000;
 $main-dark-bg-color: #202020cc;
 $main-dark-bg-color-opaque: #202020ff;
 $main-dark-text-color: #ffffff;
+$main-dark-text-color-select: #ffffff;// #eee3cc;// #ddf2ff;
 $main-dark-border: 0.5px solid darken($main-dark-bg-color, 5%);
 $main-light-border: 0.5px solid lighten($main-dark-bg-color, 50%);
 /* menu */
@@ -41,10 +42,10 @@ $header-menu-width-mobile-little: calc($header-menu-title-width-mobile-little + 
 $header-logo-height: 1.0rem;
 
 /* search bar */
-$search-bar-font-size: 1rem;
-$search-bar-font-size-mobile: 0.8rem;
+$search-bar-font-size: 0.8rem;
+$search-bar-font-size-mobile: 0.7rem;
 $search-bar-font-size-small: 0.75rem;
-$search-bar-font-size-small-mobile: 0.65rem;
+$search-bar-font-size-small-mobile: 0.6rem;
 $search-bar-width: 26rem;
 $search-bar-width-mobile: 20rem;
 $search-bar-product-icons-dim: 1.0rem;
@@ -63,6 +64,7 @@ $default-shadow: 0 2px 4px rgba(0,0,0,0.5);
 $login-shadow: 0 2px 50px rgba(0,0,0,1.0);
 $copsi-blue: #00aeef;
 $copsi-blue-hover: #007ebf;
+$product-name-color: white;// #ffccaa;
 $default-title-div-height: 2rem;
 $font-family: "NotesESA-Reg";
 $scrollbar-bg-color: #0000;
