@@ -63,14 +63,69 @@ hr {
 
 /* Filter Parsing div */
 #filter-parsing-div {
+  transition: 0.25s;
+}
+.filter-parsing-hidden {
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 99;
   width: $search-bar-width;
   min-height: $default-title-div-height;
-  left: calc($search-bar-width + 1rem);
-  top: 0.5rem;
+  top: calc($default-title-div-height + 1rem);
+  left: 0.5rem;
+  padding: 0.5rem 0.5rem;
   border: $main-dark-border;
   border-radius: 0.25rem;
-  background-color: $main-dark-bg-color;
+  background-color: $main-dark-bg-color-opaque;
+  box-shadow: $default-shadow;
+  opacity: 0.0;
+  pointer-events: none;
+}
+.filter-parsing-shown {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 99;
+  width: $search-bar-width;
+  min-height: $default-title-div-height;
+  top: calc($default-title-div-height + 1rem);
+  left: 0.5rem;
+  padding: 0.5rem 0.5rem;
+  border: $main-dark-border;
+  border-radius: 0.25rem;
+  background-color: $main-dark-bg-color-opaque;
+  box-shadow: $default-shadow;
+  opacity: 1.0;
+  pointer-events: visible;
+}
+#filter-parsing-label-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+#filter-parsing-label {
+  margin: 0;
+  font-size: $search-bar-font-size-small;
+  color: darken($main-dark-text-color, 35);
+}
+.filter-parsing-unpinned {
+  color: $main-dark-text-color;
+  font-size: 1.0rem;
+  line-height: 1.0rem;
+  margin: 0 -0.5rem 0 0;
+}
+.filter-parsing-pinned {
+  color: $copsi-blue;
+  font-size: 1.0rem;
+  line-height: 1.0rem;
+  margin: 0 -0.5rem 0 0;
+}
+
+#filter-parsing-div p {
+  margin: 0;
+  font-size: $search-bar-font-size-small;
+  color: $main-dark-text-color;
 }
 
 /* Advanced Search */
@@ -167,7 +222,7 @@ hr {
   align-self: flex-start;
   justify-self: flex-start;
   font-size: $search-bar-font-size-small;
-  color: white;
+  color: darken($main-dark-text-color, 35);
   margin: 0 0 0.25rem 0;
 }
 

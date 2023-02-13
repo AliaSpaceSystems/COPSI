@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
 import { Observable, Subscription } from 'rxjs';
@@ -19,6 +19,7 @@ let advancedSearchContainer: any;
 let advancedSearchScrollThumb: any;
 let filterOutputContainer: any;
 let filterOutputScrollThumb: any;
+let filterParsingDiv: any;
 let detailedView: any;
 let simpleView: any;
 let minimalView: any;
@@ -75,6 +76,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public productFilter: string = "";
   public attributeFilter: string = "";
   public filterOutputIsVisible: boolean = false;
+  public filterParsingDivIsPinned: boolean = false;
+  public showParseFilterTimeoutId: any;
 
   public productList: any = {
     "@odata.count": 0,
@@ -235,12 +238,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.scrollFilterThumbPos = this.calcThumbPos(filterOutputContainer, this.scrollFilterSize);
       this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
     });
+  }
 
+  ngAfterViewInit(): void {
     /* Filter parsing while typing */
+    filterParsingDiv = document.getElementById('filter-parsing-div')!;
     let typedFilter: any = document.getElementById('search-input')!;
     let parseFilterTimeoutId: any;
+
     typedFilter.addEventListener('input', (e: any) => {
-      //console.log(e.target.value);
+      this.checkFilterParsingToggle();
       clearTimeout(parseFilterTimeoutId);
       parseFilterTimeoutId = setTimeout(() => {
         this.parsedFilter = this.productSearch.parseFilter(e.target.value);
@@ -257,22 +264,41 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
   }
 
+  checkFilterParsingToggle() {
+    if (this.showAdvancedSearch == false) {
+      if (filterParsingDiv.classList.contains('filter-parsing-hidden')) {
+        filterParsingDiv!.classList.replace('filter-parsing-hidden', 'filter-parsing-shown');
+      }
+      clearTimeout(this.showParseFilterTimeoutId);
+      if (this.filterParsingDivIsPinned == false) {
+        this.showParseFilterTimeoutId = setTimeout(() => {
+          filterParsingDiv!.classList.replace('filter-parsing-shown', 'filter-parsing-hidden');
+        }, AppConfig.settings.searchOptions.hideFilterOutputTimeout);
+      }
+    }
+  }
+
   onShowAdvancedSearch(event: any) {
     let advancedSearchMenu = document.getElementById('advanced-search-menu');
     if (this.showAdvancedSearch) {
-
       this.showAdvancedSearch = false;
       this.productListRolled = true;
       setTimeout(() => {
         advancedSearchMenu!.style.visibility = 'hidden';
+        if (this.filterParsingDivIsPinned) {
+          this.checkFilterParsingToggle();
+        }
       }, 250);
     } else {
       this.productListRolled = false;
       advancedSearchMenu!.style.visibility = 'visible';
       this.showAdvancedSearch = true;
+      filterParsingDiv!.classList.replace('filter-parsing-shown', 'filter-parsing-hidden');
       this.checkAdvancedSearchThumbSize();
     }
     this.onShowHideButtonClick(null);
+
+
   }
 
   onFilterOutputToggle(event: any) {
@@ -294,6 +320,21 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.checkAdvancedSearchThumbSize();
         advancedSearchScrollThumb.style.marginTop = '1.85rem';
       }, 300);
+    }
+  }
+
+  onPushPinToggle (event: any) {
+    let pinIcon = document.getElementById('pin-search-filter-output-icon')!;
+    if (pinIcon.classList.contains('filter-parsing-unpinned')) {
+      pinIcon.classList.replace('filter-parsing-unpinned', 'filter-parsing-pinned');
+      this.filterParsingDivIsPinned = true;
+      clearTimeout(this.showParseFilterTimeoutId);
+    } else {
+      pinIcon.classList.replace('filter-parsing-pinned', 'filter-parsing-unpinned');
+      this.filterParsingDivIsPinned = false;
+      this.showParseFilterTimeoutId = setTimeout(() => {
+        filterParsingDiv!.classList.replace('filter-parsing-shown', 'filter-parsing-hidden');
+      }, 5000);
     }
   }
 
@@ -664,7 +705,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   onShowHideButtonClick(event: any) {
     if (this.listIsReady) {
-
       let listItemParentContainer = document.getElementById('list-items-parent-container')!;
       if (this.productListRolled) {
         this.productListRolled = false;

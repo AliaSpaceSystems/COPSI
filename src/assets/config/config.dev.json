@@ -29,7 +29,8 @@
         "name": "Ascending",
         "value": "ASC"
       }
-    ]
+    ],
+    "hideFilterOutputTimeout": 3000
   },
   "mapSettings": {
       "initialViewState": {
