@@ -7,6 +7,10 @@
   </div>
 </div>
 
+<div *ngIf="showAdvancedSearch == false" id="filter-parsing-div">
+  PARSING
+</div>
+
 <div id="advanced-search-menu" [@searchMenuAnimation]="showAdvancedSearch ? 'open' : 'closed'">
   <div id="advanced-search-title-div">
     <mat-icon *ngIf="advancedFilterOutputIsActive == false && filterOutputIsVisible == true" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_up</mat-icon>

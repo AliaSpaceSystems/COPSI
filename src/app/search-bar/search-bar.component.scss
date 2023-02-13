@@ -61,6 +61,17 @@ hr {
   transition: opacity 0.15s ease-in-out;
 }
 
+/* Filter Parsing div */
+#filter-parsing-div {
+  position: absolute;
+  width: $search-bar-width;
+  min-height: $default-title-div-height;
+  left: calc($search-bar-width + 1rem);
+  top: 0.5rem;
+  border: $main-dark-border;
+  border-radius: 0.25rem;
+  background-color: $main-dark-bg-color;
+}
 
 /* Advanced Search */
 #advanced-search-menu {
