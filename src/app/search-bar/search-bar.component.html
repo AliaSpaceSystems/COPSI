@@ -1,7 +1,7 @@
 <div id="search-bar-main-div">
   <mat-icon *ngIf="advancedFilterIsActive == false" id="advanced-search-icon" aria-hidden="false" aria-label="advanced search icon" fontIcon="menu" title="Show advanced filter" (click)="onShowAdvancedSearch($event)"></mat-icon>
   <mat-icon *ngIf="advancedFilterIsActive == true" id="advanced-search-icon-filtered" aria-hidden="false" aria-label="advanced search icon" fontIcon="filter_list" title="Show advanced filter" (click)="onShowAdvancedSearch($event)"></mat-icon>
-  <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter"   (keydown.enter)="onSearch($event)" value="{{filter}}">
+  <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter" (keydown.enter)="onSearch($event)" value="{{filter}}" title="{{parsedFilter}}">
   <div id="search-magnifier-icon-div">
     <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" title="Perform search" (click)="onAdvancedSearchSubmit($event)"></mat-icon>
   </div>
@@ -22,14 +22,24 @@
   <!-- hr -->
   <hr>
   <div id="advanced-search-filter-output-scrollable-container" class="filter-output-hidden">
-    <div id="advanced-search-filter-output" [title]="(productFilter !== '' && attributeFilter !== '') ? productFilter + ' and ' + attributeFilter : ''">
-      <label id="filter-output-label">Filter Output</label>
+    <div id="advanced-search-filter-output">
+      <label id="filter-output-label">Filter Output:</label>
       <p>
-        Product Filter: <span>{{productFilter}}</span>
+        <span>{{parsedFilter}}</span>
+        <span *ngIf="parsedFilter !== '' && (productFilter !== '' || attributeFilter !== '')"> and </span>
+        <span>{{productFilter}}</span>
+        <span *ngIf="productFilter !== '' && attributeFilter !== ''"> and </span>
+        <span>{{attributeFilter}}</span>
+      </p>
+      <!-- <p>
+        Product Filter: <span>{{parsedFilter}}</span>
+      </p>
+      <p>
+        Date Filter: <span>{{productFilter}}</span>
       </p>
       <p>
         Attribute Filter: <span>{{attributeFilter}}</span>
-      </p>
+      </p> -->
     </div>
   </div>
   <!-- hr -->

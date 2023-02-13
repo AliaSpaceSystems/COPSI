@@ -20,7 +20,7 @@ export class ProductSearchService {
   constructor(private http: HttpClient) { }
 
   parseFilter(str: string) {
-    console.log('initial filter', str);
+    //console.log('initial filter', str);
     let filterArray: any =[];
     const regexContains = /\*(.*)\*/gm;
     const regexStartsWith = /[^;]+\*(?=$|;)/gm;
@@ -43,7 +43,7 @@ export class ProductSearchService {
         }
       });
       processedString = filterArray.join(' ');
-      console.log('final replacement', processedString);
+      //console.log('final replacement', processedString);
 
     } catch (error) {
       console.error("Error converting Filter!");

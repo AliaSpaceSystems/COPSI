@@ -153,8 +153,8 @@ hr {
 }
 
 #filter-output-label {
-  align-self: center;
-  justify-self: center;
+  align-self: flex-start;
+  justify-self: flex-start;
   font-size: $search-bar-font-size-small;
   color: white;
   margin: 0 0 0.25rem 0;

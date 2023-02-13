@@ -71,6 +71,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @Input()
   public filter: string = "";
+  public parsedFilter: string = "";
   public productFilter: string = "";
   public attributeFilter: string = "";
   public filterOutputIsVisible: boolean = false;
@@ -234,6 +235,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.scrollFilterThumbPos = this.calcThumbPos(filterOutputContainer, this.scrollFilterSize);
       this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
     });
+
+    /* Filter parsing while typing */
+    let typedFilter: any = document.getElementById('search-input')!;
+    let parseFilterTimeoutId: any;
+    typedFilter.addEventListener('input', (e: any) => {
+      //console.log(e.target.value);
+      clearTimeout(parseFilterTimeoutId);
+      parseFilterTimeoutId = setTimeout(() => {
+        this.parsedFilter = this.productSearch.parseFilter(e.target.value);
+      }, 500);
+    })
   }
 
   ngOnDestroy(): void {
