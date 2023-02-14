@@ -20,30 +20,44 @@ export class ProductSearchService {
   constructor(private http: HttpClient) { }
 
   parseFilter(str: string) {
-    //console.log('initial filter', str);
-    let filterArray: any =[];
-    const regexContains = /\*(.*)\*/gm;
-    const regexStartsWith = /[^;]+\*(?=$|;)/gm;
-    const regexEndsWith = /^\*(.*)/gm;
+    //console.log('initial filter: ', str);
+    let filterArray: any = [];
+    //const regexContains = /^\*(.*)\*/gm;
+    //const regexStartsWith = /[^;]+\*(?=$|;)/gm;
+    //const regexEndsWith = /^\*(.*)/gm;
 
-    let filterPortions=str.split(' ');
-
+    const regexContains = /^\*(.*)\*/;
+    const regexStartsWith = /[^;]+\*(?=$|;)/;
+    const regexEndsWith = /^\*(.*)/;
+    const logicTestArray = [
+      "and", "AND", "or", "OR", "("
+    ];
+    let filterPortions: string[] = str.split(' ');
     let processedString='';
-    try {
 
-      filterPortions.forEach(function (portion) {
+    try {
+      filterPortions.forEach((portion: string) => {
         if(regexContains.test(portion)) {
+          if (!logicTestArray.includes(filterArray[filterArray.length - 1]) && filterArray.length > 0) {
+            filterArray.push("and");
+          }
           filterArray.push(`contains(Name, '${portion.replace(/\*/g,'')}')`);
         } else if (regexEndsWith.test(portion)) {
+          if (!logicTestArray.includes(filterArray[filterArray.length - 1]) && filterArray.length > 0) {
+            filterArray.push("and");
+          }
           filterArray.push(`endswith(Name, '${portion.replace(/\*/g,'')}')`);
         } else if (regexStartsWith.test(portion)) {
+          if (!logicTestArray.includes(filterArray[filterArray.length - 1]) && filterArray.length > 0) {
+            filterArray.push("and");
+          }
           filterArray.push(`startswith(Name, '${portion.replace(/\*/g,'')}')`);
         } else {
           filterArray.push(portion);
         }
       });
       processedString = filterArray.join(' ');
-      //console.log('final replacement', processedString);
+      //console.log('final replacement: ', processedString);
 
     } catch (error) {
       console.error("Error converting Filter!");

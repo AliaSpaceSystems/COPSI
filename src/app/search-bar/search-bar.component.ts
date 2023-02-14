@@ -78,6 +78,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   public filterOutputIsVisible: boolean = false;
   public filterParsingDivIsPinned: boolean = false;
   public showParseFilterTimeoutId: any;
+  public filterParsingDivHeight: any;
 
   public productList: any = {
     "@odata.count": 0,
@@ -251,6 +252,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       clearTimeout(parseFilterTimeoutId);
       parseFilterTimeoutId = setTimeout(() => {
         this.parsedFilter = this.productSearch.parseFilter(e.target.value);
+        setTimeout(() => {
+          this.filterParsingDivHeight = filterParsingDiv!.clientHeight;
+        }, 50);
       }, 500);
     })
   }
@@ -266,7 +270,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   checkFilterParsingToggle() {
     if (this.showAdvancedSearch == false) {
-      if (filterParsingDiv.classList.contains('filter-parsing-hidden')) {
+      if (filterParsingDiv!.classList.contains('filter-parsing-hidden')) {
         filterParsingDiv!.classList.replace('filter-parsing-hidden', 'filter-parsing-shown');
       }
       clearTimeout(this.showParseFilterTimeoutId);
@@ -297,8 +301,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.checkAdvancedSearchThumbSize();
     }
     this.onShowHideButtonClick(null);
-
-
   }
 
   onFilterOutputToggle(event: any) {
@@ -328,13 +330,15 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (pinIcon.classList.contains('filter-parsing-unpinned')) {
       pinIcon.classList.replace('filter-parsing-unpinned', 'filter-parsing-pinned');
       this.filterParsingDivIsPinned = true;
+      productListContainer!.style.top = (56 + this.filterParsingDivHeight) + 'px';
       clearTimeout(this.showParseFilterTimeoutId);
     } else {
       pinIcon.classList.replace('filter-parsing-pinned', 'filter-parsing-unpinned');
       this.filterParsingDivIsPinned = false;
+      productListContainer!.style.top = (48) + 'px';
       this.showParseFilterTimeoutId = setTimeout(() => {
         filterParsingDiv!.classList.replace('filter-parsing-shown', 'filter-parsing-hidden');
-      }, 5000);
+      }, 250);
     }
   }
 
@@ -371,8 +375,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.advancedFilterIsActive = true;
     }
     /* Hide Advanced Search Panel */
-    let advancedSearchMenu = document.getElementById('advanced-search-menu');
-    if (advancedSearchMenu!.style.visibility == 'visible') {
+    //let advancedSearchMenu = document.getElementById('advanced-search-menu');
+    if (this.showAdvancedSearch) {
       this.onShowAdvancedSearch(event);
     }
     /* Send Search */
@@ -416,6 +420,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     /* Parse Product Filter (Content and Publication Periods) */
     this.productFilter = "";
     let bracketOpen: boolean = false;
+
     if (sensingStartEl.value !== "") {
       if (!bracketOpen) {
         this.productFilter += "(";
@@ -432,6 +437,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       }
       this.productFilter += "ContentDate/End le " + sensingStopEl.value + "T23:59:59.999Z";
     }
+
     if (publicationStartEl.value !== "") {
       if (this.productFilter !== "") {
         this.productFilter += " and ";
@@ -439,7 +445,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         this.productFilter += "(";
         bracketOpen = true;
       }
-      this.productFilter += "PublicationDate ge " + publicationStopEl.value + "T00:00:00.000Z";
+      this.productFilter += "PublicationDate ge " + publicationStartEl.value + "T00:00:00.000Z";
     }
     if (publicationStopEl.value !== "") {
       if (this.productFilter !== "") {
@@ -566,6 +572,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       (res: any) => {
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
+        if (productListContainer!.classList.contains('product-list-container-hidden')) {
+          productListContainer!.classList.replace('product-list-container-hidden', 'product-list-container-shown');
+        }
+        if (this.filterParsingDivIsPinned) {
+          productListContainer!.style.top = (56 + this.filterParsingDivHeight) + 'px';
+        } else {
+          productListContainer!.style.top = (48) + 'px';
+        }
         if ("status" in res) {
           /* response error */
           this.productList = {
@@ -577,6 +591,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           /* 0 products found */
           this.showProductList = true;
           this.listIsReady = true;
+
           this.productListRolled = true;
 
           this.productList = {
