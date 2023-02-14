@@ -22,10 +22,6 @@ export class ProductSearchService {
   parseFilter(str: string) {
     //console.log('initial filter: ', str);
     let filterArray: any = [];
-    //const regexContains = /^\*(.*)\*/gm;
-    //const regexStartsWith = /[^;]+\*(?=$|;)/gm;
-    //const regexEndsWith = /^\*(.*)/gm;
-
     const regexContains = /^\*(.*)\*/;
     const regexStartsWith = /[^;]+\*(?=$|;)/;
     const regexEndsWith = /^\*(.*)/;

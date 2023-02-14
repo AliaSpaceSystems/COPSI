@@ -17,9 +17,9 @@ let productListHeader: any;
 let productListScrollThumb: any;
 let advancedSearchContainer: any;
 let advancedSearchScrollThumb: any;
-let filterOutputContainer: any;
+let filterOutputDiv: any;
 let filterOutputScrollThumb: any;
-let filterParsingDiv: any;
+//let filterParsingDiv: any;
 let detailedView: any;
 let simpleView: any;
 let minimalView: any;
@@ -143,8 +143,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     productListHeader = document.getElementById('product-list-header')!;
     productListContainer = document.getElementById('product-list-container')!;
     advancedSearchContainer = document.getElementById('advanced-search-scrollable-container')!;
-    filterOutputContainer = document.getElementById('advanced-search-filter-output-scrollable-container')!;
-
+    //filterOutputDiv = document.getElementById('advanced-search-filter-output-scrollable-container')!;
+    filterOutputDiv = document.getElementById('filter-parsing-div')!;
     sensingStartEl = document.getElementById('sensing-start')!;
     sensingStopEl = document.getElementById('sensing-stop')!;
     publicationStartEl = document.getElementById('publication-start')!;
@@ -233,17 +233,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     /* Filter Output scroll thumb */
     filterOutputScrollThumb = document.getElementById('filter-output-scroll-thumb')!;
-    this.dragElement(filterOutputScrollThumb, filterOutputContainer);
+    this.dragElement(filterOutputScrollThumb, filterOutputDiv);
 
-    filterOutputContainer!.addEventListener('scroll', (e: any) => {
-      this.scrollFilterThumbPos = this.calcThumbPos(filterOutputContainer, this.scrollFilterSize);
+    filterOutputDiv!.addEventListener('scroll', (e: any) => {
+      this.scrollFilterThumbPos = this.calcThumbPos(filterOutputDiv, this.scrollFilterSize);
       this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
     });
   }
 
   ngAfterViewInit(): void {
     /* Filter parsing while typing */
-    filterParsingDiv = document.getElementById('filter-parsing-div')!;
+    // filterParsingDiv = document.getElementById('filter-parsing-div')!;
     let typedFilter: any = document.getElementById('search-input')!;
     let parseFilterTimeoutId: any;
 
@@ -253,7 +253,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       parseFilterTimeoutId = setTimeout(() => {
         this.parsedFilter = this.productSearch.parseFilter(e.target.value);
         setTimeout(() => {
-          this.filterParsingDivHeight = filterParsingDiv!.clientHeight;
+          this.filterParsingDivHeight = filterOutputDiv!.clientHeight;
+          this.checkAdvancedSearchThumbSize();
+          filterOutputScrollThumb.style.visibility = 'visible';
         }, 50);
       }, 500);
     })
@@ -269,17 +271,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   checkFilterParsingToggle() {
-    if (this.showAdvancedSearch == false) {
-      if (filterParsingDiv!.classList.contains('filter-parsing-hidden')) {
-        filterParsingDiv!.classList.replace('filter-parsing-hidden', 'filter-parsing-shown');
+    //if (this.showAdvancedSearch == false) {
+      if (filterOutputDiv!.classList.contains('filter-parsing-hidden')) {
+        filterOutputDiv!.classList.replace('filter-parsing-hidden', 'filter-parsing-visible');
       }
       clearTimeout(this.showParseFilterTimeoutId);
       if (this.filterParsingDivIsPinned == false) {
         this.showParseFilterTimeoutId = setTimeout(() => {
-          filterParsingDiv!.classList.replace('filter-parsing-shown', 'filter-parsing-hidden');
+          filterOutputDiv!.classList.replace('filter-parsing-visible', 'filter-parsing-hidden');
         }, AppConfig.settings.searchOptions.hideFilterOutputTimeout);
       }
-    }
+    //}
   }
 
   onShowAdvancedSearch(event: any) {
@@ -297,13 +299,18 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.productListRolled = false;
       advancedSearchMenu!.style.visibility = 'visible';
       this.showAdvancedSearch = true;
-      filterParsingDiv!.classList.replace('filter-parsing-shown', 'filter-parsing-hidden');
-      this.checkAdvancedSearchThumbSize();
+      //filterOutputDiv!.classList.replace('filter-parsing-visible', 'filter-parsing-hidden');
+      //this.checkAdvancedSearchThumbSize();
+      setTimeout(() => {
+        if (this.filterParsingDivIsPinned) {
+          this.checkFilterParsingToggle();
+        }
+      }, 250);
     }
     this.onShowHideButtonClick(null);
   }
 
-  onFilterOutputToggle(event: any) {
+  /* onFilterOutputToggle(event: any) {
     let filterOutput = document.getElementById('advanced-search-filter-output-scrollable-container')!;
     if (filterOutput.classList.contains('filter-output-hidden')) {
       filterOutput.classList.replace('filter-output-hidden', 'filter-output-visible');
@@ -323,7 +330,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         advancedSearchScrollThumb.style.marginTop = '1.85rem';
       }, 300);
     }
-  }
+  } */
 
   onPushPinToggle (event: any) {
     let pinIcon = document.getElementById('pin-search-filter-output-icon')!;
@@ -337,7 +344,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.filterParsingDivIsPinned = false;
       productListContainer!.style.top = (48) + 'px';
       this.showParseFilterTimeoutId = setTimeout(() => {
-        filterParsingDiv!.classList.replace('filter-parsing-shown', 'filter-parsing-hidden');
+        filterOutputDiv!.classList.replace('filter-parsing-visible', 'filter-parsing-hidden');
       }, 250);
     }
   }
@@ -542,7 +549,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.setThumbPos(advancedSearchScrollThumb, this.scrollSearchThumbPos);
 
     this.calcFilterThumbSize();
-    this.scrollFilterThumbPos = this.calcThumbPos(filterOutputContainer, this.scrollFilterSize);
+    this.scrollFilterThumbPos = this.calcThumbPos(filterOutputDiv, this.scrollFilterSize);
     this.setThumbSize(filterOutputScrollThumb, this.scrollFilterSize);
     this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
   }
@@ -870,9 +877,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   calcFilterThumbSize() {
-    if (filterOutputContainer.scrollHeight > filterOutputContainer.clientHeight) {
+    if (filterOutputDiv.scrollHeight > filterOutputDiv.clientHeight) {
       filterOutputScrollThumb.style.visibility = 'visible';
-      this.scrollFilterSize = filterOutputContainer.clientHeight * filterOutputContainer.clientHeight / filterOutputContainer.scrollHeight;
+      this.scrollFilterSize = filterOutputDiv.clientHeight * filterOutputDiv.clientHeight / filterOutputDiv.scrollHeight;
     } else {
       filterOutputScrollThumb.style.visibility = 'hidden';
     }

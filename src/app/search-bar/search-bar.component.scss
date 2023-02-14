@@ -63,14 +63,44 @@ hr {
 
 /* Filter Parsing div */
 #filter-parsing-div {
+  overflow-y: auto;
+  width: $search-bar-width;
+  max-height: 6rem;
   transition: 0.25s;
 }
+
+/* Scrollbar hiding */
+#filter-parsing-div {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+#filter-parsing-div::-webkit-scrollbar {
+  display: none;  /* Chrome */
+}
+
+#filter-output-scroll-thumb {
+  visibility: visible;
+  position: absolute;
+  z-index: 99;
+  width: 0.5rem;
+  border: $main-dark-border;
+  box-shadow: $default-shadow;
+  height: 6rem;
+  background-color: $main-dark-text-color;
+  border-radius: 0.25rem;
+  right: -0.5rem;
+  margin: 1.85rem 0 0 0;
+  top: 0;
+  opacity: 1.0;
+  pointer-events: visible;
+  transition: background-color 0.1s linear;
+}
+
 .filter-parsing-hidden {
   position: absolute;
   display: flex;
   flex-direction: column;
-  z-index: 99;
-  width: $search-bar-width;
+  z-index: 90;
   min-height: $default-title-div-height;
   top: calc($default-title-div-height + 1rem);
   left: 0.5rem;
@@ -82,12 +112,11 @@ hr {
   opacity: 0.0;
   pointer-events: none;
 }
-.filter-parsing-shown {
+.filter-parsing-visible {
   position: absolute;
   display: flex;
   flex-direction: column;
-  z-index: 99;
-  width: $search-bar-width;
+  z-index: 90;
   min-height: $default-title-div-height;
   top: calc($default-title-div-height + 1rem);
   left: 0.5rem;
@@ -99,6 +128,23 @@ hr {
   opacity: 1.0;
   pointer-events: visible;
 }
+/* .filter-output-hidden {
+  width: 100%;
+  height: 0; //6rem when visible;
+  min-height: 0; //6rem when visible;
+  max-height: 6rem;
+  overflow-y: auto;
+  transition: 0.25s;
+}
+
+.filter-output-visible {
+  width: 100%;
+  height: 6rem;
+  min-height: 6rem;
+  max-height: 6rem;
+  overflow-y: auto;
+  transition: 0.25s;
+} */
 #filter-parsing-label-div {
   display: flex;
   flex-direction: row;
@@ -122,10 +168,11 @@ hr {
   margin: 0 -0.5rem 0 0;
 }
 
-#filter-parsing-div p {
-  margin: 0;
+#filter-parsing-div span, p {
+  color: darken($main-dark-text-color, 15);
   font-size: $search-bar-font-size-small;
-  color: $main-dark-text-color;
+  padding: 0;
+  margin: 0;
 }
 
 /* Advanced Search */
@@ -172,7 +219,7 @@ hr {
   margin: 0;
 }
 
-#advanced-search-filter-output-icon {
+/* #advanced-search-filter-output-icon {
   color: $main-dark-text-color;
   font-size: 2.2rem;
   line-height: 1.5rem;
@@ -183,13 +230,13 @@ hr {
   font-size: 2.2rem;
   line-height: 1.5rem;
   margin: 0 1.5rem 0 -0.25rem;
-}
+} */
 #advanced-search-clear-icon, #advanced-search-submit-icon {
   font-size: 1.5rem;
   line-height: 1.75rem;
 }
 
-.filter-output-hidden {
+/* .filter-output-hidden {
   width: 100%;
   height: 0; //6rem when visible;
   min-height: 0; //6rem when visible;
@@ -205,9 +252,9 @@ hr {
   max-height: 6rem;
   overflow-y: auto;
   transition: 0.25s;
-}
+} */
 
-#advanced-search-filter-output-scrollable-container {
+/* #advanced-search-filter-output-scrollable-container {
   background-color: $main-dark-bg-color;
 }
 #advanced-search-filter-output {
@@ -237,34 +284,9 @@ hr {
   font-size: $search-bar-font-size-small;
   padding: 0;
   margin: 0;
-}
+} */
 
-/* Scrollbar hiding */
-#advanced-search-filter-output-scrollable-container {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-#advanced-search-filter-output-scrollable-container::-webkit-scrollbar {
-  display: none;  /* Chrome */
-}
 
-#filter-output-scroll-thumb {
-  visibility: hidden;
-  position: absolute;
-  z-index: 99;
-  width: 0.5rem;
-  border: $main-dark-border;
-  box-shadow: $default-shadow;
-  height: 6rem;
-  background-color: $main-dark-text-color;
-  border-radius: 0.25rem;
-  right: -0.5rem;
-  margin: 1.85rem 0 0 0;
-  top: 0;
-  opacity: 1.0;
-  pointer-events: visible;
-  transition: background-color 0.1s linear;
-}
 
 #advanced-search-scrollable-container {
   width: 100%;

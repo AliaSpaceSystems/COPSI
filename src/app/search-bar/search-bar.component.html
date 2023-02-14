@@ -12,17 +12,22 @@
     <div id="filter-parsing-label">Search filter output:</div>
     <mat-icon id="pin-search-filter-output-icon" class="filter-parsing-unpinned" aria-hidden="false" aria-label="pin search filter output icon" title="Pin search filter output" (click)="onPushPinToggle($event)">push_pin</mat-icon>
   </div>
-  <span>
-    <p>{{parsedFilter}}</p>
-  </span>
+  <p>
+    <span>{{parsedFilter}}</span>
+    <span *ngIf="parsedFilter !== '' && (productFilter !== '' || attributeFilter !== '')"> and </span>
+    <span>{{productFilter}}</span>
+    <span *ngIf="productFilter !== '' && attributeFilter !== ''"> and </span>
+    <span>{{attributeFilter}}</span>
+  </p>
+  <div id="filter-output-scroll-thumb"></div>
 </div>
 
 <div id="advanced-search-menu" [@searchMenuAnimation]="showAdvancedSearch ? 'open' : 'closed'">
   <div id="advanced-search-title-div">
-    <mat-icon *ngIf="advancedFilterOutputIsActive == false && filterOutputIsVisible == true" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_up</mat-icon>
+<!--     <mat-icon *ngIf="advancedFilterOutputIsActive == false && filterOutputIsVisible == true" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_up</mat-icon>
     <mat-icon *ngIf="advancedFilterOutputIsActive == true && filterOutputIsVisible == true" id="advanced-search-filter-output-icon-filtered" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_up</mat-icon>
     <mat-icon *ngIf="advancedFilterOutputIsActive == false && filterOutputIsVisible == false" id="advanced-search-filter-output-icon" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_down</mat-icon>
-    <mat-icon *ngIf="advancedFilterOutputIsActive == true && filterOutputIsVisible == false" id="advanced-search-filter-output-icon-filtered" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_down</mat-icon>
+    <mat-icon *ngIf="advancedFilterOutputIsActive == true && filterOutputIsVisible == false" id="advanced-search-filter-output-icon-filtered" aria-hidden="false" aria-label="advanced search filter output icon" title="Show filter output" (click)="onFilterOutputToggle($event)">arrow_drop_down</mat-icon> -->
     <p>Advanced Search</p>
     <div id="advanced-search-title-buttons-div">
       <mat-icon id="advanced-search-clear-icon" aria-hidden="false" aria-label="advanced search clear icon" title="Clear all filters" (click)="onAdvancedSearchClear($event)">delete_outline</mat-icon>
@@ -30,7 +35,7 @@
     </div>
   </div>
   <!-- hr -->
-  <hr>
+  <!-- <hr>
   <div id="advanced-search-filter-output-scrollable-container" class="filter-output-hidden">
     <div id="advanced-search-filter-output">
       <div id="filter-output-label">Filter Output:</div>
@@ -42,7 +47,7 @@
         <span>{{attributeFilter}}</span>
       </p>
     </div>
-  </div>
+  </div> -->
   <!-- hr -->
   <hr>
   <div id="advanced-search-scrollable-container">
@@ -111,7 +116,6 @@
     </div>
     <div id="advanced-search-footer"></div>
   </div>
-  <div id="filter-output-scroll-thumb"></div>
   <div id="advanced-search-scroll-thumb"></div>
 </div>
 
