@@ -30,7 +30,7 @@
         "value": "ASC"
       }
     ],
-    "hideFilterOutputTimeout": 3000
+    "hideFilterOutputTimeout": 2000
   },
   "mapSettings": {
       "initialViewState": {
@@ -287,8 +287,8 @@
             "S5_OCN__2S",
             "S6_OCN__2S",
             "IW_OCN__2S",
-            "WV_OCN__2S",
-            "EW_OCN__2S"
+            "EW_OCN__2S",
+            "WV_OCN__2S"
           ]
         },
         {
@@ -321,8 +321,7 @@
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "ASCENDING",
-            "DESCENDING",
-            "UNKNOWN"
+            "DESCENDING"
           ]
         },
         {
@@ -372,8 +371,8 @@
           "manualInput": true
         },
         {
-          "name": "Data Strip Identifier",
-          "attributeName": "dataStripIdentifier",
+          "name": "Datastrip Identifier",
+          "attributeName": "datastripIdentifier",
           "attributeType": "OData.CSC.StringAttribute",
           "manualInput": true
         },
@@ -458,17 +457,6 @@
             "NR",
             "NT",
             "ST"
-          ]
-        },
-        {
-          "name": "Orbit Direction",
-          "attributeName": "orbitDirection",
-          "attributeType": "OData.CSC.StringAttribute",
-          "value": [
-            "ASCENDING",
-            "DESCENDING",
-            "ascending",
-            "descending"
           ]
         },
         {
