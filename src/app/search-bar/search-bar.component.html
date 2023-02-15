@@ -7,12 +7,13 @@
   </div>
 </div>
 
-<div id="filter-parsing-div" class="filter-parsing-hidden">
-  <div id="filter-parsing-label-div">
-    <div id="filter-parsing-label">Search filter output:</div>
-    <mat-icon id="pin-search-filter-output-icon" class="filter-parsing-unpinned" aria-hidden="false" aria-label="pin search filter output icon" title="Pin search filter output" (click)="onPushPinToggle($event)">push_pin</mat-icon>
+<div id="filter-output-div" class="hidden unpinned">
+  <div id="filter-output-label-div">
+    <div id="filter-output-label">Search filter output:</div>
+    <mat-icon id="pin-search-filter-output-icon" class="unpinned" aria-hidden="false" aria-label="pin search filter output icon" title="Pin search filter output" (click)="onPushPinToggle($event)">push_pin</mat-icon>
   </div>
-  <div id="filter-parsing-scrollable-div">
+  <hr>
+  <div id="filter-output-scrollable-div">
     <p>
       <span>{{parsedFilter}}</span>
       <span *ngIf="parsedFilter !== '' && (productFilter !== '' || attributeFilter !== '')"> and </span>
@@ -25,7 +26,7 @@
 </div>
 
 <!-- <div id="advanced-search-menu" [@searchMenuAnimation]="showAdvancedSearch ? 'open' : 'closed'"> -->
-<div id="advanced-search-menu" class="advanced-search-menu-hidden">
+<div id="advanced-search-menu" class="hidden">
   <div id="advanced-search-title-div">
     <p>Advanced Search</p>
     <div id="advanced-search-title-buttons-div">
@@ -103,7 +104,7 @@
   <div id="advanced-search-scroll-thumb"></div>
 </div>
 
-<div id="product-list-container" class="product-list-container-hidden">
+<div id="product-list-container" class="hidden">
   <div id="product-list-div">
     <div id="product-list-header">
       <div id="page-buttons-div" *ngIf="productTotalNumber > 0">
