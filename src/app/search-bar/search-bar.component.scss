@@ -19,6 +19,8 @@
   align-items: center;
   align-content: center;
   justify-content: space-evenly;
+
+  transition: 250ms ease-in-out;
 }
 
 /* component global styles */
@@ -76,7 +78,7 @@ hr {
   border: $main-dark-border;
   border-radius: 0.25rem;
   box-shadow: $default-shadow;
-  transition: 0.25s;
+  transition: 0.25s ease-in-out;
 }
 #filter-output-div.pinned {
   background-color: $main-dark-bg-color;

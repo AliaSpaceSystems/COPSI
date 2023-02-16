@@ -118,8 +118,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     window.addEventListener("resize", () => {
-      this.setListView(this.lastViewStyle);
-      this.checkAdvancedSearchThumbSize();
+      setTimeout(() => {
+        this.checkFilterOutputHeight();
+        this.setListView(this.lastViewStyle);
+        this.checkAdvancedSearchThumbSize();
+      }, 250);
     });
 
     listContainer = document.getElementById('list-items-container')!;
