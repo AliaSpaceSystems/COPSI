@@ -25,15 +25,12 @@ let simpleView: any;
 let minimalView: any;
 let prevPageButton: any;
 let nextPageButton: any;
-let sensingStartEl: any;
-let sensingStopEl: any;
-let publicationStartEl: any;
-let publicationStopEl: any;
-let missionEl: any;
 let copsyBlueColor: any;
 let copsyBlueColor_RED: number;
 let copsyBlueColor_GREEN: number;
 let copsyBlueColor_BLUE: number;
+let advancedSearchMagnifierIcon: any;
+let advancedSearchSubmitIcon: any;
 
 @Component({
   selector: 'app-search-bar',
@@ -52,6 +49,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public advancedFilterIsActive: boolean = false;
   public advancedFilterOutputIsActive: boolean = false;
   public todayDate: string = '';
+
+  public sensingStartEl: any;
+  public sensingStopEl: any;
+  public publicationStartEl: any;
+  public publicationStopEl: any;
+  public missionEl: any;
 
   @Input()
   public filter: string = "";
@@ -75,6 +78,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public lastPage: number = 0;
   public prevPage: number = 0;
   public searchOptions: any;
+  public canSubmitSearch: boolean = true;
 
   public searchBarWidth: number = 0;
   public listContainerTempWidth: any;
@@ -132,11 +136,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     advancedSearchMenu = document.getElementById('advanced-search-menu')!;
     filterOutputDiv = document.getElementById('filter-output-div')!;
     filterOutputScrollableDiv = document.getElementById('filter-output-scrollable-div')!;
-    sensingStartEl = document.getElementById('sensing-start')!;
-    sensingStopEl = document.getElementById('sensing-stop')!;
-    publicationStartEl = document.getElementById('publication-start')!;
-    publicationStopEl = document.getElementById('publication-stop')!;
-    missionEl = document.getElementsByClassName('collapsible-section')!;
+    this.sensingStartEl = document.getElementById('sensing-start')!;
+    this.sensingStopEl = document.getElementById('sensing-stop')!;
+    this.publicationStartEl = document.getElementById('publication-start')!;
+    this.publicationStopEl = document.getElementById('publication-stop')!;
+    this.missionEl = document.getElementsByClassName('collapsible-section')!;
+    advancedSearchMagnifierIcon = document.getElementById('search-magnifier-icon')!;
+    advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon');
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -310,6 +316,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 250);
   }
 
+  onCopyOutputClicked (event: any) {
+    let filterOutput: string = filterOutputScrollableDiv.textContent;
+    console.log(filterOutput);
+    this.clipboard.copy(filterOutput);
+    this.toast.showInfoToast('success', 'filter output copied');
+  }
+
   onPushPinToggle (event: any) {
     let pinIcon = document.getElementById('pin-search-filter-output-icon')!;
     if (pinIcon.classList.contains('unpinned')) {
@@ -355,10 +368,18 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     [].forEach.call(inputsToClear, (el:any) => {
       el.value = "";
+      el.setCustomValidity("");
     });
     [].forEach.call(datesToClear, (el:any) => {
       el.value = "";
+      el.setCustomValidity("");
     });
+    if (advancedSearchMagnifierIcon.classList.contains('invalid')) {
+      advancedSearchMagnifierIcon.classList.remove('invalid');
+    }
+    if (advancedSearchSubmitIcon.classList.contains('invalid')) {
+      advancedSearchSubmitIcon.classList.remove('invalid');
+    }
     this.productFilter = "";
     this.attributeFilter = "";
     this.advancedFilterOutputIsActive = false;
@@ -366,22 +387,27 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onAdvancedSearchSubmit(event: any) {
     this.parseAdvancedFilter();
+    if (this.canSubmitSearch) {
+      if (this.productFilter === "" && this.attributeFilter === "") {
+        this.advancedFilterIsActive = false;
+      } else {
+        this.advancedFilterIsActive = true;
+      }
 
-    if (this.productFilter === "" && this.attributeFilter === "") {
-      this.advancedFilterIsActive = false;
+      /* Hide Advanced Search Panel */
+      if (advancedSearchMenu.classList.contains('visible')) {
+        this.onShowAdvancedSearch(event);
+      }
+      /* Send Search */
+      this.onSearch(event);
     } else {
-      this.advancedFilterIsActive = true;
+      this.toast.showInfoToast('error', 'Please check input: invalid fields');
     }
-    /* Hide Advanced Search Panel */
-    if (advancedSearchMenu.classList.contains('visible')) {
-      this.onShowAdvancedSearch(event);
-    }
-    /* Send Search */
-    this.onSearch(event);
   }
 
   onDateClicked(event: any) {
-    event.target.showPicker();
+    /* uncomment showPicker() to sho picker calendar on date click */
+    //event.target.showPicker();
   }
 
   onMissionFilterButtonClicked(event: any) {
@@ -417,41 +443,80 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     /* Parse Product Filter (Content and Publication Periods) */
     this.productFilter = "";
     let bracketOpen: boolean = false;
-
-    if (sensingStartEl.value !== "") {
-      if (!bracketOpen) {
-        this.productFilter += "(";
-        bracketOpen = true;
-      }
-      this.productFilter += "ContentDate/Start ge " + sensingStartEl.value + "T00:00:00.000Z";
+    this.canSubmitSearch = true;
+    if (advancedSearchSubmitIcon.classList.contains('invalid')) {
+      advancedSearchSubmitIcon.classList.remove('invalid');
     }
-    if (sensingStopEl.value !== "") {
-      if (this.productFilter !== "") {
-        this.productFilter += " and ";
-      } else if (!bracketOpen) {
-        this.productFilter += "(";
-        bracketOpen = true;
-      }
-      this.productFilter += "ContentDate/End le " + sensingStopEl.value + "T23:59:59.999Z";
+    if (advancedSearchMagnifierIcon.classList.contains('invalid')) {
+      advancedSearchMagnifierIcon.classList.remove('invalid');
     }
 
-    if (publicationStartEl.value !== "") {
-      if (this.productFilter !== "") {
-        this.productFilter += " and ";
-      } else if (!bracketOpen) {
-        this.productFilter += "(";
-        bracketOpen = true;
+    if (this.sensingStartEl.value !== "") {
+      if (this.sensingStopEl.value === "" || (this.sensingStartEl.value <= this.sensingStopEl.value)) {
+        this.sensingStartEl.setCustomValidity("");
+        if (!bracketOpen) {
+          this.productFilter += "(";
+          bracketOpen = true;
+        }
+        this.productFilter += "ContentDate/Start ge " + this.sensingStartEl.value + "T00:00:00.000Z";
+      } else {
+        advancedSearchSubmitIcon.classList.add('invalid');
+        advancedSearchMagnifierIcon.classList.add('invalid');
+        this.sensingStartEl.setCustomValidity("Please check Sensing Start Date: Start Date > Stop Date");
+        this.canSubmitSearch = false;
       }
-      this.productFilter += "PublicationDate ge " + publicationStartEl.value + "T00:00:00.000Z";
     }
-    if (publicationStopEl.value !== "") {
-      if (this.productFilter !== "") {
-        this.productFilter += " and ";
-      } else if (!bracketOpen) {
-        this.productFilter += "(";
-        bracketOpen = true;
+    if (this.sensingStopEl.value !== "") {
+      if (this.sensingStartEl.value === "" || (this.sensingStartEl.value <= this.sensingStopEl.value)) {
+        this.sensingStopEl.setCustomValidity("");
+        if (this.productFilter !== "") {
+          this.productFilter += " and ";
+        } else if (!bracketOpen) {
+          this.productFilter += "(";
+          bracketOpen = true;
+        }
+        this.productFilter += "ContentDate/End le " + this.sensingStopEl.value + "T23:59:59.999Z";
+      } else {
+        advancedSearchSubmitIcon.classList.add('invalid');
+        advancedSearchMagnifierIcon.classList.add('invalid');
+        this.sensingStopEl.setCustomValidity("Please check Sensing Stop Date: Stop Date < Start Date");
+        this.canSubmitSearch = false;
       }
-      this.productFilter += "PublicationDate le " + publicationStopEl.value + "T23:59:59.999Z";
+    }
+
+    if (this.publicationStartEl.value !== "") {
+      if (this.publicationStopEl.value === "" || (this.publicationStartEl.value <= this.publicationStopEl.value)) {
+        this.publicationStartEl.setCustomValidity("");
+        if (this.productFilter !== "") {
+          this.productFilter += " and ";
+        } else if (!bracketOpen) {
+          this.productFilter += "(";
+          bracketOpen = true;
+        }
+        this.productFilter += "PublicationDate ge " + this.publicationStartEl.value + "T00:00:00.000Z";
+      } else {
+        advancedSearchSubmitIcon.classList.add('invalid');
+        advancedSearchMagnifierIcon.classList.add('invalid');
+        this.publicationStartEl.setCustomValidity("Please check Publication Start Date: Start Date > Stop Date");
+        this.canSubmitSearch = false;
+      }
+    }
+    if (this.publicationStopEl.value !== "") {
+      if (this.publicationStartEl.value === "" || (this.publicationStartEl.value <= this.publicationStopEl.value)) {
+        this.publicationStopEl.setCustomValidity("");
+        if (this.productFilter !== "") {
+          this.productFilter += " and ";
+        } else if (!bracketOpen) {
+          this.productFilter += "(";
+          bracketOpen = true;
+        }
+        this.productFilter += "PublicationDate le " + this.publicationStopEl.value + "T23:59:59.999Z";
+      } else {
+        advancedSearchSubmitIcon.classList.add('invalid');
+        advancedSearchMagnifierIcon.classList.add('invalid');
+        this.publicationStopEl.setCustomValidity("Please check Publication Stop Date: Stop Date < Start Date");
+        this.canSubmitSearch = false;
+      }
     }
     if (bracketOpen) {
       this.productFilter += ")";
@@ -461,7 +526,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /* Parse Attribute Filter */
     this.attributeFilter = "";
-    [].forEach.call(missionEl, (el:any, i:any) => {
+    [].forEach.call(this.missionEl, (el:any, i:any) => {
       let bracketOpenInner: boolean = false;
       if (el.getElementsByTagName('input')[0].checked) {
         if (this.attributeFilter !== "") {
@@ -499,12 +564,31 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               value = input.value;
               if (value !== "") {
                 if (input.classList.contains("input-min")) {
-                  gotMinValue = true;
+                  let maxValueEl = this.getNextSibling(input, ".input-max")!;
+                  if(maxValueEl.value === "" || maxValueEl.value >= input.value) {
+                    gotMinValue = true;
+                    gotValue = true;
+                    input.setCustomValidity("");
+                  } else {
+                    advancedSearchSubmitIcon.classList.add('invalid');
+                    advancedSearchMagnifierIcon.classList.add('invalid');
+                    input.setCustomValidity("Please check input: Min Value > Max Value");
+                    this.canSubmitSearch = false;
+                  }
                 }
                 if (input.classList.contains("input-max")) {
-                  gotMaxValue = true;
+                  let minValueEl = this.getPreviousSibling(input, ".input-min")!;
+                  if(minValueEl.value === "" || minValueEl.value <= input.value) {
+                    gotMinValue = true;
+                    gotValue = true;
+                    input.setCustomValidity("");
+                  } else {
+                    advancedSearchSubmitIcon.classList.add('invalid');
+                    advancedSearchMagnifierIcon.classList.add('invalid');
+                    input.setCustomValidity("Please check input: Max Value < Min Value");
+                    this.canSubmitSearch = false;
+                  }
                 }
-                gotValue = true;
               }
             }
             if (gotValue) {
@@ -521,6 +605,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         bracketOpenInner = false;
       }
     });
+
     if (this.productFilter === "" && this.attributeFilter === "") {
       this.advancedFilterOutputIsActive = false;
     } else {
@@ -534,6 +619,24 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.checkAdvancedSearchThumbSize();
     }, 200);
   }
+
+  getNextSibling(elem: any, selector: any) {
+    var sibling = elem.nextElementSibling;
+    if (!selector) return sibling;
+    while (sibling) {
+      if (sibling.matches(selector)) return sibling;
+      sibling = sibling.nextElementSibling
+    }
+  };
+  getPreviousSibling(elem: any, selector: any) {
+    var sibling = elem.previousElementSibling;
+    if (!selector) return sibling;
+    while (sibling) {
+      if (sibling.matches(selector)) return sibling;
+      sibling = sibling.previousElementSibling;
+    }
+  };
+
 
   checkAdvancedSearchThumbSize() {
     this.calcSearchThumbSize();
