@@ -310,9 +310,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.productListRolled = true;
     }
     this.onShowHideButtonClick(null);
-    setTimeout(() => {
+    this.checkFilterOutputHeight();
+    /* setTimeout(() => {
       this.checkFilterOutputHeight();
-    }, 50);
+    }, 50); */
     setTimeout(() => {
       if (this.filterParsingDivIsPinned) {
         this.checkFilterParsingToggle();
@@ -402,6 +403,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       if (advancedSearchMenu.classList.contains('visible')) {
         this.onShowAdvancedSearch(event);
       }
+      if (productListContainer.classList.contains('visible')) {
+        this.onShowHideButtonClick(event);
+      }
+
       /* Send Search */
       this.onSearch(event);
     } else {
@@ -410,7 +415,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDateClicked(event: any) {
-    /* uncomment showPicker() to sho picker calendar on date click */
+    /* uncomment showPicker() to show picker calendar on date click */
     //event.target.showPicker();
   }
 
@@ -644,15 +649,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkAdvancedSearchThumbSize() {
     this.calcSearchThumbSize();
-    this.scrollSearchThumbPos = this.calcThumbPos(advancedSearchContainer, this.scrollSearchSize);
     this.setThumbSize(advancedSearchScrollThumb, this.scrollSearchSize);
+    this.scrollSearchThumbPos = this.calcThumbPos(advancedSearchContainer, this.scrollSearchSize);
     this.setThumbPos(advancedSearchScrollThumb, this.scrollSearchThumbPos);
   }
 
   checkFilterOutputThumbSize() {
     this.calcFilterThumbSize();
-    this.scrollFilterThumbPos = this.calcThumbPos(filterOutputScrollableDiv, this.scrollFilterSize);
     this.setThumbSize(filterOutputScrollThumb, this.scrollFilterSize);
+    this.scrollFilterThumbPos = this.calcThumbPos(filterOutputScrollableDiv, this.scrollFilterSize);
     this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
 
   }
