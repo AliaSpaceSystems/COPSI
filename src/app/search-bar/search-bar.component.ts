@@ -325,7 +325,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     let filterOutput: string = filterOutputScrollableDiv.textContent;
     console.log(filterOutput);
     this.clipboard.copy(filterOutput);
-    this.toast.showInfoToast('success', 'filter output copied');
+    this.toast.showInfoToast('success', 'FILTER OUTPUT COPIED');
   }
 
   onPushPinToggle (event: any) {
@@ -410,7 +410,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       /* Send Search */
       this.onSearch(event);
     } else {
-      this.toast.showInfoToast('error', 'Please check input: invalid fields');
+      this.toast.showInfoToast('error', 'PLEASE CHECK INPUT: INVALID FIELDS');
     }
   }
 
@@ -588,7 +588,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (input.classList.contains("input-max")) {
                   let minValueEl = this.getPreviousSibling(input, ".input-min")!;
                   if(minValueEl.value === "" || minValueEl.value <= input.value) {
-                    gotMinValue = true;
+                    gotMaxValue = true;
                     gotValue = true;
                     input.setCustomValidity("");
                   } else {
