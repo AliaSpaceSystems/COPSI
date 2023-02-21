@@ -47,9 +47,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public mapLayer: string = '';
   mapSettingsSubscription!: Subscription;
 
-  public showUser = false;
-  public showSettings = false;
-  public name: string = ''; 
+  public showUser: boolean = false;
+  public showUserTimeoutId: any;
+  public showSettings: boolean = false;
+  public showSettingsTimeoutId: any;
+  public name: string = '';
   public centreInfo: any = AppConfig.settings.centreInfo;
 
   constructor(private exchangeService: ExchangeService,
@@ -57,7 +59,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const userClaims: any = this.oauthService.getIdentityClaims();
-    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";    
+    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
     this.mapTiles.styles = AppConfig.settings.styles;
     this.mapStyle = AppConfig.settings.mapSettings.projection;
   }
@@ -65,17 +67,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
-  onUserMenuClick(event: any) {
+  onUserMenuIconClick(event: any) {
     const userClaims: any = this.oauthService.getIdentityClaims();
-    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";  
+    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
     this.showUser = !this.showUser;
     this.showSettings = false;
+    this.setUserMenuTimeout();
     event.stopPropagation();
   }
 
-  onSettingsMenuClick(event: any) {
+  onSettingsMenuIconClick(event: any) {
     this.showSettings = !this.showSettings;
     this.showUser = false;
+    this.setSettingsMenuTimeout();
     event.stopPropagation();
   }
 
@@ -94,11 +98,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.exchangeService.setShowLabels(showLabels);
   }
 
-  onMenuClicked(event: any) {
+  onUserMenuClicked(event: any) {
+    this.setUserMenuTimeout();
+    event.stopPropagation();
+  }
+
+  onSettingsMenuClicked(event: any) {
+    this.setSettingsMenuTimeout();
     event.stopPropagation();
   }
 
   onLogoutClicked() {
     this.oauthService.logOut();
+  }
+
+  setUserMenuTimeout() {
+    if (this.showUserTimeoutId) {
+      clearTimeout(this.showUserTimeoutId);
+    }
+    this.showUserTimeoutId = setTimeout(() => {
+      this.showUser = false;
+    }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
+  }
+
+  setSettingsMenuTimeout() {
+    if (this.showSettingsTimeoutId) {
+      clearTimeout(this.showSettingsTimeoutId);
+    }
+    this.showSettingsTimeoutId = setTimeout(() => {
+      this.showSettings = false;
+    }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
   }
 }

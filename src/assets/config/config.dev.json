@@ -33,6 +33,9 @@
     "hideFilterOutputTimeout": 2000,
     "filterOutputIsPinnedByDefault": true
   },
+  "headerSettings": {
+    "menuAutoHideTimeout": 5000
+  },
   "mapSettings": {
       "initialViewState": {
           "longitude": 2.27,
