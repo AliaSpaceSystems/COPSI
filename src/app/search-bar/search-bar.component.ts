@@ -565,6 +565,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
           let inputs = item.getElementsByTagName('input');
           [].forEach.call(inputs, (input:any) => {
+            console.log(input);
             let gotValue: boolean = false;
             let value: string = "";
             let gotMinValue: boolean = false;
@@ -597,6 +598,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                     input.setCustomValidity("Please check input: Max Value < Min Value");
                     this.canSubmitSearch = false;
                   }
+                } else {
+                  gotValue = true;
                 }
               }
             }
