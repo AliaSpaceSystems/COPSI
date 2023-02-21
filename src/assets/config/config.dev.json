@@ -1,5 +1,5 @@
 {
-  "version": "1.1",
+  "version": "1.1.0",
   "centreInfo": {
       "name": "",
       "image": "",
@@ -30,7 +30,8 @@
         "value": "ASC"
       }
     ],
-    "hideFilterOutputTimeout": 2000
+    "hideFilterOutputTimeout": 2000,
+    "filterOutputIsPinnedByDefault": true
   },
   "mapSettings": {
       "initialViewState": {
@@ -49,8 +50,8 @@
   "keycloak": {
       "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
       "issuer_": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
-      "redirectUri": "http://localhost:4200/home",
-      "redirectUri_": "http://192.168.0.109:4200/home",
+      "redirectUri_": "http://localhost:4200/home",
+      "redirectUri": "http://192.168.0.109:4200/home",
       "clientId": "prip-api",
       "clientId_": "ivv-prip-client",
       "responseType": "code",

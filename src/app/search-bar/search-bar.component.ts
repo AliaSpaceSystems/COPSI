@@ -62,7 +62,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public productFilter: string = "";
   public attributeFilter: string = "";
   public filterOutputIsVisible: boolean = false;
-  public filterParsingDivIsPinned: boolean = false;
+  public filterOutputIsPinnedByDefault: boolean = AppConfig.settings.searchOptions.filterOutputIsPinnedByDefault;
+  public filterParsingDivIsPinned: boolean = this.filterOutputIsPinnedByDefault;
   public showParseFilterTimeoutId: any;
   public filterParsingDivHeight: any;
 
@@ -309,6 +310,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.productListRolled = true;
     }
     this.onShowHideButtonClick(null);
+    setTimeout(() => {
+      this.checkFilterOutputHeight();
+    }, 50);
     setTimeout(() => {
       if (this.filterParsingDivIsPinned) {
         this.checkFilterParsingToggle();

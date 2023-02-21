@@ -12,7 +12,7 @@
     <div id="filter-output-label">Search filter output:</div>
     <div id="filter-output-icons-div">
       <mat-icon id="copy-search-filter-output-icon" aria-hidden="false" aria-label="copy search filter output icon" title="Copy search filter output" (click)="onCopyOutputClicked($event)">content_copy</mat-icon>
-      <mat-icon id="pin-search-filter-output-icon" class="unpinned" aria-hidden="false" aria-label="pin search filter output icon" title="Pin search filter output" (click)="onPushPinToggle($event)">push_pin</mat-icon>
+      <mat-icon id="pin-search-filter-output-icon" [class]="filterOutputIsPinnedByDefault ? 'pinned' : 'unpinned'" aria-hidden="false" aria-label="pin search filter output icon" title="Pin search filter output" (click)="onPushPinToggle($event)">push_pin</mat-icon>
     </div>
   </div>
   <hr>
@@ -56,17 +56,17 @@
       <div class="advanced-search-item-div">
         <label for="sensing-start">Sensing date:</label>
         <div class="datepicker-div">
-          <input data-dependent-validation='{"from": "sensing-stop", "prop": "max"}' type="date" class="date" id="sensing-start" name="sensing-start" [max]="sensingStopEl.value == '' ? todayDate : sensingStopEl.value" title="Sensing start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="sensing-start" name="sensing-start" [max]="sensingStopEl.value === '' ? todayDate : sensingStopEl.value" title="Sensing start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
           <span>-</span>
-          <input data-dependent-validation='{"from": "sensing-start", "prop": "min"}' type="date" class="date" id="sensing-stop" name="sensing-stop" [min]="sensingStartEl.value == '' ? todayDate : sensingStartEl.value" [max]="todayDate" title="Sensing stop date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="sensing-stop" name="sensing-stop" [min]="sensingStartEl.value === '' ? undefined : sensingStartEl.value" [max]="todayDate" title="Sensing stop date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         </div>
       </div>
       <div class="advanced-search-item-div">
         <label for="publication-start">Publication date:</label>
         <div class="datepicker-div">
-          <input type="date" class="date" id="publication-start" name="publication-start" [max]="publicationStopEl.value == '' ? todayDate : publicationStopEl.value" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="publication-start" name="publication-start" [max]="publicationStopEl.value === '' ? todayDate : publicationStopEl.value" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
           <span>-</span>
-          <input type="date" class="date" id="publication-stop" name="publication-stop" [min]="publicationStartEl.value == '' ? todayDate : publicationStartEl.value" [max]="todayDate" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="publication-stop" name="publication-stop" [min]="publicationStartEl.value === '' ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         </div>
       </div>
     </div>
