@@ -323,7 +323,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onCopyOutputClicked (event: any) {
     let filterOutput: string = filterOutputScrollableDiv.textContent;
-    console.log(filterOutput);
+    //console.log(filterOutput);
     this.clipboard.copy(filterOutput);
     this.toast.showInfoToast('success', 'FILTER OUTPUT COPIED');
   }
@@ -565,7 +565,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
           let inputs = item.getElementsByTagName('input');
           [].forEach.call(inputs, (input:any) => {
-            console.log(input);
             let gotValue: boolean = false;
             let value: string = "";
             let gotMinValue: boolean = false;
