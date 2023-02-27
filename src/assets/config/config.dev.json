@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "centreInfo": {
       "name": "",
       "image": "",
@@ -52,11 +52,13 @@
   },
   "keycloak": {
       "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-      "issuer_": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
-      "redirectUri_": "http://localhost:4200/home",
-      "redirectUri": "http://192.168.0.109:4200/home",
+      "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
+      "issuer_SERCO_GSS": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
+      "redirectUri": "http://localhost:4200/home",
+      "redirectUri_": "http://192.168.0.109:4200/home",
       "clientId": "prip-api",
       "clientId_": "ivv-prip-client",
+      "clientId_GSS": "ivv-gss1-client",
       "responseType": "code",
       "scope": "openid profile email",
       "requireHttps": false,
@@ -386,7 +388,7 @@
           "attributeType": "OData.CSC.DoubleAttribute",
           "minValue": 0.00,
           "maxValue": 100.00,
-          "step": 0.01,
+          "step": 0.001,
           "needsMinMaxValues": true
         }
       ]
@@ -469,7 +471,7 @@
           "attributeType": "OData.CSC.DoubleAttribute",
           "minValue": 0.00,
           "maxValue": 100.00,
-          "step": 0.01,
+          "step": 0.001,
           "needsMinMaxValues": true
         }
       ]

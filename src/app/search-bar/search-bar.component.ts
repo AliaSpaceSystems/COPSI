@@ -574,7 +574,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               if (value !== "") {
                 if (input.classList.contains("input-min")) {
                   let maxValueEl = this.getNextSibling(input, ".input-max")!;
-                  if(maxValueEl.value === "" || maxValueEl.value >= input.value) {
+                  if(maxValueEl.value === "" || Number(maxValueEl.value) >= Number(input.value)) {
                     gotMinValue = true;
                     gotValue = true;
                     input.setCustomValidity("");
@@ -587,7 +587,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
                 if (input.classList.contains("input-max")) {
                   let minValueEl = this.getPreviousSibling(input, ".input-min")!;
-                  if(minValueEl.value === "" || minValueEl.value <= input.value) {
+                  if(minValueEl.value === "" || Number(minValueEl.value) <= Number(input.value)) {
                     gotMaxValue = true;
                     gotValue = true;
                     input.setCustomValidity("");
