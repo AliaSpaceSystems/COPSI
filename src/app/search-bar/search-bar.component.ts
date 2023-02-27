@@ -20,6 +20,7 @@ let advancedSearchScrollThumb: any;
 let filterOutputDiv: any;
 let filterOutputScrollableDiv: any;
 let filterOutputScrollThumb: any;
+let productDetailContainer: any;
 let detailedView: any;
 let simpleView: any;
 let minimalView: any;
@@ -105,6 +106,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public scrollFilterThumbPos: number = 0;
   public scrollFilterSize: number = 0;
 
+  public productDetail: any = {
+    name: "S2B_OPER_MSI_L1C_DS_2BPS_20220523T002058_S20220523T000611_N11.11.tar"
+  };
+
   download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
 
@@ -143,7 +148,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.publicationStopEl = document.getElementById('publication-stop')!;
     this.missionEl = document.getElementsByClassName('collapsible-section')!;
     advancedSearchMagnifierIcon = document.getElementById('search-magnifier-icon')!;
-    advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon');
+    advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon')!;
+    productDetailContainer = document.getElementById('product-details-container')!;
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -757,7 +763,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   product.hasQL = true;
                   product.qlURL = this.sanitizeImageUrl(URL.createObjectURL(res));
                 } else {
-                  product.hasQl = false;
+                  product.hasQL = false;
                   product.qlURL = "";
                 }
               },
@@ -842,7 +848,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onShowHideButtonClick(event: any) {
     if (this.listIsReady) {
-      let listItemParentContainer = document.getElementById('list-items-parent-container')!;
+      //let listItemParentContainer = document.getElementById('list-items-parent-container')!;
       if (this.productListRolled) {
         this.productListRolled = false;
         if (advancedSearchMenu.classList.contains('visible')) {
@@ -860,7 +866,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         productListHeader.style.opacity = '1.0';
         productListContainer.style.left = '0.5rem';
         this.calcListThumbSize();
-        listItemParentContainer!.style.gap = '0 0.5rem';
+        /* listItemParentContainer!.style.gap = '0 0.5rem'; */
+        productListContainer!.style.gap = '0';
       } else {
         this.productListRolled = true;
         listContainer.style.visibility = 'hidden';
@@ -869,7 +876,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         productListHeader.style.opacity = '0.0';
         productListContainer.style.left = (-productListContainer.clientWidth - productListScrollThumb.clientWidth - 2).toString() + 'px';
         productListScrollThumb.style.visibility = 'hidden';
-        listItemParentContainer!.style.gap = '0 1.0rem';
+        /* listItemParentContainer!.style.gap = '0 1.0rem'; */
+        productListContainer!.style.gap = '0 0.75rem';
       }
     }
     if (event != null) event.stopPropagation();
@@ -1052,6 +1060,27 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       document.onmouseup = null;
       document.onmousemove = null;
     }
+  }
+
+  onShowProductDetails(id: string) {
+    console.log("Show product details for ID: " + id);
+    if (productDetailContainer.classList.contains('hidden')) {
+      productDetailContainer.classList.replace('hidden', 'visible');
+    }
+    let selectedProduct: any = this.productList.value.filter((product: any) => product.Id === id)[0];
+    if (this.productDetail.name !== selectedProduct.Name) {
+      this.productDetail.name = selectedProduct.Name;
+      this.productDetail.hasQL = selectedProduct.hasQL;
+    } else {
+      this.onHideProductDetails();
+    }
+  }
+
+  onHideProductDetails() {
+    if (productDetailContainer.classList.contains('visible')) {
+      productDetailContainer.classList.replace('visible', 'hidden');
+    }
+    this.productDetail.name = '';
   }
 
   copyUrl(id: string) {

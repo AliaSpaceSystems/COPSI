@@ -162,7 +162,7 @@
                 <div class="ql" *ngIf="product.hasQL == true && showSimpleView">
                   <img class="quicklook" [src]="product.qlURL">
                 </div>
-                <div class="ql" *ngIf="product.hasQL == null && showSimpleView">
+                <div class="ql" *ngIf="(product.hasQL == false || product.hasQL == null) && showSimpleView">
                   <img class="quicklook" src="./assets/images/no-preview-1.png">
                 </div>
 
@@ -174,6 +174,8 @@
           <!-- Product Action Buttons Template -->
           <ng-template #qlButtons>
             <div class="ql-buttons-div">
+              <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
+              (click)="onShowProductDetails(product.Id)"></mat-icon>
               <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
               (click)="copyUrl(product.Id)"></mat-icon>
               <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
@@ -202,16 +204,41 @@
               </div>
             </div>
           </ng-template>
-
         </div>
       </div>
-      <div id="product-list-scroll-thumb"></div>
-      <button id="show-hide-button" *ngIf="productTotalNumber > 0" title="Show/Hide list" (click)="onShowHideButtonClick($event)">
-        <mat-icon *ngIf="productListRolled == true" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_right</mat-icon>
-        <mat-icon *ngIf="productListRolled == false" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
-      </button>
     </div>
   </div>
+  <!-- product list scroll bar -->
+  <div id="product-list-scroll-thumb"></div>
+
+  <!-- product details panel -->
+  <!-- <div id="product-details-container" class="hidden"> -->
+  <div id="product-details-container" class="visible">
+    <div id="product-details-title">
+      <p>Product details</p>
+      <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility_off"
+      (click)="onHideProductDetails()"></mat-icon>
+    </div>
+    <div id="product-details-inner-container">
+      <div id="product-details-header">
+        <p>{{productDetail.name}}</p>
+      </div>
+      <div id="product-details-div">
+        <div id="product-details-ql" *ngIf="productDetail.hasQL == true">
+          <img id="product-details-quicklook" [src]="productDetail.qlURL">
+        </div>
+        <div id="product-details-ql" *ngIf="(productDetail.hasQL == null || productDetail.hasQL == false)">
+          <img id="product-details-quicklook" src="./assets/images/no-preview-1.png">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- show hide button -->
+  <button id="show-hide-button" *ngIf="productTotalNumber > 0" title="Show/Hide list" (click)="onShowHideButtonClick($event)">
+    <mat-icon *ngIf="productListRolled == true" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_right</mat-icon>
+    <mat-icon *ngIf="productListRolled == false" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
+  </button>
 </div>
 
 <div id="get-properties-div"></div>

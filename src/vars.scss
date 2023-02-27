@@ -52,6 +52,10 @@ $search-bar-product-icons-dim: 1.0rem;
 $switch-width: 1.6rem;
 $switch-height: 0.8rem;
 
+/* product details */
+$product-details-width: 26rem;
+$product-details-width-mobile: 20rem;
+
 /* toast */
 $toast-font-size: $footer-font-size;
 $toast-font-size-mobile: 0.7rem;
@@ -73,8 +77,8 @@ $main-buttons-bg-color-hover: #ababab;
 
 
 /* responsiveness */
-$screen-width-threshold-medium: 48rem;
-$screen-width-threshold-little: 44rem;
+$screen-width-threshold-medium: 54.5rem;
+$screen-width-threshold-little: 44rem; //44rem;
 $screen-minimum-width: 37rem;
 
 /* progress bar download */
