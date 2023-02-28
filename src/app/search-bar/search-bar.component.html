@@ -204,6 +204,7 @@
               </div>
             </div>
           </ng-template>
+
         </div>
       </div>
     </div>
@@ -212,8 +213,7 @@
   <div id="product-list-scroll-thumb"></div>
 
   <!-- product details panel -->
-  <!-- <div id="product-details-container" class="hidden"> -->
-  <div id="product-details-container" class="visible">
+  <div id="product-details-container" class="hidden">
     <div id="product-details-title">
       <p>Product details</p>
       <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility_off"
@@ -221,18 +221,71 @@
     </div>
     <div id="product-details-inner-container">
       <div id="product-details-header">
-        <p>{{productDetail.name}}</p>
+        <p>{{selectedProduct.Name}}</p>
       </div>
       <div id="product-details-div">
-        <div id="product-details-ql" *ngIf="productDetail.hasQL == true">
-          <img id="product-details-quicklook" [src]="productDetail.qlURL">
+        <hr>
+        <div id="product-details-ql" *ngIf="selectedProduct.hasQL == true">
+          <img id="product-details-quicklook" [src]="selectedProduct.qlURL">
         </div>
-        <div id="product-details-ql" *ngIf="(productDetail.hasQL == null || productDetail.hasQL == false)">
-          <img id="product-details-quicklook" src="./assets/images/no-preview-1.png">
+        <div id="product-details-ql" *ngIf="(selectedProduct.hasQL == null || selectedProduct.hasQL == false)">
+          No Preview Available
+        </div>
+        <hr>
+        <div id="product-details-attributes-div">
+          <p>
+            Properties
+          </p>
+          <table class="properties-table">
+            <tr>
+              <th style="width: 25%;">Name</th>
+              <th style="width: 75%;">Value</th>
+            </tr>
+            <tr *ngFor="let property of properiesList">
+              <td *ngIf="selectedProduct.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
+              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number')" class="properties-table-value">{{selectedProduct[property]}}</td>
+              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value">
+                <ng-container [ngTemplateOutlet]='Array.isArray(selectedProduct[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:selectedProduct[property]}" class="properties-table-value"></ng-container>
+                <ng-template #array let-obj='obj'>
+                  <span *ngFor="let item of obj; let idx = index">
+                    <ng-container [ngTemplateOutlet]='notArray' [ngTemplateOutletContext]="{obj:item, idx:idx}"></ng-container>
+                  </span>
+                </ng-template>
+                <ng-template #notArray let-obj='obj' let-idx='idx'>
+                  <table class="inner-table">
+                    <tr *ngIf="idx >= 0">
+                      <th style="width: 35%;">Algorithm: {{idx}}</th>
+                      <th style="width: 65%;"></th>
+                    </tr>
+                    <tr *ngFor="let key of Object.keys(obj)">
+                      <td class="inner-table-name">{{key}}</td>
+                      <td class="inner-table-value">{{obj[key]}}</td>
+                    </tr>
+                  </table>
+                </ng-template>
+              </td>
+            </tr>
+          </table>
+          <hr>
+          <p>
+            Attributes
+          </p>
+          <table class="attributes-table">
+            <tr>
+              <th>Name</th>
+              <th>Value</th>
+            </tr>
+            <tr *ngFor="let attribute of selectedProduct.Attributes">
+              <td class="attribute-table-name">{{beautifyCamelCase(attribute.Name)}}</td>
+              <td class="attribute-table-value">{{attribute.Value}}</td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
   </div>
+  <!-- product detail scroll bar -->
+  <div id="product-detail-scroll-thumb"></div>
 
   <!-- show hide button -->
   <button id="show-hide-button" *ngIf="productTotalNumber > 0" title="Show/Hide list" (click)="onShowHideButtonClick($event)">

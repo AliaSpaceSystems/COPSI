@@ -7,6 +7,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
 import { Download } from 'ngx-operators';
+import productDetails from 'src/assets/config/product_details.json';
 
 
 declare let $: any;
@@ -21,6 +22,8 @@ let filterOutputDiv: any;
 let filterOutputScrollableDiv: any;
 let filterOutputScrollThumb: any;
 let productDetailContainer: any;
+let productDetailScrollableDiv: any;
+let productDetailScrollThumb: any;
 let detailedView: any;
 let simpleView: any;
 let minimalView: any;
@@ -106,9 +109,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public scrollFilterThumbPos: number = 0;
   public scrollFilterSize: number = 0;
 
-  public productDetail: any = {
-    name: "S2B_OPER_MSI_L1C_DS_2BPS_20220523T002058_S20220523T000611_N11.11.tar"
-  };
+  public scrollDetailThumbPos: number = 0;
+  public scrollDetailSize: number = 0;
+
+  public selectedProduct: any = {};
+  public properiesList: any = productDetails.Properties;
+  public attributesList: any = productDetails.Attributes;
+  public precProductId: any;
+  public Object = Object;
+  public Array = Array;
 
   download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
@@ -150,6 +159,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     advancedSearchMagnifierIcon = document.getElementById('search-magnifier-icon')!;
     advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon')!;
     productDetailContainer = document.getElementById('product-details-container')!;
+    productDetailScrollableDiv = document.getElementById('product-details-inner-container')!;
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -238,6 +248,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     filterOutputScrollableDiv!.addEventListener('scroll', (e: any) => {
       this.scrollFilterThumbPos = this.calcThumbPos(filterOutputScrollableDiv, this.scrollFilterSize);
       this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
+    });
+
+    /* Product Detail scroll thumb */
+    productDetailScrollThumb = document.getElementById('product-detail-scroll-thumb')!;
+    this.dragElement(productDetailScrollThumb, productDetailScrollableDiv);
+
+    productDetailScrollableDiv!.addEventListener('scroll', (e: any) => {
+      this.scrollDetailThumbPos = this.calcThumbPos(productDetailScrollableDiv, this.scrollDetailSize);
+      this.setThumbPos(productDetailScrollThumb, this.scrollDetailThumbPos);
     });
   }
 
@@ -667,7 +686,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setThumbSize(filterOutputScrollThumb, this.scrollFilterSize);
     this.scrollFilterThumbPos = this.calcThumbPos(filterOutputScrollableDiv, this.scrollFilterSize);
     this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
+  }
 
+  checkProductDetailThumbSize() {
+    this.calcDetailThumbSize();
+    this.setThumbSize(productDetailScrollThumb, this.scrollDetailSize);
+    this.scrollDetailThumbPos = this.calcThumbPos(productDetailScrollableDiv, this.scrollDetailSize);
+    this.setThumbPos(productDetailScrollThumb, this.scrollDetailThumbPos);
   }
 
   onSearch(event: any) {
@@ -704,6 +729,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
       (res: any) => {
+        this.selectedProduct = {};
+        this.onHideProductDetails();
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
         if ("status" in res) {
@@ -733,6 +760,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           /* got a list */
           this.productList = res;
+          //console.log("Product List: ", this.productList);
+
           this.productList.value.forEach((product: any) => {
             product.download = {};
             product.tags = [];
@@ -868,6 +897,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         this.calcListThumbSize();
         /* listItemParentContainer!.style.gap = '0 0.5rem'; */
         productListContainer!.style.gap = '0';
+        if (productDetailContainer.classList.contains('visible')) {
+          productDetailScrollThumb.style.visibility = 'visible';
+        }
       } else {
         this.productListRolled = true;
         listContainer.style.visibility = 'hidden';
@@ -878,6 +910,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         productListScrollThumb.style.visibility = 'hidden';
         /* listItemParentContainer!.style.gap = '0 1.0rem'; */
         productListContainer!.style.gap = '0 0.75rem';
+        productDetailScrollThumb.style.visibility = 'hidden';
       }
     }
     if (event != null) event.stopPropagation();
@@ -1009,6 +1042,14 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       filterOutputScrollThumb.style.visibility = 'hidden';
     }
   }
+  calcDetailThumbSize() {
+    if (productDetailScrollableDiv.scrollHeight > productDetailScrollableDiv.clientHeight) {
+      productDetailScrollThumb.style.visibility = 'visible';
+      this.scrollDetailSize = productDetailScrollableDiv.clientHeight * productDetailScrollableDiv.clientHeight / productDetailScrollableDiv.scrollHeight;
+    } else {
+      productDetailScrollThumb.style.visibility = 'hidden';
+    }
+  }
 
   calcListThumbColor() {
     clearTimeout(this.listThumbColorTimeout);
@@ -1063,24 +1104,39 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onShowProductDetails(id: string) {
-    console.log("Show product details for ID: " + id);
     if (productDetailContainer.classList.contains('hidden')) {
       productDetailContainer.classList.replace('hidden', 'visible');
     }
-    let selectedProduct: any = this.productList.value.filter((product: any) => product.Id === id)[0];
-    if (this.productDetail.name !== selectedProduct.Name) {
-      this.productDetail.name = selectedProduct.Name;
-      this.productDetail.hasQL = selectedProduct.hasQL;
-    } else {
+
+    this.selectedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
+    let tempUnfilteredProductAttributes: any = this.selectedProduct.Attributes;
+    let tempAttributesToFilter: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProduct.platformShortName)[0].Attributes;
+
+    this.selectedProduct.Attributes = [];
+    tempUnfilteredProductAttributes.forEach((unfilteredAttribute: any) => {
+      tempAttributesToFilter.forEach((attributeNameToFilter: any) => {
+        if (attributeNameToFilter === unfilteredAttribute.Name) {
+          this.selectedProduct.Attributes.push(unfilteredAttribute);
+        }
+      });
+    });
+
+    if (this.precProductId === this.selectedProduct.Id) {
       this.onHideProductDetails();
+    } else {
+      this.precProductId = this.selectedProduct.Id;
+      setTimeout(() => {
+        this.checkProductDetailThumbSize();
+      }, 200);
     }
   }
 
   onHideProductDetails() {
+    this.precProductId = '';
     if (productDetailContainer.classList.contains('visible')) {
       productDetailContainer.classList.replace('visible', 'hidden');
+      productDetailScrollThumb.style.visibility = 'hidden';
     }
-    this.productDetail.name = '';
   }
 
   copyUrl(id: string) {
@@ -1091,5 +1147,19 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   returnOptionNameFromValue(val: any, options: any) {
     return options.filter((option: any) => option.value === val)[0].name;
+  }
+
+  beautifyCamelCase(text: any) {
+    let words = text.split(/(?=[A-Z])/);
+    for(var i = 0; i < words.length; i++) {
+      let tempWord = words[i];
+      tempWord = tempWord.trim();
+      words[i] = tempWord.charAt(0).toUpperCase() + tempWord.slice(1);
+    }
+    return words.join(" ");
+  }
+
+  getTypeOf(obj: any) {
+    return typeof obj;
   }
 }
