@@ -51,22 +51,16 @@
       "buttonText": "Sign in"
   },
   "keycloak": {
-      "issuer": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-      "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
-      "issuer_SERCO_GSS": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
-      "redirectUri": "http://localhost:4200/home",
-      "redirectUri_": "http://192.168.0.109:4200/home",
-      "clientId": "prip-api",
-      "clientId_": "ivv-prip-client",
-      "clientId_GSS": "ivv-gss1-client",
-      "responseType": "code",
-      "scope": "openid profile email",
-      "requireHttps": false,
-      "showDebugInformation": false,
-      "disableAtHashCheck": true,
-      "useSilentRefresh_": true,
-      "useSilentRefresh": false
-  },
+    "issuer": "https://<keycloak_url>/auth/realms/<realm>",
+    "redirectUri": "http(s)://<copsy_domain>/home",
+    "clientId": "<client_id>",
+    "responseType": "code",
+    "scope": "openid profile email",
+    "requireHttps": false,
+    "showDebugInformation": false,
+    "disableAtHashCheck": true,
+    "useSilentRefresh": false
+},
   "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
   "infoLogosLeft": [
       { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
