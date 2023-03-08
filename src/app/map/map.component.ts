@@ -34,8 +34,8 @@ let drawGeoJsonData: any = {
       "geometry": {
         "type": "Polygon",
         "coordinates": [
-          //[[]]
-          [[0, 20], [0, 50], [50, 50], [50, 20]]
+          //[]
+          [[0, 20], [0, 50], [50, 50], [50, 20], [0, 20]]
         ]
       },
       "properties": {
@@ -65,14 +65,102 @@ let selectedMapStyle: string;
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  onClickAtMapCoords(info: any) {
-    console.log("Click on globe: ", info.coordinate);
-    console.log("drawGeoJsonData pre: ", drawGeoJsonData.features[0].geometry.coordinates);
-    setTimeout(() => {
-      drawGeoJsonData.features[0].geometry.coordinates[0].push(info.coordinate);
-      console.log("drawGeoJsonData after: ", drawGeoJsonData.features[0].geometry.coordinates);
-      this.changeDrawLayer();
-    }, 500);
+  public canDraw: boolean = false;
+  public drawPointAdded: boolean = false;
+
+  onDrawButtonClicked() {
+    this.canDraw = true;
+    drawGeoJsonData = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[]]
+          },
+          "properties": {
+          }
+        }
+      ]
+    };
+    this.changeDrawLayer();
+  }
+
+  onClickAtMapCoords(info: any, event: any) {
+    if (event.middleButton) {
+      this.canDraw = false;
+      console.log("CanDraw: " + this.canDraw);
+    } else {
+      //console.log("Click on globe: ", info.coordinate);
+      let tempJson: any;
+      if (this.canDraw) {
+        //console.log("drawGeoJsonData pre: ", drawGeoJsonData.features[0].geometry.coordinates);
+        let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+        if(tempArray[0].length == 0) {
+          tempArray[0].push(info.coordinate);
+          tempArray[0].push(info.coordinate);
+          this.drawPointAdded = true;
+        } else {
+          //tempArray[0].splice(tempArray[0].length - 1, 0, info.coordinate);
+          //console.log(tempArray);
+          this.drawPointAdded = true;
+
+          tempJson = {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": tempArray/* [
+                    //[[]]
+                    [[30, 60], [30, 80], [80, 80], [80, 60], [30, 60]]
+                  ] */
+                },
+                "properties": {
+                }
+              }
+            ]
+          };
+          drawGeoJsonData = tempJson;
+          console.log("drawGeoJsonData after: ", drawGeoJsonData.features[0].geometry.coordinates);
+          this.changeDrawLayer();
+        }
+      }
+    }
+  }
+
+  onHoverWhileDrawing(info: any) {
+    if (this.canDraw) {
+      let tempJson: any;
+      let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+      if(tempArray[0].length > 1) {
+        if (this.drawPointAdded) {
+          console.log("initial array: " , tempArray[0]);
+          tempArray[0].splice(tempArray[0].length - 1, 0, info.coordinate);
+          this.drawPointAdded = false;
+        } else {
+          tempArray[0].splice(tempArray[0].length - 2, 1, info.coordinate);
+        }
+        tempJson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": tempArray
+              },
+              "properties": {
+              }
+            }
+          ]
+        };
+        drawGeoJsonData = tempJson;
+        this.changeDrawLayer();
+      }
+    }
   }
 
   productList: object = {};
@@ -196,16 +284,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMaxPixels: 2,
     getLineWidth: 2,
     getFillColor: [60, 140, 0, 130],
-    getLineColor: [80, 80, 80, 255],
+    getLineColor: [0, 50, 0, 255],
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 15000000)]
     },
-    wrapLongitude: true,
-    highlightedObjectIndex: -1,
-    fp64: true/* ,
-    updateTriggers: {
-      data: [drawGeoJsonData]
-    } */
+    wrapLongitude: true
   })
 
   public drawPolygonLayerPlane = new GeoJsonLayer({
@@ -221,13 +304,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMaxPixels: 2,
     getLineWidth: 2,
     getFillColor: [60, 140, 0, 130],
-    getLineColor: [80, 80, 80, 255],
+    getLineColor: [0, 50, 0, 255],
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 15000000)]
     },
-    wrapLongitude: true,
-    highlightedObjectIndex: -1,
-    fp64: true
+    wrapLongitude: true
   })
 
   /* public drawPolygonLayer = new PolygonLayer({
@@ -353,7 +434,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-
+  public deckRef: any;
   initMap() {
     deckGlobe = new Deck({
       parameters: {
@@ -365,7 +446,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           resolution: 1,
           nearZMultiplier: 1.4, // 1.4 max near limit
           farZMultiplier: 2.0, // use 2.0
-          controller: {keyboard: false, inertia: true},
+          controller: {keyboard: false, inertia: true, doubleClickZoom: false},
           clear: true
         }),
       canvas: 'map-globe',
@@ -381,7 +462,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.drawPolygonLayerGlobe
       ],
       wrapLongitude: true,
-      onClick: (info: any) => this.onClickAtMapCoords(info)
+      onClick: (info: any, event: any) => {
+        this.onClickAtMapCoords(info, event)
+      },
+      onHover: (info: any) => {
+        this.onHoverWhileDrawing(info);
+      },
+      getCursor: (cursor: any) => {
+        return cursor.isDragging ? 'grabbing' : 'crosshair';
+      }
     });
 
     deckPlane = new Deck({
@@ -391,7 +480,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       initialViewState: initialViewState,
       views: new MapView({
         id: 'plane',
-        controller: true,
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false},
         repeat: false,
         orthographic: false,
         bearing: 0,
@@ -409,8 +498,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Drawable Polygon Layer */
         this.drawPolygonLayerPlane
       ],
-      onClick: (info: any) => {
-        console.log("Click on plane: ", info.coordinate);
+      wrapLongitude: true,
+      onClick: (info: any, event: any) => {
+        this.onClickAtMapCoords(info, event)
+      },
+      getCursor: (cursor: any) => {
+        return cursor.isDragging ? 'grabbing' : 'crosshair';
       }
     });
   }
