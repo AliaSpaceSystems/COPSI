@@ -294,4 +294,12 @@
   </button>
 </div>
 
+<div id="geo-search-button-div" class="rolled">
+  <mat-icon id="geo-search-icon" aria-hidden="false" aria-label="GeoSearch icon" fontIcon="bring_your_own_ip" title="Geographic search" (click)="onGeoSearchClicked()"></mat-icon>
+</div>
+<div id="geo-search-container" class="hidden">
+  <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle" (click)="onDrawRectangleClicked()"></mat-icon>
+  <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon" (click)="onDrawPolygonClicked()"></mat-icon>
+</div>
+
 <div id="get-properties-div"></div>

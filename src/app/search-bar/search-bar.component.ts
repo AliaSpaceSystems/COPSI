@@ -36,6 +36,8 @@ let copsyBlueColor_GREEN: number;
 let copsyBlueColor_BLUE: number;
 let advancedSearchMagnifierIcon: any;
 let advancedSearchSubmitIcon: any;
+let geoSearchButtonDiv: any;
+let geoSearchContainer: any;
 
 @Component({
   selector: 'app-search-bar',
@@ -162,6 +164,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon')!;
     productDetailContainer = document.getElementById('product-details-container')!;
     productDetailScrollableDiv = document.getElementById('product-details-inner-container')!;
+    geoSearchButtonDiv = document.getElementById('geo-search-button-div');
+    geoSearchContainer = document.getElementById('geo-search-container');
+
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -917,6 +922,22 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     if (event != null) event.stopPropagation();
+  }
+
+  onGeoSearchClicked() {
+    if (geoSearchButtonDiv.classList.contains('rolled')) {
+      geoSearchButtonDiv.classList.replace('rolled', 'unrolled');
+      geoSearchContainer.classList.replace('hidden', 'visible');
+    } else {
+      geoSearchButtonDiv.classList.replace('unrolled', 'rolled');
+      geoSearchContainer.classList.replace('visible', 'hidden');
+    }
+  }
+  onDrawRectangleClicked() {
+
+  }
+  onDrawPolygonClicked() {
+
   }
 
   simplifyBytes(bytes: number) {

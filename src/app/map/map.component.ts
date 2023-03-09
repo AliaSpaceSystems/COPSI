@@ -65,11 +65,31 @@ let selectedMapStyle: string;
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  public canDraw: boolean = false;
+  public canDrawPolygon: boolean = false;
+  public canDrawSquare: boolean = false;
   public drawPointAdded: boolean = false;
 
   onDrawButtonClicked() {
-    this.canDraw = true;
+    this.canDrawPolygon = true;
+    drawGeoJsonData = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[]]
+          },
+          "properties": {
+          }
+        }
+      ]
+    };
+    this.changeDrawLayer();
+  }
+
+  onDrawSquareButtonClicked() {
+    this.canDrawSquare = true;
     drawGeoJsonData = {
       "type": "FeatureCollection",
       "features": [
@@ -89,12 +109,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onClickAtMapCoords(info: any, event: any) {
     if (event.middleButton) {
-      this.canDraw = false;
-      console.log("CanDraw: " + this.canDraw);
+      this.canDrawPolygon = false;
+      this.canDrawSquare = false;
     } else {
       //console.log("Click on globe: ", info.coordinate);
       let tempJson: any;
-      if (this.canDraw) {
+      if (this.canDrawPolygon || this.canDrawSquare) {
         //console.log("drawGeoJsonData pre: ", drawGeoJsonData.features[0].geometry.coordinates);
         let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
         if(tempArray[0].length == 0) {
@@ -113,7 +133,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
                 "type": "Feature",
                 "geometry": {
                   "type": "Polygon",
-                  "coordinates": tempArray/* [
+                  "coordinates": tempArray
+                  /* [
                     //[[]]
                     [[30, 60], [30, 80], [80, 80], [80, 60], [30, 60]]
                   ] */
@@ -124,7 +145,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             ]
           };
           drawGeoJsonData = tempJson;
-          console.log("drawGeoJsonData after: ", drawGeoJsonData.features[0].geometry.coordinates);
+          //console.log("drawGeoJsonData after: ", drawGeoJsonData.features[0].geometry.coordinates);
           this.changeDrawLayer();
         }
       }
@@ -132,16 +153,49 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onHoverWhileDrawing(info: any) {
-    if (this.canDraw) {
+    if (this.canDrawPolygon) {
       let tempJson: any;
       let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
       if(tempArray[0].length > 1) {
         if (this.drawPointAdded) {
-          console.log("initial array: " , tempArray[0]);
+          /* add point in array */
+          //console.log("initial array: " , tempArray[0]);
           tempArray[0].splice(tempArray[0].length - 1, 0, info.coordinate);
           this.drawPointAdded = false;
         } else {
+          /* next point preview */
           tempArray[0].splice(tempArray[0].length - 2, 1, info.coordinate);
+        }
+        tempJson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": tempArray
+              },
+              "properties": {
+              }
+            }
+          ]
+        };
+        drawGeoJsonData = tempJson;
+        this.changeDrawLayer();
+      }
+    } else if (this.canDrawSquare) {
+      let tempJson: any;
+      let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+      if(tempArray[0].length > 1) {
+        if (this.drawPointAdded) {
+          /* add point in array */
+          console.log("initial array: " + tempArray[0]);
+          tempArray[0].splice(tempArray[0].length - 1, 0, info.coordinate, info.coordinate, info.coordinate);
+          this.drawPointAdded = false;
+        } else {
+          /* square preview */
+          tempArray[0].splice(tempArray[0].length - 4, 3, [info.coordinate[0], tempArray[0][0][1]], info.coordinate, [tempArray[0][0][0], info.coordinate[1]]);
+          console.log("preview array: " , tempArray[0]);
         }
         tempJson = {
           "type": "FeatureCollection",
