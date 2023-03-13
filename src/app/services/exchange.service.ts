@@ -26,6 +26,12 @@ export class ExchangeService {
   private selectedProductId = new BehaviorSubject<any>({});
   selectProductOnMapExchange = this.selectedProductId.asObservable();
 
+  private rectDrawing = new BehaviorSubject<any>({});
+  startRectDrawingExchange = this.rectDrawing.asObservable();
+
+  private polygonDrawing = new BehaviorSubject<any>({});
+  startPolygonDrawingExchange = this.polygonDrawing.asObservable();
+
   constructor() { }
 
   setMapStyle(mapStyle: string) {
@@ -54,5 +60,13 @@ export class ExchangeService {
 
   selectProductOnMap(selectedProductId: any) {
     this.selectedProductId.next(selectedProductId);
+  }
+
+  startRectDrawing(rectDrawing: boolean) {
+    this.rectDrawing.next(rectDrawing);
+  }
+
+  startPolygonDrawing(polygonDrawing: boolean) {
+    this.polygonDrawing.next(polygonDrawing);
   }
 }

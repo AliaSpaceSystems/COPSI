@@ -4,9 +4,10 @@ import { Subscription } from 'rxjs';
 /* Map Imports */
 import { Deck, MapView, _GlobeView as GlobeView, COORDINATE_SYSTEM } from '@deck.gl/core';
 import { TileLayer } from '@deck.gl/geo-layers';
-import { BitmapLayer, GeoJsonLayer, PolygonLayer } from '@deck.gl/layers';
+import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { wktToGeoJSON } from '@terraformer/wkt';
 import { AppConfig } from '../services/app.config';
+import { trigger } from '@angular/animations';
 
 let deckGlobe: any;
 let deckPlane: any;
@@ -39,10 +40,31 @@ let drawGeoJsonData: any = {
         ]
       },
       "properties": {
+        "fillColor": [60, 140, 0, 150],
+        "borderColor": [0, 50, 0, 255]
       }
     }
   ]
 };
+//let drawCirclesData: any = [];
+let drawCirclesData: any = [
+  {
+    "coordinates": [0, 20],
+    "radius": 10
+  },
+  {
+    "coordinates": [0, 50],
+    "radius": 10
+  },
+  {
+    "coordinates": [50, 50],
+    "radius": 10
+  },
+  {
+    "coordinates": [50, 20],
+    "radius": 10
+  }
+];
 
 
 /* Base Map Styles Layer Data Array */
@@ -66,10 +88,41 @@ let selectedMapStyle: string;
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public canDrawPolygon: boolean = false;
-  public canDrawSquare: boolean = false;
+  public canDrawRect: boolean = false;
   public drawPointAdded: boolean = false;
+  public isHoveringOnPoints: boolean = false;
+  public isHoveringOnPolygon: boolean = false;
+  public canDragMap: boolean = true;
+  public startDragCoordinates: number[] = [];
 
-  onDrawButtonClicked() {
+  onDrawRectButtonClicked(val: boolean) {
+    this.canDrawRect = true;
+    drawGeoJsonData = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[]]
+          },
+          "properties": {
+            "fillColor": [200, 0, 0, 150],
+            "borderColor": [100, 0, 0, 255]
+          }
+        }
+      ]
+    };
+    drawCirclesData = [
+      {
+        "coordinates": [0, 90],
+        "radius": 0
+      }
+    ];
+    this.changeDrawLayer();
+  }
+
+  onDrawPolygonButtonClicked(val: boolean) {
     this.canDrawPolygon = true;
     drawGeoJsonData = {
       "type": "FeatureCollection",
@@ -81,140 +134,369 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             "coordinates": [[]]
           },
           "properties": {
+            "fillColor": [200, 0, 0, 150],
+            "borderColor": [100, 0, 0, 255]
           }
         }
       ]
     };
+    drawCirclesData = [
+      {
+        "coordinates": [0, 90],
+        "radius": 0
+      }
+    ];
     this.changeDrawLayer();
   }
 
-  onDrawSquareButtonClicked() {
-    this.canDrawSquare = true;
-    drawGeoJsonData = {
+  onClickOnMap(info: any, event: any) {
+    //console.log("info: ",info);
+    //console.log("event: ",event);
+    //console.log(info.layer.id);
+    //console.log(info.index);
+    let tempPolygonJson: any;
+
+    if (this.canDrawRect) {
+      let tempPolygonArray = drawGeoJsonData.features[0].geometry.coordinates;
+      let tempPointsArray = drawCirclesData;
+      if(tempPolygonArray[0].length == 0) {
+        tempPolygonArray[0].push(info.coordinate, info.coordinate, info.coordinate, info.coordinate, info.coordinate);
+        tempPointsArray = [{"coordinates": info.coordinate, "radius": 10}];
+        drawCirclesData = tempPointsArray;
+        this.drawPointAdded = true;
+        this.changeDrawLayer();
+      } else {
+        tempPolygonArray[0].splice(1, 3, [info.coordinate[0], tempPolygonArray[0][0][1]], info.coordinate, [tempPolygonArray[0][0][0], info.coordinate[1]]);
+        tempPointsArray = [
+          tempPointsArray[0],
+          {"coordinates": [info.coordinate[0], tempPolygonArray[0][0][1]], "radius": 10},
+          {"coordinates": info.coordinate, "radius": 10},
+          {"coordinates": [tempPolygonArray[0][0][0], info.coordinate[1]], "radius": 10}
+        ];
+        drawCirclesData = tempPointsArray;
+        this.canDrawRect = false;
+        tempPolygonJson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": tempPolygonArray
+              },
+              "properties": {
+                "fillColor": [60, 140, 0, 150],
+                "borderColor": [0, 50, 0, 255]
+              }
+            }
+          ]
+        };
+        drawGeoJsonData = tempPolygonJson;
+        this.changeDrawLayer();
+        //console.log(JSON.stringify(drawGeoJsonData, null, 2));
+
+      }
+    } else if (this.canDrawPolygon) {
+      let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+      let tempPointsArray = drawCirclesData;
+      let tempFillColor = [200, 0, 0, 150];
+      let tempBorderColor = [100, 0, 0, 255];
+      if(tempArray[0].length == 0) {
+        tempArray[0].push(info.coordinate, info.coordinate);
+        tempPointsArray = [{"coordinates": info.coordinate, "radius": 10}];
+        drawCirclesData = tempPointsArray;
+        this.drawPointAdded = true;
+        this.changeDrawLayer();
+      } else {
+        /* tempArray[0].splice(-1, 1, info.coordinate, info.coordinate); */
+
+        if (info.layer != null && info.layer.id === "scatterplot-layer" && info.index === 0) {
+          tempPointsArray = [];
+          for (var i = 0; i < drawCirclesData.length; i++) {
+            tempPointsArray.push({"coordinates": drawCirclesData[i].coordinates, "radius": 10});
+          }
+          tempFillColor = [60, 140, 0, 150];
+          tempBorderColor = [0, 50, 0, 255];
+          this.canDrawPolygon = false;
+        } else {
+          tempArray[0].push(info.coordinate);
+          tempPointsArray = tempPointsArray.concat([{"coordinates": info.coordinate, "radius": 3}]);
+        }
+        this.drawPointAdded = true;
+        tempPolygonJson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": tempArray
+              },
+              "properties": {
+                "fillColor": tempFillColor,
+                "borderColor": tempBorderColor
+              }
+            }
+          ]
+        };
+        drawGeoJsonData = tempPolygonJson;
+        drawCirclesData = tempPointsArray;
+        this.changeDrawLayer();
+      }
+    }
+  }
+
+  onHoverWhileDrawing(info: any) {
+    /* set bools to change cursor type */
+    if (info.layer != null) {
+      //console.log("info: ", info.layer.id);
+      if (info.layer.id === 'scatterplot-layer') {
+        this.isHoveringOnPoints = true;
+        this.isHoveringOnPolygon = false;
+      } else if (info.layer.id === 'draw-layer') {
+        this.isHoveringOnPolygon = true;
+        this.isHoveringOnPoints = false;
+      }
+    } else {
+      this.isHoveringOnPoints = false;
+      this.isHoveringOnPolygon = false;
+    }
+
+    if (this.canDrawRect) {
+      let tempJson: any;
+      let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+      if(tempArray[0].length > 0 && tempArray[0].length <= 5) {
+        tempArray[0].splice(-4, 3, [info.coordinate[0], tempArray[0][0][1]], info.coordinate, [tempArray[0][0][0], info.coordinate[1]]);
+        tempJson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": tempArray
+              },
+              "properties": {
+                "fillColor": [200, 0, 0, 150],
+                "borderColor": [100, 0, 0, 255]
+              }
+            }
+          ]
+        };
+        drawGeoJsonData = tempJson;
+        this.changeDrawLayer();
+      }
+    } else if (this.canDrawPolygon) {
+      let tempJson: any;
+      let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+      if(tempArray[0].length > 0) {
+        tempArray[0].splice(-1, 1, info.coordinate);
+        tempJson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": tempArray
+              },
+              "properties": {
+                "fillColor": [200, 0, 0, 150],
+                "borderColor": [100, 0, 0, 255]
+              }
+            }
+          ]
+        };
+        drawGeoJsonData = tempJson;
+        this.changeDrawLayer();
+      }
+    }
+  }
+
+  onPointDragStart() {
+    deckGlobe.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+    });
+    deckPlane.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+    });
+  }
+
+  onPointDrag(info: any) {
+    //console.log(info.index); // the array.index to move!!
+    //console.log(info.object.coordinates);
+
+    if (info.layer != null && info.layer.id === "scatterplot-layer") {
+      let tempPolygonJson: any;
+      let tempPolygonArray = drawGeoJsonData.features[0].geometry.coordinates;
+      let tempPointsArray = [];
+      let tempFillColor = [200, 0, 0, 150];
+      let tempBorderColor = [100, 0, 0, 255];
+      //console.log(tempArray);
+      tempPolygonArray[0][info.index] = (info.coordinate);
+      if (info.index == 0) {
+        tempPolygonArray[0][tempPolygonArray[0].length - 1] = (info.coordinate);
+      }
+      tempPolygonJson = {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": tempPolygonArray
+            },
+            "properties": {
+              "fillColor": tempFillColor,
+              "borderColor": tempBorderColor
+            }
+          }
+        ]
+      };
+      for (var i = 0; i < drawCirclesData.length; i++) {
+        if (i === info.index) {
+          tempPointsArray.push({"coordinates": info.coordinate, "radius": 5});
+        } else {
+          tempPointsArray.push({"coordinates": drawCirclesData[i].coordinates, "radius": 10});
+        }
+      }
+      drawGeoJsonData = tempPolygonJson;
+      drawCirclesData = tempPointsArray;
+      this.canDrawPolygon = false;
+      this.changeDrawLayer();
+    }
+  }
+
+  onPointDragEnd() {
+    let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+    let tempPolygonJson = drawGeoJsonData;
+    let tempPointsArray = [];
+    for (var i = 0; i < drawCirclesData.length; i++) {
+      tempPointsArray.push({"coordinates": drawCirclesData[i].coordinates, "radius": 10});
+    }
+    tempPolygonJson = {
       "type": "FeatureCollection",
       "features": [
         {
           "type": "Feature",
           "geometry": {
             "type": "Polygon",
-            "coordinates": [[]]
+            "coordinates": tempArray
           },
           "properties": {
+            "fillColor": [60, 140, 0, 150],
+            "borderColor": [0, 50, 0, 255]
           }
         }
       ]
     };
+    drawGeoJsonData = tempPolygonJson;
+    drawCirclesData = tempPointsArray;
     this.changeDrawLayer();
+
+    deckGlobe.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+    });
+    deckPlane.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+    });
   }
 
-  onClickAtMapCoords(info: any, event: any) {
-    if (event.middleButton) {
-      this.canDrawPolygon = false;
-      this.canDrawSquare = false;
-    } else {
-      //console.log("Click on globe: ", info.coordinate);
-      let tempJson: any;
-      if (this.canDrawPolygon || this.canDrawSquare) {
-        //console.log("drawGeoJsonData pre: ", drawGeoJsonData.features[0].geometry.coordinates);
-        let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
-        if(tempArray[0].length == 0) {
-          tempArray[0].push(info.coordinate);
-          tempArray[0].push(info.coordinate);
-          this.drawPointAdded = true;
-        } else {
-          //tempArray[0].splice(tempArray[0].length - 1, 0, info.coordinate);
-          //console.log(tempArray);
-          this.drawPointAdded = true;
+  onPolygonDragStart(info: any) {
+    this.startDragCoordinates = info.coordinate;
+    deckGlobe.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+    });
+    deckPlane.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+    });
+  }
 
-          tempJson = {
-            "type": "FeatureCollection",
-            "features": [
-              {
-                "type": "Feature",
-                "geometry": {
-                  "type": "Polygon",
-                  "coordinates": tempArray
-                  /* [
-                    //[[]]
-                    [[30, 60], [30, 80], [80, 80], [80, 60], [30, 60]]
-                  ] */
-                },
-                "properties": {
-                }
-              }
+  onPolygonDrag(info: any) {
+    if (info.layer != null && info.layer.id === "draw-layer") {
+      let tempDeltaDragCoordinates: number[] = [(info.coordinate[0] - this.startDragCoordinates[0]), (info.coordinate[1] - this.startDragCoordinates[1])];
+      this.startDragCoordinates = info.coordinate;
+      let tempPolygonArray = new Array();
+      tempPolygonArray[0] = new Array();
+      let tempPointsArray = [];
+      let tempFillColor = [200, 0, 0, 150];
+      let tempBorderColor = [100, 0, 0, 255];
+      let canMovePolygon: boolean = true;
+      for (let i = 0; i < drawGeoJsonData.features[0].geometry.coordinates[0].length; i++) {
+        if (drawGeoJsonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] > 89.99 || drawGeoJsonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] < -89.99) {
+          canMovePolygon = false;
+        }
+      }
+      if (canMovePolygon) {
+        for (let i = 0; i < drawGeoJsonData.features[0].geometry.coordinates[0].length; i++) {
+          tempPolygonArray[0].push(
+            [
+              drawGeoJsonData.features[0].geometry.coordinates[0][i][0] + tempDeltaDragCoordinates[0],
+              drawGeoJsonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1]
             ]
-          };
-          drawGeoJsonData = tempJson;
-          //console.log("drawGeoJsonData after: ", drawGeoJsonData.features[0].geometry.coordinates);
-          this.changeDrawLayer();
+          );
         }
+        let tempPolygonJson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": tempPolygonArray
+              },
+              "properties": {
+                "fillColor": tempFillColor,
+                "borderColor": tempBorderColor
+              }
+            }
+          ]
+        };
+        for (var i = 0; i < drawCirclesData.length; i++) {
+          tempPointsArray.push({"coordinates": [drawCirclesData[i].coordinates[0] + tempDeltaDragCoordinates[0], drawCirclesData[i].coordinates[1] + tempDeltaDragCoordinates[1]], "radius": 10});
+        }
+        drawGeoJsonData = tempPolygonJson;
+        drawCirclesData = tempPointsArray;
       }
+
+      this.canDrawPolygon = false;
+      this.changeDrawLayer();
     }
   }
 
-  onHoverWhileDrawing(info: any) {
-    if (this.canDrawPolygon) {
-      let tempJson: any;
-      let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
-      if(tempArray[0].length > 1) {
-        if (this.drawPointAdded) {
-          /* add point in array */
-          //console.log("initial array: " , tempArray[0]);
-          tempArray[0].splice(tempArray[0].length - 1, 0, info.coordinate);
-          this.drawPointAdded = false;
-        } else {
-          /* next point preview */
-          tempArray[0].splice(tempArray[0].length - 2, 1, info.coordinate);
-        }
-        tempJson = {
-          "type": "FeatureCollection",
-          "features": [
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": tempArray
-              },
-              "properties": {
-              }
-            }
-          ]
-        };
-        drawGeoJsonData = tempJson;
-        this.changeDrawLayer();
-      }
-    } else if (this.canDrawSquare) {
-      let tempJson: any;
-      let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
-      if(tempArray[0].length > 1) {
-        if (this.drawPointAdded) {
-          /* add point in array */
-          console.log("initial array: " + tempArray[0]);
-          tempArray[0].splice(tempArray[0].length - 1, 0, info.coordinate, info.coordinate, info.coordinate);
-          this.drawPointAdded = false;
-        } else {
-          /* square preview */
-          tempArray[0].splice(tempArray[0].length - 4, 3, [info.coordinate[0], tempArray[0][0][1]], info.coordinate, [tempArray[0][0][0], info.coordinate[1]]);
-          console.log("preview array: " , tempArray[0]);
-        }
-        tempJson = {
-          "type": "FeatureCollection",
-          "features": [
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": tempArray
-              },
-              "properties": {
-              }
-            }
-          ]
-        };
-        drawGeoJsonData = tempJson;
-        this.changeDrawLayer();
-      }
+  onPolygonDragEnd() {
+    let tempArray = drawGeoJsonData.features[0].geometry.coordinates;
+    let tempPolygonJson = drawGeoJsonData;
+    let tempPointsArray = [];
+    for (var i = 0; i < drawCirclesData.length; i++) {
+      tempPointsArray.push({"coordinates": drawCirclesData[i].coordinates, "radius": 10});
     }
+    tempPolygonJson = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": tempArray
+          },
+          "properties": {
+            "fillColor": [60, 140, 0, 150],
+            "borderColor": [0, 50, 0, 255]
+          }
+        }
+      ]
+    };
+    drawGeoJsonData = tempPolygonJson;
+    drawCirclesData = tempPointsArray;
+    this.changeDrawLayer();
+
+    deckGlobe.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+    });
+    deckPlane.setProps({
+      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+    });
   }
 
   productList: object = {};
@@ -224,6 +506,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   productListSubscription!: Subscription;
   showProductIndexSubscription!: Subscription;
   selectedProductIdSubscription!: Subscription;
+  startRectDrawingSubscription!: Subscription;
+  startPolygonDrawingSubscription!: Subscription;
 
   public defaultFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultColor);
   public defaultFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultBorderColor);
@@ -337,12 +621,21 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMinPixels: 1,
     lineWidthMaxPixels: 2,
     getLineWidth: 2,
-    getFillColor: [60, 140, 0, 130],
-    getLineColor: [0, 50, 0, 255],
+    getFillColor: (d: any) => d.properties.fillColor,
+    getLineColor: (d: any) => d.properties.borderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 15000000)]
     },
-    wrapLongitude: true
+    wrapLongitude: true,
+    onDragStart: (info: any) => {
+      this.onPolygonDragStart(info);
+    },
+    onDrag: (info: any) => {
+      this.onPolygonDrag(info);
+    },
+    onDragEnd: () => {
+      this.onPolygonDragEnd();
+    },
   })
 
   public drawPolygonLayerPlane = new GeoJsonLayer({
@@ -357,33 +650,76 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMinPixels: 1,
     lineWidthMaxPixels: 2,
     getLineWidth: 2,
-    getFillColor: [60, 140, 0, 130],
-    getLineColor: [0, 50, 0, 255],
+    getFillColor: (d: any) => d.properties.fillColor,
+    getLineColor: (d: any) => d.properties.borderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 15000000)]
     },
-    wrapLongitude: true
+    wrapLongitude: true,
+    onDragStart: (info: any) => {
+      this.onPolygonDragStart(info);
+    },
+    onDrag: (info: any) => {
+      this.onPolygonDrag(info);
+    },
+    onDragEnd: () => {
+      this.onPolygonDragEnd();
+    },
   })
 
-  /* public drawPolygonLayer = new PolygonLayer({
-    id: 'polygon-layer',
-    data: drawPolygonData,
+  public drawCirclesLayerGlobe = new ScatterplotLayer({
+    id: 'scatterplot-layer',
+    data: drawCirclesData,
     pickable: true,
     stroked: true,
     filled: true,
-    wireframe: true,
     lineWidthUnits: 'pixels',
-    lineWidthMinPixels: 2,
-    lineWidthMaxPixels: this.selectedFootprintBorderWidth,
-    getPolygon: (d: any) => d.coords,
-    getElevation: 10000000,
-    getFillColor: [60, 140, 0, 0],
-    getLineColor: [80, 80, 80, 255],
-    getLineWidth: 2,
+    radiusUnits: 'pixels',
+    getLineWidth: 1,
+    getPosition: (d: any) => d.coordinates,
+    getRadius: (d: any, obj: any) => d.radius,
+    getFillColor: [255, 255, 255],
+    getLineColor: [0, 0, 0],
+    getPolygonOffset: (layerIndex:any) => {
+      return [0, -(layerIndex.layerIndex * 10000 + 20000000)]
+    },
+    onDragStart: () => {
+      this.onPointDragStart();
+    },
+    onDrag: (info: any) => {
+      this.onPointDrag(info);
+    },
+    onDragEnd: () => {
+      this.onPointDragEnd();
+    },
+  });
 
-    //wrapLongitude: true,
-    fp64: true
-  }) */
+  public drawCirclesLayerPlane = new ScatterplotLayer({
+    id: 'scatterplot-layer',
+    data: drawCirclesData,
+    pickable: true,
+    stroked: true,
+    filled: true,
+    lineWidthUnits: 'pixels',
+    radiusUnits: 'pixels',
+    getLineWidth: 1,
+    getPosition: (d: any) => d.coordinates,
+    getRadius: (d: any, obj: any) => d.radius,
+    getFillColor: [255, 255, 255],
+    getLineColor: [0, 0, 0],
+    getPolygonOffset: (layerIndex:any) => {
+      return [0, -(layerIndex.layerIndex * 10000 + 20000000)]
+    },
+    onDragStart: () => {
+      this.onPointDragStart();
+    },
+    onDrag: (info: any) => {
+      this.onPointDrag(info);
+    },
+    onDragEnd: () => {
+      this.onPointDragEnd();
+    },
+  });
 
   constructor(private exchangeService: ExchangeService) {
     mapTiles.styles = AppConfig.settings.styles;
@@ -426,8 +762,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.selectedProductIdSubscription = this.exchangeService.selectProductOnMapExchange.subscribe((value) => {
       if (typeof(value) === 'string') {
-        //this.selectProductFootprint(value);
-        console.log(value);
+        //console.log(value);
+      }
+    });
+    this.startRectDrawingSubscription = this.exchangeService.startRectDrawingExchange.subscribe((value) => {
+      if (typeof(value) === 'boolean' && value === true) {
+        this.onDrawRectButtonClicked(value);
+      }
+    });
+    this.startPolygonDrawingSubscription = this.exchangeService.startPolygonDrawingExchange.subscribe((value) => {
+      if (typeof(value) === 'boolean' && value === true) {
+        this.onDrawPolygonButtonClicked(value);
       }
     });
   }
@@ -513,17 +858,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Selected footprint layer */
         this.geojsonLayerGlobeSelected,
         /* Drawable Polygon Layer */
-        this.drawPolygonLayerGlobe
+        this.drawPolygonLayerGlobe,
+        /* Polygon circles */
+        this.drawCirclesLayerGlobe
       ],
       wrapLongitude: true,
       onClick: (info: any, event: any) => {
-        this.onClickAtMapCoords(info, event)
+        this.onClickOnMap(info, event)
       },
       onHover: (info: any) => {
         this.onHoverWhileDrawing(info);
       },
       getCursor: (cursor: any) => {
-        return cursor.isDragging ? 'grabbing' : 'crosshair';
+        return cursor.isDragging ? 'grabbing' : (this.isHoveringOnPoints ? 'pointer' : (this.isHoveringOnPolygon ? 'grab' : 'crosshair'));
       }
     });
 
@@ -550,14 +897,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         /* Selected footprint layer */
         this.geojsonLayerPlaneSelected,
         /* Drawable Polygon Layer */
-        this.drawPolygonLayerPlane
+        this.drawPolygonLayerPlane,
+        /* Polygon Circles */
+        this.drawCirclesLayerPlane
       ],
       wrapLongitude: true,
       onClick: (info: any, event: any) => {
-        this.onClickAtMapCoords(info, event)
+        this.onClickOnMap(info, event)
+      },
+      onHover: (info: any) => {
+        this.onHoverWhileDrawing(info);
       },
       getCursor: (cursor: any) => {
-        return cursor.isDragging ? 'grabbing' : 'crosshair';
+        return cursor.isDragging ? 'grabbing' : (this.isHoveringOnPoints ? 'pointer' : (this.isHoveringOnPolygon ? 'grab' : 'crosshair'));
       }
     });
   }
@@ -585,6 +937,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.drawPolygonLayerGlobe = this.drawPolygonLayerGlobe.clone({
       data: drawGeoJsonData
     });
+    this.drawCirclesLayerPlane = this.drawCirclesLayerPlane.clone({
+      data: drawCirclesData
+    });
+    this.drawCirclesLayerGlobe = this.drawCirclesLayerGlobe.clone({
+      data: drawCirclesData
+    });
     /* Update Plane View */
     const layersPlane =  [
       /* Base Map Layer */
@@ -594,7 +952,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       /* Selected footprint layer */
       this.geojsonLayerPlaneSelected,
       /* Drawable Polygon Layer */
-      this.drawPolygonLayerPlane
+      this.drawPolygonLayerPlane,
+      /* Polygon circles */
+      this.drawCirclesLayerPlane
     ]
     deckPlane.setProps({layers: layersPlane});
 
@@ -608,6 +968,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerGlobeSelected,
       /* Drawable Polygon Layer */
       this.drawPolygonLayerGlobe,
+      /* Polygon circles */
+      this.drawCirclesLayerGlobe
     ]
     deckGlobe.setProps({layers: layersGlobe});
   }
@@ -635,7 +997,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       /* Selected footprint layer */
       this.geojsonLayerPlaneSelected,
       /* Drawable Polygon Layer */
-      this.drawPolygonLayerPlane
+      this.drawPolygonLayerPlane,
+      /* Polygon circles */
+      this.drawCirclesLayerPlane
     ]
     deckPlane.setProps({layers: layersPlane});
 
@@ -649,6 +1013,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerGlobeSelected,
       /* Drawable Polygon Layer */
       this.drawPolygonLayerGlobe,
+      /* Polygon circles */
+      this.drawCirclesLayerGlobe
     ]
     deckGlobe.setProps({layers: layersGlobe});
   }

@@ -167,6 +167,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     geoSearchButtonDiv = document.getElementById('geo-search-button-div');
     geoSearchContainer = document.getElementById('geo-search-container');
 
+    /* uncomment to unroll geosearch on hover */
+    /* geoSearchButtonDiv.addEventListener("mouseover", this.onGeoSearchHover);
+    geoSearchButtonDiv.addEventListener("mouseout", this.onGeoSearchOut);
+    geoSearchContainer.addEventListener("mouseover", this.onGeoSearchHover);
+    geoSearchContainer.addEventListener("mouseout", this.onGeoSearchOut); */
+
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -933,11 +939,26 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       geoSearchContainer.classList.replace('visible', 'hidden');
     }
   }
-  onDrawRectangleClicked() {
+  /* onGeoSearchHover() {
+    if (geoSearchButtonDiv.classList.contains('rolled')) {
+      geoSearchButtonDiv.classList.replace('rolled', 'unrolled');
+      geoSearchContainer.classList.replace('hidden', 'visible');
+    }
+  }
+  onGeoSearchOut() {
+    if (geoSearchButtonDiv.classList.contains('unrolled')) {
+      geoSearchButtonDiv.classList.replace('unrolled', 'rolled');
+      geoSearchContainer.classList.replace('visible', 'hidden');
+    }
+  } */
 
+  onDrawRectangleClicked() {
+    this.onGeoSearchClicked();
+    this.exchangeService.startRectDrawing(true);
   }
   onDrawPolygonClicked() {
-
+    this.onGeoSearchClicked();
+    this.exchangeService.startPolygonDrawing(true);
   }
 
   simplifyBytes(bytes: number) {
