@@ -36,7 +36,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     /* Spinner Service On */
     const now = moment.now().toLocaleString();
-    if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
+    if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0 && request.url.indexOf("/token") < 0) {
       this.spinner.setOn(now);
     }
     return next.handle(request).pipe(
