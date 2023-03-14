@@ -471,7 +471,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let tempPointsArray = this.drawGeoSearchCirclesData;
       let tempFillColor = this.geoSearchSettings.fillColorActive;
       let tempBorderColor = this.geoSearchSettings.borderColorActive;
-
+      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
       if (tempPointsArray.length == 1) {
         /* If it is a Single Point Polygon drag */
         tempPolygonArray[0] = [
@@ -579,7 +580,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let tempBorderColor = this.geoSearchSettings.borderColorActive;
       let canMovePolygon: boolean = true;
       for (let i = 0; i < this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0].length; i++) {
-        if (this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] > 89.99 || this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] < -89.99) {
+        if (this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] > this.geoSearchSettings.latitudeLimit
+         || this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] < -this.geoSearchSettings.latitudeLimit) {
           canMovePolygon = false;
         }
       }
