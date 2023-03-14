@@ -621,7 +621,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onPolygonDragEnd() {
-    let tempArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
+    let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
     let tempPolygonJson = this.drawGeoSearchPolygonData;
     let tempPointsArray = [];
     for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
@@ -634,7 +634,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           "type": "Feature",
           "geometry": {
             "type": "Polygon",
-            "coordinates": tempArray
+            "coordinates": tempPolygonArray
           },
           "properties": {
             "fillColor": this.geoSearchSettings.fillColor,
@@ -646,6 +646,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.drawGeoSearchPolygonData = tempPolygonJson;
     this.drawGeoSearchCirclesData = tempPointsArray;
     this.changeDrawLayer();
+
+    this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
+    this.exchangeService.updateGeoSearch(this.geoSearchOutput);
 
     deckGlobe.setProps({
       controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
