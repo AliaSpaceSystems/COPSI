@@ -46,6 +46,14 @@
       },
       "projection": "globe"
   },
+  "geoSearchSettings": {
+    "defaultCircleRadius": 8,
+    "smallCircleRadius": 3,
+    "fillColor": [60, 140, 0, 80],
+    "borderColor": [0, 50, 0, 255],
+    "fillColorActive": [200, 0, 0, 60],
+    "borderColorActive": [100, 0, 0, 255]
+  },
   "loginSettings": {
       "text": "Please Sign in to access our service",
       "buttonText": "Sign in"

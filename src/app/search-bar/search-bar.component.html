@@ -19,10 +19,12 @@
   <div id="filter-output-scrollable-div">
     <p>
       <span>{{parsedFilter}}</span>
-      <span *ngIf="parsedFilter !== '' && (productFilter !== '' || attributeFilter !== '')"> and </span>
+      <span *ngIf="parsedFilter !== '' && (productFilter !== '' || attributeFilter !== '' || geoFilter !== '')"> and </span>
       <span>{{productFilter}}</span>
-      <span *ngIf="productFilter !== '' && attributeFilter !== ''"> and </span>
+      <span *ngIf="productFilter !== '' && (attributeFilter !== '' || geoFilter !== '')"> and </span>
       <span>{{attributeFilter}}</span>
+      <span *ngIf="attributeFilter !== '' && geoFilter !== ''"> and </span>
+      <span>{{geoFilter}}</span>
     </p>
   </div>
   <div id="filter-output-scroll-thumb"></div>
@@ -294,12 +296,18 @@
   </button>
 </div>
 
-<div id="geo-search-button-div" class="rolled">
+<!-- <div id="geo-search-button-div" class="rolled">
   <mat-icon id="geo-search-icon" class="material-symbols-outlined" aria-hidden="false" aria-label="GeoSearch icon" title="Geographic search" (click)="onGeoSearchClicked()">bring_your_own_ip</mat-icon>
+  <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle" (click)="onDrawRectangleClicked()"></mat-icon>
+  <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon" (click)="onDrawPolygonClicked()"></mat-icon>
+  <mat-icon id="point-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Point icon" fontIcon="adjust" title="Draw point" (click)="onDrawPointClicked()"></mat-icon>
 </div>
 <div id="geo-search-container" class="hidden">
   <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle" (click)="onDrawRectangleClicked()"></mat-icon>
   <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon" (click)="onDrawPolygonClicked()"></mat-icon>
-</div>
+  <mat-icon id="point-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Point icon" fontIcon="adjust" title="Draw point" (click)="onDrawPointClicked()"></mat-icon>
+  <br>
+  <mat-icon id="cancel-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Cancel polygon icon" fontIcon="disabled_by_default" title="Cancel polygon" (click)="onCancelPolygonClicked()"></mat-icon>
+</div> -->
 
 <div id="get-properties-div"></div>

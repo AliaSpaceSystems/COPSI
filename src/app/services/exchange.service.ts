@@ -32,6 +32,15 @@ export class ExchangeService {
   private polygonDrawing = new BehaviorSubject<any>({});
   startPolygonDrawingExchange = this.polygonDrawing.asObservable();
 
+  private pointDrawing = new BehaviorSubject<any>({});
+  startPointDrawingExchange = this.pointDrawing.asObservable();
+
+  private cancelDrawing = new BehaviorSubject<any>({});
+  cancelDrawingExchange = this.cancelDrawing.asObservable();
+
+  private geoSearchOutput = new BehaviorSubject<any>({});
+  geoSearchOutputExchange = this.geoSearchOutput.asObservable();
+
   constructor() { }
 
   setMapStyle(mapStyle: string) {
@@ -68,5 +77,17 @@ export class ExchangeService {
 
   startPolygonDrawing(polygonDrawing: boolean) {
     this.polygonDrawing.next(polygonDrawing);
+  }
+
+  startPointDrawing(pointDrawing: boolean) {
+    this.pointDrawing.next(pointDrawing);
+  }
+
+  cancelPolygonDrawing(cancelDrawing: boolean) {
+    this.cancelDrawing.next(cancelDrawing);
+  }
+
+  updateGeoSearch(geoSearchOutput: string) {
+    this.geoSearchOutput.next(geoSearchOutput);
   }
 }

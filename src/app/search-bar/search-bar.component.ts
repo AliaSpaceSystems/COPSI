@@ -68,6 +68,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public parsedFilter: string = "";
   public productFilter: string = "";
   public attributeFilter: string = "";
+  public geoFilter: string = "";
+  public geoFilterIsActive: boolean = false;
   public filterOutputIsVisible: boolean = false;
   public filterOutputIsPinnedByDefault: boolean = AppConfig.settings.searchOptions.filterOutputIsPinnedByDefault;
   public filterParsingDivIsPinned: boolean = this.filterOutputIsPinnedByDefault;
@@ -124,6 +126,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
+
+  updateGeoSearchSubscription!: Subscription;
 
   constructor(
     private exchangeService: ExchangeService,
@@ -301,6 +305,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           }, 50);
         }, 500);
       })
+    });
+
+    this.updateGeoSearchSubscription = this.exchangeService.geoSearchOutputExchange.subscribe((value) => {
+      if (typeof(value) === 'string') {
+        this.geoSearchUpdate(value);
+      }
     });
   }
 
@@ -716,11 +726,14 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       filter: this.filter,
       productFilter: this.productFilter,
       attributeFilter: this.attributeFilter,
+      geoFilter: this.geoFilter,
       top: AppConfig.settings.searchOptions.productsPerPage,
       skip: 0,
       order: this.orderBy,
       sort: this.sortBy
     }
+    //console.log("SearchOptions: ", this.searchOptions);
+
     this.loadPage(this.currentPage);
     this.productListRolled = false;
     event.stopPropagation();
@@ -960,6 +973,16 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.onGeoSearchClicked();
     this.exchangeService.startPolygonDrawing(true);
   }
+  onDrawPointClicked() {
+    this.onGeoSearchClicked();
+    this.exchangeService.startPointDrawing(true);
+  }
+  onCancelPolygonClicked() {
+    this.onGeoSearchClicked();
+    this.geoFilter = "";
+    this.geoFilterIsActive = false;
+    this.exchangeService.cancelPolygonDrawing(true);
+  }
 
   simplifyBytes(bytes: number) {
     let result: string = "";
@@ -1059,6 +1082,23 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     }
+  }
+
+  geoSearchUpdate(geoSearchOutput: string) {
+    if (geoSearchOutput !== "") {
+      //console.log("GeoSearchOutput: " + geoSearchOutput);
+      this.geoFilter = geoSearchOutput;
+      this.geoFilterIsActive = true;
+    } else {
+      //console.log("GeoSearchOutput is EMPTY!");
+      this.geoFilter = "";
+      this.geoFilterIsActive = false;
+    }
+    this.checkFilterParsingToggle();
+    setTimeout(() => {
+      this.checkFilterOutputHeight();
+      this.checkAdvancedSearchThumbSize();
+    }, 200);
   }
 
   calcListThumbSize() {

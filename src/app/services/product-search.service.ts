@@ -106,7 +106,10 @@ export class ProductSearchService {
       filter = (filter) ? filter + ' and (' + searchOptions.productFilter + ')' : searchOptions.productFilter
     }
     if(searchOptions && searchOptions.attributeFilter) {
-      filter = (filter) ? filter + ' and (' + searchOptions.attributeFilter + ')': searchOptions.attributeFilter
+      filter = (filter) ? filter + ' and (' + searchOptions.attributeFilter + ')' : searchOptions.attributeFilter
+    }
+    if(searchOptions && searchOptions.geoFilter) {
+      filter = (filter) ? filter + ' and (' + searchOptions.geoFilter + ')' : searchOptions.geoFilter
     }
     if(filter) {
       productsUrl+='&$filter=' + filter;
@@ -127,6 +130,8 @@ export class ProductSearchService {
       sort = searchOptions.sort;
     }
     productsUrl+='&$skip=' + skip + '&$orderby=' + order + ' ' + sort.toLowerCase();
+    //console.log("Sent URL: " + productsUrl);
+
     return forkJoin({
       count: this.getProductsCount(productsCountUrl).pipe(map((res) => res), catchError(e => of(e))),
       products: this.getProducts(productsUrl).pipe(map((res) => res), catchError(e => of(e)))

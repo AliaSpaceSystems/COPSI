@@ -1,2 +1,12 @@
-<canvas id='map-globe'></canvas>
-<canvas id='map-plane'></canvas>
+<div id="canvas-container">
+  <canvas id='map-globe'></canvas>
+  <canvas id='map-plane'></canvas>
+</div>
+
+<div id="geo-search-container" class="hidden">
+  <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle" (click)="this.onDrawRectButtonClicked(true)"></mat-icon>
+  <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon" (click)="this.onDrawPolygonButtonClicked(true)"></mat-icon>
+  <mat-icon id="point-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Point icon" fontIcon="adjust" title="Draw point" (click)="this.onDrawPointButtonClicked(true)"></mat-icon>
+  <hr>
+  <mat-icon id="cancel-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Cancel polygon icon" fontIcon="disabled_by_default" title="Cancel polygon" (click)="this.onCancelDrawingButtonClicked(true)"></mat-icon>
+</div>
