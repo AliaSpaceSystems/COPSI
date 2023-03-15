@@ -665,7 +665,11 @@ input:invalid {
 }
 .list-item-div:hover {
   background-color: #fff;
-  border-color: $copsi-blue;
+  border-color: $menu-dark-bg-color;
+  //border-color: $copsi-blue;
+}
+.list-item-div.selected {
+  border: 1px solid $copsi-blue;
 }
 
 /* Product Name */
@@ -673,6 +677,7 @@ input:invalid {
   display: flex;
   flex-direction: row;
   padding: 0.25rem;
+  border-radius: 0.15rem 0.15rem 0 0;
   background-color: $main-dark-bg-color;
   align-items: center;
 }
@@ -702,6 +707,7 @@ input:invalid {
   flex-direction: row;
   justify-content: space-between;
   padding: 0.25rem;
+  border-radius: 0 0 0.15rem 0.15rem;
   background-color: $menu-dark-bg-color;
 }
 .product-data-column-div {
@@ -1020,11 +1026,11 @@ input:invalid {
   background-color: transparent;
 }
 .inner-table-name {
-  width: 35%;
+  //width: 35%;
   white-space: nowrap;
 }
 .inner-table-value {
-  width: 65%;
+  //width: 65%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1052,11 +1058,14 @@ input:invalid {
   background-color: $menu-dark-bg-color;
 }
 .attribute-table-name {
-  width: 50%;
+  //width: 50%;
   //white-space: nowrap;
 }
 .attribute-table-value {
-  width: 50%;
+  //width: 50%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   overflow-wrap: break-word;
 }
 

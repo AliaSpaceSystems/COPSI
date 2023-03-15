@@ -12,6 +12,7 @@ import productDetails from 'src/assets/config/product_details.json';
 
 declare let $: any;
 let listContainer: any;
+let listItemDiv: any;
 let productListContainer: any;
 let productListHeader: any;
 let productListScrollThumb: any;
@@ -145,6 +146,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     listContainer = document.getElementById('list-items-container')!;
+    listItemDiv = document.getElementsByClassName('list-item-div')!;
     productListHeader = document.getElementById('product-list-header')!;
     productListContainer = document.getElementById('product-list-container')!;
     advancedSearchContainer = document.getElementById('advanced-search-scrollable-container')!;
@@ -763,6 +765,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           //console.log("Product List: ", this.productList);
 
           this.productList.value.forEach((product: any) => {
+            product.isSelected = false;
             product.download = {};
             product.tags = [];
             if ("Attributes" in product) {
@@ -1103,12 +1106,21 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onShowProductDetails(id: string) {
+  onShowProductDetails(id: string, index: number) {
     if (productDetailContainer.classList.contains('hidden')) {
       productDetailContainer.classList.replace('hidden', 'visible');
     }
 
     this.selectedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
+    this.selectedProduct.isSelected = true;
+
+    for (let div of listItemDiv) {
+      if (div.classList.contains('selected')) {
+        div.classList.remove('selected');
+      }
+    };
+    listItemDiv[index].classList.add('selected');
+
     let tempUnfilteredProductAttributes: any = this.selectedProduct.Attributes;
     let tempAttributesToFilter: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProduct.platformShortName)[0].Attributes;
 

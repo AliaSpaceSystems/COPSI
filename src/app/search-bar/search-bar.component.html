@@ -175,7 +175,7 @@
           <ng-template #qlButtons>
             <div class="ql-buttons-div">
               <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
-              (click)="onShowProductDetails(product.Id)"></mat-icon>
+              (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
               <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
               (click)="copyUrl(product.Id)"></mat-icon>
               <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
@@ -247,7 +247,7 @@
               <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value">
                 <ng-container [ngTemplateOutlet]='Array.isArray(selectedProduct[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:selectedProduct[property]}" class="properties-table-value"></ng-container>
                 <ng-template #array let-obj='obj'>
-                  <span *ngFor="let item of obj; let idx = index">
+                  <span *ngFor="let item of obj; let idx = index;">
                     <ng-container [ngTemplateOutlet]='notArray' [ngTemplateOutletContext]="{obj:item, idx:idx}"></ng-container>
                   </span>
                 </ng-template>
@@ -272,8 +272,8 @@
           </p>
           <table class="attributes-table">
             <tr>
-              <th>Name</th>
-              <th>Value</th>
+              <th style="width: 60%;">Name</th>
+              <th style="width: 40%;">Value</th>
             </tr>
             <tr *ngFor="let attribute of selectedProduct.Attributes">
               <td class="attribute-table-name">{{beautifyCamelCase(attribute.Name)}}</td>
