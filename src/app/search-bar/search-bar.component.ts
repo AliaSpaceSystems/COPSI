@@ -118,6 +118,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public scrollDetailSize: number = 0;
 
   public selectedProduct: any = {};
+  public selectedProductIndex: number = -1;
   public properiesList: any = productDetails.Properties;
   public attributesList: any = productDetails.Attributes;
   public precProductId: any;
@@ -1193,8 +1194,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       productDetailContainer.classList.replace('hidden', 'visible');
     }
 
+    this.productList.value.forEach((product: any) => {
+      product.isSelected = false;
+    });
     this.selectedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
     this.selectedProduct.isSelected = true;
+    this.selectedProductIndex = index;
 
     for (let div of listItemDiv) {
       if (div.classList.contains('selected')) {
@@ -1230,6 +1235,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (productDetailContainer.classList.contains('visible')) {
       productDetailContainer.classList.replace('visible', 'hidden');
       productDetailScrollThumb.style.visibility = 'hidden';
+    }
+    this.selectedProduct.isSelected = false;
+    if (this.selectedProductIndex > -1) {
+      listItemDiv[this.selectedProductIndex].classList.remove('selected');
+      this.selectedProductIndex = -1;
     }
   }
 

@@ -854,6 +854,12 @@ input:invalid {
   height: $search-bar-product-icons-dim;
   transition: opacity 0.15s ease-in-out;
 }
+.product-selected{
+  color: $copsi-blue;
+}
+.product-unselected{
+  color: white;
+}
 .downloaded {
   color: $copsi-blue;
 }

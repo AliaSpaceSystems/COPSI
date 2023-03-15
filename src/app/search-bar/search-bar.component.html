@@ -176,18 +176,20 @@
           <!-- Product Action Buttons Template -->
           <ng-template #qlButtons>
             <div class="ql-buttons-div">
-              <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
+              <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility_off"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
-              <mat-icon id="copy" class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
+              <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
+              (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
+              <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
               (click)="copyUrl(product.Id)"></mat-icon>
               <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
-                <mat-icon *ngIf="product.download.state == 'DONE'" id="download" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                <mat-icon *ngIf="product.download.state == 'DONE'" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
                   (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
                 <mat-icon *ngIf="(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
                   (click)="unsubscribeDownload(product.Id)"></mat-icon>
               </ng-template>
               <ng-template #downloadDefault>
-                <mat-icon id="download" class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
                   (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
               </ng-template>
             </div>
