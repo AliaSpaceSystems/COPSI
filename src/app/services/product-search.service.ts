@@ -109,7 +109,7 @@ export class ProductSearchService {
       filter = (filter) ? filter + ' and (' + searchOptions.attributeFilter + ')' : searchOptions.attributeFilter
     }
     if(searchOptions && searchOptions.geoFilter) {
-      filter = (filter) ? filter + ' and (' + searchOptions.geoFilter + ')' : searchOptions.geoFilter
+      filter = (filter) ? filter + ' and ' + searchOptions.geoFilter : searchOptions.geoFilter
     }
     if(filter) {
       productsUrl+='&$filter=' + filter;

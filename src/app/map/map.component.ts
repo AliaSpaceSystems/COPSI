@@ -9,7 +9,7 @@ import { wktToGeoJSON } from '@terraformer/wkt';
 import { AppConfig } from '../services/app.config';
 
 let canvasContainer: any;
-let geoSearchContainer: any;
+let contextMenuContainer: any;
 let deckGlobe: any;
 let deckPlane: any;
 let mapProjection: string = 'globe';
@@ -892,22 +892,22 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   hideContextMenu() {
-    geoSearchContainer.style.left = '-100px';
-    if (geoSearchContainer.classList.contains('visible')) {
-      geoSearchContainer.classList.replace('visible', 'hidden');
+    contextMenuContainer.style.left = '-100px';
+    if (contextMenuContainer.classList.contains('visible')) {
+      contextMenuContainer.classList.replace('visible', 'hidden');
     }
   }
 
   ngOnInit(): void {
     canvasContainer = document.getElementById('canvas-container')!;
-    geoSearchContainer = document.getElementById('geo-search-container')!;
+    contextMenuContainer = document.getElementById('context-menu-container')!;
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
       //console.log(event);
-      geoSearchContainer.style.left = event.clientX + 'px';
-      geoSearchContainer.style.top = event.clientY + 'px';
-      if (geoSearchContainer.classList.contains('hidden')) {
-        geoSearchContainer.classList.replace('hidden', 'visible');
+      contextMenuContainer.style.left = event.clientX + 'px';
+      contextMenuContainer.style.top = event.clientY + 'px';
+      if (contextMenuContainer.classList.contains('hidden')) {
+        contextMenuContainer.classList.replace('hidden', 'visible');
       }
     });
     ["mousedown", "wheel"].forEach((inputEvent: any) => {

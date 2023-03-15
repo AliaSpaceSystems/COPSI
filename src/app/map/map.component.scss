@@ -4,7 +4,7 @@ mat-icon:hover {
   opacity: 0.7;
 }
 
-#geo-search-container {
+#context-menu-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,8 +12,6 @@ mat-icon:hover {
   position: absolute;
   top: 0;
   left: -5rem;
-  width: 2.5rem;
-  height: 9rem;
   border: $main-dark-border;
   border-radius: 0 0 0.25rem 0.25rem;
   background-color: $menu-dark-bg-color;
@@ -21,15 +19,25 @@ mat-icon:hover {
   z-index: 60;
 }
 
-#geo-search-container.visible {
+#context-menu-container.visible {
   visibility: visible;
 }
 
-#geo-search-container.hidden {
+#context-menu-container.hidden {
   visibility: hidden;
 }
 
-hr {
+#context-menu-container hr {
   width: 100%;
   margin: 0;
+}
+
+#geo-search-title {
+
+}
+#geo-search-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 0.5rem;
 }
