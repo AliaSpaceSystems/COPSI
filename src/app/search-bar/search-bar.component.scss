@@ -520,7 +520,6 @@ input:invalid {
   display: flex;
   flex-direction: row;
   left: 0;
-  //width: $search-bar-width;
   height: auto;
   padding: 0;
   bottom: 0;
@@ -666,7 +665,6 @@ input:invalid {
 .list-item-div:hover {
   background-color: #fff;
   border-color: $menu-dark-bg-color;
-  //border-color: $copsi-blue;
 }
 .list-item-div.selected {
   border: 1px solid $copsi-blue;
@@ -928,7 +926,6 @@ input:invalid {
   flex-direction: column;
   background-color: transparent;
   pointer-events: visible;
-  //overflow-y: hidden;
   overflow-y: auto;
 }
 #product-details-header {
@@ -948,9 +945,6 @@ input:invalid {
 #product-details-div {
   display: flex;
   flex-direction: column;
-  //overflow-y: auto;
-  /* overflow-y: hidden;
-  overflow-x: hidden; */
 }
 
 /* Product Detail Quick look */
@@ -993,7 +987,7 @@ input:invalid {
   border: 1px solid black;
   text-align: left;
   padding-left: 0.5rem;
-  color: darken($main-dark-text-color, 35);
+  color: darken($main-dark-text-color, 50);
   background-color: $main-dark-bg-color;
 }
 .properties-table td {
@@ -1003,6 +997,7 @@ input:invalid {
   background-color: $menu-dark-bg-color;
 }
 .properties-table-name {
+  color: darken($main-dark-text-color, 25) !important;
   white-space: nowrap;
 }
 .properties-table-value {
@@ -1022,7 +1017,7 @@ input:invalid {
 .inner-table th {
   border-width: 0;
   padding-left: 0.5rem;
-  color: darken($main-dark-text-color, 35);
+  color: darken($main-dark-text-color, 50);
   background-color: transparent;
 }
 .inner-table td {
@@ -1032,11 +1027,10 @@ input:invalid {
   background-color: transparent;
 }
 .inner-table-name {
-  //width: 35%;
+  color: darken($main-dark-text-color, 25) !important;
   white-space: nowrap;
 }
 .inner-table-value {
-  //width: 65%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1054,7 +1048,7 @@ input:invalid {
   border: 1px solid black;
   text-align: left;
   padding-left: 0.5rem;
-  color: darken($main-dark-text-color, 35);
+  color: darken($main-dark-text-color, 50);
   background-color: $main-dark-bg-color;
 }
 .attributes-table td {
@@ -1064,11 +1058,9 @@ input:invalid {
   background-color: $menu-dark-bg-color;
 }
 .attribute-table-name {
-  //width: 50%;
-  //white-space: nowrap;
+  color: darken($main-dark-text-color, 25) !important;
 }
 .attribute-table-value {
-  //width: 50%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1093,7 +1085,6 @@ input:invalid {
   height: 1rem;
   background-color: $main-dark-text-color;
   border-radius: 0.25rem;
-  //right: -0.55rem;
   right: 1.5rem;
   margin: 2.25rem 0 0 0;
   top: 0;

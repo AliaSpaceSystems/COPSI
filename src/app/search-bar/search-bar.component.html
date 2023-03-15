@@ -242,13 +242,13 @@
           </p>
           <table class="properties-table">
             <tr>
-              <th style="width: 25%;">Name</th>
-              <th style="width: 75%;">Value</th>
+              <th style="width: 30%;">Name</th>
+              <th style="width: 70%;">Value</th>
             </tr>
             <tr *ngFor="let property of properiesList">
               <td *ngIf="selectedProduct.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
-              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number')" class="properties-table-value">{{selectedProduct[property]}}</td>
-              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value">
+              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number')" class="properties-table-value" title="{{selectedProduct[property]}}">{{selectedProduct[property]}}</td>
+              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value" title="{{selectedProduct[property]}}">
                 <ng-container [ngTemplateOutlet]='Array.isArray(selectedProduct[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:selectedProduct[property]}" class="properties-table-value"></ng-container>
                 <ng-template #array let-obj='obj'>
                   <span *ngFor="let item of obj; let idx = index;">
@@ -257,13 +257,11 @@
                 </ng-template>
                 <ng-template #notArray let-obj='obj' let-idx='idx'>
                   <table class="inner-table">
-                    <tr *ngIf="idx >= 0">
-                      <th style="width: 35%;">Algorithm: {{idx}}</th>
-                      <th style="width: 65%;"></th>
-                    </tr>
                     <tr *ngFor="let key of Object.keys(obj)">
-                      <td class="inner-table-name">{{key}}</td>
-                      <td class="inner-table-value">{{obj[key]}}</td>
+                      <td style="width: 30%;" class="inner-table-name">{{key}}</td>
+                      <td style="width: 70%;" class="inner-table-value" title="{{obj[key]}}">{{obj[key]}}</td>
+                    </tr>
+                    <tr *ngIf="idx >= 1">
                     </tr>
                   </table>
                 </ng-template>
@@ -276,12 +274,12 @@
           </p>
           <table class="attributes-table">
             <tr>
-              <th style="width: 60%;">Name</th>
-              <th style="width: 40%;">Value</th>
+              <th style="width: 30%;">Name</th>
+              <th style="width: 70%;">Value</th>
             </tr>
             <tr *ngFor="let attribute of selectedProduct.Attributes">
               <td class="attribute-table-name">{{beautifyCamelCase(attribute.Name)}}</td>
-              <td class="attribute-table-value">{{attribute.Value}}</td>
+              <td class="attribute-table-value" title="{{attribute.Value}}">{{attribute.Value}}</td>
             </tr>
           </table>
         </div>
@@ -297,19 +295,5 @@
     <mat-icon *ngIf="productListRolled == false" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
   </button>
 </div>
-
-<!-- <div id="geo-search-button-div" class="rolled">
-  <mat-icon id="geo-search-icon" class="material-symbols-outlined" aria-hidden="false" aria-label="GeoSearch icon" title="Geographic search" (click)="onGeoSearchClicked()">bring_your_own_ip</mat-icon>
-  <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle" (click)="onDrawRectangleClicked()"></mat-icon>
-  <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon" (click)="onDrawPolygonClicked()"></mat-icon>
-  <mat-icon id="point-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Point icon" fontIcon="adjust" title="Draw point" (click)="onDrawPointClicked()"></mat-icon>
-</div>
-<div id="geo-search-container" class="hidden">
-  <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle" (click)="onDrawRectangleClicked()"></mat-icon>
-  <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon" (click)="onDrawPolygonClicked()"></mat-icon>
-  <mat-icon id="point-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Point icon" fontIcon="adjust" title="Draw point" (click)="onDrawPointClicked()"></mat-icon>
-  <br>
-  <mat-icon id="cancel-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Cancel polygon icon" fontIcon="disabled_by_default" title="Cancel polygon" (click)="onCancelPolygonClicked()"></mat-icon>
-</div> -->
 
 <div id="get-properties-div"></div>
