@@ -1093,59 +1093,6 @@ input:invalid {
   transition: background-color 0.1s linear;
 }
 
-/* GEO SEARCH */
-#geo-search-button-div {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0.5rem;
-  left: calc(1rem + $search-bar-width);
-  width: 2.5rem;
-  height: $default-title-div-height;
-  border: $main-dark-border;
-  background-color: $main-dark-bg-color;
-  box-shadow: $default-shadow;
-  z-index: 70;
-
-  transition: 250ms ease-in-out;
-}
-#geo-search-button-div.rolled {
-  border-radius: 0.25rem;
-}
-#geo-search-button-div.unrolled {
-  border-radius: 0.25rem 0.25rem 0 0;
-}
-
-#geo-search-container {
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 0.5rem;
-  position: absolute;
-  top: calc(0.5rem + $default-title-div-height - 1px);
-  left: calc(1rem + $search-bar-width);
-  width: 2.5rem;
-  padding: 0.5rem 0;
-  border: $main-dark-border;
-  border-radius: 0 0 0.25rem 0.25rem;
-  background-color: $menu-dark-bg-color;
-  box-shadow: $default-shadow;
-  z-index: 60;
-
-  transition: 250ms ease-in-out;
-}
-#geo-search-container.visible {
-  display: flex;
-  height: 9rem;
-  opacity: 1;
-}
-#geo-search-container.hidden {
-  display: flex;
-  height: 0;
-  opacity: 0;
-}
-
 
 /* trick to get css vars in js.. */
 #get-properties-div {

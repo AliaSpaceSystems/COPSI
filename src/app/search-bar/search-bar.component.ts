@@ -169,15 +169,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon')!;
     productDetailContainer = document.getElementById('product-details-container')!;
     productDetailScrollableDiv = document.getElementById('product-details-inner-container')!;
-    geoSearchButtonDiv = document.getElementById('geo-search-button-div');
-    geoSearchContainer = document.getElementById('geo-search-container');
-
-    /* uncomment to unroll geosearch on hover */
-    /* geoSearchButtonDiv.addEventListener("mouseover", this.onGeoSearchHover);
-    geoSearchButtonDiv.addEventListener("mouseout", this.onGeoSearchOut);
-    geoSearchContainer.addEventListener("mouseover", this.onGeoSearchHover);
-    geoSearchContainer.addEventListener("mouseout", this.onGeoSearchOut); */
-
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -942,47 +933,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     if (event != null) event.stopPropagation();
-  }
-
-  onGeoSearchClicked() {
-    if (geoSearchButtonDiv.classList.contains('rolled')) {
-      geoSearchButtonDiv.classList.replace('rolled', 'unrolled');
-      geoSearchContainer.classList.replace('hidden', 'visible');
-    } else {
-      geoSearchButtonDiv.classList.replace('unrolled', 'rolled');
-      geoSearchContainer.classList.replace('visible', 'hidden');
-    }
-  }
-  /* onGeoSearchHover() {
-    if (geoSearchButtonDiv.classList.contains('rolled')) {
-      geoSearchButtonDiv.classList.replace('rolled', 'unrolled');
-      geoSearchContainer.classList.replace('hidden', 'visible');
-    }
-  }
-  onGeoSearchOut() {
-    if (geoSearchButtonDiv.classList.contains('unrolled')) {
-      geoSearchButtonDiv.classList.replace('unrolled', 'rolled');
-      geoSearchContainer.classList.replace('visible', 'hidden');
-    }
-  } */
-
-  onDrawRectangleClicked() {
-    this.onGeoSearchClicked();
-    this.exchangeService.startRectDrawing(true);
-  }
-  onDrawPolygonClicked() {
-    this.onGeoSearchClicked();
-    this.exchangeService.startPolygonDrawing(true);
-  }
-  onDrawPointClicked() {
-    this.onGeoSearchClicked();
-    this.exchangeService.startPointDrawing(true);
-  }
-  onCancelPolygonClicked() {
-    this.onGeoSearchClicked();
-    this.geoFilter = "";
-    this.geoFilterIsActive = false;
-    this.exchangeService.cancelPolygonDrawing(true);
   }
 
   simplifyBytes(bytes: number) {

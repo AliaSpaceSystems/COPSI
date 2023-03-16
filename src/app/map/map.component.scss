@@ -33,11 +33,15 @@ mat-icon:hover {
 }
 
 #geo-search-title {
-
+  padding: 0.25rem;
 }
 #geo-search-buttons {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   padding: 0.5rem;
+}
+#vertical-separator {
+  width: 1px;
+  border: 1px solid grey;
 }
