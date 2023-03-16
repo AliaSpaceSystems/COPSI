@@ -130,7 +130,7 @@ export class ProductSearchService {
       sort = searchOptions.sort;
     }
     productsUrl+='&$skip=' + skip + '&$orderby=' + order + ' ' + sort.toLowerCase();
-    console.log("Sent URL: " + productsUrl);
+    //console.log("Sent URL: " + productsUrl);
 
     return forkJoin({
       count: this.getProductsCount(productsCountUrl).pipe(map((res) => res), catchError(e => of(e))),

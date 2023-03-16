@@ -23,8 +23,8 @@ export class ExchangeService {
   private showProductIndex = new BehaviorSubject<any>({});
   showProductOnMapExchange = this.showProductIndex.asObservable();
 
-  private selectedProductId = new BehaviorSubject<any>({});
-  selectProductOnMapExchange = this.selectedProductId.asObservable();
+  private selectedProductIndex = new BehaviorSubject<any>({});
+  selectProductOnMapExchange = this.selectedProductIndex.asObservable();
 
   private rectDrawing = new BehaviorSubject<any>({});
   startRectDrawingExchange = this.rectDrawing.asObservable();
@@ -67,8 +67,8 @@ export class ExchangeService {
     this.showProductIndex.next(showProductIndex);
   }
 
-  selectProductOnMap(selectedProductId: any) {
-    this.selectedProductId.next(selectedProductId);
+  selectProductOnMap(selectedProductIndex: number) {
+    this.selectedProductIndex.next(selectedProductIndex);
   }
 
   startRectDrawing(rectDrawing: boolean) {

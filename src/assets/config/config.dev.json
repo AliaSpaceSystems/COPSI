@@ -60,22 +60,22 @@
       "buttonText": "Sign in"
   },
   "keycloak": {
-      "issuer_ALIA": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-      "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
-      "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
-      "redirectUri": "http://localhost:4200/home",
-      "redirectUri_": "http://192.168.0.109:4200/home",
-      "clientId_ALIA": "prip-api",
-      "clientId_SERCO": "ivv-prip-client",
-      "clientId": "ivv-gss1-client",
-      "responseType": "code",
-      "scope": "openid profile email",
-      "requireHttps": false,
-      "showDebugInformation": false,
-      "disableAtHashCheck": true,
-      "useSilentRefresh": true,
-      "useSilentRefresh_": false
-  },
+    "issuer_ALIA": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
+    "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
+    "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
+    "redirectUri": "http://localhost:4200/home",
+    "redirectUri_": "http://192.168.0.109:4200/home",
+    "clientId_ALIA": "prip-api",
+    "clientId_SERCO": "ivv-prip-client",
+    "clientId": "ivv-gss1-client",
+    "responseType": "code",
+    "scope": "openid profile email",
+    "requireHttps": false,
+    "showDebugInformation": false,
+    "disableAtHashCheck": true,
+    "useSilentRefresh": true,
+    "useSilentRefresh_": false
+},
   "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
   "infoLogosLeft": [
       { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
@@ -88,130 +88,15 @@
       { "link": "https://www.serco.com/", "image": "./assets/images/logo-serco-grey_cut.png", "title": "Visit Serco website", "alt": "Serco logo"  },
       { "link": "http://www.alia-space.com/", "image": "./assets/images/logo_alia_white.png", "title": "Visit Alia website", "alt": "Alia Space logo"  }
   ],
-  "platformList": [
-    {
-      "name": "SENTINEL-1",
-      "tags": [
-        {
-          "name": "productType",
-          "color": "#ff6400",
-          "title": "Product Type"
-        },
-        {
-          "name": "operationalMode",
-          "color": "#00338D",
-          "title": "Operational Mode"
-        },
-        {
-          "name": "polarisationChannels",
-          "color": "#0CCE6B",
-          "title": "Polarisation"
-        },
-        {
-          "name": "orbitNumber",
-          "color": "#b81365",
-          "title": "Orbit Number"
-        },
-        {
-          "name": "timeliness",
-          "color": "#C47AC0",
-          "title": "Timeliness"
-        }
-      ]
-    },
-    {
-      "name": "SENTINEL-2",
-      "tags": [
-        {
-          "name": "productType",
-          "color": "#ff6400",
-          "title": "Product Type"
-        },
-        {
-          "name": "cloudCover",
-          "color": "#ff006e",
-          "title": "Cloud Cover Percentage"
-        },
-        {
-          "name": "tileId",
-          "color": "#6400ff",
-          "title": "Tile Identifier"
-        },
-        {
-          "name": "orbitNumber",
-          "color": "#b81365",
-          "title": "Orbit Number"
-        },
-        {
-          "name": "datastripId",
-          "color": "#0f7173",
-          "title": "Datastrip Identifier"
-        }
-      ]
-    },
-    {
-      "name": "SENTINEL-3",
-      "tags": [
-        {
-          "name": "productType",
-          "color": "#ff6400",
-          "title": "Product Type"
-        },
-        {
-          "name": "orbitNumber",
-          "color": "#b81365",
-          "title": "Orbit Number"
-        },
-        {
-          "name": "relativeOrbitNumber",
-          "color": "#48a9a6",
-          "title": "Relative Orbit Number"
-        },
-        {
-          "name": "timeliness",
-          "color": "#C47AC0",
-          "title": "Timeliness"
-        },
-        {
-          "name": "instrumentShortName",
-          "color": "#4B9CE7",
-          "title": "Instrument"
-        }
-      ]
-    },
-    {
-      "name": "SENTINEL-5P",
-      "tags": [
-        {
-          "name": "productType",
-          "color": "#ff6400",
-          "title": "Product Type"
-        },
-        {
-          "name": "processingMode",
-          "color": "#5B486A",
-          "title": "Processing Mode"
-        },
-        {
-          "name": "orbitNumber",
-          "color": "#b81365",
-          "title": "Orbit Number"
-        },
-        {
-          "name": "processingLevel",
-          "color": "#E71D36",
-          "title": "Processing Level"
-        }
-      ]
-    }
-  ],
   "footprints": {
-    "defaultColor": "#ff640070",
-    "defaultBorderColor": "#882200dd",
+    "fallBackColor": "#808080cc",
+    "fallBackBorderColor": "#303030ff",
+    "fallBackHoverColor": "#a0a0a0ee",
+    "fallBackHoverBorderColor": "#808080ff",
     "defaultBorderWidth": 2,
-    "selectedColor": "#00aeefaa",
-    "selectedBorderColor": "#0044eecc",
-    "selectedBorderWidth": 3
+    "selectedBorderColor": "#00aeefff",
+    "selectedBorderWidth": 4,
+    "hoveredBorderWidth": 2
   },
   "styles": [
     {
@@ -239,13 +124,44 @@
         "url": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"
     }
   ],
-  "advancedSearchElements": [
+  "platformDetailsList": [
     {
       "name": "Mission",
       "mission": "Sentinel-1",
       "value": "SENTINEL-1",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
+      "fillColor": "#b31b1b64",
+      "borderColor": "#b31b1bff",
+      "hoverColor": "#ff0000aa",
+      "hoverBorderColor": "#ff0000ff",
+      "tags": [
+        {
+          "name": "productType",
+          "color": "#ff6400",
+          "title": "Product Type"
+        },
+        {
+          "name": "operationalMode",
+          "color": "#00338D",
+          "title": "Operational Mode"
+        },
+        {
+          "name": "polarisationChannels",
+          "color": "#0CCE6B",
+          "title": "Polarisation"
+        },
+        {
+          "name": "orbitNumber",
+          "color": "#b81365",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "timeliness",
+          "color": "#C47AC0",
+          "title": "Timeliness"
+        }
+      ],
       "filters": [
         {
           "name": "Platform Identifier",
@@ -357,9 +273,40 @@
     {
       "name": "Mission",
       "mission": "Sentinel-2",
-      "value": "SENTINEL-2",
+      "value": "Sentinel-2",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
+      "fillColor": "#17724564",
+      "borderColor": "#177245ff",
+      "hoverColor": "#adff2faa",
+      "hoverBorderColor": "#adff2fff",
+      "tags": [
+        {
+          "name": "productType",
+          "color": "#ff6400",
+          "title": "Product Type"
+        },
+        {
+          "name": "cloudCover",
+          "color": "#ff006e",
+          "title": "Cloud Cover Percentage"
+        },
+        {
+          "name": "tileId",
+          "color": "#6400ff",
+          "title": "Tile Identifier"
+        },
+        {
+          "name": "orbitNumber",
+          "color": "#b81365",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "datastripId",
+          "color": "#0f7173",
+          "title": "Datastrip Identifier"
+        }
+      ],
       "filters": [
         {
           "name": "Platform Identifier",
@@ -408,6 +355,37 @@
       "value": "SENTINEL-3",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
+      "fillColor": "#0023b964",
+      "borderColor": "#0023b9ff",
+      "hoverColor": "#0000ffaa",
+      "hoverBorderColor": "#0000ffff",
+      "tags": [
+        {
+          "name": "productType",
+          "color": "#ff6400",
+          "title": "Product Type"
+        },
+        {
+          "name": "orbitNumber",
+          "color": "#b81365",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "relativeOrbitNumber",
+          "color": "#48a9a6",
+          "title": "Relative Orbit Number"
+        },
+        {
+          "name": "timeliness",
+          "color": "#C47AC0",
+          "title": "Timeliness"
+        },
+        {
+          "name": "instrumentShortName",
+          "color": "#4B9CE7",
+          "title": "Instrument"
+        }
+      ],
       "filters": [
         {
           "name": "Platform Identifier",
@@ -491,6 +469,32 @@
       "value": "SENTINEL-5P",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
+      "fillColor": "#64539464",
+      "borderColor": "#645394ff",
+      "hoverColor": "#ff00ffaa",
+      "hoverBorderColor": "#ff00ffff",
+      "tags": [
+        {
+          "name": "productType",
+          "color": "#ff6400",
+          "title": "Product Type"
+        },
+        {
+          "name": "processingMode",
+          "color": "#5B486A",
+          "title": "Processing Mode"
+        },
+        {
+          "name": "orbitNumber",
+          "color": "#b81365",
+          "title": "Orbit Number"
+        },
+        {
+          "name": "processingLevel",
+          "color": "#E71D36",
+          "title": "Processing Level"
+        }
+      ],
       "filters": [
         {
           "name": "Product Type",

@@ -36,8 +36,6 @@ let copsyBlueColor_GREEN: number;
 let copsyBlueColor_BLUE: number;
 let advancedSearchMagnifierIcon: any;
 let advancedSearchSubmitIcon: any;
-let geoSearchButtonDiv: any;
-let geoSearchContainer: any;
 
 @Component({
   selector: 'app-search-bar',
@@ -52,7 +50,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public sortBy: string = this.sortByOptions[0].value;
   public orderByOptions = AppConfig.settings.searchOptions.orderByOptions;
   public orderBy: string = this.orderByOptions[0].value;
-  public advancedSearchElements = AppConfig.settings.advancedSearchElements;
+  public platformDetailsList = AppConfig.settings.platformDetailsList;
   public advancedFilterIsActive: boolean = false;
   public advancedFilterOutputIsActive: boolean = false;
   public todayDate: string = '';
@@ -583,9 +581,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.attributeFilter += "(";
         bracketOpenInner = true;
-        this.attributeFilter += "Attributes/" + this.advancedSearchElements[i].attributeType +
-          "/any(att:att/Name eq '" + this.advancedSearchElements[i].attributeName +
-          "' and att/" + this.advancedSearchElements[i].attributeType + "/Value eq '" + this.advancedSearchElements[i].value + "')";
+        this.attributeFilter += "Attributes/" + this.platformDetailsList[i].attributeType +
+          "/any(att:att/Name eq '" + this.platformDetailsList[i].attributeName +
+          "' and att/" + this.platformDetailsList[i].attributeType + "/Value eq '" + this.platformDetailsList[i].value + "')";
       }
       let contentDiv = el.getElementsByClassName('content');
       [].forEach.call(contentDiv, (missionDiv:any) => {
@@ -596,10 +594,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           if (select !== undefined) {
             value = select.value;
             if (value !== "") {
-              this.attributeFilter += " and Attributes/" + this.advancedSearchElements[i].filters[k].attributeType +
-                "/any(att:att/Name eq '" + this.advancedSearchElements[i].filters[k].attributeName +
-                "' and att/" + this.advancedSearchElements[i].filters[k].attributeType + "/Value eq " +
-                (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
+              this.attributeFilter += " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
+                "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value eq " +
+                (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
             }
           }
 
@@ -643,10 +641,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
             if (gotValue) {
-              this.attributeFilter += " and Attributes/" + this.advancedSearchElements[i].filters[k].attributeType +
-                "/any(att:att/Name eq '" + this.advancedSearchElements[i].filters[k].attributeName +
-                "' and att/" + this.advancedSearchElements[i].filters[k].attributeType + (gotMinValue ? "/Value ge " : (gotMaxValue ? "/Value le " : "/Value eq ")) +
-                (this.advancedSearchElements[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
+              this.attributeFilter += " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
+                "' and att/" + this.platformDetailsList[i].filters[k].attributeType + (gotMinValue ? "/Value ge " : (gotMaxValue ? "/Value le " : "/Value eq ")) +
+                (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
             }
           });
         });
@@ -794,8 +792,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
               });
               product.Attributes.forEach((attribute: any) => {
-                AppConfig.settings.platformList.forEach((platform: any) => {
-                  if (product.platformShortName == platform.name) {
+                this.platformDetailsList.forEach((platform: any) => {
+                  if (product.platformShortName == platform.value) {
                     platform.tags.forEach((tag: any) => {
                       if (attribute.Name == tag.name) {
                         product.tags.push({name: tag.name, value: attribute.Value, color: tag.color, title: tag.title});
@@ -819,6 +817,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           });
           this.exchangeService.setProductList(this.productList);
+
           this.listIsReady = true;
           this.productListRolled = true;
           this.productStartNumber = page * this.searchOptions.top + 1;
@@ -914,7 +913,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         productListHeader.style.opacity = '1.0';
         productListContainer.style.left = '0.5rem';
         this.calcListThumbSize();
-        /* listItemParentContainer!.style.gap = '0 0.5rem'; */
         productListContainer!.style.gap = '0';
         if (productDetailContainer.classList.contains('visible')) {
           productDetailScrollThumb.style.visibility = 'visible';
@@ -927,7 +925,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         productListHeader.style.opacity = '0.0';
         productListContainer.style.left = (-productListContainer.clientWidth - productListScrollThumb.clientWidth - 2).toString() + 'px';
         productListScrollThumb.style.visibility = 'hidden';
-        /* listItemParentContainer!.style.gap = '0 1.0rem'; */
         productListContainer!.style.gap = '0 0.75rem';
         productDetailScrollThumb.style.visibility = 'hidden';
       }
@@ -1037,11 +1034,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   geoSearchUpdate(geoSearchOutput: string) {
     if (geoSearchOutput !== "") {
-      //console.log("GeoSearchOutput: " + geoSearchOutput);
       this.geoFilter = geoSearchOutput;
       this.geoFilterIsActive = true;
     } else {
-      //console.log("GeoSearchOutput is EMPTY!");
       this.geoFilter = "";
       this.geoFilterIsActive = false;
     }
@@ -1174,6 +1169,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.onHideProductDetails();
     } else {
       this.precProductId = this.selectedProduct.Id;
+      this.exchangeService.selectProductOnMap(this.selectedProductIndex);
+      this.exchangeService.setProductList(this.productList);
       setTimeout(() => {
         this.checkProductDetailThumbSize();
       }, 200);
@@ -1190,6 +1187,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.selectedProductIndex > -1) {
       listItemDiv[this.selectedProductIndex].classList.remove('selected');
       this.selectedProductIndex = -1;
+      this.exchangeService.selectProductOnMap(this.selectedProductIndex);
+      this.exchangeService.setProductList(this.productList);
     }
   }
 

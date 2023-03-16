@@ -40,6 +40,7 @@ let selectedMapStyle: string;
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  public platformDetailsList = AppConfig.settings.platformDetailsList;
   public canDrawRect: boolean = false;
   public canDrawPolygon: boolean = false;
   public canDrawPoint: boolean = false;
@@ -110,36 +111,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDrawPolygonButtonClicked(val: boolean) {
     this.canDrawPolygon = true;
-    this.drawGeoSearchPolygonData = {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Polygon",
-            "coordinates": [[]]
-          },
-          "properties": {
-            "fillColor": this.geoSearchSettings.fillColorActive,
-            "borderColor": this.geoSearchSettings.borderColorActive
-          }
-        }
-      ]
-    };
-    this.drawGeoSearchCirclesData = [
-      {
-        "coordinates": [0, 90],
-        "radius": 0
-      }
-    ];
-    this.geoSearchPolygonPresent = true;
-    this.changeDrawLayer();
-
-    this.hideContextMenu();
-  }
-
-  onDrawPointButtonClicked(val: boolean) {
-    this.canDrawPoint = true;
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
       "features": [
@@ -595,6 +566,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+
+
+
   productList: object = {};
   mapStyleSubscription!: Subscription;
   mapLayerSubscription!: Subscription;
@@ -606,13 +580,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   startPolygonDrawingSubscription!: Subscription;
   cancelDrawingSubscription!: Subscription;
 
-  public defaultFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultColor);
-  public defaultFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.defaultBorderColor);
-  public defaultFootprintBorderWidth: number = AppConfig.settings.footprints.defaultBorderWidth;
-  public selectedFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.selectedColor);
+  public fallBackFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackColor);
+  public fallBackFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackBorderColor);
+  public fallBackFootprintHoverColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackHoverColor);
+  public fallBackFootprintHoverBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackHoverBorderColor);
   public selectedFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.selectedBorderColor);
+
+  public defaultFootprintBorderWidth: number = AppConfig.settings.footprints.defaultBorderWidth;
   public selectedFootprintBorderWidth: number = AppConfig.settings.footprints.selectedBorderWidth;
+  public hoveredFootprintBorderWidth: number = AppConfig.settings.footprints.hoveredBorderWidth;
   public selectedFootprintIndex: number = -1;
+  public selectedProductIndex: number = -1;
 
 
   /* Base Map Layer */
@@ -632,7 +610,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMaxPixels: this.defaultFootprintBorderWidth,
     getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
-    getLineColor: this.defaultFootprintBorderColor,
+    /* getLineColor: (d:any, f:any) => (d.isSelected ? this.selectedFootprintBorderColor : d.properties.BorderColor), */
+    getLineColor: (d:any, f:any) => d.properties.BorderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
     },
@@ -651,8 +630,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     extruded: false,
     lineWidthUnits: 'pixels',
     lineWidthMinPixels: 1,
-    lineWidthMaxPixels: this.selectedFootprintBorderWidth,
-    getLineWidth: this.selectedFootprintBorderWidth,
+    lineWidthMaxPixels: this.hoveredFootprintBorderWidth,
+    getLineWidth: this.hoveredFootprintBorderWidth,
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
@@ -676,7 +655,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMaxPixels: this.defaultFootprintBorderWidth,
     getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
-    getLineColor: this.defaultFootprintBorderColor,
+    /* getLineColor: (d:any, f:any) => (d.isSelected ? this.selectedFootprintBorderColor : d.properties.BorderColor), */
+    getLineColor: (d:any, f:any) => d.properties.BorderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
     },
@@ -695,8 +675,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     extruded: false,
     lineWidthUnits: 'pixels',
     lineWidthMinPixels: 1,
-    lineWidthMaxPixels: this.selectedFootprintBorderWidth,
-    getLineWidth: this.selectedFootprintBorderWidth,
+    lineWidthMaxPixels: this.hoveredFootprintBorderWidth,
+    getLineWidth: this.hoveredFootprintBorderWidth,
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
@@ -881,8 +861,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     this.selectedProductIdSubscription = this.exchangeService.selectProductOnMapExchange.subscribe((value) => {
-      if (typeof(value) === 'string') {
-        //console.log(value);
+      if (typeof(value) === 'number') {
+        this.selectedProductIndex = value;
       }
     });
     this.startRectDrawingSubscription = this.exchangeService.startRectDrawingExchange.subscribe((value) => {
@@ -1194,12 +1174,32 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         }
 
-        featureList[featureList.length-1].properties = {
+        let tempPlatformArray = this.platformDetailsList.filter((platform: any) => (platform.value === product.platformShortName));
+
+        let tempColor: string = "";
+        let tempBorderColor: string = "";
+        let tempHoverColor: string = "";
+        let tempHoverBorderColor: string = "";
+        if (tempPlatformArray.length > 0) {
+          tempColor = tempPlatformArray[0].fillColor;
+          tempBorderColor = tempPlatformArray[0].borderColor;
+          tempHoverColor = tempPlatformArray[0].hoverColor;
+          tempHoverBorderColor = tempPlatformArray[0].hoverBorderColor;
+        }
+        /* if (featureList[index].hasOwnProperty('properties')) {
+          delete featureList[index]['properties'];
+        } */
+        featureList[index].properties = {
           'Id': product.Id,
           'Name': product.Name,
-          'Color': this.defaultFootprintColor,
+          'Color': (tempColor !== "" ? this.rgbConvertToArray(tempColor) : this.fallBackFootprintColor),
+          'BorderColor': (tempBorderColor !== "" ? this.rgbConvertToArray(tempBorderColor) : this.fallBackFootprintBorderColor),
+          'HoverColor': (tempHoverColor !== "" ? this.rgbConvertToArray(tempHoverColor) : this.fallBackFootprintHoverColor),
+          'HoverBorderColor': (tempHoverBorderColor !== "" ? this.rgbConvertToArray(tempHoverBorderColor) : this.fallBackFootprintHoverBorderColor),
         }
       });
+
+      //console.log(JSON.stringify(featureList, null, 2));
       geojsonData = {
         "type": "FeatureCollection",
         "features": featureList
@@ -1247,7 +1247,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       deckGlobe.setProps({layers: layersGlobe});
     }
   }
+/*
 
+
+
+
+
+
+
+
+
+
+
+*/
   showProductFootprint(showProductIndex: number) {
     this.selectedFootprintIndex = showProductIndex;
     this.geojsonLayerGlobe = this.geojsonLayerGlobe.clone({
@@ -1262,8 +1274,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       lineWidthMinPixels: 1,
       lineWidthMaxPixels: this.defaultFootprintBorderWidth,
       getLineWidth: this.defaultFootprintBorderWidth,
-      getFillColor: this.defaultFootprintColor,
-      getLineColor: this.defaultFootprintBorderColor,
+      getFillColor: (d:any, f:any) => d.properties.Color,
+      getLineColor: (d:any, f:any) => d.properties.BorderColor,
       getPolygonOffset: (layerIndex:any) => {
         return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
       },
@@ -1284,17 +1296,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       lineWidthMaxPixels: this.selectedFootprintBorderWidth,
       getLineWidth: (d: any, f:any) => {
         let ret: number = 1;
-        if (f.index == this.selectedFootprintIndex) ret = this.selectedFootprintBorderWidth;
+        if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
+        else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
         return ret;
       },
       getFillColor: (d:any, f:any) => {
         let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintColor;
+        if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
         return tempCol;
       },
       getLineColor: (d:any, f:any) => {
         let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintBorderColor;
+        if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
+        else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
         return tempCol;
       },
       getPolygonOffset: (layerIndex:any) => {
@@ -1304,8 +1318,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       fp64: true,
       updateTriggers: {
         getFillColor: [this.selectedFootprintIndex],
-        getLineWidth: [this.selectedFootprintIndex],
-        getLineColor: [this.selectedFootprintIndex]
+        getLineWidth: [this.selectedFootprintIndex, this.selectedFootprintBorderWidth],
+        getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
       }
     })
 
@@ -1321,8 +1335,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       lineWidthMinPixels: 1,
       lineWidthMaxPixels: this.defaultFootprintBorderWidth,
       getLineWidth: this.defaultFootprintBorderWidth,
-      getFillColor: this.defaultFootprintColor,
-      getLineColor: this.defaultFootprintBorderColor,
+      getFillColor: (d:any, f:any) => d.properties.Color,
+      getLineColor: (d:any, f:any) => d.properties.BorderColor,
       getPolygonOffset: (layerIndex:any) => {
         return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
       },
@@ -1343,17 +1357,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       lineWidthMaxPixels: this.selectedFootprintBorderWidth,
       getLineWidth: (d: any, f:any) => {
         let ret: number = 1;
-        if (f.index == this.selectedFootprintIndex) ret = this.selectedFootprintBorderWidth;
+        if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
+        else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
         return ret;
       },
       getFillColor: (d:any, f:any) => {
         let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintColor;
+        if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
         return tempCol;
       },
       getLineColor: (d:any, f:any) => {
         let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedFootprintIndex) tempCol = this.selectedFootprintBorderColor;
+        if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
+        else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverBorderColor;
         return tempCol;
       },
       getPolygonOffset: (layerIndex:any) => {
@@ -1363,8 +1379,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       fp64: true,
       updateTriggers: {
         getFillColor: [this.selectedFootprintIndex],
-        getLineWidth: [this.selectedFootprintIndex],
-        getLineColor: [this.selectedFootprintIndex]
+        getLineWidth: [this.selectedFootprintIndex, this.selectedFootprintBorderWidth],
+        getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
       }
     })
 
