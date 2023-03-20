@@ -1060,6 +1060,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateHoveredProduct(infos: any) {
+
     if (infos === undefined) {
       this.removeAllHoveredProducts();
     } else {

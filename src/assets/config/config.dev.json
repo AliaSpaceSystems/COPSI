@@ -34,7 +34,7 @@
     "filterOutputIsPinnedByDefault": true
   },
   "headerSettings": {
-    "menuAutoHideTimeout": 5000
+    "menuAutoHideTimeout": 3000
   },
   "mapSettings": {
       "initialViewState": {

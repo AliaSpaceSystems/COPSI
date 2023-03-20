@@ -45,12 +45,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public currentProjection: string = "";
   public canDrawRect: boolean = false;
   public canDrawPolygon: boolean = false;
-  public canDrawPoint: boolean = false;
   public drawPointAdded: boolean = false;
   public isHoveringOnPoints: boolean = false;
   public isHoveringOnPolygon: boolean = false;
   public isHoveringOnFootprint: boolean = false;
-  public canDrawTooltip: boolean = true;
+  public canCalcTooltip: boolean = true;
   public canDragMap: boolean = true;
   public startDragCoordinates: number[] = [];
   public geoSearchSettings: any = AppConfig.settings.geoSearchSettings;
@@ -87,7 +86,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   onDrawRectButtonClicked(val: boolean) {
-    this.canDrawTooltip = false;
+    this.canCalcTooltip = false;
     this.canDrawRect = true;
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
@@ -118,7 +117,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDrawPolygonButtonClicked(val: boolean) {
-    this.canDrawTooltip = false;
+    this.canCalcTooltip = false;
     this.canDrawPolygon = true;
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
@@ -173,14 +172,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     ];
     this.canDrawRect = false;
     this.canDrawPolygon = false;
-    this.canDrawPoint = false;
     this.geoSearchPolygonPresent = false;
     this.changeDrawLayer();
     this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(this.drawGeoSearchCirclesData);
     this.exchangeService.updateGeoSearch(this.geoSearchOutput);
-
     this.hideContextMenu();
-    this.canDrawTooltip = true;
+    this.canCalcTooltip = true;
   }
 
   convertCoordinatesToGeographicQueryString(points: any) {
@@ -253,6 +250,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
         this.exchangeService.updateGeoSearch(this.geoSearchOutput);
+        this.canCalcTooltip = true;
       }
     } else if (this.canDrawPolygon) {
       let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
@@ -277,6 +275,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           tempPolygonArray[0].splice(-1, 1, tempPolygonArray[0][0]);
           this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
           this.exchangeService.updateGeoSearch(this.geoSearchOutput);
+          this.canCalcTooltip = true;
         } else {
           tempPolygonArray[0].push(info.coordinate);
           tempPointsArray = tempPointsArray.concat([{"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius}]);
@@ -307,37 +306,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onHoverOnMap(info: any) {
     //if (info.index > -1) console.log("INFO: ", info);
-    /* MultiProduct Picking */
 
-    let infos: any = undefined;
-    if (this.canDrawTooltip) {
-      if (this.currentProjection == 'globe') {
-        infos = deckGlobe.pickMultipleObjects({x: info.x, y: info.y, radius: 1});
-      } else {
-        infos = deckPlane.pickMultipleObjects({x: info.x, y: info.y, radius: 1});
-      }
-      if (infos.length > 0) {
-        infos = infos.filter((obj: any) => (obj.layer.id === "geojson-layer-selected"));
-        //console.log("INFOS PRE: ",infos);
-        infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
-        //console.log("INFOS POST: ",infos);
-        //console.log(this.productList);
-        let tempHoveredIndexesArray: any[] = [];
-        infos.forEach((info: any) => {
-          tempHoveredIndexesArray.push(info.index);
-        });
-
-        this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
-        //console.log(this.hoveredProductsArray);
-      }
-    }
-
+    /* set bools to change cursor type */
     this.isHoveringOnPoints = false;
     this.isHoveringOnPolygon = false;
     this.isHoveringOnFootprint = false;
-
-    /* set bools to change cursor type */
-    if (info.layer != null) {
+    if (info.layer !== null) {
       if (info.layer.id === 'scatterplot-layer') {
         this.isHoveringOnPoints = true;
         this.isHoveringOnPolygon = false;
@@ -347,26 +321,25 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isHoveringOnPolygon = true;
         this.isHoveringOnFootprint = false;
       } else if (info.layer.id === 'geojson-layer-selected') {
-        if (this.canDrawTooltip) this.exchangeService.updateHoveredProduct(infos);
         this.isHoveringOnPoints = false;
         this.isHoveringOnPolygon = false;
-        this.isHoveringOnFootprint = true;
+        if (info.index > -1) {
+          this.isHoveringOnFootprint = true;
+        } else {
+          this.hideProductFootprint();
+        }
       }
     }
 
-    if (this.isHoveringOnFootprint && this.canDrawTooltip) {
-      //console.log(info.index);
-      this.showProductFootprint(info.index);
-      this.showTooltipOnFootprint(info);
-    } else {
-      this.showProductFootprint(-1);
-      if (footprintTooltip.classList.contains('visible')) {
-        footprintTooltip.classList.replace('visible', 'hidden');
-      }
+    if (this.canDrawRect || this.canDrawPolygon) {
+      this.hideProductFootprint();
+      this.hideTooltipOnFootprint();
       this.exchangeService.updateHoveredProduct(undefined);
     }
 
+
     if (this.canDrawRect) {
+      this.hideTooltipOnFootprint();
       let tempJson: any;
       let tempArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
       if(tempArray[0].length > 0 && tempArray[0].length <= 5) {
@@ -391,6 +364,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.changeDrawLayer();
       }
     } else if (this.canDrawPolygon) {
+      this.hideTooltipOnFootprint();
       let tempJson: any;
       let tempArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
       if(tempArray[0].length > 0) {
@@ -414,16 +388,41 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.drawGeoSearchPolygonData = tempJson;
         this.changeDrawLayer();
       }
+    } else if (this.canCalcTooltip) {
+      /* MultiProduct Picking */
+      let infos: any = undefined;
+      if (this.isHoveringOnFootprint) {
+        if (this.currentProjection == 'globe') {
+          infos = deckGlobe.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: 5});
+        } else {
+          infos = deckPlane.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: 5});
+        }
+        if (infos.length > 0) {
+          infos = infos.filter((obj: any) => (obj.layer.id === "geojson-layer-selected"));
+          infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
+          let tempHoveredIndexesArray: any[] = [];
+          infos.forEach((info: any) => {
+            tempHoveredIndexesArray.push(info.index);
+          });
+          this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
+        }
+        this.showProductFootprint(info.index);
+        this.showTooltipOnFootprint(info);
+        this.exchangeService.updateHoveredProduct(infos);
+      } else {
+        this.hideTooltipOnFootprint();
+        this.exchangeService.updateHoveredProduct(undefined);
+      }
     }
   }
 
   hideTooltipOnFootprint() {
+    clearTimeout(this.tooltipTimeoutId);
     footprintTooltip.style.left = '-400px';
     footprintTooltip.style.top = '-400px';
     if (footprintTooltip.classList.contains('visible')) {
       footprintTooltip.classList.replace('visible', 'hidden');
     }
-    clearTimeout(this.tooltipTimeoutId);
   }
   showTooltipOnFootprint(info: any) {
     this.hideTooltipOnFootprint();
@@ -433,7 +432,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       if (footprintTooltip.classList.contains('hidden')) {
         footprintTooltip.classList.replace('hidden', 'visible');
       }
-    }, 750);
+    }, 500);
   }
 
   onPointDragStart() {
@@ -443,6 +442,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     deckPlane.setProps({
       controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
     });
+    this.canCalcTooltip = false;
   }
 
   onPointDrag(info: any) {
@@ -538,6 +538,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     deckPlane.setProps({
       controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
     });
+    this.canCalcTooltip = true;
   }
 
   onPolygonDragStart(info: any) {
@@ -548,6 +549,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     deckPlane.setProps({
       controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
     });
+    this.canCalcTooltip = false;
   }
 
   onPolygonDrag(info: any) {
@@ -639,6 +641,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     deckPlane.setProps({
       controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
     });
+    this.canCalcTooltip = true;
   }
 
 
@@ -902,8 +905,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     footprintTooltip = document.getElementById('footprint-tooltip')!;
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
-      this.isHoveringOnFootprint = false;
       this.hideTooltipOnFootprint();
+      //this.hideProductFootprint();
       contextMenuContainer.style.left = (event.clientX + 20) + 'px';
       contextMenuContainer.style.top = (event.clientY - 15) + 'px';
       if (contextMenuContainer.classList.contains('hidden')) {
@@ -911,6 +914,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.contextMenuTimeoutId = setTimeout(() => {
         this.hideContextMenu();
+        //this.canCalcTooltip = true;
       }, 2000);
     });
     ["mousedown", "wheel"].forEach((inputEvent: any) => {
@@ -918,6 +922,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.hideContextMenu();
       });
     });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+          const isNotCombinedKey = !(event.ctrlKey || event.altKey || event.shiftKey);
+          if (isNotCombinedKey) {
+              this.onCancelDrawingButtonClicked(true);
+          }
+      }
+  });
     this.initMapLayer();
     this.initMapProjection();
     this.initMap();
@@ -1069,16 +1081,24 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
-          this.canDrawTooltip = false;
+          this.canCalcTooltip = false;
+          this.hideTooltipOnFootprint();
+          this.hideProductFootprint();
           return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
+            this.canCalcTooltip = false;
+            this.hideTooltipOnFootprint();
+            this.hideProductFootprint();
             return 'pointer';
           } else {
             if (this.isHoveringOnPolygon) {
+              this.canCalcTooltip = false;
+              this.hideTooltipOnFootprint();
+              this.hideProductFootprint();
               return 'grab';
             } else {
-              this.canDrawTooltip = true;
+              this.canCalcTooltip = true;
               return 'crosshair';
             }
           }
@@ -1122,18 +1142,28 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
+          this.canCalcTooltip = false;
+          this.hideTooltipOnFootprint();
+          this.hideProductFootprint();
         return 'grabbing';
-      } else {
-        if (this.isHoveringOnPoints) {
-          return 'pointer';
         } else {
-          if (this.isHoveringOnPolygon) {
-            return 'grab';
+          if (this.isHoveringOnPoints) {
+            this.canCalcTooltip = false;
+            this.hideTooltipOnFootprint();
+            this.hideProductFootprint();
+            return 'pointer';
           } else {
-            return 'crosshair';
+            if (this.isHoveringOnPolygon) {
+              this.canCalcTooltip = false;
+              this.hideTooltipOnFootprint();
+              this.hideProductFootprint();
+              return 'grab';
+            } else {
+              this.canCalcTooltip = true;
+              return 'crosshair';
+            }
           }
         }
-      }
       }
     });
   }
@@ -1155,6 +1185,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       document.getElementById('map-globe')!.style.display = 'none';
       document.getElementById('map-plane')!.style.display = 'block';
     }
+    this.canCalcTooltip = true;
   }
 
   changeDrawLayer() {
@@ -1363,160 +1394,86 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       deckGlobe.setProps({layers: layersGlobe});
     }
   }
-/*
 
+  hideProductFootprint() {
+    this.showProductFootprint(-1);
+  }
 
-
-
-
-
-
-
-
-
-
-*/
   showProductFootprint(showProductIndex: number) {
     this.selectedFootprintIndex = showProductIndex;
-    this.geojsonLayerGlobe = this.geojsonLayerGlobe.clone({
-      id: 'geojson-layer',
-      data: geojsonData,
-      pickable: true,
-      stroked: true,
-      visible: true,
-      filled: true,
-      extruded: false,
-      lineWidthUnits: 'pixels',
-      lineWidthMinPixels: 1,
-      lineWidthMaxPixels: this.defaultFootprintBorderWidth,
-      getLineWidth: this.defaultFootprintBorderWidth,
-      getFillColor: (d:any, f:any) => d.properties.Color,
-      getLineColor: (d:any, f:any) => d.properties.BorderColor,
-      getPolygonOffset: (layerIndex:any) => {
-        return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
-      },
-      wrapLongitude: true,
-      fp64: true
-    })
-
-    this.geojsonLayerGlobeSelected = this.geojsonLayerGlobeSelected.clone({
-      id: 'geojson-layer-selected',
-      data: geojsonData,
-      pickable: true,
-      stroked: true,
-      visible: true,
-      filled: true,
-      extruded: false,
-      lineWidthUnits: 'pixels',
-      lineWidthMinPixels: 1,
-      lineWidthMaxPixels: this.selectedFootprintBorderWidth,
-      getLineWidth: (d: any, f:any) => {
-        let ret: number = 1;
-        if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
-        else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
-        return ret;
-      },
-      getFillColor: (d:any, f:any) => {
-        let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
-        return tempCol;
-      },
-      getLineColor: (d:any, f:any) => {
-        let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
-        else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
-        return tempCol;
-      },
-      getPolygonOffset: (layerIndex:any) => {
-        return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
-      },
-      wrapLongitude: true,
-      fp64: true,
-      updateTriggers: {
-        getFillColor: [this.selectedFootprintIndex],
-        getLineWidth: [this.selectedFootprintIndex, this.selectedFootprintBorderWidth],
-        getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
-      }
-    })
-
-    this.geojsonLayerPlane = this.geojsonLayerPlane.clone({
-      id: 'geojson-layer',
-      data: geojsonData,
-      pickable: true,
-      stroked: true,
-      visible: true,
-      filled: true,
-      extruded: false,
-      lineWidthUnits: 'pixels',
-      lineWidthMinPixels: 1,
-      lineWidthMaxPixels: this.defaultFootprintBorderWidth,
-      getLineWidth: this.defaultFootprintBorderWidth,
-      getFillColor: (d:any, f:any) => d.properties.Color,
-      getLineColor: (d:any, f:any) => d.properties.BorderColor,
-      getPolygonOffset: (layerIndex:any) => {
-        return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
-      },
-      wrapLongitude: true,
-      fp64: true
-    })
-
-    this.geojsonLayerPlaneSelected = this.geojsonLayerPlaneSelected.clone({
-      id: 'geojson-layer-selected',
-      data: geojsonData,
-      pickable: true,
-      stroked: true,
-      visible: true,
-      filled: true,
-      extruded: false,
-      lineWidthUnits: 'pixels',
-      lineWidthMinPixels: 1,
-      lineWidthMaxPixels: this.selectedFootprintBorderWidth,
-      getLineWidth: (d: any, f:any) => {
-        let ret: number = 1;
-        if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
-        else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
-        return ret;
-      },
-      getFillColor: (d:any, f:any) => {
-        let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
-        return tempCol;
-      },
-      getLineColor: (d:any, f:any) => {
-        let tempCol = [0, 0, 0, 0];
-        if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
-        else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverBorderColor;
-        return tempCol;
-      },
-      getPolygonOffset: (layerIndex:any) => {
-        return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
-      },
-      wrapLongitude: true,
-      fp64: true,
-      updateTriggers: {
-        getFillColor: [this.selectedFootprintIndex],
-        getLineWidth: [this.selectedFootprintIndex, this.selectedFootprintBorderWidth],
-        getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
-      }
-    })
-
-    const layersPlane =  [
-      this.mapLayerPlane,
-      this.geojsonLayerPlane,
-      this.geojsonLayerPlaneSelected,
-      this.drawPolygonLayerPlane,
-      this.drawCirclesLayerPlane
-    ]
-    deckPlane.setProps({layers: layersPlane});
-
-    const layersGlobe =  [
-      this.mapLayerGlobe,
-      this.geojsonLayerGlobe,
-      this.geojsonLayerGlobeSelected,
-      this.drawPolygonLayerGlobe,
-      this.drawCirclesLayerGlobe
-    ]
-    deckGlobe.setProps({layers: layersGlobe});
+    if (this.currentProjection === 'globe') {
+      this.geojsonLayerGlobeSelected = this.geojsonLayerGlobeSelected.clone({
+        getLineWidth: (d: any, f:any) => {
+          let ret: number = 1;
+          if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
+          else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
+          return ret;
+        },
+        getFillColor: (d:any, f:any) => {
+          let tempCol = [0, 0, 0, 0];
+          if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
+          return tempCol;
+        },
+        getLineColor: (d:any, f:any) => {
+          let tempCol = [0, 0, 0, 0];
+          if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
+          else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
+          return tempCol;
+        },
+        /* getPolygonOffset: (layerIndex:any) => {
+          return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
+        }, */
+        updateTriggers: {
+          getFillColor: [this.selectedFootprintIndex],
+          getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndex],
+          getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
+        }
+      });
+      const layersGlobe =  [
+        this.mapLayerGlobe,
+        this.geojsonLayerGlobe,
+        this.geojsonLayerGlobeSelected,
+        this.drawPolygonLayerGlobe,
+        this.drawCirclesLayerGlobe
+      ]
+      deckGlobe.setProps({layers: layersGlobe});
+    } else {
+      this.geojsonLayerPlaneSelected = this.geojsonLayerPlaneSelected.clone({
+        getLineWidth: (d: any, f:any) => {
+          let ret: number = 1;
+          if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
+          else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
+          return ret;
+        },
+        getFillColor: (d:any, f:any) => {
+          let tempCol = [0, 0, 0, 0];
+          if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
+          return tempCol;
+        },
+        getLineColor: (d:any, f:any) => {
+          let tempCol = [0, 0, 0, 0];
+          if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
+          else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverBorderColor;
+          return tempCol;
+        },
+        /* getPolygonOffset: (layerIndex:any) => {
+          return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
+        }, */
+        updateTriggers: {
+          getFillColor: [this.selectedFootprintIndex],
+          getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndex],
+          getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
+        }
+      });
+      const layersPlane =  [
+        this.mapLayerPlane,
+        this.geojsonLayerPlane,
+        this.geojsonLayerPlaneSelected,
+        this.drawPolygonLayerPlane,
+        this.drawCirclesLayerPlane
+      ]
+      deckPlane.setProps({layers: layersPlane});
+    }
   }
 
   /* Convert WKT footprints to geojson Feature */
