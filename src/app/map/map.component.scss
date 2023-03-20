@@ -4,6 +4,7 @@ mat-icon:hover {
   opacity: 0.7;
 }
 
+/* CONTEXT MENU */
 #context-menu-container {
   display: flex;
   flex-direction: column;
@@ -14,7 +15,7 @@ mat-icon:hover {
   left: -5rem;
   border: $main-dark-border;
   border-radius: 0 0 0.25rem 0.25rem;
-  background-color: $menu-dark-bg-color;
+  background-color: $main-dark-bg-color;
   box-shadow: $default-shadow;
   z-index: 60;
 }
@@ -33,6 +34,7 @@ mat-icon:hover {
 }
 
 #geo-search-title {
+  font-size: 0.75rem;
   padding: 0.25rem;
 }
 #geo-search-buttons {
@@ -44,4 +46,35 @@ mat-icon:hover {
 #vertical-separator {
   width: 1px;
   border: 1px solid grey;
+}
+
+/* FOOTPRINTS TOOLTIP */
+#footprint-tooltip {
+  position: absolute;
+  flex-direction: column;
+  padding: 0.25rem;
+  background-color: $main-dark-bg-color;
+  border: $main-dark-border;
+  border-radius: 0.25rem;
+}
+#footprint-tooltip.hidden {
+  display: none;
+  top: 0;
+  left: -5rem;
+}
+#footprint-tooltip.visible {
+  display: flex;
+}
+#footprint-tooltip-title {
+  font-size: $search-bar-font-size;
+  padding: 0.5rem;
+}
+#footprint-tooltip-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footprint-tooltip-table {
+  background-color: $menu-dark-bg-color;
 }

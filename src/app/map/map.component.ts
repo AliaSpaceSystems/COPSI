@@ -10,6 +10,7 @@ import { AppConfig } from '../services/app.config';
 
 let canvasContainer: any;
 let contextMenuContainer: any;
+let footprintTooltip: any;
 let deckGlobe: any;
 let deckPlane: any;
 let mapProjection: string = 'globe';
@@ -41,18 +42,24 @@ let selectedMapStyle: string;
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public platformDetailsList = AppConfig.settings.platformDetailsList;
+  public currentProjection: string = "";
   public canDrawRect: boolean = false;
   public canDrawPolygon: boolean = false;
   public canDrawPoint: boolean = false;
   public drawPointAdded: boolean = false;
   public isHoveringOnPoints: boolean = false;
   public isHoveringOnPolygon: boolean = false;
+  public isHoveringOnFootprint: boolean = false;
+  public canDrawTooltip: boolean = true;
   public canDragMap: boolean = true;
   public startDragCoordinates: number[] = [];
   public geoSearchSettings: any = AppConfig.settings.geoSearchSettings;
   public geoSearchPolygonPresent: boolean = false;
   public geoSearchOutput: string = "";
   public minimalCoordinateDiff: number = 0.00000000000001;
+  public tooltipTimeoutId: any;
+  public contextMenuTimeoutId: any;
+  public hoveredProductsArray: any[] = [];
 
   public drawGeoSearchCirclesData = [
     {
@@ -80,6 +87,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   onDrawRectButtonClicked(val: boolean) {
+    this.canDrawTooltip = false;
     this.canDrawRect = true;
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
@@ -110,6 +118,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDrawPolygonButtonClicked(val: boolean) {
+    this.canDrawTooltip = false;
     this.canDrawPolygon = true;
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
@@ -171,6 +180,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.exchangeService.updateGeoSearch(this.geoSearchOutput);
 
     this.hideContextMenu();
+    this.canDrawTooltip = true;
   }
 
   convertCoordinatesToGeographicQueryString(points: any) {
@@ -295,19 +305,65 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onHoverWhileDrawing(info: any) {
+  onHoverOnMap(info: any) {
+    //if (info.index > -1) console.log("INFO: ", info);
+    /* MultiProduct Picking */
+
+    let infos: any = undefined;
+    if (this.canDrawTooltip) {
+      if (this.currentProjection == 'globe') {
+        infos = deckGlobe.pickMultipleObjects({x: info.x, y: info.y, radius: 1});
+      } else {
+        infos = deckPlane.pickMultipleObjects({x: info.x, y: info.y, radius: 1});
+      }
+      if (infos.length > 0) {
+        infos = infos.filter((obj: any) => (obj.layer.id === "geojson-layer-selected"));
+        //console.log("INFOS PRE: ",infos);
+        infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
+        //console.log("INFOS POST: ",infos);
+        //console.log(this.productList);
+        let tempHoveredIndexesArray: any[] = [];
+        infos.forEach((info: any) => {
+          tempHoveredIndexesArray.push(info.index);
+        });
+
+        this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
+        //console.log(this.hoveredProductsArray);
+      }
+    }
+
+    this.isHoveringOnPoints = false;
+    this.isHoveringOnPolygon = false;
+    this.isHoveringOnFootprint = false;
+
     /* set bools to change cursor type */
     if (info.layer != null) {
       if (info.layer.id === 'scatterplot-layer') {
         this.isHoveringOnPoints = true;
         this.isHoveringOnPolygon = false;
+        this.isHoveringOnFootprint = false;
       } else if (info.layer.id === 'draw-layer') {
-        this.isHoveringOnPolygon = true;
         this.isHoveringOnPoints = false;
+        this.isHoveringOnPolygon = true;
+        this.isHoveringOnFootprint = false;
+      } else if (info.layer.id === 'geojson-layer-selected') {
+        if (this.canDrawTooltip) this.exchangeService.updateHoveredProduct(infos);
+        this.isHoveringOnPoints = false;
+        this.isHoveringOnPolygon = false;
+        this.isHoveringOnFootprint = true;
       }
+    }
+
+    if (this.isHoveringOnFootprint && this.canDrawTooltip) {
+      //console.log(info.index);
+      this.showProductFootprint(info.index);
+      this.showTooltipOnFootprint(info);
     } else {
-      this.isHoveringOnPoints = false;
-      this.isHoveringOnPolygon = false;
+      this.showProductFootprint(-1);
+      if (footprintTooltip.classList.contains('visible')) {
+        footprintTooltip.classList.replace('visible', 'hidden');
+      }
+      this.exchangeService.updateHoveredProduct(undefined);
     }
 
     if (this.canDrawRect) {
@@ -359,6 +415,25 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.changeDrawLayer();
       }
     }
+  }
+
+  hideTooltipOnFootprint() {
+    footprintTooltip.style.left = '-400px';
+    footprintTooltip.style.top = '-400px';
+    if (footprintTooltip.classList.contains('visible')) {
+      footprintTooltip.classList.replace('visible', 'hidden');
+    }
+    clearTimeout(this.tooltipTimeoutId);
+  }
+  showTooltipOnFootprint(info: any) {
+    this.hideTooltipOnFootprint();
+    footprintTooltip.style.left = (info.x + 20) + 'px';
+    footprintTooltip.style.top = (info.y - 15) + 'px';
+    this.tooltipTimeoutId = setTimeout(() => {
+      if (footprintTooltip.classList.contains('hidden')) {
+        footprintTooltip.classList.replace('hidden', 'visible');
+      }
+    }, 750);
   }
 
   onPointDragStart() {
@@ -569,16 +644,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
 
-  productList: object = {};
-  mapStyleSubscription!: Subscription;
-  mapLayerSubscription!: Subscription;
-  showLabelsSubscription!: Subscription;
-  productListSubscription!: Subscription;
-  showProductIndexSubscription!: Subscription;
-  selectedProductIdSubscription!: Subscription;
-  startRectDrawingSubscription!: Subscription;
-  startPolygonDrawingSubscription!: Subscription;
-  cancelDrawingSubscription!: Subscription;
+  public productList: any;
+  public mapStyleSubscription!: Subscription;
+  public mapLayerSubscription!: Subscription;
+  public showLabelsSubscription!: Subscription;
+  public productListSubscription!: Subscription;
+  public showProductIndexSubscription!: Subscription;
+  public selectedProductIdSubscription!: Subscription;
+  public startRectDrawingSubscription!: Subscription;
+  public startPolygonDrawingSubscription!: Subscription;
+  public cancelDrawingSubscription!: Subscription;
 
   public fallBackFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackColor);
   public fallBackFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackBorderColor);
@@ -610,7 +685,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMaxPixels: this.defaultFootprintBorderWidth,
     getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
-    /* getLineColor: (d:any, f:any) => (d.isSelected ? this.selectedFootprintBorderColor : d.properties.BorderColor), */
     getLineColor: (d:any, f:any) => d.properties.BorderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
@@ -655,7 +729,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineWidthMaxPixels: this.defaultFootprintBorderWidth,
     getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
-    /* getLineColor: (d:any, f:any) => (d.isSelected ? this.selectedFootprintBorderColor : d.properties.BorderColor), */
     getLineColor: (d:any, f:any) => d.properties.BorderColor,
     getPolygonOffset: (layerIndex:any) => {
       return [0, -(layerIndex.layerIndex * 10000 + 5000000)]
@@ -803,25 +876,42 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     mapTiles.styles = AppConfig.settings.styles;
     mapProjection = AppConfig.settings.mapSettings.projection;
     initialViewState = AppConfig.settings.mapSettings.initialViewState;
+
+    this.currentProjection = mapProjection;
   }
 
   hideContextMenu() {
-    contextMenuContainer.style.left = '-100px';
+    contextMenuContainer.style.left = '-400px';
+    contextMenuContainer.style.top = '-400px';
     if (contextMenuContainer.classList.contains('visible')) {
       contextMenuContainer.classList.replace('visible', 'hidden');
     }
+  }
+  onMouseEnterContextMenu() {
+    clearTimeout(this.contextMenuTimeoutId);
+  }
+  onMouseLeaveContextMenu() {
+    this.contextMenuTimeoutId = setTimeout(() => {
+      this.hideContextMenu();
+    }, 500);
   }
 
   ngOnInit(): void {
     canvasContainer = document.getElementById('canvas-container')!;
     contextMenuContainer = document.getElementById('context-menu-container')!;
+    footprintTooltip = document.getElementById('footprint-tooltip')!;
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
-      contextMenuContainer.style.left = event.clientX + 'px';
-      contextMenuContainer.style.top = event.clientY + 'px';
+      this.isHoveringOnFootprint = false;
+      this.hideTooltipOnFootprint();
+      contextMenuContainer.style.left = (event.clientX + 20) + 'px';
+      contextMenuContainer.style.top = (event.clientY - 15) + 'px';
       if (contextMenuContainer.classList.contains('hidden')) {
         contextMenuContainer.classList.replace('hidden', 'visible');
       }
+      this.contextMenuTimeoutId = setTimeout(() => {
+        this.hideContextMenu();
+      }, 2000);
     });
     ["mousedown", "wheel"].forEach((inputEvent: any) => {
       canvasContainer.addEventListener(inputEvent, (event: any) => {
@@ -846,8 +936,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.productListSubscription = this.exchangeService.productListExchange.subscribe((value) => {
       if (typeof(value) === 'object') {
-        this.productList = value;
-        this.setProductList(this.productList);
+        this.setProductList(value);
       }
     });
     this.mapLayerSubscription = this.exchangeService.selectedMapLayer.subscribe((value) => {
@@ -943,7 +1032,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  public deckRef: any;
   initMap() {
     deckGlobe = new Deck({
       parameters: {
@@ -977,10 +1065,24 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.onClickOnMap(info, event)
       },
       onHover: (info: any) => {
-        this.onHoverWhileDrawing(info);
+        this.onHoverOnMap(info);
       },
       getCursor: (cursor: any) => {
-        return cursor.isDragging ? 'grabbing' : (this.isHoveringOnPoints ? 'pointer' : (this.isHoveringOnPolygon ? 'grab' : 'crosshair'));
+        if (cursor.isDragging) {
+          this.canDrawTooltip = false;
+          return 'grabbing';
+        } else {
+          if (this.isHoveringOnPoints) {
+            return 'pointer';
+          } else {
+            if (this.isHoveringOnPolygon) {
+              return 'grab';
+            } else {
+              this.canDrawTooltip = true;
+              return 'crosshair';
+            }
+          }
+        }
       }
     });
 
@@ -1016,10 +1118,22 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.onClickOnMap(info, event)
       },
       onHover: (info: any) => {
-        this.onHoverWhileDrawing(info);
+        this.onHoverOnMap(info);
       },
       getCursor: (cursor: any) => {
-        return cursor.isDragging ? 'grabbing' : (this.isHoveringOnPoints ? 'pointer' : (this.isHoveringOnPolygon ? 'grab' : 'crosshair'));
+        if (cursor.isDragging) {
+        return 'grabbing';
+      } else {
+        if (this.isHoveringOnPoints) {
+          return 'pointer';
+        } else {
+          if (this.isHoveringOnPolygon) {
+            return 'grab';
+          } else {
+            return 'crosshair';
+          }
+        }
+      }
       }
     });
   }
@@ -1033,7 +1147,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeMapProjection(projection: string) {
-    if (projection === 'globe') {
+    this.currentProjection = projection;
+    if (this.currentProjection === 'globe') {
       document.getElementById('map-plane')!.style.display = 'none';
       document.getElementById('map-globe')!.style.display = 'block';
     } else {
@@ -1153,10 +1268,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setProductList(productList: any) {
-    if ("@odata.count" in productList) {
-      //console.log(JSON.stringify(productList.products[0].geoJson, null, 2));
+    this.productList = productList;
+    if ("@odata.count" in this.productList) {
+      //console.log(JSON.stringify(this.productList.products[0].geoJson, null, 2));
       let featureList: any[] = [];
-      productList.value.forEach((product: any, index: number) => {
+      this.productList.value.forEach((product: any, index: number) => {
         if (product.GeoFootprint != null) {
           let tempGeojson = this.getGeojsonFromGeoFootprint(product.GeoFootprint);
           featureList.push(tempGeojson);
@@ -1531,11 +1647,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     return point;
   }
 
-  arrayEquals(a: any, b: any) {
-    return Array.isArray(a) &&
-      Array.isArray(b) &&
-      a.length === b.length &&
-      a.every((val, index) => val === b[index]);
+  arrayEquals(a: any, b: any): boolean {
+    if (Array.isArray(a[0])) {
+      return this.arrayEquals(a[0], b[0]);
+    } else {
+      return Array.isArray(a) &&
+        Array.isArray(b) &&
+        a.length === b.length &&
+        a.every((val, index) => val === b[index]);
+    }
   }
 
   /* Function to convert [r, g, b] or [r, g, b, a] colors to html string: "#rrggbb" or "#rrggbbaa" */

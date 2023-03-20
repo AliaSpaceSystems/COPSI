@@ -127,6 +127,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public downloadSubscription: Map<String, Subscription> = new Map();
 
   updateGeoSearchSubscription!: Subscription;
+  updateHoveredProductSubscription! : Subscription;
 
   constructor(
     private exchangeService: ExchangeService,
@@ -302,10 +303,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geoSearchUpdate(value);
       }
     });
+    this.updateHoveredProductSubscription = this.exchangeService.hoveredProductExchange.subscribe((value) => {
+      this.updateHoveredProduct(value);
+    });
   }
 
   ngOnDestroy(): void {
     this.productListSubscription.unsubscribe();
+    this.updateGeoSearchSubscription.unsubscribe();
+    this.updateHoveredProductSubscription.unsubscribe();
     if (this.downloadSubscription.size > 0) {
       this.downloadSubscription.forEach(sub => {
         sub.unsubscribe();
@@ -868,10 +874,16 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   hoverProduct(e: any) {
     let hoveredProduct = $(e.currentTarget).index();
     this.exchangeService.showProductOnMap(hoveredProduct);
+    if ($(e.currentTarget)[0].classList.contains('hover') == false) {
+      $(e.currentTarget)[0].classList.add('hover');
+    }
   }
   leaveProduct(e: any) {
     let hoveredProduct = -1;
     this.exchangeService.showProductOnMap(hoveredProduct);
+    if ($(e.currentTarget)[0].classList.contains('hover')) {
+      $(e.currentTarget)[0].classList.remove('hover');
+    }
   }
 
   loadPageFromButtons(page: number) {
@@ -1045,6 +1057,31 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.checkFilterOutputHeight();
       this.checkAdvancedSearchThumbSize();
     }, 200);
+  }
+
+  updateHoveredProduct(infos: any) {
+    if (infos === undefined) {
+      this.removeAllHoveredProducts();
+    } else {
+      this.removeAllHoveredProducts();
+      for (var i = 0; i < listItemDiv.length; i++) {
+        infos.forEach((info: any) => {
+          if (info.index === i) {
+            if (listItemDiv[i].classList.contains('hover') == false) {
+              listItemDiv[i].classList.add('hover');
+            }
+          }
+        });
+      };
+    }
+  }
+
+  removeAllHoveredProducts() {
+    for (let product of listItemDiv) {
+      if (product.classList.contains('hover')) {
+        product.classList.remove('hover');
+      }
+    };
   }
 
   calcListThumbSize() {

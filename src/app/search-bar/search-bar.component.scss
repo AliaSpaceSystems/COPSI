@@ -662,7 +662,7 @@ input:invalid {
   box-shadow: $default-shadow;
   pointer-events: visible;
 }
-.list-item-div:hover {
+.list-item-div.hover {
   background-color: #fff;
   border-color: $menu-dark-bg-color;
 }
@@ -970,8 +970,9 @@ input:invalid {
 #product-details-attributes-div p {
   width: 100%;
   background-color: $main-dark-bg-color;
-  padding: 0.5rem 0;
-  text-align: center;
+  padding: 0.5rem;
+  text-align: left;
+  font-size: $search-bar-font-size;
   margin: 0;
 }
 
