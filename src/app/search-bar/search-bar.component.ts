@@ -7,7 +7,6 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
 import { Download } from 'ngx-operators';
-import { wktToGeoJSON } from '@terraformer/wkt';
 import productDetails from 'src/assets/config/product_details.json';
 
 
