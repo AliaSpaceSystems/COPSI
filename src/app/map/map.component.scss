@@ -55,6 +55,7 @@ mat-icon:hover {
   padding: 0.25rem;
   background-color: $main-dark-bg-color;
   border: $main-dark-border;
+  box-shadow: $default-shadow;
   border-radius: 0.25rem;
 }
 #footprint-tooltip.hidden {
@@ -77,4 +78,9 @@ mat-icon:hover {
 
 .footprint-tooltip-table {
   background-color: $menu-dark-bg-color;
+  border: $main-dark-border;
+  box-shadow: $default-shadow;
+}
+.footprint-tooltip-table th, td {
+  padding: 0 0.5rem 0 0;
 }

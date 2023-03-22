@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ExchangeService } from '../services/exchange.service';
 import { Subscription } from 'rxjs';
 /* Map Imports */
-import { Deck, MapView, _GlobeView as GlobeView, COORDINATE_SYSTEM } from '@deck.gl/core';
+import { Deck, MapView, _GlobeView as GlobeView, COORDINATE_SYSTEM, FlyToInterpolator } from '@deck.gl/core';
 import { TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { wktToGeoJSON } from '@terraformer/wkt';
@@ -45,6 +45,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public currentProjection: string = "";
   public canDrawRect: boolean = false;
   public canDrawPolygon: boolean = false;
+  public canDragPolygon: boolean = false;
   public drawPointAdded: boolean = false;
   public isHoveringOnPoints: boolean = false;
   public isHoveringOnPolygon: boolean = false;
@@ -59,6 +60,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public tooltipTimeoutId: any;
   public contextMenuTimeoutId: any;
   public hoveredProductsArray: any[] = [];
+  public hoveredObject: any = {};
 
   public drawGeoSearchCirclesData = [
     {
@@ -88,6 +90,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   onDrawRectButtonClicked(val: boolean) {
     this.canCalcTooltip = false;
     this.canDrawRect = true;
+    this.canDragPolygon = false;
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
       "features": [
@@ -112,13 +115,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     ];
     this.geoSearchPolygonPresent = true;
     this.changeDrawLayer();
-
     this.hideContextMenu();
   }
 
   onDrawPolygonButtonClicked(val: boolean) {
     this.canCalcTooltip = false;
     this.canDrawPolygon = true;
+    this.canDragPolygon = false;
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
       "features": [
@@ -143,7 +146,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     ];
     this.geoSearchPolygonPresent = true;
     this.changeDrawLayer();
-
     this.hideContextMenu();
   }
 
@@ -172,6 +174,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     ];
     this.canDrawRect = false;
     this.canDrawPolygon = false;
+    this.canDragPolygon = false;
     this.geoSearchPolygonPresent = false;
     this.changeDrawLayer();
     this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(this.drawGeoSearchCirclesData);
@@ -214,7 +217,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let tempPointsArray = this.drawGeoSearchCirclesData;
       if(tempPolygonArray[0].length == 0) {
         tempPolygonArray[0].push(info.coordinate, info.coordinate, info.coordinate, info.coordinate, info.coordinate);
-        tempPointsArray = [{"coordinates": info.coordinate, "radius": this.geoSearchSettings.defaultCircleRadius}];
+        tempPointsArray = [{"coordinates": info.coordinate, "radius": this.geoSearchSettings.defaultCircleRadius }];
         this.drawGeoSearchCirclesData = tempPointsArray;
         this.drawPointAdded = true;
         this.changeDrawLayer();
@@ -222,12 +225,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         tempPolygonArray[0].splice(1, 3, [info.coordinate[0], tempPolygonArray[0][0][1]], info.coordinate, [tempPolygonArray[0][0][0], info.coordinate[1]]);
         tempPointsArray = [
           tempPointsArray[0],
-          {"coordinates": [info.coordinate[0], tempPolygonArray[0][0][1]], "radius": this.geoSearchSettings.defaultCircleRadius},
-          {"coordinates": info.coordinate, "radius": this.geoSearchSettings.defaultCircleRadius},
-          {"coordinates": [tempPolygonArray[0][0][0], info.coordinate[1]], "radius": this.geoSearchSettings.defaultCircleRadius}
+          {"coordinates": [info.coordinate[0], tempPolygonArray[0][0][1]], "radius": this.geoSearchSettings.defaultCircleRadius },
+          {"coordinates": info.coordinate, "radius": this.geoSearchSettings.defaultCircleRadius },
+          {"coordinates": [tempPolygonArray[0][0][0], info.coordinate[1]], "radius": this.geoSearchSettings.defaultCircleRadius }
         ];
         this.drawGeoSearchCirclesData = tempPointsArray;
         this.canDrawRect = false;
+        this.canDragPolygon = true;
         tempPolygonJson = {
           "type": "FeatureCollection",
           "features": [
@@ -245,7 +249,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         };
         this.drawGeoSearchPolygonData = tempPolygonJson;
-        this.geoSearchPolygonPresent = true;
         this.changeDrawLayer();
 
         this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
@@ -259,7 +262,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let tempBorderColor = this.geoSearchSettings.borderColorActive;
       if(tempPolygonArray[0].length == 0) {
         tempPolygonArray[0].push(info.coordinate, info.coordinate);
-        tempPointsArray = [{"coordinates": info.coordinate, "radius": this.geoSearchSettings.defaultCircleRadius}];
+        tempPointsArray = [{"coordinates": info.coordinate, "radius": this.geoSearchSettings.bigCircleRadius }];
         this.drawGeoSearchCirclesData = tempPointsArray;
         this.drawPointAdded = true;
         this.changeDrawLayer();
@@ -267,18 +270,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         if (info.layer != null && info.layer.id === "scatterplot-layer" && info.index === 0) {
           tempPointsArray = [];
           for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
-            tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius});
+            tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius });
           }
           tempFillColor = this.geoSearchSettings.fillColor;
           tempBorderColor = this.geoSearchSettings.borderColor;
           this.canDrawPolygon = false;
+          this.canDragPolygon = true;
           tempPolygonArray[0].splice(-1, 1, tempPolygonArray[0][0]);
           this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
           this.exchangeService.updateGeoSearch(this.geoSearchOutput);
           this.canCalcTooltip = true;
         } else {
           tempPolygonArray[0].push(info.coordinate);
-          tempPointsArray = tempPointsArray.concat([{"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius}]);
+          tempPointsArray = tempPointsArray.concat([{"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius }]);
         }
         this.drawPointAdded = true;
         tempPolygonJson = {
@@ -316,6 +320,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isHoveringOnPoints = true;
         this.isHoveringOnPolygon = false;
         this.isHoveringOnFootprint = false;
+        //this.highlightPoint(info);
       } else if (info.layer.id === 'draw-layer') {
         this.isHoveringOnPoints = false;
         this.isHoveringOnPolygon = true;
@@ -339,7 +344,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     if (this.canDrawRect) {
-      this.hideTooltipOnFootprint();
+      //this.hideTooltipOnFootprint();
       let tempJson: any;
       let tempArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
       if(tempArray[0].length > 0 && tempArray[0].length <= 5) {
@@ -361,10 +366,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         };
         this.drawGeoSearchPolygonData = tempJson;
-        this.changeDrawLayer();
+        //this.changeDrawLayer();
       }
     } else if (this.canDrawPolygon) {
-      this.hideTooltipOnFootprint();
+      //this.hideTooltipOnFootprint();
       let tempJson: any;
       let tempArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
       if(tempArray[0].length > 0) {
@@ -386,7 +391,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         };
         this.drawGeoSearchPolygonData = tempJson;
-        this.changeDrawLayer();
+        //this.changeDrawLayer();
       }
     } else if (this.canCalcTooltip) {
       /* MultiProduct Picking */
@@ -414,13 +419,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.exchangeService.updateHoveredProduct(undefined);
       }
     }
+    this.changeDrawLayer();
   }
 
   hideTooltipOnFootprint() {
     clearTimeout(this.tooltipTimeoutId);
-    footprintTooltip.style.left = '-400px';
-    footprintTooltip.style.top = '-400px';
     if (footprintTooltip.classList.contains('visible')) {
+      footprintTooltip.style.left = '-400px';
+      footprintTooltip.style.top = '-400px';
       footprintTooltip.classList.replace('visible', 'hidden');
     }
   }
@@ -436,148 +442,53 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onPointDragStart() {
-    deckGlobe.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
-    });
-    deckPlane.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
-    });
-    this.canCalcTooltip = false;
+    if (this.canDragPolygon) {
+      deckGlobe.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+      });
+      deckPlane.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+      });
+      this.canCalcTooltip = false;
+    }
   }
 
   onPointDrag(info: any) {
-    if (info.layer != null && info.layer.id === "scatterplot-layer") {
-      let tempPolygonJson: any;
-      let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
-      let tempPointsArray = this.drawGeoSearchCirclesData;
-      let tempFillColor = this.geoSearchSettings.fillColorActive;
-      let tempBorderColor = this.geoSearchSettings.borderColorActive;
-      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
-      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
-      if (tempPointsArray.length == 1) {
-        /* If it is a Single Point Polygon drag */
-        tempPolygonArray[0] = [
-          info.coordinate,
-          [info.coordinate[0] + this.minimalCoordinateDiff, info.coordinate[1]],
-          [info.coordinate[0], info.coordinate[1] + this.minimalCoordinateDiff],
-          info.coordinate
-        ]
-        tempPointsArray = [];
-        tempPointsArray.push({"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius});
-      } else {
-        /* Other Polygons point drag  */
-        tempPolygonArray[0][info.index] = (info.coordinate);
-        if (info.index == 0) {
-          tempPolygonArray[0][tempPolygonArray[0].length - 1] = (info.coordinate);
-        }
-        tempPointsArray = [];
-        for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
-          if (i === info.index) {
-            tempPointsArray.push({"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius});
-          } else {
-            tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius});
+    if (this.canDragPolygon) {
+      if (info.layer != null && info.layer.id === "scatterplot-layer") {
+        let tempPolygonJson: any;
+        let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
+        let tempPointsArray = this.drawGeoSearchCirclesData;
+        let tempFillColor = this.geoSearchSettings.fillColorActive;
+        let tempBorderColor = this.geoSearchSettings.borderColorActive;
+        if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+        if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
+        if (tempPointsArray.length == 1) {
+          /* If it is a Single Point Polygon drag */
+          tempPolygonArray[0] = [
+            info.coordinate,
+            [info.coordinate[0] + this.minimalCoordinateDiff, info.coordinate[1]],
+            [info.coordinate[0], info.coordinate[1] + this.minimalCoordinateDiff],
+            info.coordinate
+          ]
+          tempPointsArray = [];
+          tempPointsArray.push({"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius });
+        } else {
+          /* Other Polygons point drag  */
+          tempPolygonArray[0][info.index] = (info.coordinate);
+          if (info.index == 0) {
+            tempPolygonArray[0][tempPolygonArray[0].length - 1] = (info.coordinate);
           }
-        }
-      }
-      tempPolygonJson = {
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "type": "Feature",
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": tempPolygonArray
-            },
-            "properties": {
-              "fillColor": tempFillColor,
-              "borderColor": tempBorderColor
+          tempPointsArray = [];
+          for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
+            if (i === info.index) {
+              tempPointsArray.push({"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius });
+            } else {
+              tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius });
             }
           }
-        ]
-      };
-      this.drawGeoSearchPolygonData = tempPolygonJson;
-      this.drawGeoSearchCirclesData = tempPointsArray;
-      this.canDrawPolygon = false;
-      this.changeDrawLayer();
-    }
-  }
-
-  onPointDragEnd() {
-    let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
-    let tempPolygonJson = this.drawGeoSearchPolygonData;
-    let tempPointsArray = [];
-    for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
-      tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius});
-    }
-    tempPolygonJson = {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Polygon",
-            "coordinates": tempPolygonArray
-          },
-          "properties": {
-            "fillColor": this.geoSearchSettings.fillColor,
-            "borderColor": this.geoSearchSettings.borderColor
-          }
         }
-      ]
-    };
-    this.drawGeoSearchPolygonData = tempPolygonJson;
-    this.drawGeoSearchCirclesData = tempPointsArray;
-    this.changeDrawLayer();
-
-    this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
-    this.exchangeService.updateGeoSearch(this.geoSearchOutput);
-
-    deckGlobe.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
-    });
-    deckPlane.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
-    });
-    this.canCalcTooltip = true;
-  }
-
-  onPolygonDragStart(info: any) {
-    this.startDragCoordinates = info.coordinate;
-    deckGlobe.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
-    });
-    deckPlane.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
-    });
-    this.canCalcTooltip = false;
-  }
-
-  onPolygonDrag(info: any) {
-    if (info.layer != null && info.layer.id === "draw-layer") {
-      let tempDeltaDragCoordinates: number[] = [(info.coordinate[0] - this.startDragCoordinates[0]), (info.coordinate[1] - this.startDragCoordinates[1])];
-      this.startDragCoordinates = info.coordinate;
-      let tempPolygonArray = new Array();
-      tempPolygonArray[0] = new Array();
-      let tempPointsArray = [];
-      let tempFillColor = this.geoSearchSettings.fillColorActive;
-      let tempBorderColor = this.geoSearchSettings.borderColorActive;
-      let canMovePolygon: boolean = true;
-      for (let i = 0; i < this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0].length; i++) {
-        if (this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] > this.geoSearchSettings.latitudeLimit
-         || this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] < -this.geoSearchSettings.latitudeLimit) {
-          canMovePolygon = false;
-        }
-      }
-      if (canMovePolygon) {
-        for (let i = 0; i < this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0].length; i++) {
-          tempPolygonArray[0].push(
-            [
-              this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][0] + tempDeltaDragCoordinates[0],
-              this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1]
-            ]
-          );
-        }
-        let tempPolygonJson = {
+        tempPolygonJson = {
           "type": "FeatureCollection",
           "features": [
             {
@@ -593,58 +504,163 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           ]
         };
-        for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
-          tempPointsArray.push({"coordinates": [this.drawGeoSearchCirclesData[i].coordinates[0] + tempDeltaDragCoordinates[0], this.drawGeoSearchCirclesData[i].coordinates[1] + tempDeltaDragCoordinates[1]], "radius": this.geoSearchSettings.smallCircleRadius});
-        }
         this.drawGeoSearchPolygonData = tempPolygonJson;
         this.drawGeoSearchCirclesData = tempPointsArray;
+        this.canDrawPolygon = false;
+        this.changeDrawLayer();
       }
+    }
+  }
 
-      this.canDrawPolygon = false;
+  onPointDragEnd() {
+    if (this.canDragPolygon) {
+      let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
+      let tempPolygonJson = this.drawGeoSearchPolygonData;
+      let tempPointsArray = [];
+      for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
+        tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius });
+      }
+      tempPolygonJson = {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": tempPolygonArray
+            },
+            "properties": {
+              "fillColor": this.geoSearchSettings.fillColor,
+              "borderColor": this.geoSearchSettings.borderColor
+            }
+          }
+        ]
+      };
+      this.drawGeoSearchPolygonData = tempPolygonJson;
+      this.drawGeoSearchCirclesData = tempPointsArray;
       this.changeDrawLayer();
+
+      this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
+      this.exchangeService.updateGeoSearch(this.geoSearchOutput);
+
+      deckGlobe.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+      });
+      deckPlane.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+      });
+      this.canCalcTooltip = true;
+    }
+  }
+
+  onPolygonDragStart(info: any) {
+    if (this.canDragPolygon) {
+      this.startDragCoordinates = info.coordinate;
+      deckGlobe.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+      });
+      deckPlane.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
+      });
+      this.canCalcTooltip = false;
+    }
+  }
+
+  onPolygonDrag(info: any) {
+    if (this.canDragPolygon) {
+      if (info.layer != null && info.layer.id === "draw-layer") {
+        let tempDeltaDragCoordinates: number[] = [(info.coordinate[0] - this.startDragCoordinates[0]), (info.coordinate[1] - this.startDragCoordinates[1])];
+        this.startDragCoordinates = info.coordinate;
+        let tempPolygonArray = new Array();
+        tempPolygonArray[0] = new Array();
+        let tempPointsArray = [];
+        let tempFillColor = this.geoSearchSettings.fillColorActive;
+        let tempBorderColor = this.geoSearchSettings.borderColorActive;
+        let canMovePolygon: boolean = true;
+        for (let i = 0; i < this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0].length; i++) {
+          if (this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] > this.geoSearchSettings.latitudeLimit
+          || this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1] < -this.geoSearchSettings.latitudeLimit) {
+            canMovePolygon = false;
+          }
+        }
+        if (canMovePolygon) {
+          for (let i = 0; i < this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0].length; i++) {
+            tempPolygonArray[0].push(
+              [
+                this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][0] + tempDeltaDragCoordinates[0],
+                this.drawGeoSearchPolygonData.features[0].geometry.coordinates[0][i][1] + tempDeltaDragCoordinates[1]
+              ]
+            );
+          }
+          let tempPolygonJson = {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": tempPolygonArray
+                },
+                "properties": {
+                  "fillColor": tempFillColor,
+                  "borderColor": tempBorderColor
+                }
+              }
+            ]
+          };
+          for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
+            tempPointsArray.push({"coordinates": [this.drawGeoSearchCirclesData[i].coordinates[0] + tempDeltaDragCoordinates[0], this.drawGeoSearchCirclesData[i].coordinates[1] + tempDeltaDragCoordinates[1]], "radius": this.geoSearchSettings.smallCircleRadius });
+          }
+          this.drawGeoSearchPolygonData = tempPolygonJson;
+          this.drawGeoSearchCirclesData = tempPointsArray;
+        }
+
+        this.canDrawPolygon = false;
+        this.changeDrawLayer();
+      }
     }
   }
 
   onPolygonDragEnd() {
-    let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
-    let tempPolygonJson = this.drawGeoSearchPolygonData;
-    let tempPointsArray = [];
-    for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
-      tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius});
-    }
-    tempPolygonJson = {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Polygon",
-            "coordinates": tempPolygonArray
-          },
-          "properties": {
-            "fillColor": this.geoSearchSettings.fillColor,
-            "borderColor": this.geoSearchSettings.borderColor
+    if (this.canDragPolygon) {
+      let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
+      let tempPolygonJson = this.drawGeoSearchPolygonData;
+      let tempPointsArray = [];
+      for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
+        tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius });
+      }
+      tempPolygonJson = {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": tempPolygonArray
+            },
+            "properties": {
+              "fillColor": this.geoSearchSettings.fillColor,
+              "borderColor": this.geoSearchSettings.borderColor
+            }
           }
-        }
-      ]
-    };
-    this.drawGeoSearchPolygonData = tempPolygonJson;
-    this.drawGeoSearchCirclesData = tempPointsArray;
-    this.changeDrawLayer();
+        ]
+      };
+      this.drawGeoSearchPolygonData = tempPolygonJson;
+      this.drawGeoSearchCirclesData = tempPointsArray;
+      this.changeDrawLayer();
 
-    this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
-    this.exchangeService.updateGeoSearch(this.geoSearchOutput);
+      this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
+      this.exchangeService.updateGeoSearch(this.geoSearchOutput);
 
-    deckGlobe.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
-    });
-    deckPlane.setProps({
-      controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
-    });
-    this.canCalcTooltip = true;
+      deckGlobe.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+      });
+      deckPlane.setProps({
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
+      });
+      this.canCalcTooltip = true;
+    }
   }
-
-
 
 
   public productList: any;
@@ -657,6 +673,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public startRectDrawingSubscription!: Subscription;
   public startPolygonDrawingSubscription!: Subscription;
   public cancelDrawingSubscription!: Subscription;
+  public zoomToProductSubscription!: Subscription;
 
   public fallBackFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackColor);
   public fallBackFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackBorderColor);
@@ -831,7 +848,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     radiusUnits: 'pixels',
     getLineWidth: 1,
     getPosition: (d: any) => d.coordinates,
-    getRadius: (d: any, obj: any) => d.radius,
+    getRadius: (d: any, obj: any) => {
+      //console.log(this.hoveredObject);
+      return d === this.hoveredObject ? AppConfig.settings.geoSearchSettings.bigCircleRadius : d.radius
+    },
     getFillColor: [255, 255, 255],
     getLineColor: [0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
@@ -846,8 +866,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     onDragEnd: () => {
       this.onPointDragEnd();
     },
+    onHover: (info: any) => {
+      this.hoveredObject = info.object;
+      //console.log("hovered obj: ", this.hoveredObject);
+    },
+    updateTriggers: {
+      getRadius: [this.hoveredObject]
+    }
   });
-
   public drawCirclesLayerPlane = new ScatterplotLayer({
     id: 'scatterplot-layer',
     data: this.drawGeoSearchCirclesData,
@@ -872,7 +898,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     onDragEnd: () => {
       this.onPointDragEnd();
-    },
+    }
   });
 
   constructor(private exchangeService: ExchangeService) {
@@ -979,6 +1005,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cancelDrawingSubscription = this.exchangeService.cancelDrawingExchange.subscribe((value) => {
       if (typeof(value) === 'boolean' && value === true) {
         this.onCancelDrawingButtonClicked(value);
+      }
+    });
+    this.zoomToProductSubscription = this.exchangeService.zoomToProductIdExchange.subscribe((value) => {
+      if (typeof(value) === 'string') {
+        this.zoomToProduct(value);
       }
     });
   }
@@ -1223,7 +1254,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       data: this.drawGeoSearchCirclesData
     });
     this.drawCirclesLayerGlobe = this.drawCirclesLayerGlobe.clone({
-      data: this.drawGeoSearchCirclesData
+      data: this.drawGeoSearchCirclesData,
+      getRadius: (d: any, obj: any) => {
+        //console.log(this.hoveredObject);
+        return d === this.hoveredObject ? AppConfig.settings.geoSearchSettings.bigCircleRadius : d.radius
+      },
+      onHover: (info: any) => {
+        this.hoveredObject = info.object;
+        //console.log("hovered obj: ", this.hoveredObject);
+      },
+      updateTriggers: {
+        getRadius: [this.hoveredObject]
+      }
     });
     /* Update Plane View */
     const layersPlane =  [
@@ -1333,9 +1375,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           tempHoverColor = tempPlatformArray[0].hoverColor;
           tempHoverBorderColor = tempPlatformArray[0].hoverBorderColor;
         }
-        /* if (featureList[index].hasOwnProperty('properties')) {
-          delete featureList[index]['properties'];
-        } */
         featureList[index].properties = {
           'Id': product.Id,
           'Name': product.Name,
@@ -1344,6 +1383,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           'HoverColor': (tempHoverColor !== "" ? this.rgbConvertToArray(tempHoverColor) : this.fallBackFootprintHoverColor),
           'HoverBorderColor': (tempHoverBorderColor !== "" ? this.rgbConvertToArray(tempHoverBorderColor) : this.fallBackFootprintHoverBorderColor),
         }
+        product.featureList = featureList[index];
       });
 
       //console.log(JSON.stringify(featureList, null, 2));
@@ -1420,9 +1460,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
           return tempCol;
         },
-        /* getPolygonOffset: (layerIndex:any) => {
-          return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
-        }, */
         updateTriggers: {
           getFillColor: [this.selectedFootprintIndex],
           getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndex],
@@ -1456,9 +1493,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverBorderColor;
           return tempCol;
         },
-        /* getPolygonOffset: (layerIndex:any) => {
-          return [0, -(layerIndex.layerIndex * 10000 + 10000000)]
-        }, */
         updateTriggers: {
           getFillColor: [this.selectedFootprintIndex],
           getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndex],
@@ -1476,6 +1510,150 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  zoomToProduct(id: string) {
+    let tempZoomedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
+    console.log(tempZoomedProduct.featureList.geometry.coordinates);
+    let zoomToViewState = this.getCoordinatesBounds(tempZoomedProduct.featureList.geometry.coordinates);
+    if (this.currentProjection === 'globe') {
+      deckGlobe.setProps({
+        initialViewState: {
+          longitude: zoomToViewState.centerCoordinates[0],
+          latitude: zoomToViewState.centerCoordinates[1],
+          zoom: zoomToViewState.zoomLevel,
+          transitionDuration: 'auto',
+          transitionInterpolator: new FlyToInterpolator({
+            speed: 1,
+            curve: 2
+          })
+        }
+      });
+    } else {
+      deckPlane.setProps({
+        initialViewState: {
+          longitude: zoomToViewState.centerCoordinates[0],
+          latitude: zoomToViewState.centerCoordinates[1],
+          zoom: zoomToViewState.zoomLevel,
+          transitionDuration: 'auto',
+          transitionInterpolator: new FlyToInterpolator({
+            speed: 1,
+            curve: 2
+          })
+        }
+      });
+    }
+
+  }
+
+  getArrayDim(arr: any) {
+  if (!arr.length) {
+    return []; // current array has no dimension
+  }
+  var dim: any = arr.reduce((result: any, current: any) => {
+    // check each element of arr against the first element
+    // to make sure it has the same dimensions
+    return this.arrayEquals(result, this.getArrayDim(current)) ? result : false;
+  }, this.getArrayDim(arr[0]));
+
+  // dim is either false or an array
+  return dim && [arr.length].concat(dim);
+}
+
+  getCoordinatesBounds(coordinates: any) {
+    let tempArrayDim = this.getArrayDim(coordinates);
+    console.log("tempArrayDim: ", tempArrayDim);
+    let centerCoordinates: number[] = [0, 0];
+    let zoomLevel: number = 2.5;
+    let tempLatLonBounds: {coordsMin: number[], coordsMax: number[]} = {coordsMin: [0,0], coordsMax: [0,0]};
+
+    if (coordinates.length === 2) {
+      /* TwoHalves Footprint */
+      console.log("TwoHalves Footprint");
+      let tempCoords: any[] = [];
+      coordinates[0][0].forEach((arr: any) => {
+        tempCoords.push(arr);
+      });
+      coordinates[1][0].forEach((arr: any) => {
+        tempCoords.push(arr);
+      });
+      let tempLatLonWorldBounds = this.calcMinMaxCoordinatesValues(tempCoords);
+      //console.log("World: ", tempLatLonWorldBounds);
+
+      let tempLatLonBoundsNegative: any;
+      let tempLatLonBoundsPositive: any;
+      if (coordinates[0][0][0] < 0) {
+        tempLatLonBoundsNegative = this.calcMinMaxCoordinatesValues(coordinates[0][0]);
+        tempLatLonBoundsPositive = this.calcMinMaxCoordinatesValues(coordinates[1][0]);
+      } else {
+        tempLatLonBoundsNegative = this.calcMinMaxCoordinatesValues(coordinates[1][0]);
+        tempLatLonBoundsPositive = this.calcMinMaxCoordinatesValues(coordinates[0][0]);
+      }
+      //console.log("Neg: ", tempLatLonBoundsNegative);
+      //console.log("Pos: ", tempLatLonBoundsPositive);
+      tempLatLonBounds = {
+        coordsMin: [tempLatLonBoundsPositive.coordsMin[0], tempLatLonWorldBounds.coordsMin[1]],
+        coordsMax: [tempLatLonBoundsNegative.coordsMax[0], tempLatLonWorldBounds.coordsMax[1]]
+      };
+      //console.log("Final Bounds: ", tempLatLonBounds);
+      let centerLon = (tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2;
+      if (centerLon < 0) centerLon += 180.0;
+      centerCoordinates = [centerLon, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
+      //console.log("centerCoords: " , centerCoordinates);
+      zoomLevel = 3;
+    } else if (tempArrayDim.length === 3) {
+      /* Simple Footprint */
+      console.log("Simple Footprint");
+      tempLatLonBounds = this.calcMinMaxCoordinatesValues(coordinates[0]);
+      centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
+      zoomLevel = 3;
+    } else if (tempArrayDim.length === 4) {
+      /* Multi Footprint */
+      console.log("Multi Footprint");
+      let tempCoords: any[] = [];
+      coordinates.forEach((arr: any) => {
+        arr.forEach((subArr: any) => {
+          subArr.forEach((subArr2: any) => {
+            tempCoords.push(subArr2);
+          });
+        });
+      });
+      tempLatLonBounds = this.calcMinMaxCoordinatesValues(tempCoords);
+      centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
+      console.log("centerCoords: " , centerCoordinates);
+      zoomLevel = 3;
+    } else {
+      console.log("Error: cannot get coordinates bounds.");
+    }
+    zoomLevel = this.calcZoomLevelFromLatLonBounds(tempLatLonBounds);
+    return {centerCoordinates, zoomLevel};
+  }
+
+  calcMinMaxCoordinatesValues(coordinates: number[][]) {
+    let coordsMin: number[] = [coordinates[0][0], coordinates[0][1]];
+    let coordsMax: number[] = [coordinates[0][0], coordinates[0][1]];
+    coordinates.forEach((coord: number[]) => {
+      if (coord[0] < coordsMin[0]) coordsMin[0] = coord[0];
+      if (coord[1] < coordsMin[1]) coordsMin[1] = coord[1];
+      if (coord[0] > coordsMax[0]) coordsMax[0] = coord[0];
+      if (coord[1] > coordsMax[1]) coordsMax[1] = coord[1];
+    });
+    return {coordsMin, coordsMax};
+  }
+
+  calcZoomLevelFromLatLonBounds(bounds: {coordsMin: number[], coordsMax: number[]}) {
+    let tempMaxLat = Math.abs(bounds.coordsMax[1] - bounds.coordsMin[1]);
+    console.log("MaxLat: " + bounds.coordsMax[1]);
+    console.log("MinLat: " + bounds.coordsMin[1]);
+    console.log("TempMaxLat: " + tempMaxLat);
+    let zoomLevel = Math.pow(this.convertRange(tempMaxLat, [0, 180], [2, 0]), 2);
+    console.log("ZoomLevel: " + zoomLevel);
+
+    return zoomLevel;
+  }
+
+  convertRange( value: number, r1: number[], r2: number[] ) {
+    return ( value - r1[ 0 ] ) * ( r2[ 1 ] - r2[ 0 ] ) / ( r1[ 1 ] - r1[ 0 ] ) + r2[ 0 ];
+  }
+
   /* Convert WKT footprints to geojson Feature */
   getGeojsonFromWKT(footprint: string) {
     /* Footprint example */
@@ -1490,7 +1668,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         geojsonCoords = wktToGeoJSON(footprint.substring(footprint.search('POLYGON'), footprint.length-1));
       }
     }
-
     return this.getGeojsonFromGeoFootprint(geojsonCoords);
   }
 

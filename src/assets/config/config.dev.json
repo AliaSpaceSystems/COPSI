@@ -48,10 +48,11 @@
   },
   "geoSearchSettings": {
     "defaultCircleRadius": 8,
+    "bigCircleRadius": 12,
     "smallCircleRadius": 3,
     "latitudeLimit": 85.05,
-    "fillColor": [60, 140, 0, 80],
-    "borderColor": [0, 50, 0, 255],
+    "fillColor": [60, 255, 180, 80],
+    "borderColor": [0, 100, 50, 255],
     "fillColorActive": [200, 0, 0, 60],
     "borderColorActive": [100, 0, 0, 255]
   },

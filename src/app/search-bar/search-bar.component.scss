@@ -924,6 +924,8 @@ input:invalid {
 #product-details-inner-container {
   display: flex;
   flex-direction: column;
+  border: $main-dark-border;
+  border-radius: 0.25rem;
   background-color: transparent;
   pointer-events: visible;
   overflow-y: auto;
@@ -932,7 +934,7 @@ input:invalid {
   display: flex;
   flex-direction: row;
   background-color: $main-dark-bg-color;
-  border-radius: 0.25rem 0.25rem 0 0;
+  //border-radius: 0.25rem 0.25rem 0 0;
   padding: 0.25rem;
 }
 #product-details-header p {
@@ -979,13 +981,13 @@ input:invalid {
 /* attributes tables */
 .properties-table {
   width: 100%;
-  border: $main-dark-border;
+  border: 1px solid $main-dark-bg-color;
   font-size: $search-bar-font-size-small;
   table-layout: fixed;
   border-collapse: collapse;
 }
 .properties-table th {
-  border: 1px solid black;
+  border: 1px solid $main-dark-bg-color-opaque;
   text-align: left;
   padding-left: 0.5rem;
   color: darken($main-dark-text-color, 50);
@@ -999,7 +1001,7 @@ input:invalid {
 }
 .properties-table-name {
   color: darken($main-dark-text-color, 25) !important;
-  white-space: nowrap;
+  //white-space: nowrap;
 }
 .properties-table-value {
   overflow: hidden;
@@ -1040,13 +1042,13 @@ input:invalid {
 
 .attributes-table {
   width: 100%;
-  border: $main-dark-border;
+  border: 1px solid $main-dark-bg-color;
   font-size: $search-bar-font-size-small;
   table-layout: fixed;
   border-collapse: collapse;
 }
 .attributes-table th {
-  border: 1px solid black;
+  border: 1px solid $main-dark-bg-color-opaque;
   text-align: left;
   padding-left: 0.5rem;
   color: darken($main-dark-text-color, 50);

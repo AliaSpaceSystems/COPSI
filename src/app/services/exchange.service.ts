@@ -44,6 +44,9 @@ export class ExchangeService {
   private hoveredProduct = new BehaviorSubject<any>({});
   hoveredProductExchange = this.hoveredProduct.asObservable();
 
+  private productId = new BehaviorSubject<any>({});
+  zoomToProductIdExchange = this.productId.asObservable();
+
   constructor() { }
 
   setMapStyle(mapStyle: string) {
@@ -96,5 +99,9 @@ export class ExchangeService {
 
   updateHoveredProduct(hoveredProduct: any) {
     this.hoveredProduct.next(hoveredProduct);
+  }
+
+  zoomToProduct(productId: string) {
+    this.productId.next(productId);
   }
 }

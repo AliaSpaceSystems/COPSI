@@ -180,6 +180,8 @@
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
               <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
+              <mat-icon class="material-symbols-outlined item-button-icon" aria-hidden="false" aria-label="Zoom To Map" title="Zoom To Map Position" fontIcon="point_scan"
+              (click)="onZoomToProduct(product.Id)"></mat-icon>
               <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
               (click)="copyUrl(product.Id)"></mat-icon>
               <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
@@ -215,6 +217,9 @@
   </div>
   <!-- product list scroll bar -->
   <div id="product-list-scroll-thumb"></div>
+
+
+
 
   <!-- product details panel -->
   <div id="product-details-container" class="hidden">
