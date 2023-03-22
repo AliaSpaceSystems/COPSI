@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { AppConfig } from './services/app.config';
+import { DetailsConfig } from './services/details.config';
 import { JwtInterceptor } from './util/jwt.interceptor';
 import { ErrorInterceptor } from './util/error.interceptor';
 import { CustomErrorHandler } from './util/error.handler';
@@ -22,10 +23,11 @@ import { AlertComponent } from './alert/alert.component';
 import { ToastComponent } from './toast/toast.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-export function initializeApp(
-  appConfig: AppConfig
-) {
-    return () => appConfig.load();
+export function initializeApp(appConfig: AppConfig) {
+  return () => appConfig.load();
+}
+export function initializeDetails(detailsConfig: DetailsConfig) {
+  return () => detailsConfig.load();
 }
 
 @NgModule({
@@ -64,8 +66,14 @@ export function initializeApp(
       useFactory: initializeApp,
       deps: [AppConfig], multi: true
     },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeDetails,
+      deps: [DetailsConfig], multi: true
+    },
     { provide: ErrorHandler, useClass: CustomErrorHandler},
     AppConfig,
+    DetailsConfig,
     SpinnerComponent
   ],
   bootstrap: [AppComponent]

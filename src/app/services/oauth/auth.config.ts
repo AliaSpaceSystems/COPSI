@@ -1,16 +1,15 @@
 import { AuthConfig } from 'angular-oauth2-oidc';
-import { AppConfig } from '../app.config';
 import { environment } from 'src/assets/environments/environment';
 
 export const authFlowConfig: AuthConfig = {
-    
+
     // Url of the Identity Provider
     issuer: environment.keycloak.issuer,
 
     // URL of the SPA to redirect the user to after login
     redirectUri: environment.keycloak.redirectUri,
 
-    // The SPA's id. 
+    // The SPA's id.
     // The SPA is registerd with this id at the auth-serverß
     clientId: environment.keycloak.clientId,
 

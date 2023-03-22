@@ -3,12 +3,11 @@ import { ExchangeService } from '../services/exchange.service';
 import { Observable, Subscription } from 'rxjs';
 import { ProductSearchService } from '../services/product-search.service';
 import { AppConfig } from '../services/app.config';
+import { DetailsConfig } from '../services/details.config';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
 import { Download } from 'ngx-operators';
-import productDetails from 'src/assets/config/product_details.json';
-
 
 declare let $: any;
 let listContainer: any;
@@ -117,8 +116,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public selectedProduct: any = {};
   public selectedProductIndex: number = -1;
-  public properiesList: any = productDetails.Properties;
-  public attributesList: any = productDetails.Attributes;
+  public properiesList: any = DetailsConfig.settings.Properties;
+  public attributesList: any = DetailsConfig.settings.Attributes;
   public precProductId: any;
   public Object = Object;
   public Array = Array;
