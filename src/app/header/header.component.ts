@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { AppConfig } from '../services/app.config';
+import jwt_decode from 'jwt-decode';
 
 @Component({
   selector: 'app-header',
@@ -49,7 +50,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public showUserTimeoutId: any;
   public showSettings: boolean = false;
   public showSettingsTimeoutId: any;
+  public token: any;
   public name: string = '';
+  public role: string = '';
   public centreInfo: any = AppConfig.settings.centreInfo;
 
   constructor(private exchangeService: ExchangeService,
@@ -57,7 +60,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const userClaims: any = this.oauthService.getIdentityClaims();
-    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
+    if (userClaims) {
+      this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
+      this.token = this.oauthService.getAccessToken();
+      let tokenDecodedObj = this.decodeToken(this.token);
+      console.log(tokenDecodedObj);
+
+      this.role = tokenDecodedObj.resource_access[tokenDecodedObj.azp].roles[0];
+    }
     this.mapTiles.styles = AppConfig.settings.styles;
     this.mapStyle = AppConfig.settings.mapSettings.projection;
   }
@@ -67,7 +77,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onUserMenuIconClick(event: any) {
     const userClaims: any = this.oauthService.getIdentityClaims();
-    this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
+    if (userClaims) {
+      this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
+      this.token = this.oauthService.getAccessToken();
+      let tokenDecodedObj = this.decodeToken(this.token);
+      this.role = tokenDecodedObj.resource_access[tokenDecodedObj.azp].roles[0];
+    }
     this.showUser = !this.showUser;
     this.showSettings = false;
     this.setUserMenuTimeout();
@@ -126,5 +141,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.showSettingsTimeoutId = setTimeout(() => {
       this.showSettings = false;
     }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
+  }
+
+  decodeToken(token: any) {
+    try {
+        const decodedToken:any = jwt_decode(token); //decodes and verifies the token extracted form the header
+        return decodedToken;
+    } catch (error) {
+        console.error({ 'level': 'error', 'message': { 'Token not valid!': error } });
+        return throwError(error);
+    }
   }
 }

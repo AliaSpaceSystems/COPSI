@@ -24,6 +24,7 @@
 <div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (click)="onUserMenuClicked($event)">
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
   <p>Welcome <span>{{name}}!</span></p>
+  <p>User Roles: <span>{{role}}</span></p>
   <hr style="width:100%;">
   <div id="logout-div" (click)="onLogoutClicked()">
     <mat-icon id="logout-icon" aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
