@@ -7,6 +7,7 @@ import { TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { wktToGeoJSON } from '@terraformer/wkt';
 import { AppConfig } from '../services/app.config';
+import { FootprintsCustomizationConfig as FCConfig } from '../services/footprints_customization.config';
 
 let canvasContainer: any;
 let contextMenuContainer: any;
@@ -42,6 +43,7 @@ let selectedMapStyle: string;
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public platformDetailsList = AppConfig.settings.platformDetailsList;
+  public customAttributesList = FCConfig.settings.customAttributesList;
   public currentProjection: string = "";
   public canDrawRect: boolean = false;
   public canDrawPolygon: boolean = false;
@@ -1362,14 +1364,23 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           });
         }
+        //console.log(product);
 
         let tempPlatformArray = this.platformDetailsList.filter((platform: any) => (platform.value === product.platformShortName));
+        let tempCustomAttributesArray = this.customAttributesList.filter((customAttribute: any) => {
+          return product.Attributes.some((productAttribute: any) => (productAttribute.Name === customAttribute.name && productAttribute.Value === customAttribute.value));
+        });
 
         let tempColor: string = "";
         let tempBorderColor: string = "";
         let tempHoverColor: string = "";
         let tempHoverBorderColor: string = "";
-        if (tempPlatformArray.length > 0) {
+        if (tempCustomAttributesArray.length > 0) {
+          tempColor = tempCustomAttributesArray[0].fillColor;
+          tempBorderColor = tempCustomAttributesArray[0].borderColor;
+          tempHoverColor = tempCustomAttributesArray[0].hoverColor;
+          tempHoverBorderColor = tempCustomAttributesArray[0].hoverBorderColor;
+        } else if (tempPlatformArray.length > 0) {
           tempColor = tempPlatformArray[0].fillColor;
           tempBorderColor = tempPlatformArray[0].borderColor;
           tempHoverColor = tempPlatformArray[0].hoverColor;
