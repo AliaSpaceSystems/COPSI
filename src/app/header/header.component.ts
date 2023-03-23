@@ -5,8 +5,6 @@ import { Subscription } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { AppConfig } from '../services/app.config';
 
-declare let $: any;
-
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',

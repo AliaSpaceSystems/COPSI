@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Subscription } from 'rxjs';
-import { environment } from 'src/assets/environments/environment';
 import { AppConfig } from '../services/app.config';
 import { ExchangeService } from '../services/exchange.service';
 
@@ -49,7 +48,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.oauthService.initCodeFlow();
   }
 
-  
+
   setComponentVisibility(isLogged: boolean) {
     if(isLogged) {
       document.getElementById('main-login-container')!.style.display = 'none';
