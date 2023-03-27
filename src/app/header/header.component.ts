@@ -5,6 +5,7 @@ import { Subscription, throwError } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { AppConfig } from '../services/app.config';
 import jwt_decode from 'jwt-decode';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-header',
@@ -78,10 +79,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onUserMenuIconClick(event: any) {
     const userClaims: any = this.oauthService.getIdentityClaims();
     if (userClaims) {
-      this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
+      this.name = (userClaims.preferred_username) ? userClaims.preferred_username : "";
       this.token = this.oauthService.getAccessToken();
       let tokenDecodedObj = this.decodeToken(this.token);
-      this.role = tokenDecodedObj.resource_access[tokenDecodedObj.azp].roles[0];
+      this.role = (tokenDecodedObj.hasOwnProperty('resource_access') && tokenDecodedObj.resource_access.hasOwnProperty(tokenDecodedObj.azp)) ? tokenDecodedObj.resource_access[tokenDecodedObj.azp].roles[0] : "unavailable";
     }
     this.showUser = !this.showUser;
     this.showSettings = false;
@@ -111,14 +112,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.exchangeService.setShowLabels(showLabels);
   }
 
-  onUserMenuClicked(event: any) {
-    this.setUserMenuTimeout();
-    event.stopPropagation();
+  onUserMenuHover(event: any) {
+    clearTimeout(this.showUserTimeoutId);
   }
 
-  onSettingsMenuClicked(event: any) {
-    this.setSettingsMenuTimeout();
-    event.stopPropagation();
+  onSettingsMenuHover(event: any) {
+    clearTimeout(this.showSettingsTimeoutId);
   }
 
   onLogoutClicked() {
@@ -126,18 +125,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   setUserMenuTimeout() {
-    if (this.showUserTimeoutId) {
-      clearTimeout(this.showUserTimeoutId);
-    }
     this.showUserTimeoutId = setTimeout(() => {
       this.showUser = false;
     }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
   }
 
   setSettingsMenuTimeout() {
-    if (this.showSettingsTimeoutId) {
-      clearTimeout(this.showSettingsTimeoutId);
-    }
     this.showSettingsTimeoutId = setTimeout(() => {
       this.showSettings = false;
     }, AppConfig.settings.headerSettings.menuAutoHideTimeout);

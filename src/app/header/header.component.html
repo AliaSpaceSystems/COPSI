@@ -21,7 +21,7 @@
   </div>
 </div>
 
-<div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (click)="onUserMenuClicked($event)">
+<div id="user-menu" [@headerMenuAnimation]="showUser ? 'open' : 'closed'" (mouseover)="onUserMenuHover($event)" (mouseleave)="setUserMenuTimeout()">
   <mat-icon id="user-image" aria-hidden="false" aria-label="Account image" fontIcon="account_circle"></mat-icon>
   <p>Welcome <span>{{name}}!</span></p>
   <p>User Roles: <span>{{role}}</span></p>
@@ -32,7 +32,7 @@
   </div>
 </div>
 
-<div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (click)="onSettingsMenuClicked($event)">
+<div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (mouseover)="onSettingsMenuHover($event)" (mouseleave)="setSettingsMenuTimeout()">
   <mat-icon id="settings-image" aria-hidden="false" aria-label="Settings image" fontIcon="settings"></mat-icon>
   <p>Map Settings</p>
   <hr style="width:100%;">
