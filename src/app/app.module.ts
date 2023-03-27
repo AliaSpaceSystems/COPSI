@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { AppConfig } from './services/app.config';
 import { DetailsConfig } from './services/details.config';
+import { FootprintsCustomizationConfig } from './services/footprints_customization.config';
 import { JwtInterceptor } from './util/jwt.interceptor';
 import { ErrorInterceptor } from './util/error.interceptor';
 import { CustomErrorHandler } from './util/error.handler';
@@ -28,6 +29,9 @@ export function initializeApp(appConfig: AppConfig) {
 }
 export function initializeDetails(detailsConfig: DetailsConfig) {
   return () => detailsConfig.load();
+}
+export function initializeFootprintsCustomization(footprintsCustomizationConfig: FootprintsCustomizationConfig) {
+  return () => footprintsCustomizationConfig.load();
 }
 
 @NgModule({
@@ -71,9 +75,15 @@ export function initializeDetails(detailsConfig: DetailsConfig) {
       useFactory: initializeDetails,
       deps: [DetailsConfig], multi: true
     },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeFootprintsCustomization,
+      deps: [FootprintsCustomizationConfig], multi: true
+    },
     { provide: ErrorHandler, useClass: CustomErrorHandler},
     AppConfig,
     DetailsConfig,
+    FootprintsCustomizationConfig,
     SpinnerComponent
   ],
   bootstrap: [AppComponent]

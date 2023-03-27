@@ -2,6 +2,7 @@ export const environment = {
   production: true,
   configFile: 'assets/config/config.json',
   detailsFile: 'assets/config/product_details.json',
+  footprintsCustomizationFile: 'assets/config/footprints_customization.json',
   keycloak: {
     // Url of the Identity Provider
     issuer: "https://<keycloak_url>/auth/realms/<realm>",
