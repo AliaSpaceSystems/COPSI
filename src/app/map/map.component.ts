@@ -311,7 +311,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onHoverOnMap(info: any) {
-    //if (info.index > -1) console.log("INFO: ", info);
+    //if (info.index > -1)console.log("INFO: ", info);
 
     /* set bools to change cursor type */
     this.isHoveringOnPoints = false;
@@ -1523,7 +1523,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   zoomToProduct(id: string) {
     let tempZoomedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
-    console.log(tempZoomedProduct.featureList.geometry.coordinates);
+    //console.log(tempZoomedProduct.featureList.geometry.coordinates);
     let zoomToViewState = this.getCoordinatesBounds(tempZoomedProduct.featureList.geometry.coordinates);
     if (this.currentProjection === 'globe') {
       deckGlobe.setProps({
@@ -1571,14 +1571,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getCoordinatesBounds(coordinates: any) {
     let tempArrayDim = this.getArrayDim(coordinates);
-    console.log("tempArrayDim: ", tempArrayDim);
+    //console.log("tempArrayDim: ", tempArrayDim);
     let centerCoordinates: number[] = [0, 0];
     let zoomLevel: number = 2.5;
     let tempLatLonBounds: {coordsMin: number[], coordsMax: number[]} = {coordsMin: [0,0], coordsMax: [0,0]};
 
     if (coordinates.length === 2) {
       /* TwoHalves Footprint */
-      console.log("TwoHalves Footprint");
+      //console.log("TwoHalves Footprint");
       let tempCoords: any[] = [];
       coordinates[0][0].forEach((arr: any) => {
         tempCoords.push(arr);
@@ -1612,13 +1612,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       zoomLevel = 3;
     } else if (tempArrayDim.length === 3) {
       /* Simple Footprint */
-      console.log("Simple Footprint");
+      //console.log("Simple Footprint");
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(coordinates[0]);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
       zoomLevel = 3;
     } else if (tempArrayDim.length === 4) {
       /* Multi Footprint */
-      console.log("Multi Footprint");
+      //console.log("Multi Footprint");
       let tempCoords: any[] = [];
       coordinates.forEach((arr: any) => {
         arr.forEach((subArr: any) => {
@@ -1629,10 +1629,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(tempCoords);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
-      console.log("centerCoords: " , centerCoordinates);
+      //console.log("centerCoords: " , centerCoordinates);
       zoomLevel = 3;
     } else {
-      console.log("Error: cannot get coordinates bounds.");
+      //console.log("Error: cannot get coordinates bounds.");
     }
     zoomLevel = this.calcZoomLevelFromLatLonBounds(tempLatLonBounds);
     return {centerCoordinates, zoomLevel};
@@ -1652,11 +1652,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   calcZoomLevelFromLatLonBounds(bounds: {coordsMin: number[], coordsMax: number[]}) {
     let tempMaxLat = Math.abs(bounds.coordsMax[1] - bounds.coordsMin[1]);
-    console.log("MaxLat: " + bounds.coordsMax[1]);
-    console.log("MinLat: " + bounds.coordsMin[1]);
-    console.log("TempMaxLat: " + tempMaxLat);
+    //console.log("MaxLat: " + bounds.coordsMax[1]);
+    //console.log("MinLat: " + bounds.coordsMin[1]);
+    //console.log("TempMaxLat: " + tempMaxLat);
     let zoomLevel = Math.pow(this.convertRange(tempMaxLat, [0, 180], [2, 0]), 2);
-    console.log("ZoomLevel: " + zoomLevel);
+    //console.log("ZoomLevel: " + zoomLevel);
 
     return zoomLevel;
   }
