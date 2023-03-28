@@ -63,7 +63,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public hideTooltipTimeoutId: any;
   public contextMenuTimeoutId: any;
   public hoveredProductsArray: any[] = [];
-  public hoveredProductsShownArray: any[] = [];
+  public hoveredProductShownArray: any[] = [];
   public hoveredObject: any = {};
 
   public drawGeoSearchCirclesData = [
@@ -313,10 +313,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onHoverOnMap(info: any) {
-    //if (info.index > -1)console.log("INFO: ", info);
-
     this.hoveredProductsArray = [];
-    //this.hoveredProductsShownArray = [];
     /* set bools to change cursor type */
     this.isHoveringOnPoints = false;
     this.isHoveringOnPolygon = false;
@@ -326,7 +323,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isHoveringOnPoints = true;
         this.isHoveringOnPolygon = false;
         this.isHoveringOnFootprint = false;
-        //this.highlightPoint(info);
       } else if (info.layer.id === 'draw-layer') {
         this.isHoveringOnPoints = false;
         this.isHoveringOnPolygon = true;
@@ -344,13 +340,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.canDrawRect || this.canDrawPolygon) {
       this.hideProductFootprint();
-      //this.hideTooltipOnFootprint();
       this.exchangeService.updateHoveredProduct(undefined);
     }
 
 
     if (this.canDrawRect) {
-      //this.hideTooltipOnFootprint();
       let tempJson: any;
       let tempArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
       if(tempArray[0].length > 0 && tempArray[0].length <= 5) {
@@ -372,10 +366,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         };
         this.drawGeoSearchPolygonData = tempJson;
-        //this.changeDrawLayer();
       }
     } else if (this.canDrawPolygon) {
-      //this.hideTooltipOnFootprint();
       let tempJson: any;
       let tempArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
       if(tempArray[0].length > 0) {
@@ -397,7 +389,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         };
         this.drawGeoSearchPolygonData = tempJson;
-        //this.changeDrawLayer();
       }
     } else if (this.canCalcTooltip) {
       /* MultiProduct Picking */
@@ -411,6 +402,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         if (infos.length > 0) {
           infos = infos.filter((obj: any) => (obj.layer.id === "geojson-layer-selected"));
           infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
+
           let tempHoveredIndexesArray: any[] = [];
           infos.forEach((info: any) => {
             tempHoveredIndexesArray.push(info.index);
@@ -418,41 +410,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
         }
         this.showProductFootprint(info.index);
-        //this.showTooltipOnFootprint(info);
         this.exchangeService.updateHoveredProduct(infos);
       } else {
-        //this.hideTooltipOnFootprint();
         this.exchangeService.updateHoveredProduct(undefined);
       }
     }
     this.changeDrawLayer();
   }
-
-  /* hideTooltipOnFootprint() {
-    clearTimeout(this.tooltipTimeoutId);
-    if (footprintTooltip.classList.contains('visible')) {
-      footprintTooltip.style.left = '-400px';
-      footprintTooltip.style.top = '-400px';
-      footprintTooltip.classList.replace('visible', 'hidden');
-    }
-  }
-  showTooltipOnFootprint(info: any) {
-    this.hideTooltipOnFootprint();
-    footprintTooltip.style.left = (info.x + 20) + 'px';
-    footprintTooltip.style.top = (info.y - 15) + 'px';
-    this.tooltipTimeoutId = setTimeout(() => {
-      if (footprintTooltip.classList.contains('hidden')) {
-        footprintTooltip.classList.replace('hidden', 'visible');
-      }
-    }, 500);
-  } */
-  /* onMouseOverTooltip() {
-    clearTimeout(this.hideTooltipTimeoutId);
-  }
-  onMouseLeaveTooltip() {
-    this.hideTooltipOnFootprint();
-  } */
-
 
   onPointDragStart() {
     if (this.canDragPolygon) {
@@ -862,7 +826,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: 1,
     getPosition: (d: any) => d.coordinates,
     getRadius: (d: any, obj: any) => {
-      //console.log(this.hoveredObject);
       return d === this.hoveredObject ? AppConfig.settings.geoSearchSettings.bigCircleRadius : d.radius
     },
     getFillColor: [255, 255, 255],
@@ -881,7 +844,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     onHover: (info: any) => {
       this.hoveredObject = info.object;
-      //console.log("hovered obj: ", this.hoveredObject);
     },
     updateTriggers: {
       getRadius: [this.hoveredObject]
@@ -937,6 +899,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.hideContextMenu();
     }, 500);
   }
+  onMouseOverTooltipProductTable(tooltipProduct: any) {
+    let tempIndex = this.productList.value.findIndex((product: any) => {
+      return product.Id === tooltipProduct.Id
+    });
+    this.showProductFootprint(tempIndex);
+    this.exchangeService.updateHoveredProduct([{index: tempIndex}]);
+  }
 
   ngOnInit(): void {
     canvasContainer = document.getElementById('canvas-container')!;
@@ -945,17 +914,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
-      //this.hideTooltipOnFootprint();
       //this.hideProductFootprint();
       contextMenuContainer.style.left = (event.clientX + 20) + 'px';
       contextMenuContainer.style.top = (event.clientY - 15) + 'px';
       if (contextMenuContainer.classList.contains('hidden')) {
-        this.hoveredProductsShownArray = this.hoveredProductsArray;
+        this.hoveredProductShownArray = this.hoveredProductsArray;
         contextMenuContainer.classList.replace('hidden', 'visible');
       }
       this.contextMenuTimeoutId = setTimeout(() => {
         this.hideContextMenu();
-        //this.canCalcTooltip = true;
       }, 2000);
     });
     ["mousedown", "wheel"].forEach((inputEvent: any) => {
@@ -1128,19 +1095,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
           this.canCalcTooltip = false;
-          //this.hideTooltipOnFootprint();
           this.hideProductFootprint();
           return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
             this.canCalcTooltip = false;
-            //this.hideTooltipOnFootprint();
             this.hideProductFootprint();
             return 'pointer';
           } else {
             if (this.isHoveringOnPolygon) {
               this.canCalcTooltip = false;
-              //this.hideTooltipOnFootprint();
               this.hideProductFootprint();
               return 'grab';
             } else {
@@ -1189,19 +1153,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
           this.canCalcTooltip = false;
-          //this.hideTooltipOnFootprint();
           this.hideProductFootprint();
         return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
             this.canCalcTooltip = false;
-            //this.hideTooltipOnFootprint();
             this.hideProductFootprint();
             return 'pointer';
           } else {
             if (this.isHoveringOnPolygon) {
               this.canCalcTooltip = false;
-              //this.hideTooltipOnFootprint();
               this.hideProductFootprint();
               return 'grab';
             } else {
@@ -1271,12 +1232,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.drawCirclesLayerGlobe = this.drawCirclesLayerGlobe.clone({
       data: this.drawGeoSearchCirclesData,
       getRadius: (d: any, obj: any) => {
-        //console.log(this.hoveredObject);
         return d === this.hoveredObject ? AppConfig.settings.geoSearchSettings.bigCircleRadius : d.radius
       },
       onHover: (info: any) => {
         this.hoveredObject = info.object;
-        //console.log("hovered obj: ", this.hoveredObject);
       },
       updateTriggers: {
         getRadius: [this.hoveredObject]
@@ -1358,7 +1317,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   setProductList(productList: any) {
     this.productList = productList;
     if ("@odata.count" in this.productList) {
-      //console.log(JSON.stringify(this.productList.products[0].geoJson, null, 2));
       let featureList: any[] = [];
       this.productList.value.forEach((product: any, index: number) => {
         if (product.GeoFootprint != null) {
@@ -1377,7 +1335,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           });
         }
-        //console.log(product);
 
         let tempPlatformArray = this.platformDetailsList.filter((platform: any) => (platform.value === product.platformShortName));
         let tempCustomAttributesArray = this.customAttributesList.filter((customAttribute: any) => {
@@ -1410,7 +1367,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         product.featureList = featureList[index];
       });
 
-      //console.log(JSON.stringify(featureList, null, 2));
       geojsonData = {
         "type": "FeatureCollection",
         "features": featureList
@@ -1536,7 +1492,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   zoomToProduct(id: string) {
     let tempZoomedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
-    //console.log(tempZoomedProduct.featureList.geometry.coordinates);
     let zoomToViewState = this.getCoordinatesBounds(tempZoomedProduct.featureList.geometry.coordinates);
     if (this.currentProjection === 'globe') {
       deckGlobe.setProps({
@@ -1584,7 +1539,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getCoordinatesBounds(coordinates: any) {
     let tempArrayDim = this.getArrayDim(coordinates);
-    //console.log("tempArrayDim: ", tempArrayDim);
     let centerCoordinates: number[] = [0, 0];
     let zoomLevel: number = 2.5;
     let tempLatLonBounds: {coordsMin: number[], coordsMax: number[]} = {coordsMin: [0,0], coordsMax: [0,0]};
@@ -1602,7 +1556,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         tempCoords.push(arr);
       });
       let tempLatLonWorldBounds = this.calcMinMaxCoordinatesValues(tempCoords);
-      //console.log("World: ", tempLatLonWorldBounds);
 
       let tempLatLonBoundsNegative: any;
       let tempLatLonBoundsPositive: any;
@@ -1617,28 +1570,22 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         tempLatLonBoundsNegative = this.calcMinMaxCoordinatesValues(coordinates[1][0]);
         tempLatLonBoundsPositive = this.calcMinMaxCoordinatesValues(coordinates[0][0]);
       }
-      //console.log("Neg: ", tempLatLonBoundsNegative);
-      //console.log("Pos: ", tempLatLonBoundsPositive);
       tempLatLonBounds = {
         coordsMin: [tempLatLonBoundsPositive.coordsMin[0], tempLatLonWorldBounds.coordsMin[1]],
         coordsMax: [tempLatLonBoundsNegative.coordsMax[0], tempLatLonWorldBounds.coordsMax[1]]
       };
-      //console.log("Final Bounds: ", tempLatLonBounds);
       let centerLon = (tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2;
       if (centerLon < 0) centerLon += 180.0;
       else centerLon -= 180.0;
       centerCoordinates = [centerLon, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
-      //console.log("centerCoords: " , centerCoordinates);
       zoomLevel = 3;
     } else if (tempArrayDim.length === 3) {
       /* Simple Footprint */
-      //console.log("Simple Footprint");
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(coordinates[0]);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
       zoomLevel = 3;
     } else if (tempArrayDim.length === 4) {
       /* Multi Footprint */
-      //console.log("Multi Footprint");
       let tempCoords: any[] = [];
       coordinates.forEach((arr: any) => {
         arr.forEach((subArr: any) => {
@@ -1649,10 +1596,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(tempCoords);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
-      //console.log("centerCoords: " , centerCoordinates);
       zoomLevel = 3;
     } else {
-      //console.log("Error: cannot get coordinates bounds.");
     }
     zoomLevel = this.calcZoomLevelFromLatLonBounds(tempLatLonBounds);
     return {centerCoordinates, zoomLevel};
@@ -1672,12 +1617,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   calcZoomLevelFromLatLonBounds(bounds: {coordsMin: number[], coordsMax: number[]}) {
     let tempMaxLat = Math.abs(bounds.coordsMax[1] - bounds.coordsMin[1]);
-    //console.log("MaxLat: " + bounds.coordsMax[1]);
-    //console.log("MinLat: " + bounds.coordsMin[1]);
-    //console.log("TempMaxLat: " + tempMaxLat);
     let zoomLevel = Math.pow(this.convertRange(tempMaxLat, [0, 180], [2, 0]), 2);
-    //console.log("ZoomLevel: " + zoomLevel);
-
     return zoomLevel;
   }
 
@@ -1724,10 +1664,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       for (var i = 0; i < footprint.coordinates[0].length - 1; i++) {
         if (this.checkDaylineCrossing([footprint.coordinates[0][i], footprint.coordinates[0][i+1]])) {
           if (this.arrayEquals(footprint.coordinates[0][i], footprint.coordinates[0][0])) {
-            //console.log("Fix Crossing MultiPolygon:");
             polygons = this.fixCrossingMultiPolygon(footprint);
           } else {
-            //console.log("Fix Crossing Single Polygon:");
             polygons = this.fixCrossingPolygon(footprint);
           }
         }
