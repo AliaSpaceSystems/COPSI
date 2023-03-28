@@ -13,8 +13,9 @@ mat-icon:hover {
   position: absolute;
   top: 0;
   left: -5rem;
+  padding: 0;
   border: $main-dark-border;
-  border-radius: 0 0 0.25rem 0.25rem;
+  border-radius: 0.25rem;
   background-color: $main-dark-bg-color;
   box-shadow: $default-shadow;
   z-index: 60;
@@ -33,15 +34,21 @@ mat-icon:hover {
   margin: 0;
 }
 
-#geo-search-title {
-  font-size: 0.75rem;
-  padding: 0.25rem;
+.context-menu-title {
+  font-size: $search-bar-font-size;
+  padding: 0.5rem 0 0.25rem 0;
 }
 #geo-search-buttons {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
-  padding: 0.5rem;
+  width: 100%;
+  //gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem;
+
+  background-color: $menu-dark-bg-color;
+  /* border: $main-dark-border; */
+  /* box-shadow: $default-shadow; */
 }
 #vertical-separator {
   width: 1px;
@@ -49,7 +56,7 @@ mat-icon:hover {
 }
 
 /* FOOTPRINTS TOOLTIP */
-#footprint-tooltip {
+/* #footprint-tooltip {
   position: absolute;
   flex-direction: column;
   padding: 0.25rem;
@@ -57,6 +64,12 @@ mat-icon:hover {
   border: $main-dark-border;
   box-shadow: $default-shadow;
   border-radius: 0.25rem;
+} */
+#footprint-selection-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  //padding: 0.25rem;
 }
 #footprint-tooltip.hidden {
   display: none;
@@ -66,10 +79,6 @@ mat-icon:hover {
 #footprint-tooltip.visible {
   display: flex;
 }
-#footprint-tooltip-title {
-  font-size: $search-bar-font-size;
-  padding: 0.5rem;
-}
 #footprint-tooltip-list-container {
   display: flex;
   flex-direction: column;
@@ -78,8 +87,8 @@ mat-icon:hover {
 
 .footprint-tooltip-table {
   background-color: $menu-dark-bg-color;
-  border: $main-dark-border;
-  box-shadow: $default-shadow;
+  /* border: $main-dark-border; */
+  /* box-shadow: $default-shadow; */
 }
 .footprint-tooltip-table th, td {
   padding: 0 0.5rem 0 0;

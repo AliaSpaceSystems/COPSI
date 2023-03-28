@@ -60,8 +60,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public geoSearchOutput: string = "";
   public minimalCoordinateDiff: number = 0.00000000000001;
   public tooltipTimeoutId: any;
+  public hideTooltipTimeoutId: any;
   public contextMenuTimeoutId: any;
   public hoveredProductsArray: any[] = [];
+  public hoveredProductsShownArray: any[] = [];
   public hoveredObject: any = {};
 
   public drawGeoSearchCirclesData = [
@@ -313,6 +315,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   onHoverOnMap(info: any) {
     //if (info.index > -1)console.log("INFO: ", info);
 
+    this.hoveredProductsArray = [];
+    //this.hoveredProductsShownArray = [];
     /* set bools to change cursor type */
     this.isHoveringOnPoints = false;
     this.isHoveringOnPolygon = false;
@@ -340,7 +344,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.canDrawRect || this.canDrawPolygon) {
       this.hideProductFootprint();
-      this.hideTooltipOnFootprint();
+      //this.hideTooltipOnFootprint();
       this.exchangeService.updateHoveredProduct(undefined);
     }
 
@@ -414,17 +418,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
         }
         this.showProductFootprint(info.index);
-        this.showTooltipOnFootprint(info);
+        //this.showTooltipOnFootprint(info);
         this.exchangeService.updateHoveredProduct(infos);
       } else {
-        this.hideTooltipOnFootprint();
+        //this.hideTooltipOnFootprint();
         this.exchangeService.updateHoveredProduct(undefined);
       }
     }
     this.changeDrawLayer();
   }
 
-  hideTooltipOnFootprint() {
+  /* hideTooltipOnFootprint() {
     clearTimeout(this.tooltipTimeoutId);
     if (footprintTooltip.classList.contains('visible')) {
       footprintTooltip.style.left = '-400px';
@@ -441,7 +445,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         footprintTooltip.classList.replace('hidden', 'visible');
       }
     }, 500);
+  } */
+  /* onMouseOverTooltip() {
+    clearTimeout(this.hideTooltipTimeoutId);
   }
+  onMouseLeaveTooltip() {
+    this.hideTooltipOnFootprint();
+  } */
+
 
   onPointDragStart() {
     if (this.canDragPolygon) {
@@ -931,13 +942,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     canvasContainer = document.getElementById('canvas-container')!;
     contextMenuContainer = document.getElementById('context-menu-container')!;
     footprintTooltip = document.getElementById('footprint-tooltip')!;
+
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
-      this.hideTooltipOnFootprint();
+      //this.hideTooltipOnFootprint();
       //this.hideProductFootprint();
       contextMenuContainer.style.left = (event.clientX + 20) + 'px';
       contextMenuContainer.style.top = (event.clientY - 15) + 'px';
       if (contextMenuContainer.classList.contains('hidden')) {
+        this.hoveredProductsShownArray = this.hoveredProductsArray;
         contextMenuContainer.classList.replace('hidden', 'visible');
       }
       this.contextMenuTimeoutId = setTimeout(() => {
@@ -1115,19 +1128,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
           this.canCalcTooltip = false;
-          this.hideTooltipOnFootprint();
+          //this.hideTooltipOnFootprint();
           this.hideProductFootprint();
           return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
             this.canCalcTooltip = false;
-            this.hideTooltipOnFootprint();
+            //this.hideTooltipOnFootprint();
             this.hideProductFootprint();
             return 'pointer';
           } else {
             if (this.isHoveringOnPolygon) {
               this.canCalcTooltip = false;
-              this.hideTooltipOnFootprint();
+              //this.hideTooltipOnFootprint();
               this.hideProductFootprint();
               return 'grab';
             } else {
@@ -1176,19 +1189,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
           this.canCalcTooltip = false;
-          this.hideTooltipOnFootprint();
+          //this.hideTooltipOnFootprint();
           this.hideProductFootprint();
         return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
             this.canCalcTooltip = false;
-            this.hideTooltipOnFootprint();
+            //this.hideTooltipOnFootprint();
             this.hideProductFootprint();
             return 'pointer';
           } else {
             if (this.isHoveringOnPolygon) {
               this.canCalcTooltip = false;
-              this.hideTooltipOnFootprint();
+              //this.hideTooltipOnFootprint();
               this.hideProductFootprint();
               return 'grab';
             } else {

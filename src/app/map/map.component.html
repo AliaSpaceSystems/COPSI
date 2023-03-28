@@ -4,19 +4,36 @@
 </div>
 
 <div id="context-menu-container" class="hidden" (mouseenter)="onMouseEnterContextMenu()" (mouseleave)="onMouseLeaveContextMenu()">
-  <div id="geo-search-title">
+  <div class="context-menu-title">
     Geo Search
   </div>
-  <hr>
+  <!-- <hr> -->
   <div id="geo-search-buttons">
     <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle" (click)="this.onDrawRectButtonClicked(true)"></mat-icon>
     <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon" (click)="this.onDrawPolygonButtonClicked(true)"></mat-icon>
     <div id="vertical-separator"></div>
     <mat-icon id="cancel-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Cancel polygon icon" fontIcon="delete_forever" title="Cancel polygon" (click)="this.onCancelDrawingButtonClicked(true)"></mat-icon>
   </div>
+  <div id="footprint-selection-container" *ngIf="hoveredProductsShownArray.length > 0">
+    <div class="context-menu-title">
+      Products
+    </div>
+    <div id="footprint-tooltip-list-container">
+      <table *ngFor="let product of hoveredProductsShownArray" class="footprint-tooltip-table" style="font-size: 0.75rem">
+        <tr>
+          <td>Platform</td>
+          <td>{{product.platformShortName}}{{product.platformSerialIdentifier}}</td>
+        </tr>
+        <tr *ngFor="let tag of product.tags">
+          <td>{{tag.name}}</td>
+          <td>{{tag.value}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </div>
 
-<div id="footprint-tooltip" class="hidden">
+<!-- <div id="footprint-tooltip" class="hidden" (mouseover)="onMouseOverTooltip()" (mouseleave)="onMouseLeaveTooltip()">
   <div id="footprint-tooltip-title">
     Products
   </div>
@@ -32,4 +49,4 @@
       </tr>
     </table>
   </div>
-</div>
+</div> -->

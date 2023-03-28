@@ -65,7 +65,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
       this.token = this.oauthService.getAccessToken();
       let tokenDecodedObj = this.decodeToken(this.token);
-      console.log(tokenDecodedObj);
+      //console.log(tokenDecodedObj);
 
       this.role = tokenDecodedObj.resource_access[tokenDecodedObj.azp].roles[0];
     }
