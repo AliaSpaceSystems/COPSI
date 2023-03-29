@@ -13,8 +13,10 @@ mat-icon:hover {
   top: 0;
   left: -5rem;
   width: 14rem;
+  max-height: 100dvh;
   padding: 0;
   gap: 0.25rem;
+  overflow-y: auto;
   z-index: 60;
 }
 #context-menu-container.visible {

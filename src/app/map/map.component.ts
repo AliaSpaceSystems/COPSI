@@ -11,7 +11,7 @@ import { FootprintsCustomizationConfig as FCConfig } from '../services/footprint
 
 let canvasContainer: any;
 let contextMenuContainer: any;
-let footprintTooltip: any;
+//let footprintTooltip: any;
 let deckGlobe: any;
 let deckPlane: any;
 let mapProjection: string = 'globe';
@@ -65,6 +65,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public hoveredProductsArray: any[] = [];
   public hoveredProductShownArray: any[] = [];
   public hoveredObject: any = {};
+  public maxPickableObjectsDepth: number = AppConfig.settings.footprints.maxPickableObjectsDepth;
 
   public drawGeoSearchCirclesData = [
     {
@@ -395,21 +396,23 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let infos: any = undefined;
       if (this.isHoveringOnFootprint) {
         if (this.currentProjection == 'globe') {
-          infos = deckGlobe.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: 5});
+          infos = deckGlobe.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: this.maxPickableObjectsDepth});
         } else {
-          infos = deckPlane.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: 5});
+          infos = deckPlane.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: this.maxPickableObjectsDepth});
         }
+        let tempHoveredIndexesArray: any[] = [-1];
         if (infos.length > 0) {
           infos = infos.filter((obj: any) => (obj.layer.id === "geojson-layer-selected"));
-          infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
+          /* Uncomment to select only identical footprints: */
+          //infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
 
-          let tempHoveredIndexesArray: any[] = [];
           infos.forEach((info: any) => {
             tempHoveredIndexesArray.push(info.index);
           });
           this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
         }
-        this.showProductFootprint(info.index);
+        //this.showProductFootprint(info.index);
+        this.showProductFootprint(tempHoveredIndexesArray);
         this.exchangeService.updateHoveredProduct(infos);
       } else {
         this.exchangeService.updateHoveredProduct(undefined);
@@ -661,7 +664,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public defaultFootprintBorderWidth: number = AppConfig.settings.footprints.defaultBorderWidth;
   public selectedFootprintBorderWidth: number = AppConfig.settings.footprints.selectedBorderWidth;
   public hoveredFootprintBorderWidth: number = AppConfig.settings.footprints.hoveredBorderWidth;
-  public selectedFootprintIndex: number = -1;
+  public selectedFootprintIndex: number[] = [-1];
   public selectedProductIndex: number = -1;
 
 
@@ -903,27 +906,39 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     let tempIndex = this.productList.value.findIndex((product: any) => {
       return product.Id === tooltipProduct.Id
     });
-    this.showProductFootprint(tempIndex);
+    this.showProductFootprint([tempIndex]);
     this.exchangeService.updateHoveredProduct([{index: tempIndex}]);
   }
 
   ngOnInit(): void {
     canvasContainer = document.getElementById('canvas-container')!;
     contextMenuContainer = document.getElementById('context-menu-container')!;
-    footprintTooltip = document.getElementById('footprint-tooltip')!;
+    //footprintTooltip = document.getElementById('footprint-tooltip')!;
 
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
       //this.hideProductFootprint();
+      let viewportWidth = window.innerWidth;
+      let viewportHeight = window.innerHeight;
       contextMenuContainer.style.left = (event.clientX + 20) + 'px';
       contextMenuContainer.style.top = (event.clientY - 15) + 'px';
       if (contextMenuContainer.classList.contains('hidden')) {
+
         this.hoveredProductShownArray = this.hoveredProductsArray;
-        contextMenuContainer.classList.replace('hidden', 'visible');
+        setTimeout(() => {
+          contextMenuContainer.classList.replace('hidden', 'visible');
+          if (viewportHeight - (event.clientY + contextMenuContainer.offsetHeight) < 0) {
+            contextMenuContainer.style.top = (viewportHeight - contextMenuContainer.offsetHeight) + 'px';
+          }
+          if (viewportWidth - (event.clientX + contextMenuContainer.offsetWidth) < 0) {
+            contextMenuContainer.style.left = (viewportWidth - contextMenuContainer.offsetWidth) + 'px';
+          }
+        }, 250);
       }
+
       this.contextMenuTimeoutId = setTimeout(() => {
         this.hideContextMenu();
-      }, 2000);
+      }, 3000);
     });
     ["mousedown", "wheel"].forEach((inputEvent: any) => {
       canvasContainer.addEventListener(inputEvent, (event: any) => {
@@ -966,7 +981,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.showProductIndexSubscription = this.exchangeService.showProductOnMapExchange.subscribe((value) => {
       if (typeof(value) === 'number') {
-        this.showProductFootprint(value);
+        this.showProductFootprint([value]);
       }
     });
     this.selectedProductIdSubscription = this.exchangeService.selectProductOnMapExchange.subscribe((value) => {
@@ -1416,28 +1431,28 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   hideProductFootprint() {
-    this.showProductFootprint(-1);
+    this.showProductFootprint([-1]);
   }
 
-  showProductFootprint(showProductIndex: number) {
+  showProductFootprint(showProductIndex: number[]) {
     this.selectedFootprintIndex = showProductIndex;
     if (this.currentProjection === 'globe') {
       this.geojsonLayerGlobeSelected = this.geojsonLayerGlobeSelected.clone({
         getLineWidth: (d: any, f:any) => {
           let ret: number = 1;
           if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
-          else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
+          else if (this.selectedFootprintIndex.includes(f.index)) ret = this.hoveredFootprintBorderWidth;
           return ret;
         },
         getFillColor: (d:any, f:any) => {
           let tempCol = [0, 0, 0, 0];
-          if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
+          if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverColor;
           return tempCol;
         },
         getLineColor: (d:any, f:any) => {
           let tempCol = [0, 0, 0, 0];
           if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
-          else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
+          else if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverColor;
           return tempCol;
         },
         updateTriggers: {
@@ -1459,18 +1474,18 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         getLineWidth: (d: any, f:any) => {
           let ret: number = 1;
           if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
-          else if (f.index == this.selectedFootprintIndex) ret = this.hoveredFootprintBorderWidth;
+          else if (this.selectedFootprintIndex.includes(f.index)) ret = this.hoveredFootprintBorderWidth;
           return ret;
         },
         getFillColor: (d:any, f:any) => {
           let tempCol = [0, 0, 0, 0];
-          if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverColor;
+          if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverColor;
           return tempCol;
         },
         getLineColor: (d:any, f:any) => {
           let tempCol = [0, 0, 0, 0];
           if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
-          else if (f.index == this.selectedFootprintIndex) tempCol = d.properties.HoverBorderColor;
+          else if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverBorderColor;
           return tempCol;
         },
         updateTriggers: {

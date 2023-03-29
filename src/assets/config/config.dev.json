@@ -97,7 +97,8 @@
     "defaultBorderWidth": 2,
     "selectedBorderColor": "#33ddddff",
     "selectedBorderWidth": 4,
-    "hoveredBorderWidth": 2
+    "hoveredBorderWidth": 2,
+    "maxPickableObjectsDepth": 10
   },
   "styles": [
     {
