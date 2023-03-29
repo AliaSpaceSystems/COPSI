@@ -11,7 +11,7 @@ import { FootprintsCustomizationConfig as FCConfig } from '../services/footprint
 
 let canvasContainer: any;
 let contextMenuContainer: any;
-//let footprintTooltip: any;
+let footprintMenuContainer: any;
 let deckGlobe: any;
 let deckPlane: any;
 let mapProjection: string = 'globe';
@@ -52,16 +52,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public isHoveringOnPoints: boolean = false;
   public isHoveringOnPolygon: boolean = false;
   public isHoveringOnFootprint: boolean = false;
-  public canCalcTooltip: boolean = true;
+  public canShowFootprintsMenu: boolean = true;
   public canDragMap: boolean = true;
   public startDragCoordinates: number[] = [];
   public geoSearchSettings: any = AppConfig.settings.geoSearchSettings;
   public geoSearchPolygonPresent: boolean = false;
   public geoSearchOutput: string = "";
   public minimalCoordinateDiff: number = 0.00000000000001;
-  public tooltipTimeoutId: any;
-  public hideTooltipTimeoutId: any;
+  //public tooltipTimeoutId: any;
+  //public hideTooltipTimeoutId: any;
   public contextMenuTimeoutId: any;
+  public footprintMenuTimeoutId: any;
   public hoveredProductsArray: any[] = [];
   public hoveredProductShownArray: any[] = [];
   public hoveredObject: any = {};
@@ -93,7 +94,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   onDrawRectButtonClicked(val: boolean) {
-    this.canCalcTooltip = false;
+    this.canShowFootprintsMenu = false;
     this.canDrawRect = true;
     this.canDragPolygon = false;
     this.drawGeoSearchPolygonData = {
@@ -124,7 +125,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDrawPolygonButtonClicked(val: boolean) {
-    this.canCalcTooltip = false;
+    this.canShowFootprintsMenu = false;
     this.canDrawPolygon = true;
     this.canDragPolygon = false;
     this.drawGeoSearchPolygonData = {
@@ -185,7 +186,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(this.drawGeoSearchCirclesData);
     this.exchangeService.updateGeoSearch(this.geoSearchOutput);
     this.hideContextMenu();
-    this.canCalcTooltip = true;
+    this.canShowFootprintsMenu = true;
   }
 
   convertCoordinatesToGeographicQueryString(points: any) {
@@ -215,6 +216,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onClickOnMap(info: any, event: any) {
+    if (event.rightButton === true) return;
+    this.hideContextMenu();
     let tempPolygonJson: any;
 
     if (this.canDrawRect) {
@@ -258,7 +261,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
         this.exchangeService.updateGeoSearch(this.geoSearchOutput);
-        this.canCalcTooltip = true;
+        this.canShowFootprintsMenu = true;
       }
     } else if (this.canDrawPolygon) {
       let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates;
@@ -284,7 +287,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           tempPolygonArray[0].splice(-1, 1, tempPolygonArray[0][0]);
           this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
           this.exchangeService.updateGeoSearch(this.geoSearchOutput);
-          this.canCalcTooltip = true;
+          this.canShowFootprintsMenu = true;
         } else {
           tempPolygonArray[0].push(info.coordinate);
           tempPointsArray = tempPointsArray.concat([{"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius }]);
@@ -310,6 +313,30 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.drawGeoSearchCirclesData = tempPointsArray;
         this.changeDrawLayer();
       }
+    } else if (this.canShowFootprintsMenu) {
+      //console.log("Clicced Left on Footprints");
+      //console.log(event);
+
+      let viewportWidth = window.innerWidth;
+      let viewportHeight = window.innerHeight;
+      footprintMenuContainer.style.left = (event.center.x + 20) + 'px';
+      footprintMenuContainer.style.top = (event.center.y - 15) + 'px';
+      if (footprintMenuContainer.classList.contains('hidden')) {
+        this.hoveredProductShownArray = this.hoveredProductsArray;
+        setTimeout(() => {
+          footprintMenuContainer.classList.replace('hidden', 'visible');
+          if (viewportHeight - (event.center.y + footprintMenuContainer.offsetHeight) < 0) {
+            footprintMenuContainer.style.top = (viewportHeight - footprintMenuContainer.offsetHeight) + 'px';
+          }
+          if (viewportWidth - (event.center.x + contextMenuContainer.offsetWidth) < 0) {
+            footprintMenuContainer.style.left = (viewportWidth - footprintMenuContainer.offsetWidth) + 'px';
+          }
+        }, 250);
+      }
+
+      this.footprintMenuTimeoutId = setTimeout(() => {
+        this.hideFootprintMenu();
+      }, 3000);
     }
   }
 
@@ -391,7 +418,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         };
         this.drawGeoSearchPolygonData = tempJson;
       }
-    } else if (this.canCalcTooltip) {
+    } else if (this.canShowFootprintsMenu) {
       /* MultiProduct Picking */
       let infos: any = undefined;
       if (this.isHoveringOnFootprint) {
@@ -429,7 +456,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       deckPlane.setProps({
         controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
       });
-      this.canCalcTooltip = false;
+      this.canShowFootprintsMenu = false;
     }
   }
 
@@ -529,7 +556,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       deckPlane.setProps({
         controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
       });
-      this.canCalcTooltip = true;
+      this.canShowFootprintsMenu = true;
     }
   }
 
@@ -542,7 +569,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       deckPlane.setProps({
         controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: false}
       });
-      this.canCalcTooltip = false;
+      this.canShowFootprintsMenu = false;
     }
   }
 
@@ -638,7 +665,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       deckPlane.setProps({
         controller: {keyboard: false, inertia: true, doubleClickZoom: false, dragPan: true}
       });
-      this.canCalcTooltip = true;
+      this.canShowFootprintsMenu = true;
     }
   }
 
@@ -902,6 +929,22 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.hideContextMenu();
     }, 500);
   }
+  onMouseEnterFootprintMenu() {
+    clearTimeout(this.footprintMenuTimeoutId);
+  }
+  onMouseLeaveFootprintMenu() {
+    this.footprintMenuTimeoutId = setTimeout(() => {
+      this.hideFootprintMenu();
+    }, 500);
+  }
+  hideFootprintMenu() {
+    footprintMenuContainer.style.left = '-400px';
+    footprintMenuContainer.style.top = '-400px';
+    if (footprintMenuContainer.classList.contains('visible')) {
+      footprintMenuContainer.classList.replace('visible', 'hidden');
+    }
+  }
+
   onMouseOverTooltipProductTable(tooltipProduct: any) {
     let tempIndex = this.productList.value.findIndex((product: any) => {
       return product.Id === tooltipProduct.Id
@@ -913,11 +956,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     canvasContainer = document.getElementById('canvas-container')!;
     contextMenuContainer = document.getElementById('context-menu-container')!;
-    //footprintTooltip = document.getElementById('footprint-tooltip')!;
+    footprintMenuContainer = document.getElementById('footprint-menu-container')!;
 
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
       //this.hideProductFootprint();
+      this.hideFootprintMenu();
       let viewportWidth = window.innerWidth;
       let viewportHeight = window.innerHeight;
       contextMenuContainer.style.left = (event.clientX + 20) + 'px';
@@ -940,11 +984,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.hideContextMenu();
       }, 3000);
     });
+
     ["mousedown", "wheel"].forEach((inputEvent: any) => {
       canvasContainer.addEventListener(inputEvent, (event: any) => {
         this.hideContextMenu();
       });
     });
+
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
           const isNotCombinedKey = !(event.ctrlKey || event.altKey || event.shiftKey);
@@ -1109,21 +1155,21 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
-          this.canCalcTooltip = false;
+          this.canShowFootprintsMenu = false;
           this.hideProductFootprint();
           return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
-            this.canCalcTooltip = false;
+            this.canShowFootprintsMenu = false;
             this.hideProductFootprint();
             return 'pointer';
           } else {
             if (this.isHoveringOnPolygon) {
-              this.canCalcTooltip = false;
+              this.canShowFootprintsMenu = false;
               this.hideProductFootprint();
               return 'grab';
             } else {
-              this.canCalcTooltip = true;
+              this.canShowFootprintsMenu = true;
               return 'crosshair';
             }
           }
@@ -1167,21 +1213,21 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       getCursor: (cursor: any) => {
         if (cursor.isDragging) {
-          this.canCalcTooltip = false;
+          this.canShowFootprintsMenu = false;
           this.hideProductFootprint();
         return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
-            this.canCalcTooltip = false;
+            this.canShowFootprintsMenu = false;
             this.hideProductFootprint();
             return 'pointer';
           } else {
             if (this.isHoveringOnPolygon) {
-              this.canCalcTooltip = false;
+              this.canShowFootprintsMenu = false;
               this.hideProductFootprint();
               return 'grab';
             } else {
-              this.canCalcTooltip = true;
+              this.canShowFootprintsMenu = true;
               return 'crosshair';
             }
           }
@@ -1207,7 +1253,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       document.getElementById('map-globe')!.style.display = 'none';
       document.getElementById('map-plane')!.style.display = 'block';
     }
-    this.canCalcTooltip = true;
+    this.canShowFootprintsMenu = true;
   }
 
   changeDrawLayer() {

@@ -3,6 +3,8 @@
   <canvas id='map-plane'></canvas>
 </div>
 
+
+<!-- Context menu -->
 <div id="context-menu-container" class="hidden" (mouseenter)="onMouseEnterContextMenu()" (mouseleave)="onMouseLeaveContextMenu()">
   <div id="geo-search-container">
     <div class="context-menu-title">
@@ -24,8 +26,11 @@
       </div>
     </div>
   </div>
+</div>
 
-  <div id="footprint-selection-container" *ngIf="hoveredProductShownArray.length > 0">
+<!-- Footprint selection menu -->
+<div id="footprint-menu-container" class="hidden" (mouseenter)="onMouseEnterFootprintMenu()" (mouseleave)="onMouseLeaveFootprintMenu()">
+  <div id="footprint-selection-container">  <!-- *ngIf="hoveredProductShownArray.length > 0"> -->
     <div class="context-menu-title">
       Products
     </div>

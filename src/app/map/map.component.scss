@@ -68,12 +68,34 @@ hr {
 }
 
 /* FOOTPRINTS TOOLTIP */
+#footprint-menu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: -5rem;
+  width: 14rem;
+  max-height: 100dvh;
+  padding: 0;
+  gap: 0.25rem;
+  overflow-y: auto;
+  z-index: 60;
+}
+#footprint-menu-container.visible {
+  visibility: visible;
+}
+#footprint-menu-container.hidden {
+  visibility: hidden;
+}
+
 #footprint-selection-container {
   width: 100%;
   border: $main-dark-border;
   border-radius: 0.25rem;
   box-shadow: $default-shadow;
 }
+
 .footprint-tooltip-list-container {
   display: flex;
   flex-direction: column;
