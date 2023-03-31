@@ -127,13 +127,11 @@
       <div id="list-items-container">
         <div class="list-item-div" *ngFor="let product of productList.value; let idx=index;" [attr.data-productid]="product.Id" (mouseover)="hoverProduct($event)" (mouseleave)="leaveProduct($event)">
           <div class="product-name-div" *ngIf="product.Name != null && (showSimpleView == showDetailedView)">
-            <div class="minimal-column-div">
-              <div class="product-name-value">{{product.Name}}</div>
-              <div class="minimal-buttons-div">
-                <ng-template *ngIf="(showSimpleView == false && showDetailedView == false)" [ngTemplateOutlet]="progressBar"></ng-template>
-                <ng-template *ngIf="(showSimpleView == false && showDetailedView == false)" [ngTemplateOutlet]="qlButtons"></ng-template>
-              </div>
-            </div>
+            <div class="product-name-value">{{product.Name}}</div>
+          </div>
+          <div *ngIf="(showSimpleView == false && showDetailedView == false)" class="minimal-buttons-div">
+            <ng-template [ngTemplateOutlet]="progressBar"></ng-template>
+            <ng-template [ngTemplateOutlet]="qlButtons"></ng-template>
           </div>
           <div class="product-data-row-div" *ngIf="product.Name != null && (showSimpleView)">
             <div class="product-data-column-div">

@@ -127,6 +127,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateGeoSearchSubscription!: Subscription;
   updateHoveredProductSubscription! : Subscription;
+  zoomToListSubscription!: Subscription;
 
   constructor(
     private exchangeService: ExchangeService,
@@ -305,12 +306,18 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateHoveredProductSubscription = this.exchangeService.hoveredProductExchange.subscribe((value) => {
       this.updateHoveredProduct(value);
     });
+    this.zoomToListSubscription = this.exchangeService.zoomToProductIdOnListExchange.subscribe((value) => {
+      if (typeof(value) === 'string') {
+        this.zoomToList(value);
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.productListSubscription.unsubscribe();
     this.updateGeoSearchSubscription.unsubscribe();
     this.updateHoveredProductSubscription.unsubscribe();
+    this.zoomToListSubscription.unsubscribe();
     if (this.downloadSubscription.size > 0) {
       this.downloadSubscription.forEach(sub => {
         sub.unsubscribe();
@@ -1079,6 +1086,25 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         product.classList.remove('hover');
       }
     };
+  }
+
+  zoomToList(id: string) {
+    let tempId = this.productList.value.findIndex((product: any) => (product.Id === id));
+    let tempProductFrameHeight: number;
+    let productsInClientHeight: number;
+    if (this.productTotalNumber < this.searchOptions.top) {
+      tempProductFrameHeight = listContainer.scrollHeight / this.productTotalNumber;
+      productsInClientHeight = listContainer.clientHeight / tempProductFrameHeight;
+      listContainer.scrollTop =
+        ((listContainer.scrollHeight - listContainer.clientHeight) / (this.productTotalNumber - productsInClientHeight)) *
+        (tempId) - Math.floor(Math.floor(productsInClientHeight/2) * tempProductFrameHeight);
+    } else {
+      tempProductFrameHeight = listContainer.scrollHeight / this.searchOptions.top;
+      productsInClientHeight = listContainer.clientHeight / tempProductFrameHeight;
+      listContainer.scrollTop =
+        ((listContainer.scrollHeight - listContainer.clientHeight) / (this.searchOptions.top - productsInClientHeight)) *
+        (tempId) - Math.floor(Math.floor(productsInClientHeight/2) * tempProductFrameHeight);
+    }
   }
 
   calcListThumbSize() {

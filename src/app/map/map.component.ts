@@ -321,18 +321,19 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let viewportHeight = window.innerHeight;
       footprintMenuContainer.style.left = (event.center.x + 20) + 'px';
       footprintMenuContainer.style.top = (event.center.y - 15) + 'px';
-      if (footprintMenuContainer.classList.contains('hidden')) {
-        this.hoveredProductShownArray = this.hoveredProductsArray;
-        setTimeout(() => {
+
+      this.hoveredProductShownArray = this.hoveredProductsArray;
+      setTimeout(() => {
+        if (footprintMenuContainer.classList.contains('hidden')) {
           footprintMenuContainer.classList.replace('hidden', 'visible');
-          if (viewportHeight - (event.center.y + footprintMenuContainer.offsetHeight) < 0) {
-            footprintMenuContainer.style.top = (viewportHeight - footprintMenuContainer.offsetHeight) + 'px';
-          }
-          if (viewportWidth - (event.center.x + contextMenuContainer.offsetWidth) < 0) {
-            footprintMenuContainer.style.left = (viewportWidth - footprintMenuContainer.offsetWidth) + 'px';
-          }
-        }, 250);
-      }
+        }
+        if (viewportHeight - (event.center.y + footprintMenuContainer.offsetHeight) < 0) {
+          footprintMenuContainer.style.top = (viewportHeight - footprintMenuContainer.offsetHeight) + 'px';
+        }
+        if (viewportWidth - (event.center.x + contextMenuContainer.offsetWidth) < 0) {
+          footprintMenuContainer.style.left = (viewportWidth - footprintMenuContainer.offsetWidth) + 'px';
+        }
+      }, 50);
 
       this.footprintMenuTimeoutId = setTimeout(() => {
         this.hideFootprintMenu();
@@ -953,6 +954,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.exchangeService.updateHoveredProduct([{index: tempIndex}]);
   }
 
+  onClickOverTooltipProductTable(product: any) {
+    this.exchangeService.zoomToList(product.Id);
+  }
+
   ngOnInit(): void {
     canvasContainer = document.getElementById('canvas-container')!;
     contextMenuContainer = document.getElementById('context-menu-container')!;
@@ -998,7 +1003,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
               this.onCancelDrawingButtonClicked(true);
           }
       }
-  });
+    });
     this.initMapLayer();
     this.initMapProjection();
     this.initMap();
@@ -1050,7 +1055,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.onCancelDrawingButtonClicked(value);
       }
     });
-    this.zoomToProductSubscription = this.exchangeService.zoomToProductIdExchange.subscribe((value) => {
+    this.zoomToProductSubscription = this.exchangeService.zoomToProductIdOnMapExchange.subscribe((value) => {
       if (typeof(value) === 'string') {
         this.zoomToProduct(value);
       }

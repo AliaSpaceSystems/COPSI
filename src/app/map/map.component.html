@@ -36,7 +36,7 @@
     </div>
     <div *ngFor="let product of hoveredProductShownArray" class="footprint-tooltip-list-container">
       <div class="footprint-tooltip-table-div">
-        <table class="footprint-tooltip-table" style="font-size: 0.75rem" (mouseover)="onMouseOverTooltipProductTable(product)">
+        <table class="footprint-tooltip-table" style="font-size: 0.75rem" (mouseover)="onMouseOverTooltipProductTable(product)" (mousedown)="onClickOverTooltipProductTable(product)">
           <tr>
             <td>Platform</td>
             <td>{{product.platformShortName}}{{product.platformSerialIdentifier}}</td>

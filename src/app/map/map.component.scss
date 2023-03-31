@@ -12,12 +12,12 @@ mat-icon:hover {
   position: absolute;
   top: 0;
   left: -5rem;
-  width: 14rem;
+  width: 9rem;
   max-height: 100dvh;
   padding: 0;
-  gap: 0.25rem;
   overflow-y: auto;
   z-index: 60;
+  box-shadow: $default-shadow;
 }
 #context-menu-container.visible {
   visibility: visible;
@@ -37,12 +37,12 @@ hr {
   background-color: $main-dark-bg-color;
 }
 
-/* Geo Search Menu */
+/* Geo Search Section */
 #geo-search-container {
   width: 100%;
   border: $main-dark-border;
   border-radius: 0.25rem;
-  box-shadow: $default-shadow;
+  //box-shadow: $default-shadow;
 }
 #geo-search-buttons-container {
   display: flex;
@@ -78,9 +78,9 @@ hr {
   width: 14rem;
   max-height: 100dvh;
   padding: 0;
-  gap: 0.25rem;
   overflow-y: auto;
   z-index: 60;
+  box-shadow: $default-shadow;
 }
 #footprint-menu-container.visible {
   visibility: visible;
@@ -93,7 +93,7 @@ hr {
   width: 100%;
   border: $main-dark-border;
   border-radius: 0.25rem;
-  box-shadow: $default-shadow;
+  //box-shadow: $default-shadow;
 }
 
 .footprint-tooltip-list-container {

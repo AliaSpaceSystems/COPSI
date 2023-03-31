@@ -625,10 +625,9 @@ input:invalid {
   padding: 0 0 0 0;
   gap: 0.25rem;
   transition: visibility 0.25s ease-in-out, opacity 0.25s ease-in-out;
-
+  scroll-behavior: smooth;
   pointer-events: visible;
 }
-
 /* Scrollbar hiding */
 #list-items-container {
   -ms-overflow-style: none;  /* IE and Edge */
@@ -657,6 +656,8 @@ input:invalid {
 
 /* list item */
 .list-item-div {
+  display: flex;
+  flex-direction: column;
   border: $main-dark-border;
   border-radius: 0.25rem;
   box-shadow: $default-shadow;
@@ -675,6 +676,7 @@ input:invalid {
   display: flex;
   flex-direction: row;
   padding: 0.25rem;
+  height: 2.5rem;
   border-radius: 0.15rem 0.15rem 0 0;
   background-color: $main-dark-bg-color;
   align-items: center;
@@ -685,16 +687,12 @@ input:invalid {
   color: $product-name-color;
   font-size: $search-bar-font-size-small;
 }
-.minimal-column-div {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 0.15rem;
-}
 .minimal-buttons-div {
   display: flex;
   flex-direction: row;
   width: 100%;
+  padding: 0 0.25rem 0.25rem 0.25rem;
+  background-color: $main-dark-bg-color;
   justify-content: space-between;
   gap: 0.25rem;
 }
@@ -730,6 +728,7 @@ input:invalid {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  padding-right: 0.25rem;
   align-items: center;
 }
 .progress-bar {
@@ -804,12 +803,16 @@ input:invalid {
   align-items: stretch;
 }
 .tag {
+  display: flex;
+  flex-direction: row;
   border: $main-dark-border;
   border-radius: 3px;
   padding: 0 0.2rem;
   font-size: $search-bar-font-size-small;
   text-align: center;
+  justify-content: center;
   width: 5rem;
+  height: 1rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -821,6 +824,7 @@ input:invalid {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  height: 6rem;
   justify-content: space-evenly;
   padding: 0 0.2rem;
   background-color: $main-dark-bg-color;
@@ -842,6 +846,7 @@ input:invalid {
 .ql-buttons-div {
   display: flex;
   flex-direction: row;
+  gap: 0.25rem;
   margin: 0;
   justify-content: space-evenly;
 }
