@@ -1579,6 +1579,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     if (coordinates.length === 2) {
       /* TwoHalves Footprint */
       //console.log("TwoHalves Footprint");
+      //console.log(coordinates);
+
       let tempCoords: any[] = [];
       coordinates[0][0].forEach((arr: any) => {
         tempCoords.push(arr);
@@ -1591,10 +1593,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
       let tempLatLonBoundsNegative: any;
       let tempLatLonBoundsPositive: any;
-      if (coordinates[0][0][0] < 0) {
+      //console.log("coordinates[0][0][0][0]: " + coordinates[0][0][0][0]);
+
+      if (coordinates[0][0][0][0] < 0) {
+        //console.log("coordinates[0][0][0][0] < 0");
         tempLatLonBoundsNegative = this.calcMinMaxCoordinatesValues(coordinates[0][0]);
         tempLatLonBoundsPositive = this.calcMinMaxCoordinatesValues(coordinates[1][0]);
       } else {
+        //console.log("coordinates[0][0][0][0] > 0");
         tempLatLonBoundsNegative = this.calcMinMaxCoordinatesValues(coordinates[1][0]);
         tempLatLonBoundsPositive = this.calcMinMaxCoordinatesValues(coordinates[0][0]);
       }
@@ -1607,6 +1613,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       //console.log("Final Bounds: ", tempLatLonBounds);
       let centerLon = (tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2;
       if (centerLon < 0) centerLon += 180.0;
+      else centerLon -= 180.0;
       centerCoordinates = [centerLon, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
       //console.log("centerCoords: " , centerCoordinates);
       zoomLevel = 3;
