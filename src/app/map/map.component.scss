@@ -29,7 +29,7 @@ hr {
   width: 100%;
   margin: 0;
 }
-.context-menu-title {
+#context-menu-title {
   font-size: $search-bar-font-size;
   padding: 0.5rem 0 0.25rem 0;
   width: 100%;
@@ -42,7 +42,6 @@ hr {
   width: 100%;
   border: $main-dark-border;
   border-radius: 0.25rem;
-  //box-shadow: $default-shadow;
 }
 #geo-search-buttons-container {
   display: flex;
@@ -65,56 +64,4 @@ hr {
 .geo-search-command-div p {
   font-size: $search-bar-font-size;
   margin: 0;
-}
-
-/* FOOTPRINTS TOOLTIP */
-#footprint-menu-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  left: -5rem;
-  width: 14rem;
-  max-height: calc(100dvh - 1rem);
-  padding: 0;
-  overflow-y: auto;
-  z-index: 60;
-  box-shadow: $default-shadow;
-}
-#footprint-menu-container.visible {
-  visibility: visible;
-}
-#footprint-menu-container.hidden {
-  visibility: hidden;
-}
-
-#footprint-selection-container {
-  width: 100%;
-  border: $main-dark-border;
-  border-radius: 0.25rem;
-  //box-shadow: $default-shadow;
-}
-
-.footprint-tooltip-list-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.footprint-tooltip-table-div:hover {
-  background-color: #fff;
-  border-color: $menu-dark-bg-color;
-}
-.footprint-tooltip-table {
-  background-color: $menu-dark-bg-color;
-  width: 100%;
-  padding: 0 0.25rem;
-  font-size: 0.75rem;
-}
-.footprint-tooltip-table th, td {
-  padding: 0 0.5rem 0 0;
-}
-.table-spacer {
-  height: 0.5rem;
-  background-color: $main-dark-bg-color;
 }

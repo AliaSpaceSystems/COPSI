@@ -299,4 +299,32 @@
   </button>
 </div>
 
+<!-- Footprint selection menu -->
+<div id="footprint-menu-container" class="hidden" (mouseenter)="onMouseEnterFootprintMenu()" (mouseleave)="onMouseLeaveFootprintMenu()">
+  <div id="footprints-menu-column-div">
+    <div id="footprints-menu-title">
+      Products
+    </div>
+    <div id="footprint-menu-scrollable-div">
+        <div *ngFor="let product of hoveredProductShownArray" class="footprint-tooltip-list-container">
+          <div class="footprint-tooltip-table-div">
+            <table class="footprint-tooltip-table" (mouseover)="onMouseOverTooltipProductTable(product)" (mouseleave)="onMouseLeaveTooltipProductTable()" (mousedown)="onClickOverTooltipProductTable(product)">
+              <tr>
+                <td>Platform</td>
+                <td>{{product.platformShortName}}{{product.platformSerialIdentifier}}</td>
+              </tr>
+              <tr *ngFor="let tag of product.tags">
+                <td>{{tag.name}}</td>
+                <td>{{tag.value}}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="table-spacer"></div>
+        </div>
+    </div>
+  </div>
+  <!-- footprints menu scroll bar -->
+  <div id="footprints-menu-scroll-thumb"></div>
+</div>
+
 <div id="get-properties-div"></div>

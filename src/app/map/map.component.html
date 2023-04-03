@@ -7,7 +7,7 @@
 <!-- Context menu -->
 <div id="context-menu-container" class="hidden" (mouseenter)="onMouseEnterContextMenu()" (mouseleave)="onMouseLeaveContextMenu()">
   <div id="geo-search-container">
-    <div class="context-menu-title">
+    <div id="context-menu-title">
       Geo Search
     </div>
     <div id="geo-search-buttons-container">
@@ -24,30 +24,6 @@
         <mat-icon id="cancel-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Cancel polygon icon" fontIcon="delete_forever" title="Cancel polygon"></mat-icon>
         <p>Cancel Drawings</p>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Footprint selection menu -->
-<div id="footprint-menu-container" class="hidden" (mouseenter)="onMouseEnterFootprintMenu()" (mouseleave)="onMouseLeaveFootprintMenu()">
-  <div id="footprint-selection-container">  <!-- *ngIf="hoveredProductShownArray.length > 0"> -->
-    <div class="context-menu-title">
-      Products
-    </div>
-    <div *ngFor="let product of hoveredProductShownArray" class="footprint-tooltip-list-container">
-      <div class="footprint-tooltip-table-div">
-        <table class="footprint-tooltip-table" (mouseover)="onMouseOverTooltipProductTable(product)" (mouseleave)="onMouseLeaveTooltipProductTable()" (mousedown)="onClickOverTooltipProductTable(product)">
-          <tr>
-            <td>Platform</td>
-            <td>{{product.platformShortName}}{{product.platformSerialIdentifier}}</td>
-          </tr>
-          <tr *ngFor="let tag of product.tags">
-            <td>{{tag.name}}</td>
-            <td>{{tag.value}}</td>
-          </tr>
-        </table>
-      </div>
-      <div class="table-spacer"></div>
     </div>
   </div>
 </div>

@@ -12,7 +12,6 @@ import { FootprintsCustomizationConfig as FCConfig } from '../services/footprint
 
 let canvasContainer: any;
 let contextMenuContainer: any;
-let footprintMenuContainer: any;
 let deckGlobe: any;
 let deckPlane: any;
 let mapProjection: string = 'globe';
@@ -36,6 +35,7 @@ let mapTiles: any = { styles: [
 
 let selectedMapStyleIndex = 0;
 let selectedMapStyle: string;
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -60,12 +60,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public geoSearchPolygonPresent: boolean = false;
   public geoSearchOutput: string = "";
   public minimalCoordinateDiff: number = 0.00000000000001;
-  //public tooltipTimeoutId: any;
-  //public hideTooltipTimeoutId: any;
   public contextMenuTimeoutId: any;
-  public footprintMenuTimeoutId: any;
   public hoveredProductsArray: any[] = [];
-  public hoveredProductShownArray: any[] = [];
   public hoveredObject: any = {};
   public maxPickableObjectsDepth: number = AppConfig.settings.footprints.maxPickableObjectsDepth;
 
@@ -315,33 +311,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.changeDrawLayer();
       }
     } else if (this.canShowFootprintsMenu) {
-      //console.log("Clicked Left on Footprints");
-      //console.log(info);
-      //console.log(event);
       if (info.index === -1) return;
-
-      clearTimeout(this.footprintMenuTimeoutId);
-      let viewportWidth = window.innerWidth;
-      let viewportHeight = window.innerHeight;
-      footprintMenuContainer.style.left = (event.center.x + 20) + 'px';
-      footprintMenuContainer.style.top = (event.center.y - 15) + 'px';
-
-      this.hoveredProductShownArray = this.hoveredProductsArray;
-      setTimeout(() => {
-        if (footprintMenuContainer.classList.contains('hidden')) {
-          footprintMenuContainer.classList.replace('hidden', 'visible');
-        }
-        if (viewportHeight - (event.center.y + footprintMenuContainer.offsetHeight) < 0) {
-          footprintMenuContainer.style.top = (viewportHeight - footprintMenuContainer.offsetHeight - 8) + 'px';
-        }
-        if (viewportWidth - (event.center.x + contextMenuContainer.offsetWidth) < 0) {
-          footprintMenuContainer.style.left = (viewportWidth - footprintMenuContainer.offsetWidth - 8) + 'px';
-        }
-      }, 50);
-
-      this.footprintMenuTimeoutId = setTimeout(() => {
-        this.hideFootprintMenu();
-      }, 3000);
+      this.exchangeService.showFootprintsMenu(event, this.hoveredProductsArray);
     }
   }
 
@@ -443,7 +414,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           });
           this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
         }
-        //this.showProductFootprint(info.index);
         this.showProductFootprint(tempHoveredIndexesArray);
         this.exchangeService.updateHoveredProduct(infos);
       } else {
@@ -937,49 +907,16 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.hideContextMenu();
     }, 500);
   }
-  onMouseEnterFootprintMenu() {
-    clearTimeout(this.footprintMenuTimeoutId);
-  }
-  onMouseLeaveFootprintMenu() {
-    this.footprintMenuTimeoutId = setTimeout(() => {
-      this.hideFootprintMenu();
-    }, 500);
-  }
   hideFootprintMenu() {
-    footprintMenuContainer.style.left = '-400px';
-    footprintMenuContainer.style.top = '-400px';
-    if (footprintMenuContainer.classList.contains('visible')) {
-      footprintMenuContainer.classList.replace('visible', 'hidden');
-    }
-  }
-
-  onMouseOverTooltipProductTable(tooltipProduct: any) {
-    let tempIndex = this.productList.value.findIndex((product: any) => {
-      return product.Id === tooltipProduct.Id
-    });
-    setTimeout(() => {
-      this.showProductFootprint([tempIndex]);
-      this.exchangeService.updateHoveredProduct([{index: tempIndex}]);
-    }, 0);
-  }
-
-  onMouseLeaveTooltipProductTable() {
-    this.showProductFootprint([-1]);
-    this.exchangeService.updateHoveredProduct([{index: -1}]);
-  }
-
-  onClickOverTooltipProductTable(product: any) {
-    this.exchangeService.zoomToList(product.Id);
+    this.exchangeService.showFootprintsMenu(null, []);
   }
 
   ngOnInit(): void {
     canvasContainer = document.getElementById('canvas-container')!;
     contextMenuContainer = document.getElementById('context-menu-container')!;
-    footprintMenuContainer = document.getElementById('footprint-menu-container')!;
 
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
-      //this.hideProductFootprint();
       this.hideFootprintMenu();
       clearTimeout(this.contextMenuTimeoutId);
       let viewportWidth = window.innerWidth;
@@ -987,7 +924,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       contextMenuContainer.style.left = (event.clientX + 20) + 'px';
       contextMenuContainer.style.top = (event.clientY - 15) + 'px';
       if (contextMenuContainer.classList.contains('hidden')) {
-        this.hoveredProductShownArray = this.hoveredProductsArray;
         contextMenuContainer.classList.replace('hidden', 'visible');
         if (viewportHeight - (event.clientY + contextMenuContainer.offsetHeight) < 0) {
           contextMenuContainer.style.top = (viewportHeight - contextMenuContainer.offsetHeight - 8) + 'px';
@@ -1152,15 +1088,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       canvas: 'map-globe',
       style: {display: mapProjection === 'globe' ? 'block' : 'none'},
       layers: [
-        /* Base Map Layer */
         this.mapLayerGlobe,
-        /* Footprint geojson layer */
         this.geojsonLayerGlobe,
-        /* Selected footprint layer */
         this.geojsonLayerGlobeSelected,
-        /* Drawable Polygon Layer */
         this.drawPolygonLayerGlobe,
-        /* Polygon circles */
         this.drawCirclesLayerGlobe
       ],
       wrapLongitude: true,
@@ -1210,15 +1141,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       canvas: 'map-plane',
       style: {display: mapProjection === 'plane' ? 'block' : 'none'},
       layers: [
-        /* Base Map Layer */
         this.mapLayerPlane,
-        /* Footprint geojson layer */
         this.geojsonLayerPlane,
-        /* Selected footprint layer */
         this.geojsonLayerPlaneSelected,
-        /* Drawable Polygon Layer */
         this.drawPolygonLayerPlane,
-        /* Polygon Circles */
         this.drawCirclesLayerPlane
       ],
       wrapLongitude: true,
@@ -1321,30 +1247,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     /* Update Plane View */
     const layersPlane =  [
-      /* Base Map Layer */
       this.mapLayerPlane,
-      /* Footprint geojson layer */
       this.geojsonLayerPlane,
-      /* Selected footprint layer */
       this.geojsonLayerPlaneSelected,
-      /* Drawable Polygon Layer */
       this.drawPolygonLayerPlane,
-      /* Polygon circles */
       this.drawCirclesLayerPlane
     ]
     deckPlane.setProps({layers: layersPlane});
 
     /* Update Globe View */
     const layersGlobe =  [
-      /* Base Map Layer */
       this.mapLayerGlobe,
-      /* Footprint geojson layer */
       this.geojsonLayerGlobe,
-      /* Selected footprint layer */
       this.geojsonLayerGlobeSelected,
-      /* Drawable Polygon Layer */
       this.drawPolygonLayerGlobe,
-      /* Polygon circles */
       this.drawCirclesLayerGlobe
     ]
     deckGlobe.setProps({layers: layersGlobe});
@@ -1363,30 +1279,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     /* Update Plane View */
     const layersPlane =  [
-      /* Base Map Layer */
       this.mapLayerPlane,
-      /* Footprint geojson layer */
       this.geojsonLayerPlane,
-      /* Selected footprint layer */
       this.geojsonLayerPlaneSelected,
-      /* Drawable Polygon Layer */
       this.drawPolygonLayerPlane,
-      /* Polygon circles */
       this.drawCirclesLayerPlane
     ]
     deckPlane.setProps({layers: layersPlane});
 
     /* Update Globe View */
     const layersGlobe =  [
-      /* Base Map Layer */
       this.mapLayerGlobe,
-      /* Footprint geojson layer */
       this.geojsonLayerGlobe,
-      /* Selected footprint layer */
       this.geojsonLayerGlobeSelected,
-      /* Drawable Polygon Layer */
       this.drawPolygonLayerGlobe,
-      /* Polygon circles */
       this.drawCirclesLayerGlobe
     ]
     deckGlobe.setProps({layers: layersGlobe});
@@ -1463,30 +1369,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       })
       /* Update Plane View */
       const layersPlane =  [
-        /* Base Map Layer */
         this.mapLayerPlane,
-        /* Footprint geojson layer */
         this.geojsonLayerPlane,
-        /* Selected footprints layer */
         this.geojsonLayerPlaneSelected,
-        /* Drawable Polygon Layer */
         this.drawPolygonLayerPlane,
-        /* Polygon circles */
         this.drawCirclesLayerPlane
       ]
       deckPlane.setProps({layers: layersPlane});
 
       /* Update Globe View */
       const layersGlobe =  [
-        /* Base Map Layer */
         this.mapLayerGlobe,
-        /* Footprint geojson layer */
         this.geojsonLayerGlobe,
-        /* Selected footprints layer */
         this.geojsonLayerGlobeSelected,
-        /* Drawable Polygon Layer */
         this.drawPolygonLayerGlobe,
-        /* Polygon circles */
         this.drawCirclesLayerGlobe
       ]
       deckGlobe.setProps({layers: layersGlobe});
@@ -1624,8 +1520,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (coordinates.length === 2) {
       /* TwoHalves Footprint */
-      //console.log("TwoHalves Footprint");
-      //console.log(coordinates);
       let tempCoords: any[] = [];
       coordinates[0][0].forEach((arr: any) => {
         tempCoords.push(arr);
@@ -1637,14 +1531,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
       let tempLatLonBoundsNegative: any;
       let tempLatLonBoundsPositive: any;
-      //console.log("coordinates[0][0][0][0]: " + coordinates[0][0][0][0]);
 
       if (coordinates[0][0][0][0] < 0) {
-        //console.log("coordinates[0][0][0][0] < 0");
         tempLatLonBoundsNegative = this.calcMinMaxCoordinatesValues(coordinates[0][0]);
         tempLatLonBoundsPositive = this.calcMinMaxCoordinatesValues(coordinates[1][0]);
       } else {
-        //console.log("coordinates[0][0][0][0] > 0");
         tempLatLonBoundsNegative = this.calcMinMaxCoordinatesValues(coordinates[1][0]);
         tempLatLonBoundsPositive = this.calcMinMaxCoordinatesValues(coordinates[0][0]);
       }

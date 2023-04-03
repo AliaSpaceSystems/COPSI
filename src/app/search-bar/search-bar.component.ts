@@ -36,6 +36,10 @@ let copsyBlueColor_BLUE: number;
 let advancedSearchMagnifierIcon: any;
 let advancedSearchSubmitIcon: any;
 
+let footprintMenuContainer: any;
+let footprintMenuScrollableDiv: any;
+let footprintMenuScrollThumb: any;
+
 @Component({
   selector: 'app-search-bar',
   templateUrl: './search-bar.component.html',
@@ -122,12 +126,18 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public Object = Object;
   public Array = Array;
 
+  public footprintMenuTimeoutId: any;
+  public hoveredProductShownArray: any[] = [];
+  public footprintMenuThumbPos: number = 0;
+  public footprintMenuSize: number = 0;
+
   download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
 
   updateGeoSearchSubscription!: Subscription;
   updateHoveredProductSubscription! : Subscription;
   zoomToListSubscription!: Subscription;
+  showFootprintsMenuSubscription!: Subscription;
 
   constructor(
     private exchangeService: ExchangeService,
@@ -168,6 +178,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon')!;
     productDetailContainer = document.getElementById('product-details-container')!;
     productDetailScrollableDiv = document.getElementById('product-details-inner-container')!;
+    footprintMenuContainer = document.getElementById('footprint-menu-container')!;
+    footprintMenuScrollableDiv = document.getElementById('footprint-menu-scrollable-div')!;
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -266,6 +278,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.scrollDetailThumbPos = this.calcThumbPos(productDetailScrollableDiv, this.scrollDetailSize);
       this.setThumbPos(productDetailScrollThumb, this.scrollDetailThumbPos);
     });
+
+    /* Footprint Menu scroll thumb */
+    footprintMenuScrollThumb = document.getElementById('footprints-menu-scroll-thumb')!;
+    this.dragElement(footprintMenuScrollThumb, footprintMenuScrollableDiv);
+
+    footprintMenuScrollableDiv!.addEventListener('scroll', (e: any) => {
+      this.footprintMenuThumbPos = this.calcThumbPos(footprintMenuScrollableDiv, this.footprintMenuSize);
+      this.setThumbPos(footprintMenuScrollThumb, this.footprintMenuThumbPos);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -311,6 +332,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         this.zoomToList(value);
       }
     });
+    this.showFootprintsMenuSubscription = this.exchangeService.footprintMenuEventExchange.subscribe((value) => {
+      this.showFootprintsMenu(value);
+    });
   }
 
   ngOnDestroy(): void {
@@ -318,6 +342,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateGeoSearchSubscription.unsubscribe();
     this.updateHoveredProductSubscription.unsubscribe();
     this.zoomToListSubscription.unsubscribe();
+    this.showFootprintsMenuSubscription.unsubscribe();
     if (this.downloadSubscription.size > 0) {
       this.downloadSubscription.forEach(sub => {
         sub.unsubscribe();
@@ -718,6 +743,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setThumbSize(productDetailScrollThumb, this.scrollDetailSize);
     this.scrollDetailThumbPos = this.calcThumbPos(productDetailScrollableDiv, this.scrollDetailSize);
     this.setThumbPos(productDetailScrollThumb, this.scrollDetailThumbPos);
+  }
+
+  checkFootprintsMenuThumbSize() {
+    this.calcFootprintsMenuThumbSize();
+    this.setThumbSize(footprintMenuScrollThumb, this.footprintMenuSize);
+    this.footprintMenuThumbPos = this.calcThumbPos(footprintMenuScrollableDiv, this.footprintMenuSize);
+    this.setThumbPos(footprintMenuScrollThumb, this.footprintMenuThumbPos);
   }
 
   onSearch(event: any) {
@@ -1141,6 +1173,14 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       productDetailScrollThumb.style.visibility = 'hidden';
     }
   }
+  calcFootprintsMenuThumbSize() {
+    if (footprintMenuScrollableDiv.scrollHeight > footprintMenuScrollableDiv.clientHeight) {
+      footprintMenuScrollThumb.style.visibility = 'visible';
+      this.footprintMenuSize = footprintMenuScrollableDiv.clientHeight * footprintMenuScrollableDiv.clientHeight / footprintMenuScrollableDiv.scrollHeight;
+    } else {
+      footprintMenuScrollThumb.style.visibility = 'hidden';
+    }
+  }
 
   calcListThumbColor() {
     clearTimeout(this.listThumbColorTimeout);
@@ -1262,6 +1302,82 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.toast.showInfoToast('success', 'PRODUCT URL COPIED!');
   }
 
+
+
+  /* Footprints Menu */
+  showFootprintsMenu(obj: {event: any, array: any[]}) {
+    let event: any = obj.event;
+    let hoveredProductsArray: any[] = obj.array;
+
+    footprintMenuScrollThumb.style.visibility = 'hidden';
+    if (event === null) {
+      this.hideFootprintMenu();
+    }
+    clearTimeout(this.footprintMenuTimeoutId);
+      let viewportWidth = window.innerWidth;
+      let viewportHeight = window.innerHeight;
+      footprintMenuContainer.style.left = (event.center.x + 20) + 'px';
+      footprintMenuContainer.style.top = (event.center.y - 15) + 'px';
+
+      this.hoveredProductShownArray = hoveredProductsArray;
+      setTimeout(() => {
+        if (footprintMenuContainer.classList.contains('hidden')) {
+          footprintMenuContainer.classList.replace('hidden', 'visible');
+        }
+        if (viewportHeight - (event.center.y + footprintMenuContainer.offsetHeight) < 0) {
+          footprintMenuContainer.style.top = (viewportHeight - footprintMenuContainer.offsetHeight - 8) + 'px';
+        }
+        if (viewportWidth - (event.center.x + footprintMenuContainer.offsetWidth) < 0) {
+          footprintMenuContainer.style.left = (viewportWidth - footprintMenuContainer.offsetWidth - 8) + 'px';
+        }
+        setTimeout(() => {
+          this.checkFootprintsMenuThumbSize();
+        }, 50);
+      }, 50);
+
+      this.footprintMenuTimeoutId = setTimeout(() => {
+        this.hideFootprintMenu();
+      }, 3000);
+  }
+
+  onMouseEnterFootprintMenu() {
+    clearTimeout(this.footprintMenuTimeoutId);
+  }
+  onMouseLeaveFootprintMenu() {
+    this.footprintMenuTimeoutId = setTimeout(() => {
+      this.hideFootprintMenu();
+    }, 500);
+  }
+  hideFootprintMenu() {
+    footprintMenuContainer.style.left = '-400px';
+    footprintMenuContainer.style.top = '-400px';
+    if (footprintMenuContainer.classList.contains('visible')) {
+      footprintMenuContainer.classList.replace('visible', 'hidden');
+    }
+  }
+
+  onMouseOverTooltipProductTable(tooltipProduct: any) {
+    let tempIndex = this.productList.value.findIndex((product: any) => {
+      return product.Id === tooltipProduct.Id
+    });
+    setTimeout(() => {
+      this.exchangeService.showProductOnMap(tempIndex);
+      this.updateHoveredProduct([{index: tempIndex}]);
+    }, 0);
+  }
+
+  onMouseLeaveTooltipProductTable() {
+    this.exchangeService.showProductOnMap(-1);
+    this.updateHoveredProduct([{index: -1}]);
+  }
+
+  onClickOverTooltipProductTable(product: any) {
+    this.zoomToList(product.Id);
+  }
+
+
+
+  /* Accessory functions */
   returnOptionNameFromValue(val: any, options: any) {
     return options.filter((option: any) => option.value === val)[0].name;
   }

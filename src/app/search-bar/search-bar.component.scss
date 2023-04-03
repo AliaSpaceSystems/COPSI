@@ -179,7 +179,6 @@ hr {
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
-  transition: background-color 0.1s linear;
 }
 
 
@@ -1098,8 +1097,106 @@ input:invalid {
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
-  transition: background-color 0.1s linear;
 }
+
+
+/* Footprints Menu */
+#footprint-menu-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: -5rem;
+  width: 14rem;
+  max-height: calc(100dvh - 1rem);
+  padding: 0;
+  gap: 0;
+  z-index: 60;
+}
+#footprint-menu-container.visible {
+  visibility: visible;
+}
+#footprint-menu-container.hidden {
+  visibility: hidden;
+}
+#footprints-menu-column-div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+#footprint-menu-scrollable-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: calc(100dvh - 3rem);
+  padding: 0;
+  width: 100%;
+  border: $main-dark-border;
+  border-radius: 0.25rem;
+  box-shadow: $default-shadow;
+  overflow-y: auto;
+}
+/* Scrollbar hiding */
+#footprint-menu-scrollable-div {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+#footprint-menu-scrollable-div::-webkit-scrollbar {
+  display: none;  /* Chrome */
+}
+
+#footprints-menu-title {
+  font-size: $search-bar-font-size;
+  padding: 0.5rem 0 0.25rem 0;
+  width: 100%;
+  text-align: center;
+  border-radius: 0.25rem;
+  border: $main-dark-border;
+  background-color: $main-dark-bg-color;
+}
+
+.footprint-tooltip-list-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.footprint-tooltip-table-div:hover {
+  background-color: #fff;
+  border-color: $menu-dark-bg-color;
+}
+.footprint-tooltip-table {
+  background-color: $menu-dark-bg-color;
+  width: 100%;
+  padding: 0 0.25rem;
+  font-size: 0.75rem;
+}
+.footprint-tooltip-table th, td {
+  padding: 0 0.5rem 0 0;
+}
+.table-spacer {
+  height: 0.5rem;
+  background-color: $main-dark-bg-color;
+}
+
+#footprints-menu-scroll-thumb {
+  visibility: hidden;
+  position: absolute;
+  z-index: 99;
+  width: 0.5rem;
+  border: $main-dark-border;
+  box-shadow: $default-shadow;
+  height: 1rem;
+  background-color: $main-dark-text-color;
+  border-radius: 0.25rem;
+  right: 0.75rem;
+  margin: 2rem 0 0 0;
+  top: 0;
+  opacity: 1.0;
+  pointer-events: visible;
+}
+
 
 
 /* trick to get css vars in js.. */

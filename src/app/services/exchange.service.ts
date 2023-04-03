@@ -50,6 +50,9 @@ export class ExchangeService {
   private productIdOnList = new BehaviorSubject<any>({});
   zoomToProductIdOnListExchange = this.productIdOnList.asObservable();
 
+  private footprintMenuEvent = new BehaviorSubject<any>({});
+  footprintMenuEventExchange = this.footprintMenuEvent.asObservable();
+
   constructor() { }
 
   setMapStyle(mapStyle: string) {
@@ -110,5 +113,9 @@ export class ExchangeService {
 
   zoomToList(productId: string) {
     this.productIdOnList.next(productId);
+  }
+
+  showFootprintsMenu(event: any, array: any[]) {
+    this.footprintMenuEvent.next({event, array});
   }
 }
