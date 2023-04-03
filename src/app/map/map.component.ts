@@ -7,6 +7,7 @@ import { TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { wktToGeoJSON } from '@terraformer/wkt';
 import { AppConfig } from '../services/app.config';
+import { ToastComponent } from '../toast/toast.component';
 import { FootprintsCustomizationConfig as FCConfig } from '../services/footprints_customization.config';
 
 let canvasContainer: any;
@@ -910,7 +911,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   });
 
-  constructor(private exchangeService: ExchangeService) {
+  constructor(
+    private exchangeService: ExchangeService,
+    private toast: ToastComponent
+  ) {
     mapTiles.styles = AppConfig.settings.styles;
     mapProjection = AppConfig.settings.mapSettings.projection;
     initialViewState = AppConfig.settings.mapSettings.initialViewState;
@@ -1405,7 +1409,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             "properties": {},
             "geometry": {
               type: "Point",
-              coordinates: [180,90] // fake point so deck.gl will not return a warning..
+              coordinates: []
             }
           });
         }
@@ -1567,34 +1571,35 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   zoomToProduct(id: string) {
     let tempZoomedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
     let zoomToViewState = this.getCoordinatesBounds(tempZoomedProduct.featureList.geometry.coordinates);
-    if (this.currentProjection === 'globe') {
-      deckGlobe.setProps({
-        initialViewState: {
-          longitude: zoomToViewState.centerCoordinates[0],
-          latitude: zoomToViewState.centerCoordinates[1],
-          zoom: zoomToViewState.zoomLevel,
-          transitionDuration: 'auto',
-          transitionInterpolator: new FlyToInterpolator({
-            speed: 1,
-            curve: 2
-          })
-        }
-      });
-    } else {
-      deckPlane.setProps({
-        initialViewState: {
-          longitude: zoomToViewState.centerCoordinates[0],
-          latitude: zoomToViewState.centerCoordinates[1],
-          zoom: zoomToViewState.zoomLevel,
-          transitionDuration: 'auto',
-          transitionInterpolator: new FlyToInterpolator({
-            speed: 1,
-            curve: 2
-          })
-        }
-      });
+    if (zoomToViewState !== null) {
+      if (this.currentProjection === 'globe') {
+        deckGlobe.setProps({
+          initialViewState: {
+            longitude: zoomToViewState.centerCoordinates[0],
+            latitude: zoomToViewState.centerCoordinates[1],
+            zoom: zoomToViewState.zoomLevel,
+            transitionDuration: 'auto',
+            transitionInterpolator: new FlyToInterpolator({
+              speed: 1,
+              curve: 2
+            })
+          }
+        });
+      } else {
+        deckPlane.setProps({
+          initialViewState: {
+            longitude: zoomToViewState.centerCoordinates[0],
+            latitude: zoomToViewState.centerCoordinates[1],
+            zoom: zoomToViewState.zoomLevel,
+            transitionDuration: 'auto',
+            transitionInterpolator: new FlyToInterpolator({
+              speed: 1,
+              curve: 2
+            })
+          }
+        });
+      }
     }
-
   }
 
   getArrayDim(arr: any) {
@@ -1614,14 +1619,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   getCoordinatesBounds(coordinates: any) {
     let tempArrayDim = this.getArrayDim(coordinates);
     let centerCoordinates: number[] = [0, 0];
-    let zoomLevel: number = 2.5;
+    let zoomLevel: number = 3;
     let tempLatLonBounds: {coordsMin: number[], coordsMax: number[]} = {coordsMin: [0,0], coordsMax: [0,0]};
 
     if (coordinates.length === 2) {
       /* TwoHalves Footprint */
       //console.log("TwoHalves Footprint");
       //console.log(coordinates);
-
       let tempCoords: any[] = [];
       coordinates[0][0].forEach((arr: any) => {
         tempCoords.push(arr);
@@ -1652,12 +1656,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       if (centerLon < 0) centerLon += 180.0;
       else centerLon -= 180.0;
       centerCoordinates = [centerLon, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
-      zoomLevel = 3;
     } else if (tempArrayDim.length === 3) {
       /* Simple Footprint */
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(coordinates[0]);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
-      zoomLevel = 3;
     } else if (tempArrayDim.length === 4) {
       /* Multi Footprint */
       let tempCoords: any[] = [];
@@ -1670,8 +1672,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(tempCoords);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
-      zoomLevel = 3;
     } else {
+      this.toast.showInfoToast('error', 'NO VALID FOOTPRINT TO ZOOM TO.');
+      return null;
     }
     zoomLevel = this.calcZoomLevelFromLatLonBounds(tempLatLonBounds);
     return {centerCoordinates, zoomLevel};
