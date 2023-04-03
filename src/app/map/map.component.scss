@@ -76,7 +76,7 @@ hr {
   top: 0;
   left: -5rem;
   width: 14rem;
-  max-height: 100dvh;
+  max-height: calc(100dvh - 1rem);
   padding: 0;
   overflow-y: auto;
   z-index: 60;
@@ -109,6 +109,7 @@ hr {
   background-color: $menu-dark-bg-color;
   width: 100%;
   padding: 0 0.25rem;
+  font-size: 0.75rem;
 }
 .footprint-tooltip-table th, td {
   padding: 0 0.5rem 0 0;

@@ -314,9 +314,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.changeDrawLayer();
       }
     } else if (this.canShowFootprintsMenu) {
-      //console.log("Clicced Left on Footprints");
+      //console.log("Clicked Left on Footprints");
+      //console.log(info);
       //console.log(event);
+      if (info.index === -1) return;
 
+      clearTimeout(this.footprintMenuTimeoutId);
       let viewportWidth = window.innerWidth;
       let viewportHeight = window.innerHeight;
       footprintMenuContainer.style.left = (event.center.x + 20) + 'px';
@@ -328,10 +331,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           footprintMenuContainer.classList.replace('hidden', 'visible');
         }
         if (viewportHeight - (event.center.y + footprintMenuContainer.offsetHeight) < 0) {
-          footprintMenuContainer.style.top = (viewportHeight - footprintMenuContainer.offsetHeight) + 'px';
+          footprintMenuContainer.style.top = (viewportHeight - footprintMenuContainer.offsetHeight - 8) + 'px';
         }
         if (viewportWidth - (event.center.x + contextMenuContainer.offsetWidth) < 0) {
-          footprintMenuContainer.style.left = (viewportWidth - footprintMenuContainer.offsetWidth) + 'px';
+          footprintMenuContainer.style.left = (viewportWidth - footprintMenuContainer.offsetWidth - 8) + 'px';
         }
       }, 50);
 
@@ -703,7 +706,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public geojsonLayerPlane = new GeoJsonLayer({
     id: 'geojson-layer',
     data: geojsonData,
-    pickable: true,
+    pickable: false,
     stroked: true,
     visible: true,
     filled: true,
@@ -747,7 +750,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public geojsonLayerGlobe = new GeoJsonLayer({
     id: 'geojson-layer',
     data: geojsonData,
-    pickable: true,
+    pickable: false,
     stroked: true,
     visible: true,
     filled: true,
@@ -856,7 +859,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     radiusUnits: 'pixels',
     getLineWidth: 1,
     getPosition: (d: any) => d.coordinates,
-    getRadius: (d: any, obj: any) => {
+    getRadius: (d: any) => {
       return d === this.hoveredObject ? AppConfig.settings.geoSearchSettings.bigCircleRadius : d.radius
     },
     getFillColor: [255, 255, 255],
@@ -890,7 +893,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     radiusUnits: 'pixels',
     getLineWidth: 1,
     getPosition: (d: any) => d.coordinates,
-    getRadius: (d: any, obj: any) => d.radius,
+    getRadius: (d: any) => d.radius,
     getFillColor: [255, 255, 255],
     getLineColor: [0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
@@ -950,8 +953,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     let tempIndex = this.productList.value.findIndex((product: any) => {
       return product.Id === tooltipProduct.Id
     });
-    this.showProductFootprint([tempIndex]);
-    this.exchangeService.updateHoveredProduct([{index: tempIndex}]);
+    setTimeout(() => {
+      this.showProductFootprint([tempIndex]);
+      this.exchangeService.updateHoveredProduct([{index: tempIndex}]);
+    }, 0);
+  }
+
+  onMouseLeaveTooltipProductTable() {
+    this.showProductFootprint([-1]);
+    this.exchangeService.updateHoveredProduct([{index: -1}]);
   }
 
   onClickOverTooltipProductTable(product: any) {
@@ -967,24 +977,21 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       event.preventDefault();
       //this.hideProductFootprint();
       this.hideFootprintMenu();
+      clearTimeout(this.contextMenuTimeoutId);
       let viewportWidth = window.innerWidth;
       let viewportHeight = window.innerHeight;
       contextMenuContainer.style.left = (event.clientX + 20) + 'px';
       contextMenuContainer.style.top = (event.clientY - 15) + 'px';
       if (contextMenuContainer.classList.contains('hidden')) {
-
         this.hoveredProductShownArray = this.hoveredProductsArray;
-        setTimeout(() => {
-          contextMenuContainer.classList.replace('hidden', 'visible');
-          if (viewportHeight - (event.clientY + contextMenuContainer.offsetHeight) < 0) {
-            contextMenuContainer.style.top = (viewportHeight - contextMenuContainer.offsetHeight) + 'px';
-          }
-          if (viewportWidth - (event.clientX + contextMenuContainer.offsetWidth) < 0) {
-            contextMenuContainer.style.left = (viewportWidth - contextMenuContainer.offsetWidth) + 'px';
-          }
-        }, 250);
+        contextMenuContainer.classList.replace('hidden', 'visible');
+        if (viewportHeight - (event.clientY + contextMenuContainer.offsetHeight) < 0) {
+          contextMenuContainer.style.top = (viewportHeight - contextMenuContainer.offsetHeight - 8) + 'px';
+        }
+        if (viewportWidth - (event.clientX + contextMenuContainer.offsetWidth) < 0) {
+          contextMenuContainer.style.left = (viewportWidth - contextMenuContainer.offsetWidth - 8) + 'px';
+        }
       }
-
       this.contextMenuTimeoutId = setTimeout(() => {
         this.hideContextMenu();
       }, 3000);
@@ -993,6 +1000,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     ["mousedown", "wheel"].forEach((inputEvent: any) => {
       canvasContainer.addEventListener(inputEvent, (event: any) => {
         this.hideContextMenu();
+        this.hideFootprintMenu();
       });
     });
 
