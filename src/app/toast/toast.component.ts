@@ -13,6 +13,7 @@ let toastMainDiv: any;
 })
 export class ToastComponent implements OnInit {
 
+  public toastTimeoutId: any;
   public message: string = '';
   constructor() {
   }
@@ -23,12 +24,13 @@ export class ToastComponent implements OnInit {
   }
 
   showToast(message: string) {
+    clearTimeout(this.toastTimeoutId);
     this.message = message;
     toastContainerDiv.style.visibility = 'visible';
     toastContainerDiv.style.bottom = '1.75rem';
     toastContainerDiv.style.opacity = '1.0';
     document.getElementById('toast-title')!.innerHTML = this.message;
-    setTimeout(function(){
+    this.toastTimeoutId = setTimeout(function(){
       toastContainerDiv.style.opacity = '0.0';
       toastContainerDiv.style.bottom = '1.25rem';
       toastContainerDiv.style.visibility = 'hidden';
@@ -40,6 +42,8 @@ export class ToastComponent implements OnInit {
       toastMainDiv.className = "success";
     } else if (type === "error") {
       toastMainDiv.className = "error";
+    } else if (type === "info") {
+      toastMainDiv.className = "info";
     } else {
       toastMainDiv.className = "base";
     }

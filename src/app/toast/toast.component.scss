@@ -40,6 +40,10 @@
   background-color: $toast-success-color;
 }
 
+#toast-container-div .info {
+  background-color: $toast-info-color;
+}
+
 #toast-container-div .error {
   background-color: $toast-error-color;
 }

@@ -47,6 +47,7 @@
       "projection": "globe"
   },
   "geoSearchSettings": {
+    "showGeoSearchToolbar": true,
     "defaultCircleRadius": 8,
     "bigCircleRadius": 12,
     "smallCircleRadius": 3,

@@ -57,13 +57,6 @@ $switch-height: 0.8rem;
 $product-details-width: 26rem;
 $product-details-width-mobile: 20rem;
 
-/* toast */
-$toast-font-size: $footer-font-size;
-$toast-font-size-mobile: 0.7rem;
-$toast-default-color: $menu-dark-bg-color;
-$toast-success-color: #419641;
-$toast-error-color: #ff4141;
-
 /* miscellaneus */
 $default-shadow: 0 2px 4px rgba(0,0,0,0.5);
 $login-shadow: 0 2px 50px rgba(0,0,0,1.0);
@@ -76,6 +69,13 @@ $scrollbar-bg-color: #0000;
 $main-buttons-bg-color: #dddddd;
 $main-buttons-bg-color-hover: #ababab;
 
+/* toast */
+$toast-font-size: $footer-font-size;
+$toast-font-size-mobile: 0.7rem;
+$toast-default-color: $menu-dark-bg-color;
+$toast-success-color: #419641;
+$toast-error-color: #ff4141;
+$toast-info-color: $copsi-blue;
 
 /* responsiveness */
 $screen-width-threshold-medium: 54.5rem;

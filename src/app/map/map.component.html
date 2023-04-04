@@ -21,14 +21,14 @@
       </div>
       <hr>
       <div class="geo-search-command-div" (click)="this.onCancelDrawingButtonClicked(true)">
-        <mat-icon id="cancel-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Cancel polygon icon" fontIcon="delete_forever" title="Cancel polygon"></mat-icon>
-        <p>Cancel Drawings</p>
+        <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon>
+        <p>Delete Polygon</p>
       </div>
     </div>
   </div>
 </div>
 
-<div id="geosearch-fixed-container">
+<div *ngIf="showGeoSearchToolbar" id="geosearch-fixed-container">
   <div id="geosearch-fixed-column-div">
     <div class="geo-search-command-div" (click)="this.onDrawRectButtonClicked(true)">
       <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon>
@@ -38,7 +38,7 @@
     </div>
     <hr>
     <div class="geo-search-command-div" (click)="this.onCancelDrawingButtonClicked(true)">
-      <mat-icon id="cancel-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Cancel polygon icon" fontIcon="delete_forever" title="Cancel polygon"></mat-icon>
+      <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon>
     </div>
   </div>
 </div>
