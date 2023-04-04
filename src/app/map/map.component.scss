@@ -65,3 +65,22 @@ hr {
   font-size: $search-bar-font-size;
   margin: 0;
 }
+
+/* Geo Search Fixed Container */
+#geosearch-fixed-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  height: 100%;
+  right: 0.5rem;
+}
+#geosearch-fixed-column-div {
+  display: flex;
+  flex-direction: column;
+  background-color: $menu-dark-bg-color;
+  border: $main-dark-border;
+  border-radius: 0.25rem;
+  box-shadow: $default-shadow;
+}

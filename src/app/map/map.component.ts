@@ -64,6 +64,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public hoveredProductsArray: any[] = [];
   public hoveredObject: any = {};
   public maxPickableObjectsDepth: number = AppConfig.settings.footprints.maxPickableObjectsDepth;
+  public showGeoSearchToolbar: boolean = AppConfig.settings.geoSearchSettings.showGeoSearchToolbar;
 
   public drawGeoSearchCirclesData = [
     {
@@ -91,6 +92,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   onDrawRectButtonClicked(val: boolean) {
+    this.toast.showInfoToast('info', 'CLICK ON MAP TO PLACE FIRST VERTEX');
     this.canShowFootprintsMenu = false;
     this.canDrawRect = true;
     this.canDragPolygon = false;
@@ -122,6 +124,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDrawPolygonButtonClicked(val: boolean) {
+    this.toast.showInfoToast('info', 'CLICK ON MAP TO PLACE FIRST VERTEX');
     this.canShowFootprintsMenu = false;
     this.canDrawPolygon = true;
     this.canDragPolygon = false;
@@ -153,6 +156,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onCancelDrawingButtonClicked(val: boolean) {
+    this.toast.showInfoToast('info', 'POLYGON DELETED');
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
       "features": [
@@ -226,6 +230,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.drawGeoSearchCirclesData = tempPointsArray;
         this.drawPointAdded = true;
         this.changeDrawLayer();
+        this.toast.showInfoToast('info', 'CLICK ON MAP TO FINISH');
       } else {
         tempPolygonArray[0].splice(1, 3, [info.coordinate[0], tempPolygonArray[0][0][1]], info.coordinate, [tempPolygonArray[0][0][0], info.coordinate[1]]);
         tempPointsArray = [
@@ -266,6 +271,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let tempFillColor = this.geoSearchSettings.fillColorActive;
       let tempBorderColor = this.geoSearchSettings.borderColorActive;
       if(tempPolygonArray[0].length == 0) {
+        this.toast.showInfoToast('info', 'CLICK ON MAP TO DRAW NEXT VERTEX');
         tempPolygonArray[0].push(info.coordinate, info.coordinate);
         tempPointsArray = [{"coordinates": info.coordinate, "radius": this.geoSearchSettings.bigCircleRadius }];
         this.drawGeoSearchCirclesData = tempPointsArray;
@@ -286,6 +292,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           this.exchangeService.updateGeoSearch(this.geoSearchOutput);
           this.canShowFootprintsMenu = true;
         } else {
+          tempPolygonArray[0].length === 2 ?
+            this.toast.showInfoToast('info', 'CLICK ON MAP TO DRAW NEXT VERTEX') :
+            this.toast.showInfoToast('info', 'CLICK ON FIRST POINT TO CLOSE POLYGON');
           tempPolygonArray[0].push(info.coordinate);
           tempPointsArray = tempPointsArray.concat([{"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius }]);
         }
