@@ -120,7 +120,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public selectedProduct: any = {};
   public selectedProductIndex: number = -1;
-  public properiesList: any = DetailsConfig.settings.Properties;
+  public propertiesList: any = DetailsConfig.settings.Properties;
   public attributesList: any = DetailsConfig.settings.Attributes;
   public precProductId: any;
   public Object = Object;

@@ -248,7 +248,7 @@
               <th style="width: 30%;">Name</th>
               <th style="width: 70%;">Value</th>
             </tr>
-            <tr *ngFor="let property of properiesList">
+            <tr *ngFor="let property of propertiesList">
               <td *ngIf="selectedProduct.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
               <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number')" class="properties-table-value" title="{{selectedProduct[property]}}">{{selectedProduct[property]}}</td>
               <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value" title="{{selectedProduct[property]}}">
