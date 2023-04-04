@@ -26,6 +26,10 @@
   <p>Welcome <span>{{name}}!</span></p>
   <p>User Roles: <span>{{role}}</span></p>
   <hr style="width:100%;">
+  <div id="edit-user-div" (click)="onLogoutClicked()">
+    <mat-icon id="edit-user-icon" aria-hidden="false" aria-label="edit user icon" fontIcon="edit_user"></mat-icon>
+    <div id="edit-user-text">Logout</div>
+  </div>
   <div id="logout-div" (click)="onLogoutClicked()">
     <mat-icon id="logout-icon" aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
     <div id="logout-text">Logout</div>
