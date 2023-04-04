@@ -26,13 +26,17 @@
   <p>Welcome <span>{{name}}!</span></p>
   <p>User Roles: <span>{{role}}</span></p>
   <hr style="width:100%;">
-  <div id="edit-user-div" (click)="onLogoutClicked()">
-    <mat-icon id="edit-user-icon" aria-hidden="false" aria-label="edit user icon" fontIcon="edit_user"></mat-icon>
-    <div id="edit-user-text">Logout</div>
+  <div class="user-option-div" (click)="onEditProfileClicked()">
+    <mat-icon class="user-option-icon" aria-hidden="false" aria-label="edit user icon" fontIcon="edit_user"></mat-icon>
+    <div class="user-option-text">Edit profile</div>
   </div>
-  <div id="logout-div" (click)="onLogoutClicked()">
-    <mat-icon id="logout-icon" aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
-    <div id="logout-text">Logout</div>
+  <div class="user-option-div" (click)="onChangePasswordClicked()">
+    <mat-icon class="user-option-icon" aria-hidden="false" aria-label="change user password icon" fontIcon="password"></mat-icon>
+    <div class="user-option-text">Change password</div>
+  </div>
+  <div class="user-option-div" (click)="onLogoutClicked()">
+    <mat-icon class="user-option-icon" aria-hidden="false" aria-label="logout icon" fontIcon="logout"></mat-icon>
+    <div class="user-option-text">Logout</div>
   </div>
 </div>
 

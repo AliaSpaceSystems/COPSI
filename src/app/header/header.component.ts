@@ -5,7 +5,6 @@ import { Subscription, throwError } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { AppConfig } from '../services/app.config';
 import jwt_decode from 'jwt-decode';
-import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-header',
@@ -55,6 +54,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public name: string = '';
   public role: string = '';
   public centreInfo: any = AppConfig.settings.centreInfo;
+  public editProfileUrl: string = "";
+  public changePasswordUrl: string = "";
 
   constructor(private exchangeService: ExchangeService,
               private oauthService: OAuthService) { }
@@ -65,12 +66,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
       this.token = this.oauthService.getAccessToken();
       let tokenDecodedObj = this.decodeToken(this.token);
-      //console.log(tokenDecodedObj);
-
       this.role = tokenDecodedObj.resource_access[tokenDecodedObj.azp].roles[0];
     }
     this.mapTiles.styles = AppConfig.settings.styles;
     this.mapStyle = AppConfig.settings.mapSettings.projection;
+    this.editProfileUrl = AppConfig.settings.keycloak.editProfileUrl.replace('<issuer>', AppConfig.settings.keycloak.issuer).replace('<clientId>', AppConfig.settings.keycloak.clientId);
+    this.changePasswordUrl = AppConfig.settings.keycloak.changePasswordUrl.replace('<issuer>', AppConfig.settings.keycloak.issuer).replace('<clientId>', AppConfig.settings.keycloak.clientId);
   }
 
   ngOnDestroy(): void {
@@ -118,6 +119,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onSettingsMenuHover(event: any) {
     clearTimeout(this.showSettingsTimeoutId);
+  }
+
+  onEditProfileClicked() {
+    window.open(this.editProfileUrl, "_blank");
+  }
+
+  onChangePasswordClicked() {
+    window.open(this.changePasswordUrl, "_blank");
   }
 
   onLogoutClicked() {

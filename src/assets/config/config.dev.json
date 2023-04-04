@@ -64,6 +64,8 @@
     "issuer_ALIA": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
     "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
     "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
+    "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
+    "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
     "redirectUri": "http://localhost:4200/home",
     "redirectUri_": "http://192.168.0.109:4200/home",
     "clientId_ALIA": "prip-api",
