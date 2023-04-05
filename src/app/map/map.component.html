@@ -12,16 +12,19 @@
     </div>
     <div id="geo-search-buttons-container">
       <div class="geo-search-command-div" (click)="this.onDrawRectButtonClicked(true)">
-        <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon>
+        <!-- <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon> -->
+        <img class="svg-icon" src="assets/images/draw-rect.svg" alt="draw rect icon" />
         <p>Draw Rectangle</p>
       </div>
       <div class="geo-search-command-div" (click)="this.onDrawPolygonButtonClicked(true)">
-        <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon"></mat-icon>
+        <!-- <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon"></mat-icon> -->
+        <img class="svg-icon" src="assets/images/draw-polygon.svg" alt="draw polygon icon" />
         <p>Draw Polygon</p>
       </div>
       <hr>
       <div class="geo-search-command-div" (click)="this.onCancelDrawingButtonClicked(true)">
-        <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon>
+        <!-- <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon> -->
+        <img class="svg-icon" src="assets/images/delete-polygon.svg" alt="draw polygon icon" />
         <p>Delete Polygon</p>
       </div>
     </div>
@@ -31,14 +34,17 @@
 <div *ngIf="showGeoSearchToolbar" id="geosearch-fixed-container">
   <div id="geosearch-fixed-column-div">
     <div class="geo-search-command-div" (click)="this.onDrawRectButtonClicked(true)">
-      <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon>
+      <!-- <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon> -->
+      <img class="svg-icon" src="assets/images/draw-rect.svg" alt="draw rect icon" />
     </div>
     <div class="geo-search-command-div" (click)="this.onDrawPolygonButtonClicked(true)">
-      <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon"></mat-icon>
+      <!-- <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon"></mat-icon> -->
+      <img class="svg-icon" src="assets/images/draw-polygon.svg" alt="draw polygon icon" />
     </div>
     <hr>
     <div class="geo-search-command-div" (click)="this.onCancelDrawingButtonClicked(true)">
-      <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon>
+      <!-- <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon> -->
+      <img class="svg-icon" src="assets/images/delete-polygon.svg" alt="draw polygon icon" />
     </div>
   </div>
 </div>

@@ -223,8 +223,16 @@
   <div id="product-details-container" class="hidden">
     <div id="product-details-title">
       <p>Product Details</p>
-      <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility_off"
-      (click)="onHideProductDetails()"></mat-icon>
+      <div id="product-details-title-buttons-div">
+        <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Zoom Product On List" fontIcon="view_stream"
+          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
+          <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Zoom Product On List" fontIcon="indeterminate_check_box"
+          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
+          <mat-icon id="zoom-on-list" class="item-button-icon material-symbols-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Zoom Product On List" fontIcon="flex_direction"
+          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon>
+        <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility_off"
+          (click)="onHideProductDetails()"></mat-icon>
+      </div>
     </div>
     <div id="product-details-inner-container">
       <div id="product-details-header">

@@ -925,6 +925,12 @@ input:invalid {
   font-size: $search-bar-font-size;
   cursor: default;
 }
+#product-details-title-buttons-div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+}
+
 #product-details-inner-container {
   display: flex;
   flex-direction: column;

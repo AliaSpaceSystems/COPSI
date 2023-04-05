@@ -79,8 +79,15 @@ hr {
 #geosearch-fixed-column-div {
   display: flex;
   flex-direction: column;
+  align-items: center;
   background-color: $menu-dark-bg-color;
   border: $main-dark-border;
   border-radius: 0.25rem;
   box-shadow: $default-shadow;
+}
+
+.svg-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.25rem;
 }

@@ -1121,6 +1121,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   zoomToList(id: string) {
+    if (this.productListRolled) {
+      this.onShowHideButtonClick(null);
+      this.showProductListContainer();
+    }
+
     let tempId = this.productList.value.findIndex((product: any) => (product.Id === id));
     let tempProductFrameHeight: number;
     let productsInClientHeight: number;
