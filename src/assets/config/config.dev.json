@@ -34,6 +34,8 @@
     "filterOutputIsPinnedByDefault": true
   },
   "headerSettings": {
+    "showUserEditButton": false,
+    "showPasswordChangeButton": false,
     "menuAutoHideTimeout": 3000
   },
   "mapSettings": {

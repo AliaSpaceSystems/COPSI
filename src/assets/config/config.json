@@ -34,7 +34,9 @@
     "filterOutputIsPinnedByDefault": true
   },
   "headerSettings": {
-    "menuAutoHideTimeout": 5000
+    "showUserEditButton": false,
+    "showPasswordChangeButton": false,
+    "menuAutoHideTimeout": 3000
   },
   "mapSettings": {
       "initialViewState": {
@@ -47,6 +49,7 @@
       "projection": "globe"
   },
   "geoSearchSettings": {
+    "showGeoSearchToolbar": true,
     "defaultCircleRadius": 8,
     "bigCircleRadius": 12,
     "smallCircleRadius": 3,
@@ -62,6 +65,8 @@
   },
   "keycloak": {
       "issuer": "https://<keycloak_url>/auth/realms/<realm>",
+      "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
+      "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
       "redirectUri": "http(s)://<copsy_domain>/home",
       "clientId": "<client_id>",
       "responseType": "code",
@@ -91,7 +96,8 @@
     "defaultBorderWidth": 2,
     "selectedBorderColor": "#00aeefff",
     "selectedBorderWidth": 4,
-    "hoveredBorderWidth": 2
+    "hoveredBorderWidth": 2,
+    "maxPickableObjectsDepth": 15
   },
   "styles": [
     {
@@ -268,7 +274,7 @@
     {
       "name": "Mission",
       "mission": "Sentinel-2",
-      "value": "Sentinel-2",
+      "value": "SENTINEL-2",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "fillColor": "#17724564",

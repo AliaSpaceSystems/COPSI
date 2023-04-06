@@ -56,6 +56,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public centreInfo: any = AppConfig.settings.centreInfo;
   public editProfileUrl: string = "";
   public changePasswordUrl: string = "";
+  public showUserEditButton: boolean = AppConfig.settings.headerSettings.showUserEditButton;
+  public showPasswordChangeButton: boolean = AppConfig.settings.headerSettings.showPasswordChangeButton;
 
   constructor(private exchangeService: ExchangeService,
               private oauthService: OAuthService) { }
