@@ -60,6 +60,7 @@
 
 .header-menu-button {
   text-align: center;
+  cursor: pointer;
 }
 
 #user-icon {
@@ -184,6 +185,7 @@
   border: 0;
   border-bottom: $main-light-border;
   text-align: right;
+  cursor: pointer;
 }
 
 .map-settings-menu option {

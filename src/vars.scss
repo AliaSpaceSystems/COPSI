@@ -76,7 +76,7 @@ $toast-font-size-mobile: 0.7rem;
 $toast-default-color: $menu-dark-bg-color;
 $toast-success-color: #419641;
 $toast-error-color: #ff4141;
-$toast-info-color: $copsi-blue;
+$toast-info-color: darken($copsi-blue, 10);
 
 /* responsiveness */
 $screen-width-threshold-medium: 54.5rem;

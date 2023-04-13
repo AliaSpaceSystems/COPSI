@@ -38,7 +38,7 @@
       ]
     },
     {
-      "platformShortName": "Sentinel-2",
+      "platformShortName": "SENTINEL-2",
       "Attributes": [
         "beginningDateTime",
         "endingDateTime",

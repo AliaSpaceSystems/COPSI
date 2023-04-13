@@ -136,16 +136,16 @@
           <div class="product-data-row-div" *ngIf="product.Name != null && (showSimpleView)">
             <div class="product-data-column-div">
               <div class="product-metadata-column-div">
-                <div class="metadata-row">
-                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product" title="Platform" fontIcon="satellite_alt"></mat-icon>
+                <div class="metadata-row" title="Platform">
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product" fontIcon="satellite_alt"></mat-icon>
                   <div class="metadata-value">{{product.platformShortName}}{{product.platformSerialIdentifier}}</div>
                 </div>
-                <div class="metadata-row">
-                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-sensing" title="Sensing Start" fontIcon="today"></mat-icon>
+                <div class="metadata-row" title="Sensing Start">
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-sensing" fontIcon="today"></mat-icon>
                   <div class="metadata-value" *ngIf="product.ContentDate.Start != null">{{product.ContentDate.Start}}</div>
                 </div>
-                <div class="metadata-row">
-                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" title="Size" fontIcon="dns"></mat-icon>
+                <div class="metadata-row" title="Size">
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" fontIcon="dns"></mat-icon>
                   <div class="metadata-value" *ngIf="product.ContentLength != null">{{product.ContentLength}}</div>
                   <div class="metadata-value-italic">bytes</div>
                   <div class="metadata-value-simplified" *ngIf="product.ContentLength != null">({{simplifyBytes(product.ContentLength)}})</div>
@@ -174,7 +174,7 @@
           <!-- Product Action Buttons Template -->
           <ng-template #qlButtons>
             <div class="ql-buttons-div">
-              <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility_off"
+              <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
               <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
@@ -226,11 +226,14 @@
       <div id="product-details-title-buttons-div">
         <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="view_stream"
           (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
-        <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="indeterminate_check_box"
-          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon>
+        <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="indeterminate_check_box"
+          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
+          <!-- <img class="svg-icon" src="assets/images/show-in-list.svg" alt="show in list icon" title="Show in list"/> -->
         <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-symbols-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="flex_direction"
           (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
-        <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility_off"
+        <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
+          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon>
+        <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"
           (click)="onHideProductDetails()"></mat-icon>
       </div>
     </div>

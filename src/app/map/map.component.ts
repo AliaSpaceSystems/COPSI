@@ -156,7 +156,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onCancelDrawingButtonClicked(val: boolean) {
-    this.toast.showInfoToast('info', 'POLYGON DELETED');
+    this.toast.showInfoToast('success', 'POLYGON DELETED');
     this.drawGeoSearchPolygonData = {
       "type": "FeatureCollection",
       "features": [
@@ -797,7 +797,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     onDragEnd: () => {
       this.onPolygonDragEnd();
-    },
+    }
   })
 
   public drawPolygonLayerPlane = new GeoJsonLayer({
@@ -1127,7 +1127,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
               return 'grab';
             } else {
               this.canShowFootprintsMenu = true;
-              return 'crosshair';
+              if (this.isHoveringOnFootprint) {
+                if (this.canDrawPolygon || this.canDrawRect) {
+                  return 'crosshair';
+                } else {
+                  return 'pointer';
+                }
+              } else {
+                return 'crosshair';
+              }
             }
           }
         }
@@ -1167,7 +1175,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         if (cursor.isDragging) {
           this.canShowFootprintsMenu = false;
           this.hideProductFootprint();
-        return 'grabbing';
+          return 'grabbing';
         } else {
           if (this.isHoveringOnPoints) {
             this.canShowFootprintsMenu = false;
@@ -1180,7 +1188,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
               return 'grab';
             } else {
               this.canShowFootprintsMenu = true;
-              return 'crosshair';
+              if (this.isHoveringOnFootprint) {
+                if (this.canDrawPolygon || this.canDrawRect) {
+                  return 'crosshair';
+                } else {
+                  return 'pointer';
+                }
+              } else {
+                return 'crosshair';
+              }
             }
           }
         }
