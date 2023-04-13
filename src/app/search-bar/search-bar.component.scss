@@ -664,6 +664,7 @@ input:invalid {
   opacity: 1.0;
   pointer-events: visible;
   transition: background-color 0.1s linear;
+  cursor: pointer;
 }
 
 /* list item */
@@ -819,16 +820,21 @@ input:invalid {
   flex-direction: row;
   border: $main-dark-border;
   border-radius: 3px;
+  margin: 0;
   padding: 0 0.2rem;
-  font-size: $search-bar-font-size-small;
   text-align: center;
   justify-content: center;
   width: 5rem;
   height: 1rem;
+  cursor: default;
+}
+.tag p {
+  margin: 0;
+  font-size: $search-bar-font-size-small;
   white-space: nowrap;
   text-overflow: ellipsis;
+  overflow-wrap: break-word;
   overflow: hidden;
-  cursor: default;
 }
 
 /* Quick look */

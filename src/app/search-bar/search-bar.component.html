@@ -155,7 +155,9 @@
             </div>
             <div class="tag-ql-div">
               <div class="tag-div">
-                <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.title ? tag.title.concat(': ').concat(tag.value) : tag.name">{{beautifyTag(tag.value)}}</div>
+                <div class="tag" *ngFor="let tag of product.tags" [ngStyle]="{'background-color': tag.color}" [title]="tag.title ? tag.title.concat(': ').concat(tag.value) : tag.name">
+                  <p>{{beautifyTag(tag.value)}}</p>
+                </div>
               </div>
 
               <div class="ql-div">
@@ -224,13 +226,6 @@
     <div id="product-details-title">
       <p>Product Details</p>
       <div id="product-details-title-buttons-div">
-        <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="view_stream"
-          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
-        <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="indeterminate_check_box"
-          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
-          <!-- <img class="svg-icon" src="assets/images/show-in-list.svg" alt="show in list icon" title="Show in list"/> -->
-        <!-- <mat-icon id="zoom-on-list" class="item-button-icon material-symbols-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="flex_direction"
-          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon> -->
         <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
           (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon>
         <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"

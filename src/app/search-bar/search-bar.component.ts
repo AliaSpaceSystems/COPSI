@@ -1226,11 +1226,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     function elementDrag(e: any) {
+      container.style.scrollBehavior = "auto";
       e = e || window.event;
       e.preventDefault();
       yDiff = yPos - e.clientY;
       yPos = e.clientY;
       container.scrollTop = container.scrollTop - (yDiff * container.scrollHeight / container.clientHeight);
+      container.style.scrollBehavior = "smooth";
     }
 
     function closeDragElement() {

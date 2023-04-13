@@ -280,7 +280,7 @@
     {
       "name": "Mission",
       "mission": "Sentinel-2",
-      "value": "SENTINEL-2",
+      "value": "Sentinel-2",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "fillColor": "#17724564",
