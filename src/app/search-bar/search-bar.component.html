@@ -316,12 +316,12 @@
         <div class="footprint-tooltip-table-div">
           <table class="footprint-tooltip-table" (mouseover)="onMouseOverTooltipProductTable(product)" (mouseleave)="onMouseLeaveTooltipProductTable()" (mousedown)="onClickOverTooltipProductTable(product)">
             <tr>
-              <td style="width: 30%;">Platform</td>
-              <td style="width: 70%;" title="{{product.platformShortName}}{{product.platformSerialIdentifier}}">{{product.platformShortName}}{{product.platformSerialIdentifier}}</td>
+              <td style="width: 35%;">Platform</td>
+              <td style="width: 65%;" title="{{product.platformShortName}}{{product.platformSerialIdentifier}}">{{product.platformShortName}}{{product.platformSerialIdentifier}}</td>
             </tr>
             <tr *ngFor="let tag of product.tags">
-              <td style="width: 30%;">{{tag.name}}</td>
-              <td style="width: 70%;" title="{{tag.value}}">{{tag.value}}</td>
+              <td>{{tag.name}}</td>
+              <td title="{{tag.value}}">{{tag.value}}</td>
             </tr>
           </table>
         </div>
