@@ -1135,6 +1135,8 @@ input:invalid {
   top: 0;
   left: -5rem;
   width: 14rem;
+  max-width: 14rem;
+  min-width: 14rem;
   max-height: calc(100dvh - 1rem);
   padding: 0;
   gap: 0;
@@ -1150,6 +1152,7 @@ input:invalid {
 #footprints-menu-column-div {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 0.15rem;
 }
 
@@ -1190,6 +1193,7 @@ input:invalid {
   width: 100%;
 }
 .footprint-tooltip-table-div {
+  width: 100%;
   cursor: pointer;
 }
 .footprint-tooltip-table-div:hover {
@@ -1203,7 +1207,13 @@ input:invalid {
   font-size: 0.75rem;
 }
 .footprint-tooltip-table th, td {
+  text-align: left;
   padding: 0 0.5rem 0 0;
+  max-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  overflow: hidden;
 }
 .table-spacer {
   height: 0.5rem;
@@ -1220,8 +1230,8 @@ input:invalid {
   height: 1rem;
   background-color: $main-dark-text-color;
   border-radius: 0.25rem;
-  right: 0.75rem;
-  margin: 2rem 0 0 0;
+  right: -0.5rem;
+  margin: 2.0rem 0 0 0;
   top: 0;
   opacity: 1.0;
   pointer-events: visible;
