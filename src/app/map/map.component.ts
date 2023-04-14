@@ -65,7 +65,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public hoveredObject: any = {};
   public maxPickableObjectsDepth: number = AppConfig.settings.footprints.maxPickableObjectsDepth;
   public showGeoSearchToolbar: boolean = AppConfig.settings.geoSearchSettings.showGeoSearchToolbar;
-  public footprintAltitudeFactor: number = 100000;
+  public footprintAltitudeFactor: number = 500000;
 
   public drawGeoSearchCirclesData = [
     {
@@ -699,7 +699,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: (d:any, f:any) => d.properties.Color,
     getLineColor: (d:any, f:any) => d.properties.BorderColor,
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 5000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 10000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -721,7 +721,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 10000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 50000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -743,7 +743,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: (d:any, f:any) => d.properties.Color,
     getLineColor: (d:any, f:any) => d.properties.BorderColor,
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 5000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 10000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -765,7 +765,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 10000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 50000000)]
     },
     wrapLongitude: true,
     highlightedObjectIndex: -1,
@@ -787,7 +787,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: (d: any) => d.properties.fillColor,
     getLineColor: (d: any) => d.properties.borderColor,
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 15000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 100000000)]
     },
     wrapLongitude: true,
     onDragStart: (info: any) => {
@@ -816,7 +816,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: (d: any) => d.properties.fillColor,
     getLineColor: (d: any) => d.properties.borderColor,
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 15000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 100000000)]
     },
     wrapLongitude: true,
     onDragStart: (info: any) => {
@@ -846,7 +846,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: [255, 255, 255],
     getLineColor: [0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 20000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 500000000)]
     },
     onDragStart: () => {
       this.onPointDragStart();
@@ -878,7 +878,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getFillColor: [255, 255, 255],
     getLineColor: [0, 0, 0],
     getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 20000000)]
+      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 500000000)]
     },
     onDragStart: () => {
       this.onPointDragStart();
