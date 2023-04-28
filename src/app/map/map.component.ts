@@ -59,13 +59,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public geoSearchSettings: any = AppConfig.settings.geoSearchSettings;
   public geoSearchPolygonPresent: boolean = false;
   public geoSearchOutput: string = "";
-  public minimalCoordinateDiff: number = 0.00000000000001;
   public contextMenuTimeoutId: any;
   public hoveredProductsArray: any[] = [];
   public hoveredObject: any = {};
   public maxPickableObjectsDepth: number = AppConfig.settings.footprints.maxPickableObjectsDepth;
   public showGeoSearchToolbar: boolean = AppConfig.settings.geoSearchSettings.showGeoSearchToolbar;
-  public footprintAltitudeFactor: number = 500000;
+  public footprintAltitudeFactor: number = 10000000;
+  public footprintAltitudeAddendum: number = 100000000;
+  public footprintSelectedAltitudeAddendum: number = 500000000;
+  public polygonAltitudeAddendum: number = 1000000000;
+  public circlesAltitudeAddendum: number = 5000000000;
+  public footprintZoomMultiplierFactor: number = 0;
 
   public drawGeoSearchCirclesData = [
     {
@@ -455,31 +459,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         let tempBorderColor = this.geoSearchSettings.borderColorActive;
         if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
         if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
-        if (tempPointsArray.length == 1) {
-          /* If it is a Single Point Polygon drag */
-          tempPolygonArray[0] = [
-            info.coordinate,
-            [info.coordinate[0] + this.minimalCoordinateDiff, info.coordinate[1]],
-            [info.coordinate[0], info.coordinate[1] + this.minimalCoordinateDiff],
-            info.coordinate
-          ]
-          tempPointsArray = [];
-          tempPointsArray.push({"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius });
-        } else {
-          /* Other Polygons point drag  */
-          tempPolygonArray[0][info.index] = (info.coordinate);
-          if (info.index == 0) {
-            tempPolygonArray[0][tempPolygonArray[0].length - 1] = (info.coordinate);
-          }
-          tempPointsArray = [];
-          for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
-            if (i === info.index) {
-              tempPointsArray.push({"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius });
-            } else {
-              tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius });
-            }
+
+        tempPolygonArray[0][info.index] = (info.coordinate);
+        if (info.index == 0) {
+          tempPolygonArray[0][tempPolygonArray[0].length - 1] = (info.coordinate);
+        }
+        tempPointsArray = [];
+        for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
+          if (i === info.index) {
+            tempPointsArray.push({"coordinates": info.coordinate, "radius": this.geoSearchSettings.smallCircleRadius });
+          } else {
+            tempPointsArray.push({"coordinates": this.drawGeoSearchCirclesData[i].coordinates, "radius": this.geoSearchSettings.defaultCircleRadius });
           }
         }
+
         tempPolygonJson = {
           "type": "FeatureCollection",
           "features": [
@@ -698,9 +691,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
     getLineColor: (d:any, f:any) => d.properties.BorderColor,
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 10000000)]
-    },
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.footprintAltitudeAddendum)],
     wrapLongitude: true,
     highlightedObjectIndex: -1,
     fp64: true
@@ -720,9 +711,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: this.hoveredFootprintBorderWidth,
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 50000000)]
-    },
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.footprintSelectedAltitudeAddendum)],
     wrapLongitude: true,
     highlightedObjectIndex: -1,
     fp64: true
@@ -742,9 +731,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: this.defaultFootprintBorderWidth,
     getFillColor: (d:any, f:any) => d.properties.Color,
     getLineColor: (d:any, f:any) => d.properties.BorderColor,
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 10000000)]
-    },
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.footprintAltitudeAddendum)],
     wrapLongitude: true,
     highlightedObjectIndex: -1,
     fp64: true
@@ -764,9 +751,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: this.hoveredFootprintBorderWidth,
     getFillColor: [0, 0, 0, 0],
     getLineColor: [0, 0, 0, 0],
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 50000000)]
-    },
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.footprintSelectedAltitudeAddendum)],
     wrapLongitude: true,
     highlightedObjectIndex: -1,
     fp64: true
@@ -786,10 +771,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: 2,
     getFillColor: (d: any) => d.properties.fillColor,
     getLineColor: (d: any) => d.properties.borderColor,
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 100000000)]
-    },
-    wrapLongitude: true,
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.polygonAltitudeAddendum)],
     onDragStart: (info: any) => {
       this.onPolygonDragStart(info);
     },
@@ -798,7 +780,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     onDragEnd: () => {
       this.onPolygonDragEnd();
-    }
+    },
+    wrapLongitude: true,
+    fp64: true
   })
 
   public drawPolygonLayerPlane = new GeoJsonLayer({
@@ -815,10 +799,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getLineWidth: 2,
     getFillColor: (d: any) => d.properties.fillColor,
     getLineColor: (d: any) => d.properties.borderColor,
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 100000000)]
-    },
-    wrapLongitude: true,
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.polygonAltitudeAddendum)],
     onDragStart: (info: any) => {
       this.onPolygonDragStart(info);
     },
@@ -828,6 +809,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     onDragEnd: () => {
       this.onPolygonDragEnd();
     },
+    wrapLongitude: true,
+    fp64: true
   })
 
   public drawCirclesLayerGlobe = new ScatterplotLayer({
@@ -845,9 +828,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     getFillColor: [255, 255, 255],
     getLineColor: [0, 0, 0],
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 500000000)]
-    },
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.circlesAltitudeAddendum)],
     onDragStart: () => {
       this.onPointDragStart();
     },
@@ -862,7 +843,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     updateTriggers: {
       getRadius: [this.hoveredObject]
-    }
+    },
+    wrapLongitude: true,
+    fp64: true
   });
   public drawCirclesLayerPlane = new ScatterplotLayer({
     id: 'scatterplot-layer',
@@ -877,9 +860,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     getRadius: (d: any) => d.radius,
     getFillColor: [255, 255, 255],
     getLineColor: [0, 0, 0],
-    getPolygonOffset: (layerIndex:any) => {
-      return [0, -(layerIndex.layerIndex * this.footprintAltitudeFactor + 500000000)]
-    },
+    getPolygonOffset: (layerIndex:any) => [this.footprintZoomMultiplierFactor, -(layerIndex.layerIndex * this.footprintAltitudeFactor + this.circlesAltitudeAddendum)],
     onDragStart: () => {
       this.onPointDragStart();
     },
@@ -888,7 +869,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     onDragEnd: () => {
       this.onPointDragEnd();
-    }
+    },
+    wrapLongitude: true,
+    fp64: true
   });
 
   constructor(
@@ -962,8 +945,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           }
       }
     });
-    this.initMapLayer();
-    this.initMapProjection();
+    this.initMapLayerPlane();
+    this.initMapLayerGlobe();
     this.initMap();
   }
 
@@ -1032,7 +1015,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cancelDrawingSubscription.unsubscribe();
   }
 
-  initMapLayer(): void {
+  initMapLayerPlane(): void {
     this.mapLayerPlane = new TileLayer({
       data: mapTiles.styles[selectedMapStyleIndex].url,     //// Change here the default map style
       maxZoom: 14,
@@ -1050,13 +1033,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           bounds: [west, south, east, north]
         });
       },
-      getPolygonOffset: (z: any) => {
-        return [500, 5]
-      }
+      getPolygonOffset: (layerIndex: any) => [0, 1000],
+      fp64: true
     })
   }
 
-  initMapProjection(): void {
+  initMapLayerGlobe(): void {
     this.mapLayerGlobe = new TileLayer({
       data: mapTiles.styles[selectedMapStyleIndex].url,     //// Change here the default map style
       maxZoom: 14,
@@ -1074,9 +1056,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           bounds: [west, south, east, north]
         });
       },
-      getPolygonOffset: (z: any) => {
-        return [500, 5]
-      }
+      getPolygonOffset: (layerIndex: any) => [0, 1000],
+      fp64: true
     })
 
   }

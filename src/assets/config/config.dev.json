@@ -42,8 +42,8 @@
       "initialViewState": {
           "longitude": 2.27,
           "latitude": 38.86,
-          "zoom": 1.3,
-          "minZoom": 0.8,
+          "zoom": 1.7,
+          "minZoom": 1.2,
           "maxZoom": 10
       },
       "projection": "globe"
