@@ -1418,7 +1418,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         getLineColor: (d:any, f:any) => {
           let tempCol = [0, 0, 0, 0];
           if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
-          else if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverColor;
+          else if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverBorderColor;
           return tempCol;
         },
         updateTriggers: {
