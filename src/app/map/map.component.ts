@@ -222,7 +222,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onClickOnMap(info: any, event: any) {
-    if (event.rightButton === true) return;
+    if (event.rightButton === true) {
+      return;
+    }
     this.hideContextMenu();
     let tempPolygonJson: any;
 
@@ -910,24 +912,26 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     canvasContainer.addEventListener("contextmenu", (event: any) => {
       event.preventDefault();
-      this.hideFootprintMenu();
-      clearTimeout(this.contextMenuTimeoutId);
-      let viewportWidth = window.innerWidth;
-      let viewportHeight = window.innerHeight;
-      contextMenuContainer.style.left = (event.clientX + 20) + 'px';
-      contextMenuContainer.style.top = (event.clientY - 15) + 'px';
-      if (contextMenuContainer.classList.contains('hidden')) {
-        contextMenuContainer.classList.replace('hidden', 'visible');
-        if (viewportHeight - (event.clientY + contextMenuContainer.offsetHeight) < 0) {
-          contextMenuContainer.style.top = (viewportHeight - contextMenuContainer.offsetHeight - 8) + 'px';
+      if (!(this.canDrawRect || this.canDrawPolygon)) {
+        this.hideFootprintMenu();
+        clearTimeout(this.contextMenuTimeoutId);
+        let viewportWidth = window.innerWidth;
+        let viewportHeight = window.innerHeight;
+        contextMenuContainer.style.left = (event.clientX + 20) + 'px';
+        contextMenuContainer.style.top = (event.clientY - 15) + 'px';
+        if (contextMenuContainer.classList.contains('hidden')) {
+          contextMenuContainer.classList.replace('hidden', 'visible');
+          if (viewportHeight - (event.clientY + contextMenuContainer.offsetHeight) < 0) {
+            contextMenuContainer.style.top = (viewportHeight - contextMenuContainer.offsetHeight - 8) + 'px';
+          }
+          if (viewportWidth - (event.clientX + contextMenuContainer.offsetWidth) < 0) {
+            contextMenuContainer.style.left = (viewportWidth - contextMenuContainer.offsetWidth - 8) + 'px';
+          }
         }
-        if (viewportWidth - (event.clientX + contextMenuContainer.offsetWidth) < 0) {
-          contextMenuContainer.style.left = (viewportWidth - contextMenuContainer.offsetWidth - 8) + 'px';
-        }
+        this.contextMenuTimeoutId = setTimeout(() => {
+          this.hideContextMenu();
+        }, 3000);
       }
-      this.contextMenuTimeoutId = setTimeout(() => {
-        this.hideContextMenu();
-      }, 3000);
     });
 
     ["mousedown", "wheel"].forEach((inputEvent: any) => {
