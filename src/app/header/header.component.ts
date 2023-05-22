@@ -31,11 +31,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   /* Base Map Styles Layer Data Array */
   /* Managed default OSM Tile layer */
-  public mapTiles: any = { styles: [
-    {
-      "name": "openstreetmap",
-      "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    }]
+  public mapTiles: any = {
+    styles: [{}]
   };
 
   public mapStyles = [
@@ -72,6 +69,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
     this.mapTiles.styles = AppConfig.settings.styles;
     this.mapStyle = AppConfig.settings.mapSettings.projection;
+    this.mapLayer = this.mapTiles.styles[0].name;
     this.editProfileUrl = AppConfig.settings.keycloak.editProfileUrl.replace('<issuer>', AppConfig.settings.keycloak.issuer).replace('<clientId>', AppConfig.settings.keycloak.clientId);
     this.changePasswordUrl = AppConfig.settings.keycloak.changePasswordUrl.replace('<issuer>', AppConfig.settings.keycloak.issuer).replace('<clientId>', AppConfig.settings.keycloak.clientId);
   }
@@ -100,14 +98,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  onMapStyleChanged(event: Event) {
+  /* onMapStyleChanged(event: Event) {
     let newMapStyle = (event.target as HTMLInputElement).value;
     this.exchangeService.setMapStyle(newMapStyle);
+  } */
+  onMapStyleChanged(view: string) {
+    this.exchangeService.setMapStyle(view);
   }
 
-  onMapLayerChanged(event: Event) {
+  /* onMapLayerChanged(event: Event) {
     let newMapLayer = (event.target as HTMLInputElement).value;
     this.exchangeService.setMapLayer(newMapLayer);
+  } */
+  onMapLayerChanged(layer: string) {
+    console.log(layer);
+
+    this.exchangeService.setMapLayer(layer);
   }
 
   onShowLabelCheck(event: any) {

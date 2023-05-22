@@ -40,24 +40,46 @@
   </div>
 </div>
 
-<div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (mouseover)="onSettingsMenuHover($event)" (mouseleave)="setSettingsMenuTimeout()">
-  <mat-icon id="settings-image" aria-hidden="false" aria-label="Settings image" fontIcon="settings"></mat-icon>
-  <p>Map Settings</p>
-  <hr style="width:100%;">
-  <div class="menu-item-div">
-    <label for="map-style">Map projection:</label>
-    <select class="map-settings-menu" id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle" [(ngModel)]="mapStyle">
-      <option *ngFor="let option of mapStyles">{{option}}</option>
-    </select>
+<div id="settings-container">
+  <div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (mouseover)="onSettingsMenuHover($event)" (mouseleave)="setSettingsMenuTimeout()">
+    <mat-icon id="settings-image" aria-hidden="false" aria-label="Settings image" fontIcon="settings"></mat-icon>
+    <p>Map Settings</p>
+    <hr style="width:100%;">
+    <div class="menu-item-div">
+      <label for="map-style">Map projection:</label>
+      <!-- <select class="map-settings-menu" id="map-style" (change)="onMapStyleChanged($event)" [value]="mapStyle" [(ngModel)]="mapStyle">
+        <option *ngFor="let option of mapStyles">{{option}}</option>
+      </select> -->
+      <div class="map-settings-buttons" id="map-style">{{(mapStyle == 'globe' ? 'Globe View' : "Plane View")}}</div>
+    </div>
+    <div class="menu-item-div">
+      <label for="map-layer">Map layer:</label>
+      <!-- <select class="map-settings-menu" id="map-layer" (change)="onMapLayerChanged($event)" [value]="mapLayer">
+        <option *ngFor="let tile of mapTiles.styles">{{tile.name}}</option>
+      </select> -->
+      <div class="map-settings-buttons" id="map-layer">{{mapLayer}}</div>
+    </div>
+    <!-- <div class="menu-item-div">
+      <label for="show-labels">Show labels:</label>
+      <input type="checkbox" id="show-labels" [value]="false" (change)="onShowLabelCheck($event)"/>
+    </div> -->
   </div>
-  <div class="menu-item-div">
-    <label for="map-layer">Map layer:</label>
-    <select class="map-settings-menu" id="map-layer" (change)="onMapLayerChanged($event)" [value]="mapLayer">
-      <option *ngFor="let tile of mapTiles.styles">{{tile.name}}</option>
-    </select>
+
+  <div id="projection-container" class="settings-sub-container">
+    <div class="selection-item" (click)="onMapStyleChanged('globe')">
+      <label for="selection-globe">Globe View</label>
+      <img id="selection-globe" src="./assets/images/globe_view_160.png" alt="Globe View">
+    </div>
+    <div class="selection-item" (click)="onMapLayerChanged('plane')">
+      <label for="selection-plane">Plane View</label>
+      <img id="selection-plane" src="./assets/images/plane_view_160.png" alt="Plane View">
+    </div>
   </div>
-  <!-- <div class="menu-item-div">
-    <label for="show-labels">Show labels:</label>
-    <input type="checkbox" id="show-labels" [value]="false" (change)="onShowLabelCheck($event)"/>
-  </div> -->
+
+  <div id="layer-container" class="settings-sub-container">
+    <div class="selection-item" *ngFor="let style of mapTiles.styles" (click)="onMapLayerChanged(style.name)">
+      <label for="selection-globe">{{style.name}}</label>
+      <img id="selection-globe" src="./assets/images/globe_view_160.png" alt="Globe View">
+    </div>
+  </div>
 </div>

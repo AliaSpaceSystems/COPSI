@@ -34,8 +34,8 @@
     "filterOutputIsPinnedByDefault": true
   },
   "headerSettings": {
-    "showUserEditButton": false,
-    "showPasswordChangeButton": false,
+    "showUserEditButton": true,
+    "showPasswordChangeButton": true,
     "menuAutoHideTimeout": 3000
   },
   "mapSettings": {
@@ -46,7 +46,8 @@
           "minZoom": 1.2,
           "maxZoom": 10
       },
-      "projection": "globe"
+      "projection": "globe",
+      "layer": "Terrain"
   },
   "geoSearchSettings": {
     "showGeoSearchToolbar": true,
