@@ -26,15 +26,14 @@ let geojsonData: any = {
 
 /* Base Map Styles Layer Data Array */
 /* Managed default OSM Tile layer */
-let mapTiles: any = { styles: [
-  {
-    "name": "openstreetmap",
-    "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
-  }]
-};
+let mapLayers: any;
+let mapOverlays: any;
 
 let selectedMapStyleIndex = 0;
 let selectedMapStyle: string;
+
+let selectedMapOverlayIndex = 0;
+let selectedMapOverlay: string;
 
 @Component({
   selector: 'app-map',
@@ -64,6 +63,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public hoveredObject: any = {};
   public maxPickableObjectsDepth: number = AppConfig.settings.footprints.maxPickableObjectsDepth;
   public showGeoSearchToolbar: boolean = AppConfig.settings.geoSearchSettings.showGeoSearchToolbar;
+  public hideGeoSearchToolbar: boolean = false;
   public footprintAltitudeFactor: number = 10000000;
   public footprintAltitudeAddendum: number = 100000000;
   public footprintSelectedAltitudeAddendum: number = 500000000;
@@ -653,6 +653,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public productList: any;
   public mapStyleSubscription!: Subscription;
   public mapLayerSubscription!: Subscription;
+  public mapOverlaySubscription!: Subscription;
   public showLabelsSubscription!: Subscription;
   public productListSubscription!: Subscription;
   public showProductIndexSubscription!: Subscription;
@@ -661,6 +662,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public startPolygonDrawingSubscription!: Subscription;
   public cancelDrawingSubscription!: Subscription;
   public zoomToProductSubscription!: Subscription;
+  public hideGeoSearchToolbarSubscription! : Subscription;
 
   public fallBackFootprintColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackColor);
   public fallBackFootprintBorderColor: number[] = this.rgbConvertToArray(AppConfig.settings.footprints.fallBackBorderColor);
@@ -678,6 +680,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   /* Base Map Layer */
   public mapLayerPlane: any;
   public mapLayerGlobe: any;
+
+  public mapOverlayPlane: any;
+  public mapOverlayGlobe: any;
 
   public geojsonLayerPlane = new GeoJsonLayer({
     id: 'geojson-layer',
@@ -876,11 +881,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     fp64: true
   });
 
+
   constructor(
     private exchangeService: ExchangeService,
     private toast: ToastComponent
   ) {
-    mapTiles.styles = AppConfig.settings.styles;
+    mapLayers = AppConfig.settings.styles;
+    mapOverlays = AppConfig.settings.overlays;
     mapProjection = AppConfig.settings.mapSettings.projection;
     initialViewState = AppConfig.settings.mapSettings.initialViewState;
 
@@ -949,8 +956,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           }
       }
     });
-    this.initMapLayerPlane();
-    this.initMapLayerGlobe();
+    this.initMapLayers();
+    this.initMapOverlays();
     this.initMap();
   }
 
@@ -973,6 +980,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapLayerSubscription = this.exchangeService.selectedMapLayer.subscribe((value) => {
       if (typeof(value) === 'string') {
         this.changeMapLayer(value);
+      }
+    });
+    this.mapOverlaySubscription = this.exchangeService.selectedMapOverlay.subscribe((value) => {
+      if (typeof(value) === 'string') {
+        this.changeMapOverlay(value);
       }
     });
     this.showProductIndexSubscription = this.exchangeService.showProductOnMapExchange.subscribe((value) => {
@@ -1005,23 +1017,32 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.zoomToProduct(value);
       }
     });
+    this.hideGeoSearchToolbarSubscription = this.exchangeService.hideGeoSearchToolbarExchange.subscribe((value) => {
+      if (typeof(value) === 'boolean') {
+        this.onHideGeoSearchToolbar(value);
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.mapStyleSubscription.unsubscribe();
-    this.mapLayerSubscription.unsubscribe();
     this.showLabelsSubscription.unsubscribe();
     this.productListSubscription.unsubscribe();
+    this.mapLayerSubscription.unsubscribe();
+    this.mapOverlaySubscription.unsubscribe();
     this.showProductIndexSubscription.unsubscribe();
     this.selectedProductIdSubscription.unsubscribe();
     this.startRectDrawingSubscription.unsubscribe();
     this.startPolygonDrawingSubscription.unsubscribe();
     this.cancelDrawingSubscription.unsubscribe();
+    this.zoomToProductSubscription.unsubscribe();
+    this.hideGeoSearchToolbarSubscription.unsubscribe();
   }
 
-  initMapLayerPlane(): void {
+  initMapLayers(): void {
     this.mapLayerPlane = new TileLayer({
-      data: mapTiles.styles[selectedMapStyleIndex].url,     //// Change here the default map style
+      id: "mapLayer",
+      data: mapLayers[selectedMapStyleIndex].url,     //// Change here the default map style
       maxZoom: 14,
       tileSize: 256,
 
@@ -1037,14 +1058,37 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           bounds: [west, south, east, north]
         });
       },
-      getPolygonOffset: (layerIndex: any) => [0, 1000],
+      getPolygonOffset: (layerIndex:any) => [0, -(layerIndex.layerIndex * 1000)],
+      fp64: true
+    })
+
+    this.mapLayerGlobe = new TileLayer({
+      id: "mapLayer",
+      data: mapLayers[selectedMapStyleIndex].url,     //// Change here the default map style
+      maxZoom: 14,
+      tileSize: 256,
+
+      renderSubLayers: (props: any) => {
+        const {
+          bbox: {west, south, east, north}
+        } = props.tile;
+
+        return new BitmapLayer(props, {
+          data: null,
+          image: props.data,
+          _imageCoordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
+          bounds: [west, south, east, north]
+        });
+      },
+      getPolygonOffset: (layerIndex:any) => [0, -(layerIndex.layerIndex * 1000)],
       fp64: true
     })
   }
 
-  initMapLayerGlobe(): void {
-    this.mapLayerGlobe = new TileLayer({
-      data: mapTiles.styles[selectedMapStyleIndex].url,     //// Change here the default map style
+  initMapOverlays() {
+    this.mapOverlayPlane = new TileLayer({
+      id: "mapOverlayLayer",
+      data: mapOverlays[selectedMapOverlayIndex].url,
       maxZoom: 14,
       tileSize: 256,
 
@@ -1060,10 +1104,35 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           bounds: [west, south, east, north]
         });
       },
-      getPolygonOffset: (layerIndex: any) => [0, 1000],
-      fp64: true
+      getPolygonOffset: (layerIndex:any) => [0, -(layerIndex.layerIndex * 5000)],
+      fp64: true,
+      visible: false
     })
 
+    this.mapOverlayGlobe = new TileLayer({
+      id: "mapOverlayLayer",
+      data: (selectedMapOverlayIndex == 0 ? '' : mapOverlays[selectedMapOverlayIndex].url),
+      maxZoom: 14,
+      tileSize: 256,
+
+      renderSubLayers: (props: any) => {
+        const {
+          bbox: {west, south, east, north}
+        } = props.tile;
+
+        return new BitmapLayer(props, {
+          data: null,
+          image: props.data,
+          _imageCoordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
+          bounds: [west, south, east, north]
+        });
+      },
+      getPolygonOffset: (layerIndex:any) => {
+        return [0, -(layerIndex.layerIndex * 50000)]
+      },
+      fp64: true,
+      visible: false
+    })
   }
 
   initMap() {
@@ -1073,13 +1142,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       initialViewState: initialViewState,
       views: new GlobeView({
-          id: 'globe',
-          resolution: 1,
-          nearZMultiplier: 1.4, // 1.4 max near limit
-          farZMultiplier: 2.0, // use 2.0
-          controller: {keyboard: false, inertia: true, doubleClickZoom: false},
-          clear: true
-        }),
+        id: 'globe',
+        resolution: 1,
+        nearZMultiplier: 1.4, // 1.4 max near limit
+        farZMultiplier: 2.0, // use 2.0
+        controller: {keyboard: false, inertia: true, doubleClickZoom: false},
+        clear: true
+      }),
       canvas: 'map-globe',
       style: {display: mapProjection === 'globe' ? 'block' : 'none'},
       layers: [
@@ -1087,7 +1156,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geojsonLayerGlobe,
         this.geojsonLayerGlobeSelected,
         this.drawPolygonLayerGlobe,
-        this.drawCirclesLayerGlobe
+        this.drawCirclesLayerGlobe,
+        this.mapOverlayGlobe
       ],
       wrapLongitude: true,
       onClick: (info: any, event: any) => {
@@ -1148,7 +1218,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geojsonLayerPlane,
         this.geojsonLayerPlaneSelected,
         this.drawPolygonLayerPlane,
-        this.drawCirclesLayerPlane
+        this.drawCirclesLayerPlane,
+        this.mapOverlayPlane
       ],
       wrapLongitude: true,
       onClick: (info: any, event: any) => {
@@ -1262,7 +1333,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerPlane,
       this.geojsonLayerPlaneSelected,
       this.drawPolygonLayerPlane,
-      this.drawCirclesLayerPlane
+      this.drawCirclesLayerPlane,
+      this.mapOverlayPlane
     ]
     deckPlane.setProps({layers: layersPlane});
 
@@ -1272,21 +1344,22 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerGlobe,
       this.geojsonLayerGlobeSelected,
       this.drawPolygonLayerGlobe,
-      this.drawCirclesLayerGlobe
+      this.drawCirclesLayerGlobe,
+      this.mapOverlayGlobe
     ]
     deckGlobe.setProps({layers: layersGlobe});
   }
 
   changeMapLayer(layer: string) {
     selectedMapStyle = layer;
-    selectedMapStyleIndex = mapTiles.styles.findIndex(function(item: any, i: any){
+    selectedMapStyleIndex = mapLayers.findIndex(function(item: any, i: any){
       return item.name === layer
     });
     this.mapLayerPlane = this.mapLayerPlane.clone({
-      data: mapTiles.styles[selectedMapStyleIndex].url
+      data: mapLayers[selectedMapStyleIndex].url
     });
     this.mapLayerGlobe = this.mapLayerGlobe.clone({
-      data: mapTiles.styles[selectedMapStyleIndex].url
+      data: mapLayers[selectedMapStyleIndex].url
     });
     /* Update Plane View */
     const layersPlane =  [
@@ -1294,7 +1367,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerPlane,
       this.geojsonLayerPlaneSelected,
       this.drawPolygonLayerPlane,
-      this.drawCirclesLayerPlane
+      this.drawCirclesLayerPlane,
+      this.mapOverlayPlane
     ]
     deckPlane.setProps({layers: layersPlane});
 
@@ -1304,7 +1378,44 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerGlobe,
       this.geojsonLayerGlobeSelected,
       this.drawPolygonLayerGlobe,
-      this.drawCirclesLayerGlobe
+      this.drawCirclesLayerGlobe,
+      this.mapOverlayGlobe
+    ]
+    deckGlobe.setProps({layers: layersGlobe});
+  }
+
+  changeMapOverlay(overlay: string) {
+    selectedMapOverlay = overlay;
+    selectedMapOverlayIndex = mapOverlays.findIndex(function(item: any, i: any){
+      return item.name === overlay;
+    });
+    this.mapOverlayPlane = this.mapOverlayPlane.clone({
+      data: mapOverlays[selectedMapOverlayIndex].url,
+      visible: true
+    });
+    this.mapOverlayGlobe = this.mapOverlayGlobe.clone({
+      data: mapOverlays[selectedMapOverlayIndex].url,
+      visible: true
+    });
+    /* Update Plane View */
+    const layersPlane =  [
+      this.mapLayerPlane,
+      this.geojsonLayerPlane,
+      this.geojsonLayerPlaneSelected,
+      this.drawPolygonLayerPlane,
+      this.drawCirclesLayerPlane,
+      this.mapOverlayPlane
+    ]
+    deckPlane.setProps({layers: layersPlane});
+
+    /* Update Globe View */
+    const layersGlobe =  [
+      this.mapLayerGlobe,
+      this.geojsonLayerGlobe,
+      this.geojsonLayerGlobeSelected,
+      this.drawPolygonLayerGlobe,
+      this.drawCirclesLayerGlobe,
+      this.mapOverlayGlobe
     ]
     deckGlobe.setProps({layers: layersGlobe});
   }
@@ -1384,7 +1495,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geojsonLayerPlane,
         this.geojsonLayerPlaneSelected,
         this.drawPolygonLayerPlane,
-        this.drawCirclesLayerPlane
+        this.drawCirclesLayerPlane,
+        this.mapOverlayPlane
       ]
       deckPlane.setProps({layers: layersPlane});
 
@@ -1394,7 +1506,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geojsonLayerGlobe,
         this.geojsonLayerGlobeSelected,
         this.drawPolygonLayerGlobe,
-        this.drawCirclesLayerGlobe
+        this.drawCirclesLayerGlobe,
+        this.mapOverlayGlobe
       ]
       deckGlobe.setProps({layers: layersGlobe});
     }
@@ -1436,7 +1549,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geojsonLayerGlobe,
         this.geojsonLayerGlobeSelected,
         this.drawPolygonLayerGlobe,
-        this.drawCirclesLayerGlobe
+        this.drawCirclesLayerGlobe,
+        this.mapOverlayGlobe
       ]
       deckGlobe.setProps({layers: layersGlobe});
     } else {
@@ -1469,7 +1583,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geojsonLayerPlane,
         this.geojsonLayerPlaneSelected,
         this.drawPolygonLayerPlane,
-        this.drawCirclesLayerPlane
+        this.drawCirclesLayerPlane,
+        this.mapOverlayPlane
       ]
       deckPlane.setProps({layers: layersPlane});
     }
@@ -1507,6 +1622,15 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     }
+  }
+
+  onHideGeoSearchToolbar(hidden: boolean) {
+    if (hidden) {
+      this.showGeoSearchToolbar = false;
+    } else {
+      this.showGeoSearchToolbar = true;
+    }
+    this.exchangeService.showGeoSearchToolbar(this.showGeoSearchToolbar);
   }
 
   getArrayDim(arr: any) {

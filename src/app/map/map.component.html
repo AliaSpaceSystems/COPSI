@@ -31,7 +31,7 @@
   </div>
 </div>
 
-<div *ngIf="showGeoSearchToolbar" id="geosearch-fixed-container">
+<div *ngIf="showGeoSearchToolbar && !hideGeoSearchToolbar" id="geosearch-fixed-container">
   <div id="geosearch-fixed-column-div">
     <div class="geo-search-command-div" (click)="this.onDrawRectButtonClicked(true)">
       <!-- <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon> -->

@@ -13,10 +13,12 @@ import jwt_decode from 'jwt-decode';
   animations: [
     trigger('headerMenuAnimation', [
       state('open', style({
-        'top': '3rem', 'opacity': 1, 'visibility': 'visible'
+        /* 'top': '3rem', 'opacity': 1, 'visibility': 'visible' */
+        'opacity': 1, 'visibility': 'visible'
       })),
       state('closed', style({
-        'top': '2.5rem', 'opacity': 0, 'visibility': 'hidden'
+        /* 'top': '2.5rem', 'opacity': 0, 'visibility': 'hidden' */
+        'opacity': 0, 'visibility': 'hidden'
       })),
       transition('closed => open', [
         animate('250ms ease-in')
@@ -31,22 +33,73 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   /* Base Map Styles Layer Data Array */
   /* Managed default OSM Tile layer */
-  public mapTiles: any = {
-    styles: [{}]
-  };
+  public mapLayers: any;
 
   public mapStyles = [
     'globe',
     'plane'
   ];
-  public mapStyle: any = '';
+  public mapStyle: string = '';
   public mapLayer: string = '';
+  public mapLayersPreviewpaths: any = [
+    {
+      "name": "Terrain",
+      "path": "./assets/images/Preview_Terrain.png",
+    },
+    {
+      "name": "OSM",
+      "path": "./assets/images/Preview_OSM.png"
+    },
+    {
+      "name": "Terrain_Light",
+      "path": "./assets/images/Preview_Terrain_Light.png",
+    },
+    {
+      "name": "Preview_Black_Marble",
+      "path": "./assets/images/Preview_Black_Marble.png",
+    },
+    {
+      "name": "Preview_Blue_Marble",
+      "path": "./assets/images/Preview_Blue_Marble.png",
+    },
+    {
+      "name": "Preview_S2_Cloudless",
+      "path": "./assets/images/Preview_S2_Cloudless.png"
+    }
+  ];
+  public mapOverlays: any;
+  public mapOverlay: string = '';
+  public mapOverlaysPreviewpaths: any = [
+    {
+      "name": "No Overlay",
+      "path": "./assets/images/Overlay_None.png",
+    },
+    {
+      "name": "Dark Overlay",
+      "path": "./assets/images/Overlay_Dark.png",
+    },
+    {
+      "name": "Bright Overlay",
+      "path": "./assets/images/Overlay_Bright.png"
+    }
+  ];
+  public mapLayerPrevious: string = '';
+  public mapOverlayPrevious: string = '';
+  public showGeoSearchToolbar: boolean = AppConfig.settings.geoSearchSettings.showGeoSearchToolbar;
+  public hideGeoSearchToolbar: boolean = false;
+
   mapSettingsSubscription!: Subscription;
 
   public showUser: boolean = false;
   public showUserTimeoutId: any;
   public showSettings: boolean = false;
   public showSettingsTimeoutId: any;
+  public showStyles: boolean = false;
+  public showStylesTimeoutId: any;
+  public showLayers: boolean = false;
+  public showLayersTimeoutId: any;
+  public showOverlays: boolean = false;
+  public showOverlaysTimeoutId: any;
   public token: any;
   public name: string = '';
   public role: string = '';
@@ -56,6 +109,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public showUserEditButton: boolean = AppConfig.settings.headerSettings.showUserEditButton;
   public showPasswordChangeButton: boolean = AppConfig.settings.headerSettings.showPasswordChangeButton;
 
+  public styleContainer: any;
+  public layerContainer: any;
+  public overlayContainer: any;
+  public overlayButton: any;
   constructor(private exchangeService: ExchangeService,
               private oauthService: OAuthService) { }
 
@@ -67,11 +124,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
       let tokenDecodedObj = this.decodeToken(this.token);
       this.role = tokenDecodedObj.resource_access[tokenDecodedObj.azp].roles[0];
     }
-    this.mapTiles.styles = AppConfig.settings.styles;
+    this.mapLayers = AppConfig.settings.styles;
     this.mapStyle = AppConfig.settings.mapSettings.projection;
-    this.mapLayer = this.mapTiles.styles[0].name;
+    this.mapLayer = this.mapLayers[0].name;
+    this.mapOverlays = AppConfig.settings.overlays;
+    this.mapOverlay = this.mapOverlays[0].name;
     this.editProfileUrl = AppConfig.settings.keycloak.editProfileUrl.replace('<issuer>', AppConfig.settings.keycloak.issuer).replace('<clientId>', AppConfig.settings.keycloak.clientId);
     this.changePasswordUrl = AppConfig.settings.keycloak.changePasswordUrl.replace('<issuer>', AppConfig.settings.keycloak.issuer).replace('<clientId>', AppConfig.settings.keycloak.clientId);
+
+    this.styleContainer = document.getElementById("style-container")!;
+    this.layerContainer = document.getElementById("layer-container")!;
+    this.overlayContainer = document.getElementById("overlay-container")!;
+    this.overlayButton = document.getElementById("map-overlay")!;
   }
 
   ngOnDestroy(): void {
@@ -98,22 +162,86 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  /* onMapStyleChanged(event: Event) {
-    let newMapStyle = (event.target as HTMLInputElement).value;
-    this.exchangeService.setMapStyle(newMapStyle);
-  } */
+  onMapStyleButtonClicked() {
+    if (this.showStyles) {
+      this.showStyles = false;
+      this.styleContainer.style.display = 'none';
+      this.exchangeService.hideGeoSearchToolbar(false);
+    } else {
+      this.exchangeService.hideGeoSearchToolbar(true);
+      this.styleContainer.style.display = 'flex';
+      this.showStyles = true;
+      this.showLayers = false;
+      this.showOverlays = false;
+      this.layerContainer.style.display = 'none';
+      this.overlayContainer.style.display = 'none';
+      this.setStylesTimeout();
+    }
+  }
   onMapStyleChanged(view: string) {
+    this.mapStyle = view;
     this.exchangeService.setMapStyle(view);
   }
 
-  /* onMapLayerChanged(event: Event) {
-    let newMapLayer = (event.target as HTMLInputElement).value;
-    this.exchangeService.setMapLayer(newMapLayer);
-  } */
+  onMapLayerButtonClicked() {
+    if (this.showLayers) {
+      this.showLayers = false;
+      this.layerContainer.style.display = 'none';
+      this.exchangeService.hideGeoSearchToolbar(false);
+    } else {
+      this.exchangeService.hideGeoSearchToolbar(true);
+      this.layerContainer.style.display = 'flex';
+      this.showStyles = false;
+      this.showLayers = true;
+      this.showOverlays = false;
+      this.styleContainer.style.display = 'none';
+      this.overlayContainer.style.display = 'none';
+      this.setLayersTimeout();
+    }
+  }
   onMapLayerChanged(layer: string) {
-    console.log(layer);
-
+    this.mapLayerPrevious = this.mapLayer;
+    this.mapLayer = layer;
     this.exchangeService.setMapLayer(layer);
+    if (layer === 'OSM') {
+      this.onMapOverlayChanged(this.mapOverlays[0].name);
+      this.overlayButton.classList.add('disabled');
+    } else {
+      if (this.overlayButton.classList.contains('disabled')) {
+        this.overlayButton.classList.remove('disabled');
+      }
+      if (this.mapOverlayPrevious != this.mapOverlays[0].name && this.mapLayerPrevious === 'OSM') {
+        this.onMapOverlayChanged(this.mapOverlayPrevious);
+      }
+    }
+  }
+
+  onMapOverlayButtonClicked() {
+    if (this.showOverlays) {
+      this.showOverlays = false;
+      this.overlayContainer.style.display = 'none';
+      this.exchangeService.hideGeoSearchToolbar(false);
+    } else {
+      this.exchangeService.hideGeoSearchToolbar(true);
+      this.overlayContainer.style.display = 'flex';
+      this.showStyles = false;
+      this.showLayers = false;
+      this.showOverlays = true;
+      this.styleContainer.style.display = 'none';
+      this.layerContainer.style.display = 'none';
+      this.setOverlaysTimeout();
+    }
+  }
+  onMapOverlayChanged(overlay: string) {
+    this.mapOverlayPrevious = this.mapOverlay;
+    this.mapOverlay = overlay;
+    this.exchangeService.setMapOverlay(overlay);
+  }
+
+  onShowGeoSearchToolbarClicked(event: any) {
+    this.showGeoSearchToolbar = !this.showGeoSearchToolbar;
+    this.exchangeService.hideGeoSearchToolbar(!this.showGeoSearchToolbar);
+    event.stopPropagation();
   }
 
   onShowLabelCheck(event: any) {
@@ -123,10 +251,45 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onUserMenuHover(event: any) {
     clearTimeout(this.showUserTimeoutId);
+    event.stopPropagation();
   }
 
   onSettingsMenuHover(event: any) {
     clearTimeout(this.showSettingsTimeoutId);
+    event.stopPropagation();
+  }
+
+  onStylesMenuHover(event: any) {
+    clearTimeout(this.showSettingsTimeoutId);
+    clearTimeout(this.showStylesTimeoutId);
+    event.stopPropagation();
+  }
+  onStyleMenuLeave(event: any) {
+    this.setSettingsMenuTimeout();
+    this.setStylesTimeout();
+    event.stopPropagation();
+  }
+
+  onLayersMenuHover(event: any) {
+    clearTimeout(this.showSettingsTimeoutId);
+    clearTimeout(this.showLayersTimeoutId);
+    event.stopPropagation();
+  }
+  onLayerMenuLeave(event: any) {
+    this.setSettingsMenuTimeout();
+    this.setLayersTimeout();
+    event.stopPropagation();
+  }
+
+  onOverlaysMenuHover(event: any) {
+    clearTimeout(this.showSettingsTimeoutId);
+    clearTimeout(this.showOverlaysTimeoutId);
+    event.stopPropagation();
+  }
+  onOverlaysMenuLeave(event: any) {
+    this.setSettingsMenuTimeout();
+    this.setOverlaysTimeout();
+    event.stopPropagation();
   }
 
   onEditProfileClicked() {
@@ -142,14 +305,49 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   setUserMenuTimeout() {
+    clearTimeout(this.showUserTimeoutId);
     this.showUserTimeoutId = setTimeout(() => {
       this.showUser = false;
     }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
   }
 
   setSettingsMenuTimeout() {
+    clearTimeout(this.showSettingsTimeoutId);
     this.showSettingsTimeoutId = setTimeout(() => {
       this.showSettings = false;
+    }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
+  }
+
+  setStylesTimeout() {
+    clearTimeout(this.showStylesTimeoutId);
+    this.showStylesTimeoutId = setTimeout(() => {
+      this.showStyles = false;
+      if (this.showLayers == false && this.showOverlays == false && this.showGeoSearchToolbar) {
+        this.exchangeService.hideGeoSearchToolbar(false);
+      }
+      this.styleContainer.style.display = 'none';
+    }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
+  }
+
+  setLayersTimeout() {
+    clearTimeout(this.showLayersTimeoutId);
+    this.showLayersTimeoutId = setTimeout(() => {
+      this.showLayers = false;
+      if (this.showStyles == false && this.showOverlays == false && this.showGeoSearchToolbar) {
+        this.exchangeService.hideGeoSearchToolbar(false);
+      }
+      this.layerContainer.style.display = 'none';
+    }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
+  }
+
+  setOverlaysTimeout() {
+    clearTimeout(this.showOverlaysTimeoutId);
+    this.showOverlaysTimeoutId = setTimeout(() => {
+      this.showOverlays = false;
+      if (this.showStyles == false && this.showLayers == false && this.showGeoSearchToolbar) {
+        this.exchangeService.hideGeoSearchToolbar(false);
+      }
+      this.overlayContainer.style.display = 'none';
     }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
   }
 

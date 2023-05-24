@@ -20,6 +20,9 @@ export class ExchangeService {
   private mapLayer = new BehaviorSubject<any>({});
   selectedMapLayer = this.mapLayer.asObservable();
 
+  private mapOverlay = new BehaviorSubject<any>({});
+  selectedMapOverlay = this.mapOverlay.asObservable();
+
   private showProductIndex = new BehaviorSubject<any>({});
   showProductOnMapExchange = this.showProductIndex.asObservable();
 
@@ -53,6 +56,12 @@ export class ExchangeService {
   private footprintMenuEvent = new BehaviorSubject<any>({});
   footprintMenuEventExchange = this.footprintMenuEvent.asObservable();
 
+  private hideGeoSearchToolbarEvent = new BehaviorSubject<any>({});
+  hideGeoSearchToolbarExchange = this.hideGeoSearchToolbarEvent.asObservable();
+
+  private showGeoSearchToolbarEvent = new BehaviorSubject<any>({});
+  showGeoSearchToolbarExchange = this.showGeoSearchToolbarEvent.asObservable();
+
   constructor() { }
 
   setMapStyle(mapStyle: string) {
@@ -73,6 +82,10 @@ export class ExchangeService {
 
   setMapLayer(mapLayer: string) {
     this.mapLayer.next(mapLayer);
+  }
+
+  setMapOverlay(mapOverlay: string) {
+    this.mapOverlay.next(mapOverlay);
   }
 
   showProductOnMap(showProductIndex: any) {
@@ -117,5 +130,13 @@ export class ExchangeService {
 
   showFootprintsMenu(event: any, array: any[]) {
     this.footprintMenuEvent.next({event, array});
+  }
+
+  hideGeoSearchToolbar(hide: boolean) {
+    this.hideGeoSearchToolbarEvent.next(hide);
+  }
+
+  showGeoSearchToolbar(show: boolean) {
+    this.showGeoSearchToolbarEvent.next(show);
   }
 }
