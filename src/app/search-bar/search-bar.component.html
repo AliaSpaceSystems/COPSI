@@ -177,7 +177,7 @@
           <ng-template #qlButtons>
             <div class="ql-buttons-div">
               <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"
-              (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
+              (click)="onHideProductDetails(product.Id, idx)"></mat-icon>
               <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
               <mat-icon class="material-symbols-outlined item-button-icon" aria-hidden="false" aria-label="Zoom To Map" title="Zoom To Map Position" fontIcon="point_scan"
@@ -223,74 +223,81 @@
 
   <!-- product details panel -->
   <div id="product-details-container" class="hidden">
-    <div id="product-details-title">
-      <p>Product Details</p>
-      <div id="product-details-title-buttons-div">
-        <mat-icon id="zoom-on-list" class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
-          (click)="onClickOverTooltipProductTable(selectedProduct)"></mat-icon>
-        <mat-icon id="details" class="item-button-icon" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"
-          (click)="onHideProductDetails()"></mat-icon>
-      </div>
-    </div>
-    <div id="product-details-inner-container">
-      <div id="product-details-header">
-        <p>{{selectedProduct.Name}}</p>
-      </div>
-      <div id="product-details-div">
-        <hr>
-        <div id="product-details-ql" *ngIf="selectedProduct.hasQL == true">
-          <img id="product-details-quicklook" [src]="selectedProduct.qlURL">
-        </div>
-        <div id="product-details-ql" *ngIf="(selectedProduct.hasQL == null || selectedProduct.hasQL == false)">
-          No Preview Available
-        </div>
-        <hr>
-        <div id="product-details-attributes-div">
-          <p>
-            Properties
-          </p>
-          <table class="properties-table">
-            <tr>
-              <th style="width: 30%;">Name</th>
-              <th style="width: 70%;">Value</th>
-            </tr>
-            <tr *ngFor="let property of propertiesList">
-              <td *ngIf="selectedProduct.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
-              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number')" class="properties-table-value" title="{{selectedProduct[property]}}">{{selectedProduct[property]}}</td>
-              <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value" title="{{selectedProduct[property]}}">
-                <ng-container [ngTemplateOutlet]='Array.isArray(selectedProduct[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:selectedProduct[property]}" class="properties-table-value"></ng-container>
-                <ng-template #array let-obj='obj'>
-                  <span *ngFor="let item of obj; let idx = index;">
-                    <ng-container [ngTemplateOutlet]='notArray' [ngTemplateOutletContext]="{obj:item, idx:idx}"></ng-container>
-                  </span>
-                </ng-template>
-                <ng-template #notArray let-obj='obj' let-idx='idx'>
-                  <table class="inner-table">
-                    <tr *ngFor="let key of Object.keys(obj)">
-                      <td style="width: 30%;" class="inner-table-name">{{key}}</td>
-                      <td style="width: 70%;" class="inner-table-value" title="{{obj[key]}}">{{obj[key]}}</td>
-                    </tr>
-                    <tr *ngIf="idx >= 1">
-                    </tr>
-                  </table>
-                </ng-template>
-              </td>
-            </tr>
-          </table>
-          <hr>
-          <p>
-            Attributes
-          </p>
-          <table class="attributes-table">
-            <tr>
-              <th style="width: 30%;">Name</th>
-              <th style="width: 70%;">Value</th>
-            </tr>
-            <tr *ngFor="let attribute of selectedProduct.Attributes">
-              <td class="attribute-table-name">{{beautifyCamelCase(attribute.Name)}}</td>
-              <td class="attribute-table-value" title="{{attribute.Value}}">{{attribute.Value}}</td>
-            </tr>
-          </table>
+    <div id="product-details-container-title">Products Details</div>
+    <div id="product-details-item-list-container">
+      <div class="product-details-item-container" *ngFor="let product of selectedProduct; let i = index">
+        <!-- <div class="product-details-title">
+
+        </div> -->
+        <div class="product-details-inner-container">
+          <div class="product-details-header">
+            <p>{{product.Name}}</p>
+            <div class="product-details-title-buttons-div">
+              <!-- FIXIT!! -->
+              <mat-icon class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
+                (click)="onClickOverTooltipProductTable(product)"></mat-icon>
+              <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"
+                (click)="onHideProductDetails(product.Id, i)"></mat-icon>
+              <!-- FIXIT!! -->
+            </div>
+          </div>
+          <div class="product-details-div">
+            <hr>
+            <div class="product-details-ql" *ngIf="product.hasQL == true">
+              <img class="product-details-quicklook" [src]="product.qlURL">
+            </div>
+            <div class="product-details-ql" *ngIf="(product.hasQL == null || product.hasQL == false)">
+              No Preview Available
+            </div>
+            <hr>
+            <div class="product-details-attributes-div">
+              <p>
+                Properties
+              </p>
+              <table class="properties-table">
+                <tr>
+                  <th style="width: 40%;">Name</th>
+                  <th style="width: 60%;">Value</th>
+                </tr>
+                <tr *ngFor="let property of propertiesList" title="{{beautifyCamelCase(property)}}: {{getTypeOf(product[property]) === 'object' ? '' : product[property]}}">
+                  <td *ngIf="product.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
+                  <td *ngIf="product.hasOwnProperty(property) && (getTypeOf(product[property]) === 'string' || getTypeOf(product[property]) === 'number')" class="properties-table-value">{{product[property]}}</td>
+                  <td *ngIf="product.hasOwnProperty(property) && (getTypeOf(product[property]) === 'object')" class="properties-table-value">
+                    <ng-container [ngTemplateOutlet]='Array.isArray(product[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:product[property]}" class="properties-table-value"></ng-container>
+                    <ng-template #array let-obj='obj'>
+                      <span *ngFor="let item of obj; let idx = index;">
+                        <ng-container [ngTemplateOutlet]='notArray' [ngTemplateOutletContext]="{obj:item, idx:idx}"></ng-container>
+                      </span>
+                    </ng-template>
+                    <ng-template #notArray let-obj='obj' let-idx='idx'>
+                      <table class="inner-table">
+                        <tr *ngFor="let key of Object.keys(obj)" title="{{key}}: {{obj[key]}}">
+                          <td style="width: 40%;" class="inner-table-name">{{key}}</td>
+                          <td style="width: 60%;" class="inner-table-value">{{obj[key]}}</td>
+                        </tr>
+                        <tr *ngIf="idx >= 1">
+                        </tr>
+                      </table>
+                    </ng-template>
+                  </td>
+                </tr>
+              </table>
+              <hr>
+              <p>
+                Attributes
+              </p>
+              <table class="attributes-table">
+                <tr>
+                  <th style="width: 40%;">Name</th>
+                  <th style="width: 60%;">Value</th>
+                </tr>
+                <tr *ngFor="let attribute of product.Attributes" title="{{beautifyCamelCase(attribute.Name)}}: {{attribute.Value}}">
+                  <td class="attribute-table-name">{{beautifyCamelCase(attribute.Name)}}</td>
+                  <td class="attribute-table-value">{{attribute.Value}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

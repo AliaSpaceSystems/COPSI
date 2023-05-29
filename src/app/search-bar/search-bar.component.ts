@@ -118,11 +118,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public scrollDetailThumbPos: number = 0;
   public scrollDetailSize: number = 0;
 
-  public selectedProduct: any = {};
-  public selectedProductIndex: number = -1;
+  public selectedProduct: any = [];
   public propertiesList: any = DetailsConfig.settings.Properties;
   public attributesList: any = DetailsConfig.settings.Attributes;
-  public precProductId: any;
+  //public precProductId: any;
   public Object = Object;
   public Array = Array;
 
@@ -789,8 +788,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
       (res: any) => {
-        this.selectedProduct = {};
-        this.onHideProductDetails();
+        //this.selectedProduct = {}; // don't delete on every page loading..
+        //this.onHideProductDetails();
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
         if ("status" in res) {
@@ -1242,64 +1241,59 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onShowProductDetails(id: string, index: number) {
-    if (productDetailContainer.classList.contains('hidden')) {
+    if (productDetailContainer.classList.contains('hidden')) {      // find a way for multiple panels...
       productDetailContainer.classList.replace('hidden', 'visible');
     }
+    //console.log("onShowProductDetails("+id+", "+index+")");
 
-    this.productList.value.forEach((product: any) => {
+    /* this.productList.value.forEach((product: any) => {
       product.isSelected = false;
-    });
-    this.selectedProduct = this.productList.value.filter((product: any) => product.Id === id)[0];
-    this.selectedProduct.isSelected = true;
-    this.selectedProductIndex = index;
+    }); */
+    this.selectedProduct.push(this.productList.value.filter((product: any) => product.Id === id)[0]);
+    this.selectedProduct[this.selectedProduct.length - 1].isSelected = true;
+    this.selectedProduct[this.selectedProduct.length - 1].productListIndex = index;
 
-    for (let div of listItemDiv) {
-      if (div.classList.contains('selected')) {
-        div.classList.remove('selected');
-      }
-    };
     listItemDiv[index].classList.add('selected');
 
-    let tempUnfilteredProductAttributes: any = this.selectedProduct.Attributes;
-    let tempAttributesToFilter: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProduct.platformShortName)[0].Attributes;
+    let tempUnfilteredProductAttributes: any = this.selectedProduct[this.selectedProduct.length - 1].Attributes;
+    let tempAttributesToFilter: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProduct[this.selectedProduct.length - 1].platformShortName)[0].Attributes;
 
-    this.selectedProduct.Attributes = [];
+    this.selectedProduct[this.selectedProduct.length - 1].Attributes = [];
     tempUnfilteredProductAttributes.forEach((unfilteredAttribute: any) => {
       tempAttributesToFilter.forEach((attributeNameToFilter: any) => {
         if (attributeNameToFilter === unfilteredAttribute.Name) {
-          this.selectedProduct.Attributes.push(unfilteredAttribute);
+          this.selectedProduct[this.selectedProduct.length - 1].Attributes.push(unfilteredAttribute);
         }
       });
     });
 
-    if (this.precProductId === this.selectedProduct.Id) {
-      this.onHideProductDetails();
-    } else {
-      this.precProductId = this.selectedProduct.Id;
-      this.exchangeService.selectProductOnMap(this.selectedProductIndex);
-      this.exchangeService.setProductList(this.productList);
-      setTimeout(() => {
-        this.checkProductDetailThumbSize();
-      }, 200);
-    }
+    this.exchangeService.selectProductOnMap(this.selectedProduct[this.selectedProduct.length - 1].productListIndex, true);
+    this.exchangeService.setProductList(this.productList); // Check here the behaviour..
+    setTimeout(() => {
+      this.checkProductDetailThumbSize();
+    }, 200);
+//    }
   }
 
   onZoomToProduct(id: string) {
     this.exchangeService.zoomToProduct(id);
   }
 
-  onHideProductDetails() {
-    this.precProductId = '';
-    if (productDetailContainer.classList.contains('visible')) {
-      productDetailContainer.classList.replace('visible', 'hidden');
-      productDetailScrollThumb.style.visibility = 'hidden';
+  onHideProductDetails(id: string, index: number) {
+    for (var i = 0; i < this.selectedProduct.length; i++) {
+      if (this.selectedProduct[i].Id === id) {
+        listItemDiv[this.selectedProduct[i].productListIndex].classList.remove('selected');
+        this.exchangeService.selectProductOnMap(this.selectedProduct[i].productListIndex, false);
+        this.selectedProduct[i].isSelected = false;
+        this.selectedProduct.splice(i, 1);
+      }
     }
-    this.selectedProduct.isSelected = false;
-    if (this.selectedProductIndex > -1) {
-      listItemDiv[this.selectedProductIndex].classList.remove('selected');
-      this.selectedProductIndex = -1;
-      this.exchangeService.selectProductOnMap(this.selectedProductIndex);
-      this.exchangeService.setProductList(this.productList);
+    if (this.selectedProduct.length == 0) {
+      this.selectedProduct = [];
+      if (productDetailContainer.classList.contains('visible')) {
+        productDetailContainer.classList.replace('visible', 'hidden');
+        productDetailScrollThumb.style.visibility = 'hidden';
+      }
     }
   }
 

@@ -79,8 +79,8 @@ export class ExchangeService {
     this.showProductIndex.next(showProductIndex);
   }
 
-  selectProductOnMap(selectedProductIndex: number) {
-    this.selectedProductIndex.next(selectedProductIndex);
+  selectProductOnMap(selectedProductIndex: number, selected: boolean) {
+    this.selectedProductIndex.next({selectedProductIndex, selected});
   }
 
   startRectDrawing(rectDrawing: boolean) {
