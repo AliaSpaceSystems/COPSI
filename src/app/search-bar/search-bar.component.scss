@@ -586,6 +586,16 @@ input:invalid {
   height: $search-bar-product-icons-dim;
   transition: opacity 0.15s ease-in-out, color 0.25s linear;
 }
+#load-prev, #load-next {
+  opacity: 0.4;
+}
+#load-prev.active, #load-next.active {
+  opacity: 1.0;
+}
+#load-prev.active:hover, #load-next.active:hover {
+  opacity: 0.7;
+}
+
 #sort-order-div {
   display: flex;
   flex-direction: row;
@@ -681,7 +691,7 @@ input:invalid {
   border-color: $menu-dark-bg-color;
 }
 .list-item-div.selected {
-  border: 1px solid $copsi-blue;
+  border: 2px solid $copsi-blue;
 }
 
 /* Product Name */
@@ -889,27 +899,48 @@ input:invalid {
 }
 
 /* Show/Hide button */
-#show-hide-button {
+#show-hide-button-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 1.5rem;
-  height: 3rem;
+  height: auto;
   background-color: $menu-dark-bg-color;
   color: $main-dark-text-color;
   border: $main-dark-border;
   border-radius: 0.3rem;
-  padding: 0;
   margin: 0;
+  padding: 0;
   align-self: center;
   box-shadow: $default-shadow;
   pointer-events: visible;
   cursor: pointer;
 }
+#show-hide-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  padding: 1rem 0;
+  margin: 0;
+}
 #show-hide-list-icon {
   font-size: 1rem;
   width: 1rem;
   height: 1rem;
+}
+#show-all-product-details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  padding: 1rem 0;
+  margin: 0;
 }
 
 
@@ -921,8 +952,11 @@ input:invalid {
   top: -3rem;
   gap: 0.1rem;
   max-width: calc(100vw - $search-bar-width - 7.3rem);
+  height: auto;
   background-color: transparent;
   transition: opacity 250ms ease-in-out, margin-left 250ms ease-in-out;
+  cursor: default;
+  //pointer-events: visible;
 }
 #product-details-container.hidden {
   visibility: hidden;
@@ -938,19 +972,53 @@ input:invalid {
 }
 
 #product-details-container-title {
+  display: flex;
+  flex-direction: row;
   width: 100%;
   background-color: $main-dark-bg-color;
   border: $main-dark-border;
   border-radius: 0.25rem;
   padding: 0.5rem;
+  font-size: $search-bar-font-size;
+  align-items: center;
   justify-content: space-between;
+
+  cursor: default;
+  pointer-events: visible;
+}
+#product-details-container-title p {
+  margin: 0 0 0 1rem;
+}
+#product-details-container-left-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#product-details-container-right-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#scroll-details-left, #scroll-details-right {
+  opacity: 0.4;
+}
+#scroll-details-left.active, #scroll-details-right.active {
+  opacity: 1.0;
+}
+#scroll-details-left.active:hover, #scroll-details-right.active:hover {
+  opacity: 0.7;
 }
 #product-details-item-list-container {
   display: flex;
   flex-direction: row;
-  height: 100%;
-  gap: 0.1rem;
+  height: auto;
+  gap: 0.125rem;
   overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+
+  cursor: default;
+  pointer-events: visible;
 }
 /* Scrollbar hiding */
 #product-details-item-list-container {
@@ -972,26 +1040,11 @@ input:invalid {
   gap: 0.1rem;
   background-color: transparent;
 }
-/* .product-details-title {
-  display: flex;
-  flex-direction: row;
-  width: $product-details-width;
-  background-color: $main-dark-bg-color;
-  border: $main-dark-border;
-  border-radius: 0.25rem;
-  padding: 0.5rem;
-  justify-content: space-between;
-  pointer-events: visible;
-}
-.product-details-title p {
-  margin: 0;
-  font-size: $search-bar-font-size;
-  cursor: default;
-} */
 .product-details-title-buttons-div {
   display: flex;
   flex-direction: row;
   gap: 0.25rem;
+  padding: 0 0.25rem 0 0.5rem;
 }
 
 .product-details-inner-container {
@@ -1006,8 +1059,8 @@ input:invalid {
 .product-details-header {
   display: flex;
   flex-direction: row;
+  align-items: center;
   background-color: $main-dark-bg-color;
-  //border-radius: 0.25rem 0.25rem 0 0;
   padding: 0.25rem;
 }
 .product-details-header p {
@@ -1287,12 +1340,11 @@ input:invalid {
   margin: 0.25rem;
 }
 
-
-
 /* trick to get css vars in js.. */
 #get-properties-div {
   visibility: hidden;
   background-color: $copsi-blue;
+  width: calc($product-details-width + 0.13rem);
 }
 
 

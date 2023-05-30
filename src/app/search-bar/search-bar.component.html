@@ -176,9 +176,9 @@
           <!-- Product Action Buttons Template -->
           <ng-template #qlButtons>
             <div class="ql-buttons-div">
-              <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"
+              <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="close"
               (click)="onHideProductDetails(product.Id, idx)"></mat-icon>
-              <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Show Product Details" title="Show Product Details" fontIcon="visibility"
+              <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Select Product" title="Select Product" fontIcon="check"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
               <mat-icon class="material-symbols-outlined item-button-icon" aria-hidden="false" aria-label="Zoom To Map" title="Zoom To Map Position" fontIcon="point_scan"
               (click)="onZoomToProduct(product.Id)"></mat-icon>
@@ -223,12 +223,21 @@
 
   <!-- product details panel -->
   <div id="product-details-container" class="hidden">
-    <div id="product-details-container-title">Products Details</div>
+    <div id="product-details-container-title">
+      <div id="product-details-container-left-buttons">
+        <mat-icon id="scroll-details-left" class="item-button-icon" aria-hidden="false" aria-label="Scroll Left" title="Scroll Left" fontIcon="navigate_before"
+          (click)="onScrollDetailsLeft()"></mat-icon>
+        <mat-icon id="scroll-details-right" class="item-button-icon" aria-hidden="false" aria-label="Scroll Right" title="Scroll Right" fontIcon="navigate_next"
+          (click)="onScrollDetailsRight()"></mat-icon>
+        <p>Products Details</p>
+      </div>
+      <div id="product-details-container-right-buttons">
+        <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Hide All Product Details" title="Hide All Product Details" fontIcon="visibility_off"
+          (click)="onHideAllProductDetails()"></mat-icon>
+      </div>
+    </div>
     <div id="product-details-item-list-container">
       <div class="product-details-item-container" *ngFor="let product of selectedProduct; let i = index">
-        <!-- <div class="product-details-title">
-
-        </div> -->
         <div class="product-details-inner-container">
           <div class="product-details-header">
             <p>{{product.Name}}</p>
@@ -236,8 +245,8 @@
               <!-- FIXIT!! -->
               <mat-icon class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
                 (click)="onClickOverTooltipProductTable(product)"></mat-icon>
-              <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Hide Product Details" title="Hide Product Details" fontIcon="visibility_off"
-                (click)="onHideProductDetails(product.Id, i)"></mat-icon>
+              <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="close"
+                (click)="onHideProductDetails(product.Id, product.productListIndex)"></mat-icon>
               <!-- FIXIT!! -->
             </div>
           </div>
@@ -303,12 +312,17 @@
     </div>
   </div>
   <!-- product detail scroll bar -->
-  <div id="product-detail-scroll-thumb"></div>
+  <!-- <div id="product-detail-scroll-thumb"></div> -->
 
   <!-- show hide button -->
-  <button id="show-hide-button" *ngIf="productTotalNumber > 0" title="Show/Hide list" (click)="onShowHideButtonClick($event)">
-    <mat-icon *ngIf="productListRolled == true" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_right</mat-icon>
-    <mat-icon *ngIf="productListRolled == false" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
+  <button id="show-hide-button-container" *ngIf="productTotalNumber > 0">
+    <div id="show-all-product-details" *ngIf="productDetailsContainerIsRolled && selectedProduct.length > 0" title="Show All Product Details" (click)="onShowAllProductDetails()">
+      <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Show All Product Details" fontIcon="visibility_on"></mat-icon>
+    </div>
+    <div id="show-hide-button" title="Show/Hide list" (click)="onShowHideButtonClick($event)">
+      <mat-icon *ngIf="productListRolled == true" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_right</mat-icon>
+      <mat-icon *ngIf="productListRolled == false" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
+    </div>
   </button>
 </div>
 
