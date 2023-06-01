@@ -76,6 +76,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public filterParsingDivIsPinned: boolean = this.filterOutputIsPinnedByDefault;
   public showParseFilterTimeoutId: any;
   public filterParsingDivHeight: any;
+  public selectedOptions: string[] = [];
 
   public productList: any = {
     "@odata.count": 0,
@@ -510,7 +511,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         el.value = "";
       });
     } else {
-      content.style.maxHeight = content.scrollHeight + "px";
+      /* content.style.maxHeight = content.scrollHeight + "px"; */
+      content.style.maxHeight = "10000px";
     }
     this.parseAdvancedFilter();
   }
@@ -521,6 +523,24 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onOrderByChanged(event: any) {
     this.orderBy = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
+  }
+
+  showComboSelect(event: any, filter: any) {
+    let tempComboDiv = event.target.nextElementSibling;
+    tempComboDiv.classList.replace('hidden', 'visible');
+    setTimeout(() => {
+      tempComboDiv.classList.replace('visible', 'hidden');
+    }, 3000);
+  }
+
+  onComboButtonSelected(filter: any, value: string) {
+    filter.selectedValues.push(value);
+    this.parseAdvancedFilter();
+  }
+
+  onComboFilterRemove(selectedValues: string[], index: number) {
+    selectedValues.splice(index, 1);
+    this.parseAdvancedFilter();
   }
 
   parseAdvancedFilter() {
@@ -626,7 +646,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       [].forEach.call(contentDiv, (missionDiv:any) => {
         let missionItems = missionDiv.getElementsByClassName('advanced-search-filter-div');
         [].forEach.call(missionItems, (item:any, k:any) => {
-          let select = item.getElementsByTagName('select')[0];
+          /* let select = item.getElementsByTagName('select')[0];
           let value: string = "";
           if (select !== undefined) {
             value = select.value;
@@ -636,7 +656,18 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value eq " +
                 (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
             }
-          }
+          } */
+          //let multiFilterSelect = item.getElementsByClassName('selected-option')[0];
+          [].forEach.call(this.platformDetailsList, (platform: any) => {
+            //console.log(platform);
+
+            [].forEach.call(platform.filters, (filter: any) => {
+              console.log(filter);
+
+            });
+          });
+          //let value: string = '';
+
 
           let inputs = item.getElementsByTagName('input');
           [].forEach.call(inputs, (input:any) => {

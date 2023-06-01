@@ -177,7 +177,8 @@
           "value": [
             "A",
             "B"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Product Type",
@@ -227,7 +228,8 @@
             "IW_OCN__2S",
             "EW_OCN__2S",
             "WV_OCN__2S"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Polarisation",
@@ -240,7 +242,8 @@
             "VH,VV",
             "HH,HV",
             "HV,HH"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Operational Mode",
@@ -251,7 +254,8 @@
             "IW",
             "EW",
             "WV"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Orbit Direction",
@@ -260,7 +264,8 @@
           "value": [
             "ASCENDING",
             "DESCENDING"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Timeliness",
@@ -273,7 +278,8 @@
             "Fast-24h",
             "Off-line",
             "Reprocessing"
-          ]
+          ],
+          "selectedValues": []
         }
       ]
     },
@@ -322,7 +328,8 @@
           "value": [
             "A",
             "B"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Product Type",
@@ -331,7 +338,8 @@
           "value": [
             "S2MSI1C",
             "S2MSI2A"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Tile ID",
@@ -401,7 +409,8 @@
           "value": [
             "A",
             "B"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Product Type",
@@ -427,7 +436,8 @@
             "SY_2_VG1___",
             "SY_2_V10___",
             "SY_2_AOD___"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Instrument",
@@ -438,7 +448,8 @@
             "SRAL",
             "SLSTR",
             "SYNERGY"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Processing Level",
@@ -447,7 +458,8 @@
           "value": [
             "1",
             "2"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Timeliness",
@@ -457,7 +469,8 @@
             "NR",
             "NT",
             "ST"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Cloud Cover %",
@@ -534,7 +547,8 @@
             "L2__SO2___",
             "AUX_CTMFCT",
             "AUX_CTMANA"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Processing Mode",
@@ -544,7 +558,8 @@
             "NRTI",
             "OFFL",
             "RPRO"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Processing Level",
@@ -553,7 +568,8 @@
           "value": [
             "L1b",
             "L2"
-          ]
+          ],
+          "selectedValues": []
         }
       ]
     }

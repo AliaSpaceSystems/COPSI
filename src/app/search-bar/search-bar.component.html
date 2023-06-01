@@ -74,6 +74,8 @@
     </div>
     <!-- hr -->
     <hr>
+
+    <!-- Missions Sections -->
     <div class="collapsible-section" *ngFor="let el of platformDetailsList">
       <div class="collapsible-header-div">
         <div type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</div>
@@ -86,11 +88,31 @@
       </div>
       <div class="content">
         <div *ngFor="let filter of el.filters" class="advanced-search-filter-div">
-          <label for="filter">{{filter.name}}:</label>
+          <!-- <label for="filter">{{filter.name}}:</label>
           <select *ngIf="filter.hasOwnProperty('value')" class="select" name="filter" title="Select {{filter.name}}" (change)="parseAdvancedFilter()">
             <option selected value="">---</option>
             <option *ngFor="let value of filter.value">{{value}}</option>
-          </select>
+          </select> -->
+
+          <label for="filter-select-div">{{filter.name}}:</label>
+          <div class="filter-select-container" name="filter-select-div">
+
+            <div *ngIf="filter.hasOwnProperty('value')" class="filter-select-div" title="Select {{filter.name}}" (click)="showComboSelect($event, filter)">
+              <div class="selected-options-div">
+                <div *ngIf="filter.selectedValues.length === 0" class="selected-option-placeholder">---</div>
+                <div *ngFor="let option of filter.selectedValues; let i = index" class="selected-option">
+                  {{option}}
+                  <mat-icon class="selected-option-button" aria-hidden="false" aria-label="Remove filter" title="Remove filter" fontIcon="clear"
+                    (click)="onComboFilterRemove(filter.selectedValues, i)"></mat-icon>
+                </div>
+              </div>
+            </div>
+            <div class="combo-select-div hidden">
+              <button class="combo-select-button" *ngFor="let value of filter.value" (click)="onComboButtonSelected(filter, value)">{{value}}</button>
+            </div>
+
+          </div>
+
           <input *ngIf="filter.hasOwnProperty('manualInput')" class="input" type="string" name="filter" title="Write a {{filter.name}}" (change)="parseAdvancedFilter()">
           <input *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == false" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
           <div *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == true" class="min-max-input-div">
