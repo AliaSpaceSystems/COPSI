@@ -100,7 +100,7 @@
     "fallBackHoverColor": "#a0a0a0ee",
     "fallBackHoverBorderColor": "#808080ff",
     "defaultBorderWidth": 2,
-    "selectedBorderColor": "#33ddddff",
+    "selectedBorderColor": "#00aeefff",
     "selectedBorderWidth": 4,
     "hoveredBorderWidth": 2,
     "maxPickableObjectsDepth": 15

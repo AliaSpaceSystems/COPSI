@@ -674,7 +674,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public selectedFootprintBorderWidth: number = AppConfig.settings.footprints.selectedBorderWidth;
   public hoveredFootprintBorderWidth: number = AppConfig.settings.footprints.hoveredBorderWidth;
   public selectedFootprintIndex: number[] = [-1];
-  public selectedProductIndex: number = -1;
+  public selectedProductIndexes: number[] = [];
 
 
   /* Base Map Layer */
@@ -993,8 +993,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
     this.selectedProductIdSubscription = this.exchangeService.selectProductOnMapExchange.subscribe((value) => {
-      if (typeof(value) === 'number') {
-        this.selectedProductIndex = value;
+      if (typeof(value) === 'object') {
+        if (value.selected) {
+          this.selectedProductIndexes.push(value.selectedProductIndex);
+        } else {
+          this.selectedProductIndexes.splice(this.selectedProductIndexes.indexOf(value.selectedProductIndex), 1);
+        }
       }
     });
     this.startRectDrawingSubscription = this.exchangeService.startRectDrawingExchange.subscribe((value) => {
@@ -1523,7 +1527,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerGlobeSelected = this.geojsonLayerGlobeSelected.clone({
         getLineWidth: (d: any, f:any) => {
           let ret: number = 1;
-          if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
+          if (this.selectedProductIndexes.includes(f.index)) ret = this.selectedFootprintBorderWidth;
           else if (this.selectedFootprintIndex.includes(f.index)) ret = this.hoveredFootprintBorderWidth;
           return ret;
         },
@@ -1534,14 +1538,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         getLineColor: (d:any, f:any) => {
           let tempCol = [0, 0, 0, 0];
-          if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
+          if (this.selectedProductIndexes.includes(f.index)) tempCol = this.selectedFootprintBorderColor;
           else if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverBorderColor;
           return tempCol;
         },
         updateTriggers: {
           getFillColor: [this.selectedFootprintIndex],
-          getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndex],
-          getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
+          getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndexes],
+          getLineColor: [this.selectedFootprintIndex, this.selectedProductIndexes]
         }
       });
       const layersGlobe =  [
@@ -1557,7 +1561,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.geojsonLayerPlaneSelected = this.geojsonLayerPlaneSelected.clone({
         getLineWidth: (d: any, f:any) => {
           let ret: number = 1;
-          if (f.index == this.selectedProductIndex) ret = this.selectedFootprintBorderWidth;
+          if (this.selectedProductIndexes.includes(f.index)) ret = this.selectedFootprintBorderWidth;
           else if (this.selectedFootprintIndex.includes(f.index)) ret = this.hoveredFootprintBorderWidth;
           return ret;
         },
@@ -1568,14 +1572,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         getLineColor: (d:any, f:any) => {
           let tempCol = [0, 0, 0, 0];
-          if (f.index == this.selectedProductIndex) tempCol = this.selectedFootprintBorderColor;
+          if (this.selectedProductIndexes.includes(f.index)) tempCol = this.selectedFootprintBorderColor;
           else if (this.selectedFootprintIndex.includes(f.index)) tempCol = d.properties.HoverBorderColor;
           return tempCol;
         },
         updateTriggers: {
           getFillColor: [this.selectedFootprintIndex],
-          getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndex],
-          getLineColor: [this.selectedFootprintIndex, this.selectedProductIndex]
+          getLineWidth: [this.selectedFootprintIndex, this.selectedProductIndexes],
+          getLineColor: [this.selectedFootprintIndex, this.selectedProductIndexes]
         }
       });
       const layersPlane =  [
