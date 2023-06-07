@@ -1292,11 +1292,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.exchangeService.selectProductOnMap(this.selectedProduct[this.selectedProduct.length - 1].productListIndex, true);
     this.exchangeService.setProductList(this.productList); // Refresh map
-    /* setTimeout(() => {
-      this.checkProductDetailThumbSize();
-    }, 200); */
-
-    this.checkScrollButtons();
+    setTimeout(() => {
+      this.onScrollDetailsLast();
+    }, 50);
   }
 
   onZoomToProduct(id: string) {
@@ -1363,6 +1361,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   onScrollDetailsRight() {
     productDetailsItemListContainer.scrollLeft += detailsPanelWidth;
+    this.checkScrollButtons();
+  }
+  onScrollDetailsLast() {
+    productDetailsItemListContainer.scrollLeft = 99999;
     this.checkScrollButtons();
   }
 
