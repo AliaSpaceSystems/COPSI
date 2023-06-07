@@ -31,7 +31,8 @@
       }
     ],
     "hideFilterOutputTimeout": 2000,
-    "filterOutputIsPinnedByDefault": true
+    "filterOutputIsPinnedByDefault": true,
+    "useMultipleAttributesInOption": true
   },
   "headerSettings": {
     "showUserEditButton": true,
@@ -67,6 +68,7 @@
   "keycloak": {
     "issuer_ALIA": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
     "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
+    "issuer_SERCO_GSS": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
     "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
     "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
     "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
@@ -74,6 +76,7 @@
     "redirectUri_": "http://192.168.0.109:4200/home",
     "clientId_ALIA": "prip-api",
     "clientId_SERCO": "ivv-prip-client",
+    "clientId_SERCO_GSS": "ivv-gss1-client",
     "clientId": "ivv-gss1-client",
     "responseType": "code",
     "scope": "openid profile email",
@@ -191,7 +194,8 @@
           "value": [
             "A",
             "B"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Product Type",
@@ -241,7 +245,8 @@
             "IW_OCN__2S",
             "EW_OCN__2S",
             "WV_OCN__2S"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Polarisation",
@@ -254,7 +259,8 @@
             "VH,VV",
             "HH,HV",
             "HV,HH"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Operational Mode",
@@ -265,7 +271,8 @@
             "IW",
             "EW",
             "WV"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Orbit Direction",
@@ -274,7 +281,8 @@
           "value": [
             "ASCENDING",
             "DESCENDING"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Timeliness",
@@ -287,7 +295,8 @@
             "Fast-24h",
             "Off-line",
             "Reprocessing"
-          ]
+          ],
+          "selectedValues": []
         }
       ]
     },
@@ -336,7 +345,8 @@
           "value": [
             "A",
             "B"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Product Type",
@@ -345,7 +355,8 @@
           "value": [
             "S2MSI1C",
             "S2MSI2A"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Tile ID",
@@ -415,7 +426,8 @@
           "value": [
             "A",
             "B"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Product Type",
@@ -441,7 +453,8 @@
             "SY_2_VG1___",
             "SY_2_V10___",
             "SY_2_AOD___"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Instrument",
@@ -452,7 +465,8 @@
             "SRAL",
             "SLSTR",
             "SYNERGY"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Processing Level",
@@ -461,7 +475,8 @@
           "value": [
             "1",
             "2"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Timeliness",
@@ -471,7 +486,8 @@
             "NR",
             "NT",
             "ST"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Cloud Cover %",
@@ -548,7 +564,8 @@
             "L2__SO2___",
             "AUX_CTMFCT",
             "AUX_CTMANA"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Processing Mode",
@@ -558,7 +575,8 @@
             "NRTI",
             "OFFL",
             "RPRO"
-          ]
+          ],
+          "selectedValues": []
         },
         {
           "name": "Processing Level",
@@ -567,7 +585,8 @@
           "value": [
             "L1b",
             "L2"
-          ]
+          ],
+          "selectedValues": []
         }
       ]
     }

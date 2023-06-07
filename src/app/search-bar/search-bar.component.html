@@ -74,6 +74,8 @@
     </div>
     <!-- hr -->
     <hr>
+
+    <!-- Missions Sections -->
     <div class="collapsible-section" *ngFor="let el of platformDetailsList">
       <div class="collapsible-header-div">
         <div type="button" class="collapsible-header">{{el.name}}: {{el.mission}}</div>
@@ -85,12 +87,29 @@
         </div>
       </div>
       <div class="content">
-        <div *ngFor="let filter of el.filters" class="advanced-search-filter-div">
+        <div *ngFor="let filter of el.filters; let i = index" class="advanced-search-filter-div">
+
           <label for="filter">{{filter.name}}:</label>
-          <select *ngIf="filter.hasOwnProperty('value')" class="select" name="filter" title="Select {{filter.name}}" (change)="parseAdvancedFilter()">
-            <option selected value="">---</option>
-            <option *ngFor="let value of filter.value">{{value}}</option>
-          </select>
+          <div class="filter-select-container" *ngIf="filter.hasOwnProperty('value')" name="filter">
+            <div *ngIf="filter.hasOwnProperty('value')" class="filter-select-div" title="Select {{filter.name}}" (click)="showComboSelect($event)">
+              <div class="selected-options-div">
+                <div *ngIf="filter.selectedValues.length === 0" class="selected-option-placeholder">---</div>
+                <div *ngFor="let option of filter.selectedValues; let k = index" class="selected-option">
+                  {{option}}
+                  <mat-icon class="selected-option-button" aria-hidden="false" aria-label="Remove filter" title="Remove filter" fontIcon="clear"
+                    (click)="onComboFilterRemove(filter.selectedValues, k, $event)"></mat-icon>
+                </div>
+              </div>
+            </div>
+            <div class="combo-select-container hidden" (mouseover)="onComboHover()" (mouseleave)="onComboLeave()">
+              <div class="combo-select-div" *ngFor="let value of filter.value">
+                <button class="combo-select-button" (click)="onComboButtonSelected(filter, value, $event)">{{value}}</button>
+                <mat-icon class="combo-select-button-remove" aria-hidden="false" aria-label="Remove filter" title="Remove filter" fontIcon="clear"
+                  (click)="onComboFilterRemoveFromList(filter.selectedValues, value, $event)"></mat-icon>
+              </div>
+            </div>
+          </div>
+
           <input *ngIf="filter.hasOwnProperty('manualInput')" class="input" type="string" name="filter" title="Write a {{filter.name}}" (change)="parseAdvancedFilter()">
           <input *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == false" class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
           <div *ngIf="filter.hasOwnProperty('needsMinMaxValues') && filter.needsMinMaxValues == true" class="min-max-input-div">
@@ -98,6 +117,7 @@
             <span>-</span>
             <input class="input-max" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Max value - Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()">
           </div>
+
         </div>
       </div>
       <!-- hr -->
