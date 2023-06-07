@@ -75,11 +75,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       "path": "./assets/images/Overlay_None.png",
     },
     {
-      "name": "Dark Overlay",
-      "path": "./assets/images/Overlay_Dark.png",
-    },
-    {
-      "name": "Bright Overlay",
+      "name": "Overlay",
       "path": "./assets/images/Overlay_Bright.png"
     }
   ];

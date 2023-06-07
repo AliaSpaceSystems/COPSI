@@ -87,9 +87,13 @@
       <div class="map-settings-buttons" id="map-overlay" (click)="onMapOverlayButtonClicked()">{{mapOverlay}}</div>
     </div>
     <div id="overlay-container" class="settings-sub-container" (mouseover)="onOverlaysMenuHover($event)" (mouseleave)="onOverlaysMenuLeave($event)">
-      <div class="selection-item" *ngFor="let overlay of mapOverlays; let i = index" (click)="onMapOverlayChanged(overlay.name)">
-        <label for="overlay-item">{{overlay.name}}</label>
-        <img id="overlay-item" src={{mapOverlaysPreviewpaths[i].path}} alt={{mapOverlaysPreviewpaths[i].name}}>
+      <div class="selection-item" (click)="onMapOverlayChanged(mapOverlays[0].name)">
+        <label for="overlay-item">No Overlay</label>
+        <img id="overlay-item" src={{mapOverlaysPreviewpaths[0].path}} alt={{mapOverlaysPreviewpaths[0].name}}>
+      </div>
+      <div class="selection-item" (click)="onMapOverlayChanged(mapOverlays[1].name)">
+        <label for="overlay-item">Overlay</label>
+        <img id="overlay-item" src={{mapOverlaysPreviewpaths[1].path}} alt={{mapOverlaysPreviewpaths[1].name}}>
       </div>
     </div>
 
