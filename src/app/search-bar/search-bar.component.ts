@@ -56,6 +56,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public platformDetailsList = AppConfig.settings.platformDetailsList;
   public advancedFilterIsActive: boolean = false;
   public advancedFilterOutputIsActive: boolean = false;
+  public useMultipleAttributesInOption: boolean = AppConfig.settings.searchOptions.useMultipleAttributesInOption;
   public todayDate: string = '';
 
   public sensingStartEl: any;
@@ -131,6 +132,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public hoveredProductShownArray: any[] = [];
   public footprintMenuThumbPos: number = 0;
   public footprintMenuSize: number = 0;
+
+  public comboTimeoutId: any;
 
   download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
@@ -435,8 +438,16 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onAdvancedSearchClear(event: any) {
+    [].forEach.call(this.platformDetailsList, (mission: any) => {
+      [].forEach.call(mission.filters, (filter: any) => {
+        filter.selectedValues = [];
+      });
+    });
+    let comboButtonClear = document.getElementsByClassName("combo-select-button");
+    [].forEach.call(comboButtonClear, (button: any) => {
+      button.classList.remove('selected');
+    });
     let checkboxToClear = document.getElementsByClassName("checkbox");
-    let selectsToClear = document.getElementsByClassName("select");
     let inputsToClear = document.getElementsByClassName("input");
     let datesToClear = document.getElementsByClassName("date");
     [].forEach.call(checkboxToClear, (el:any) => {
@@ -444,9 +455,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         el.click();
       }
     });
-    [].forEach.call(selectsToClear, (el:any) => {
-      el.selectedIndex = 0;
-    });
+
     [].forEach.call(inputsToClear, (el:any) => {
       el.value = "";
       el.setCustomValidity("");
@@ -525,21 +534,72 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.orderBy = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
   }
 
-  showComboSelect(event: any, filter: any) {
+  showComboSelect(event: any) {
+    let tempComboDivArray = document.getElementsByClassName('combo-select-container');
+    [].forEach.call(tempComboDivArray, (div:any) => {
+      div.classList.replace('visible', 'hidden');
+    });
+    clearTimeout(this.comboTimeoutId);
     let tempComboDiv = event.target.nextElementSibling;
     tempComboDiv.classList.replace('hidden', 'visible');
+
     setTimeout(() => {
-      tempComboDiv.classList.replace('visible', 'hidden');
-    }, 3000);
+      tempComboDiv.style.maxHeight = '20rem';
+      tempComboDiv.style.opacity = 1.0;
+    }, 10);
+    setTimeout(() => {
+      this.checkAdvancedSearchThumbSize();
+    }, 250);
+    this.hideAllComboBox();
+  }
+  hideAllComboBox() {
+    let tempComboDivArray = document.getElementsByClassName('combo-select-container');
+    this.comboTimeoutId = setTimeout(() => {
+      [].forEach.call(tempComboDivArray, (div:any) => {
+        div.style.maxHeight = '0rem';
+        div.style.opacity = 0.0;
+        setTimeout(() => {
+          div.classList.replace('visible', 'hidden');
+        }, 220);
+      });
+      setTimeout(() => {
+        this.checkAdvancedSearchThumbSize();
+      }, 250);
+    }, 1000);
+  }
+  onComboHover() {
+    clearTimeout(this.comboTimeoutId);
+  }
+  onComboLeave() {
+    this.hideAllComboBox();
   }
 
-  onComboButtonSelected(filter: any, value: string) {
+  onComboButtonSelected(filter: any, value: string, event: any) {
     filter.selectedValues.push(value);
+    event.target.classList.add('selected');
     this.parseAdvancedFilter();
   }
 
-  onComboFilterRemove(selectedValues: string[], index: number) {
+  onComboFilterRemove(selectedValues: string[], index: number, event: any) {
+    let tempParentElement = event.target.parentElement.parentElement.parentElement!;
+    let tempComboDiv = this.getNextSibling(tempParentElement, ".combo-select-container")!;
+    [].forEach.call(tempComboDiv.children, (buttonDiv: any) => {
+      if (buttonDiv.children[0].innerHTML === selectedValues[index]) {
+        buttonDiv.children[0].classList.remove('selected');
+      }
+    });
     selectedValues.splice(index, 1);
+    this.parseAdvancedFilter();
+  }
+
+  onComboFilterRemoveFromList(selectedValues: string[], value: string, event: any) {
+    let tempButton = this.getPreviousSibling(event.target, '.combo-select-button')!;
+    tempButton.classList.remove('selected');
+    [].forEach.call(selectedValues, (selectedValue: any, index: number) => {
+      if (selectedValue === value) {
+        selectedValues.splice(index, 1);
+      }
+    });
     this.parseAdvancedFilter();
   }
 
@@ -633,6 +693,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     [].forEach.call(this.missionEl, (el:any, i:any) => {
       let bracketOpenInner: boolean = false;
       if (el.getElementsByTagName('input')[0].checked) {
+        /* a mission has been selected */
         if (this.attributeFilter !== "") {
           this.attributeFilter += " or "
         }
@@ -646,28 +707,28 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       [].forEach.call(contentDiv, (missionDiv:any) => {
         let missionItems = missionDiv.getElementsByClassName('advanced-search-filter-div');
         [].forEach.call(missionItems, (item:any, k:any) => {
-          /* let select = item.getElementsByTagName('select')[0];
-          let value: string = "";
-          if (select !== undefined) {
-            value = select.value;
-            if (value !== "") {
-              this.attributeFilter += " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
-                "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
-                "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value eq " +
-                (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
-            }
-          } */
-          //let multiFilterSelect = item.getElementsByClassName('selected-option')[0];
-          [].forEach.call(this.platformDetailsList, (platform: any) => {
-            //console.log(platform);
-
-            [].forEach.call(platform.filters, (filter: any) => {
-              console.log(filter);
-
+          /* for each attribute in the mission */
+          let bracketOpenMissionInner: boolean = false;
+          if (this.platformDetailsList[i].filters[k].hasOwnProperty('selectedValues')) {
+            [].forEach.call(this.platformDetailsList[i].filters[k].selectedValues, (selectedValue: any) => {
+              if (this.useMultipleAttributesInOption) {
+                this.attributeFilter += (bracketOpenMissionInner ? ", " : " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName + "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value in (") +
+                  (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + selectedValue + "'" : selectedValue);
+                  bracketOpenMissionInner = true;
+              } else {
+                this.attributeFilter += (bracketOpenMissionInner ? " or " : " and (") + "Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                  "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
+                  "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value eq " +
+                  (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + selectedValue + "'" : selectedValue) + ")";
+                  bracketOpenMissionInner = true;
+              }
             });
-          });
-          //let value: string = '';
-
+          }
+          if (bracketOpenMissionInner) {
+            this.attributeFilter += "))";
+            bracketOpenMissionInner = false;
+          }
 
           let inputs = item.getElementsByTagName('input');
           [].forEach.call(inputs, (input:any) => {

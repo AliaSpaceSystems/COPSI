@@ -350,6 +350,7 @@ hr {
   z-index: 10;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   width: 100%;
   padding: 0.25rem 1rem;
   background-color: transparent;
@@ -1342,26 +1343,37 @@ input:invalid {
 }
 
 /* combo select */
-.combo-select-div {
+.combo-select-container {
   z-index: 9;
   align-self: flex-end;
-  position: absolute;
-  top: 1.25rem;
+  position: relative;
+  top: 0;
   width: 100%;
+  max-height: 0rem;
   flex-direction: column;
   border: $main-dark-border;
   gap: 0.25rem;
-  padding: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 0.25rem;
   background-color: $main-dark-bg-color-opaque;
-  opacity: 1;
+  opacity: 0.0;
+  overflow-y: auto;
+
+  transition: max-height 200ms ease-in-out, opacity 100ms ease-in-out;
 }
-.combo-select-div.hidden {
+.combo-select-container.hidden {
   display: none;
   height: 0;
 }
-.combo-select-div.visible {
+.combo-select-container.visible {
   display: flex;
   height: auto;
+}
+.combo-select-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 }
 .combo-select-button {
   --webkit-appearance: none;
@@ -1376,3 +1388,21 @@ input:invalid {
 .combo-select-button:hover {
   opacity: 0.7;
 }
+.combo-select-button.selected {
+  opacity: 0.3;
+  pointer-events: none;
+}
+.combo-select-button-remove {
+  padding: 0;
+  margin: 0;
+  visibility: hidden;
+  font-size: $search-bar-font-size-small;
+  width: $search-bar-font-size-small;
+  height: $search-bar-font-size-small;
+  pointer-events: visible;
+}
+.combo-select-button.selected + .combo-select-button-remove {
+  visibility: visible;
+}
+
+

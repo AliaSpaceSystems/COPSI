@@ -31,7 +31,8 @@
       }
     ],
     "hideFilterOutputTimeout": 2000,
-    "filterOutputIsPinnedByDefault": true
+    "filterOutputIsPinnedByDefault": true,
+    "useMultipleAttributesInOption": true
   },
   "headerSettings": {
     "showUserEditButton": false,
@@ -66,6 +67,7 @@
   "keycloak": {
     "issuer_ALIA": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
     "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
+    "issuer_SERCO_GSS": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
     "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
     "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
     "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
@@ -73,6 +75,7 @@
     "redirectUri_": "http://192.168.0.109:4200/home",
     "clientId_ALIA": "prip-api",
     "clientId_SERCO": "ivv-prip-client",
+    "clientId_SERCO_GSS": "ivv-gss1-client",
     "clientId": "ivv-gss1-client",
     "responseType": "code",
     "scope": "openid profile email",
