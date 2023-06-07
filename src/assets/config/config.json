@@ -132,11 +132,7 @@
       "url": ""
     },
     {
-      "name": "Dark Overlay",
-      "url": "https://tiles.maps.eox.at/wmts/1.0.0/overlay_3857/default/g/{z}/{y}/{x}.jpg"
-    },
-    {
-      "name": "Bright Overlay",
+      "name": "Overlay",
       "url": "https://tiles.maps.eox.at/wmts/1.0.0/overlay_bright_3857/default/g/{z}/{y}/{x}.jpg"
     }
   ],
