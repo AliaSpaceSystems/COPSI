@@ -1169,21 +1169,29 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   downloadProduct(id: string, name: string) {
     this.toast.showInfoToast('success', 'DOWNLOADING PRODUCT...');
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
-
+    let productInSelectedList = this.selectedProducts.filter((product: any) => product.Id === id)[0];
     this.downloadSubscription.set(id ,this.productSearch.download(downloadUrl, name).subscribe({
         next: (res: any) => {
-          this.productList.value.forEach((product: any) => {
-            if (product.Id == id) {
-              product.download = res;
-            }
-          });
+          if (productInSelectedList != null) {
+            productInSelectedList.download = res;
+          } else {
+            this.productList.value.forEach((product: any) => {
+              if (product.Id == id) {
+                product.download = res;
+              }
+            });
+          }
         }
         , error: (e) => {
-          this.productList.value.forEach((product: any) => {
-            if (product.Id == id) {
-              product.download = {};
-            }
-          });
+          if (productInSelectedList != null) {
+            productInSelectedList.download = {};
+          } else {
+            this.productList.value.forEach((product: any) => {
+              if (product.Id == id) {
+                product.download = {};
+              }
+            });
+          }
         }
       })
     );
@@ -1191,13 +1199,20 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   unsubscribeDownload(id: string) {
     if (this.downloadSubscription != null) {
-      this.productList.value.forEach((product: any) => {
-        if (product.Id == id) {
-          product.download.state = null;
-          this.downloadSubscription.get(id)!.unsubscribe();
-          this.toast.showInfoToast('error', 'DOWNLOAD STOPPED!');
-        }
-      });
+      let productInSelectedList = this.selectedProducts.filter((product: any) => product.Id === id)[0];
+      if (productInSelectedList != null) {
+        productInSelectedList.download.state = null;
+        this.downloadSubscription.get(id)!.unsubscribe();
+        this.toast.showInfoToast('error', 'DOWNLOAD STOPPED!');
+      } else {
+        this.productList.value.forEach((product: any) => {
+          if (product.Id == id) {
+            product.download.state = null;
+            this.downloadSubscription.get(id)!.unsubscribe();
+            this.toast.showInfoToast('error', 'DOWNLOAD STOPPED!');
+          }
+        });
+      }
     }
   }
 
@@ -1534,7 +1549,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
 
-  /* Accessory functions */
+  /* Auxiliary functions */
   returnOptionNameFromValue(val: any, options: any) {
     return options.filter((option: any) => option.value === val)[0].name;
   }

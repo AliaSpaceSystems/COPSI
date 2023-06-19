@@ -261,59 +261,53 @@
       </div>
     </div>
     <div id="product-details-item-list-container">
-      <div class="product-details-item-container" *ngFor="let product of selectedProducts; let i = index">
+      <div class="product-details-item-container" *ngFor="let selectedProduct of selectedProducts; let i = index">
         <div class="product-details-inner-container">
           <div class="product-details-header">
-            <p>{{product.Name}}</p>
-            <!-- <div class="product-details-title-buttons-div">
-              <mat-icon class="item-button-icon material-icons-outlined zoom-to-list" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
-                (click)="onZoomToList(product)"></mat-icon>
-              <mat-icon class="item-button-icon unselect-product" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="remove"
-                (click)="onHideProductDetails(product.Id, product.productListIndex)"></mat-icon>
-            </div> -->
+            <p>{{selectedProduct.Name}}</p>
           </div>
           <div class="product-details-div">
             <hr>
             <div style="position: relative">
-              <div class="product-details-ql" *ngIf="product.hasQL == true">
-                <img class="product-details-quicklook" [src]="product.qlURL">
+              <div class="product-details-ql" *ngIf="selectedProduct.hasQL == true">
+                <img class="product-details-quicklook" [src]="selectedProduct.qlURL">
               </div>
-              <div class="product-details-ql" *ngIf="(product.hasQL == null || product.hasQL == false)">
-                <p *ngIf="!(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">No Preview Available</p>
+              <div class="product-details-ql" *ngIf="(selectedProduct.hasQL == null || selectedProduct.hasQL == false)">
+                <p *ngIf="!(selectedProduct.download.state == 'IN_PROGRESS' || selectedProduct.download.state == 'PENDING' )">No Preview Available</p>
               </div>
               <!-- download buttons -->
               <div class="product-details-download-column-div">
                 <div class="product-details-download-row-div">
                   <div class="progress-div">
                     <mat-progress-bar class="progress-bar"
-                      *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )"
-                      [mode]="product.download.state == 'PENDING' ? 'determinate' : 'determinate'"
-                      [value]="product.download.progress">
+                      *ngIf="selectedProduct.download && (selectedProduct.download.state == 'IN_PROGRESS' || selectedProduct.download.state == 'PENDING' )"
+                      [mode]="selectedProduct.download.state == 'PENDING' ? 'determinate' : 'determinate'"
+                      [value]="selectedProduct.download.progress">
                     </mat-progress-bar>
-                    <div class="progress-value" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">
-                      {{product.download.progress}}%
+                    <div class="progress-value" *ngIf="selectedProduct.download && (selectedProduct.download.state == 'IN_PROGRESS' || selectedProduct.download.state == 'PENDING' )">
+                      {{selectedProduct.download.progress}}%
                     </div>
                   </div>
                   <div class="product-details-download-buttons-div">
                     <mat-icon class="item-button-icon unselect-product" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="remove"
-                      (click)="onHideProductDetails(product.Id, product.productListIndex)"></mat-icon>
+                      (click)="onHideProductDetails(selectedProduct.Id, selectedProduct.productListIndex)"></mat-icon>
                     <mat-icon class="item-button-icon material-icons-outlined zoom-to-list" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
-                      (click)="onZoomToList(product)"></mat-icon>
+                      (click)="onZoomToList(selectedProduct)"></mat-icon>
                     <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
-                      (click)="copyUrl(product.Id)"></mat-icon>
-                    <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
-                      <mat-icon *ngIf="product.download.state == 'DONE'" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
-                        (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
-                      <mat-icon *ngIf="(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
-                        (click)="unsubscribeDownload(product.Id)"></mat-icon>
+                      (click)="copyUrl(selectedProduct.Id)"></mat-icon>
+                    <ng-template [ngIf]="selectedProduct.download.state" [ngIfElse]="downloadDefault">
+                      <mat-icon *ngIf="selectedProduct.download.state == 'DONE'" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                        (click)="downloadProduct(selectedProduct.Id, selectedProduct.Name)"></mat-icon>
+                      <mat-icon *ngIf="(selectedProduct.download.state == 'IN_PROGRESS' || selectedProduct.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
+                        (click)="unsubscribeDownload(selectedProduct.Id)"></mat-icon>
                     </ng-template>
                     <ng-template #downloadDefault>
                       <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
-                        (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                        (click)="downloadProduct(selectedProduct.Id, selectedProduct.Name)"></mat-icon>
                     </ng-template>
                   </div>
                 </div>
-                <div class="product-details-download-column-div-spacer" *ngIf="product.hasQL == true"></div>
+                <div class="product-details-download-column-div-spacer" *ngIf="selectedProduct.hasQL == true"></div>
               </div>
             </div>
             <hr>
@@ -326,11 +320,11 @@
                   <th style="width: 40%;">Name</th>
                   <th style="width: 60%;">Value</th>
                 </tr>
-                <tr *ngFor="let property of propertiesList" title="{{beautifyCamelCase(property)}}: {{getTypeOf(product[property]) === 'object' ? '' : product[property]}}">
-                  <td *ngIf="product.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
-                  <td *ngIf="product.hasOwnProperty(property) && (getTypeOf(product[property]) === 'string' || getTypeOf(product[property]) === 'number')" class="properties-table-value">{{product[property]}}</td>
-                  <td *ngIf="product.hasOwnProperty(property) && (getTypeOf(product[property]) === 'object')" class="properties-table-value">
-                    <ng-container [ngTemplateOutlet]='Array.isArray(product[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:product[property]}" class="properties-table-value"></ng-container>
+                <tr *ngFor="let property of propertiesList" title="{{beautifyCamelCase(property)}}: {{getTypeOf(selectedProduct[property]) === 'object' ? '' : selectedProduct[property]}}">
+                  <td *ngIf="selectedProduct.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
+                  <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number')" class="properties-table-value">{{selectedProduct[property]}}</td>
+                  <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value">
+                    <ng-container [ngTemplateOutlet]='Array.isArray(selectedProduct[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:selectedProduct[property]}" class="properties-table-value"></ng-container>
                     <ng-template #array let-obj='obj'>
                       <span *ngFor="let item of obj; let idx = index;">
                         <ng-container [ngTemplateOutlet]='notArray' [ngTemplateOutletContext]="{obj:item, idx:idx}"></ng-container>
@@ -358,7 +352,7 @@
                   <th style="width: 40%;">Name</th>
                   <th style="width: 60%;">Value</th>
                 </tr>
-                <tr *ngFor="let attribute of product.Attributes" title="{{beautifyCamelCase(attribute.Name)}}: {{attribute.Value}}">
+                <tr *ngFor="let attribute of selectedProduct.Attributes" title="{{beautifyCamelCase(attribute.Name)}}: {{attribute.Value}}">
                   <td class="attribute-table-name">{{beautifyCamelCase(attribute.Name)}}</td>
                   <td class="attribute-table-value">{{attribute.Value}}</td>
                 </tr>
@@ -369,8 +363,6 @@
       </div>
     </div>
   </div>
-  <!-- product detail scroll bar -->
-  <!-- <div id="product-detail-scroll-thumb"></div> -->
 
   <!-- show hide button -->
   <button id="show-hide-button-container" *ngIf="productTotalNumber > 0">
