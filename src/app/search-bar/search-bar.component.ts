@@ -484,15 +484,17 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onAdvancedSearchSubmit(event: any) {
     this.parseAdvancedFilter();
-    if (
-      this.parsedFilterPrec != this.parsedFilter ||
-      this.productFilterPrec != this.productFilter ||
-      this.attributeFilterPrec != this.attributeFilter ||
-      this.geoFilterPrec != this.geoFilter
-    ) {
-      console.log("Delete selected products list.");
-      for (let i = this.selectedProducts.length - 1; i >= 0; i--) {
-        this.onHideProductDetails(this.selectedProducts[i].Id, this.selectedProducts[i].productListIndex);
+    if (this.selectedProducts.length > 0) {
+      if (
+        this.parsedFilterPrec != this.parsedFilter ||
+        this.productFilterPrec != this.productFilter ||
+        this.attributeFilterPrec != this.attributeFilter ||
+        this.geoFilterPrec != this.geoFilter
+      ) {
+        this.toast.showInfoToast('info', 'FILTER CHANGED. REMOVING PRODUCT DETAILS');
+        for (let i = this.selectedProducts.length - 1; i >= 0; i--) {
+          this.onHideProductDetails(this.selectedProducts[i].Id, this.selectedProducts[i].productListIndex);
+        }
       }
     }
     this.parsedFilterPrec = this.parsedFilter;
@@ -975,6 +977,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               if (product.Id === sel.Id) {
                 setTimeout(() => {
                   product.isSelected = true;
+                  product.download = sel.download;
                   sel.isInList = true;
                   listItemDiv[sel.productListIndex].classList.add('selected');
                   tempProductDetailsZoomToListButtons[index].classList.remove('is-not-in-list');
