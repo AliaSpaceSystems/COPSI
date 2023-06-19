@@ -30,7 +30,7 @@
         "value": "ASC"
       }
     ],
-    "hideFilterOutputTimeout": 2000,
+    "hideFilterOutputTimeout": 1500,
     "filterOutputIsPinnedByDefault": true,
     "useMultipleAttributesInOption": true
   },

@@ -22,8 +22,6 @@ let filterOutputDiv: any;
 let filterOutputScrollableDiv: any;
 let filterOutputScrollThumb: any;
 let productDetailContainer: any;
-//let productDetailScrollableDiv: any;
-//let productDetailScrollThumb: any;
 let productDetailsContainerTitle: any;
 let productDetailsItemListContainer: any;
 let detailedView: any;
@@ -85,11 +83,16 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public filterParsingDivHeight: any;
   public selectedOptions: string[] = [];
 
+  public parsedFilterPrec: string = "";
+  public productFilterPrec: string = "";
+  public attributeFilterPrec: string = "";
+  public geoFilterPrec: string = "";
+  public filterHasChanged: boolean = false;
+
   public productList: any = {
     "@odata.count": 0,
     value: []
   };
-  public fakeProductList: any;
   public productTotalNumber: number = 0;
   public productStartNumber: number = 0;
   public productEndNumber: number = 0;
@@ -127,10 +130,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public scrollDetailSize: number = 0;
 
   public productDetailsContainerIsRolled: boolean = true;
-  public selectedProduct: any = [];
+  public selectedProducts: any = [];
   public propertiesList: any = DetailsConfig.settings.Properties;
   public attributesList: any = DetailsConfig.settings.Attributes;
-  //public precProductId: any;
   public Object = Object;
   public Array = Array;
 
@@ -188,7 +190,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     advancedSearchMagnifierIcon = document.getElementById('search-magnifier-icon')!;
     advancedSearchSubmitIcon = document.getElementById('advanced-search-submit-icon')!;
     productDetailContainer = document.getElementById('product-details-container')!;
-    //productDetailScrollableDiv = document.getElementById('product-details-inner-container')!;
     productDetailsContainerTitle = document.getElementById('product-details-container-title')!;
     productDetailsItemListContainer = document.getElementById('product-details-item-list-container')!;
     footprintMenuContainer = document.getElementById('footprint-menu-container')!;
@@ -283,15 +284,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.scrollFilterThumbPos = this.calcThumbPos(filterOutputScrollableDiv, this.scrollFilterSize);
       this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
     });
-
-    /* Product Detail scroll thumb */
-    /* productDetailScrollThumb = document.getElementById('product-detail-scroll-thumb')!;
-    this.dragElement(productDetailScrollThumb, productDetailScrollableDiv); */
-
-    /* productDetailScrollableDiv!.addEventListener('scroll', (e: any) => {
-      this.scrollDetailThumbPos = this.calcThumbPos(productDetailScrollableDiv, this.scrollDetailSize);
-      this.setThumbPos(productDetailScrollThumb, this.scrollDetailThumbPos);
-    }); */
 
     /* Footprint Menu scroll thumb */
     footprintMenuScrollThumb = document.getElementById('footprints-menu-scroll-thumb')!;
@@ -409,9 +401,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.onShowHideButtonClick(null);
     this.checkFilterOutputHeight();
-    /* setTimeout(() => {
-      this.checkFilterOutputHeight();
-    }, 50); */
     setTimeout(() => {
       if (this.filterParsingDivIsPinned) {
         this.checkFilterParsingToggle();
@@ -421,7 +410,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onCopyOutputClicked (event: any) {
     let filterOutput: string = filterOutputScrollableDiv.textContent;
-    //console.log(filterOutput);
     this.clipboard.copy(filterOutput);
     this.toast.showInfoToast('success', 'FILTER OUTPUT COPIED');
   }
@@ -496,6 +484,22 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onAdvancedSearchSubmit(event: any) {
     this.parseAdvancedFilter();
+    if (
+      this.parsedFilterPrec != this.parsedFilter ||
+      this.productFilterPrec != this.productFilter ||
+      this.attributeFilterPrec != this.attributeFilter ||
+      this.geoFilterPrec != this.geoFilter
+    ) {
+      console.log("Delete selected products list.");
+      for (let i = this.selectedProducts.length - 1; i >= 0; i--) {
+        this.onHideProductDetails(this.selectedProducts[i].Id, this.selectedProducts[i].productListIndex);
+      }
+    }
+    this.parsedFilterPrec = this.parsedFilter;
+    this.productFilterPrec = this.productFilter;
+    this.attributeFilterPrec = this.attributeFilter;
+    this.geoFilterPrec = this.geoFilter;
+
     if (this.canSubmitSearch) {
       if (this.productFilter === "" && this.attributeFilter === "") {
         this.advancedFilterIsActive = false;
@@ -539,7 +543,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         el.value = "";
       });
     } else {
-      /* content.style.maxHeight = content.scrollHeight + "px"; */
       content.style.maxHeight = "10000px";
     }
     this.parseAdvancedFilter();
@@ -849,13 +852,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setThumbPos(filterOutputScrollThumb, this.scrollFilterThumbPos);
   }
 
-  /* checkProductDetailThumbSize() {
-    this.calcDetailThumbSize();
-    this.setThumbSize(productDetailScrollThumb, this.scrollDetailSize);
-    this.scrollDetailThumbPos = this.calcThumbPos(productDetailScrollableDiv, this.scrollDetailSize);
-    this.setThumbPos(productDetailScrollThumb, this.scrollDetailThumbPos);
-  } */
-
   checkFootprintsMenuThumbSize() {
     this.calcFootprintsMenuThumbSize();
     this.setThumbSize(footprintMenuScrollThumb, this.footprintMenuSize);
@@ -877,8 +873,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       order: this.orderBy,
       sort: this.sortBy
     }
-    //console.log("SearchOptions: ", this.searchOptions);
-
     this.loadPage(this.currentPage);
     this.productListRolled = false;
     event.stopPropagation();
@@ -897,11 +891,19 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadPage(page: number) {
     this.searchOptions.skip = page * this.searchOptions.top;
-
+    this.productList.value.forEach((product: any, index: number) => {
+      if (product.isSelected === true) {
+        this.exchangeService.selectProductOnMap(index, false);
+      }
+    });
     let searchReturn = this.productSearch.search(this.searchOptions).subscribe(
       (res: any) => {
-        //this.selectedProduct = {}; // don't delete on every page loading..
-        //this.onHideProductDetails();
+        let tempProductDetailsZoomToListButtons = document.getElementsByClassName('zoom-to-list')!;
+        if (tempProductDetailsZoomToListButtons.length > 0) {
+          [].forEach.call(tempProductDetailsZoomToListButtons, (button: any) => {
+            button.classList.add('is-not-in-list');
+          });
+        }
         this.productTotalNumber = res['@odata.count'];
         this.lastPage = Math.floor(this.productTotalNumber / this.searchOptions.top);
         if ("status" in res) {
@@ -915,9 +917,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           /* 0 products found */
           this.showProductList = true;
           this.listIsReady = true;
-
           this.productListRolled = true;
-
           this.productList = {
             "@odata.count": 0,
             value: []
@@ -931,8 +931,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           /* got a list */
           this.productList = res;
-          //console.log("Product List: ", this.productList);
-
           this.productList.value.forEach((product: any) => {
             product.isSelected = false;
             product.download = {};
@@ -970,6 +968,20 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               },
               error: (e) => {}
             });
+
+            /* Check if selected products are in the list */
+            [].forEach.call(this.selectedProducts ,(sel: any, index: number) => {
+              sel.isInList = false;
+              if (product.Id === sel.Id) {
+                setTimeout(() => {
+                  product.isSelected = true;
+                  sel.isInList = true;
+                  listItemDiv[sel.productListIndex].classList.add('selected');
+                  tempProductDetailsZoomToListButtons[index].classList.remove('is-not-in-list');
+                  this.exchangeService.selectProductOnMap(sel.productListIndex, true);
+                }, 0);
+              }
+            });
           });
           this.exchangeService.setProductList(this.productList);
 
@@ -997,24 +1009,18 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
             /* Check if page buttons should be visible */
             if (this.currentPage == 0) {
-              //prevPageButton.style.opacity = '0.4';
               prevPageButton.classList.remove('active');
               if (this.currentPage < this.lastPage) {
-                //nextPageButton.style.opacity = '1.0';
                 nextPageButton.classList.add('active');
               } else {
-                //nextPageButton.style.opacity = '0.4';
                 nextPageButton.classList.remove('active');
               }
             } else if (this.currentPage == this.lastPage) {
-              //nextPageButton.style.opacity = '0.4';
               nextPageButton.classList.remove('active');
               if (this.currentPage > 0) {
-                //prevPageButton.style.opacity = '1.0';
               prevPageButton.classList.add('active');
               }
             } else {
-              //prevPageButton.style.opacity = nextPageButton.style.opacity = '1.0';
               prevPageButton.classList.add('active');
               nextPageButton.classList.add('active');
             }
@@ -1063,7 +1069,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onShowHideButtonClick(event: any) {
     if (this.listIsReady) {
-      //let listItemParentContainer = document.getElementById('list-items-parent-container')!;
       if (this.productListRolled) {
         this.productListRolled = false;
         if (advancedSearchMenu.classList.contains('visible')) {
@@ -1082,9 +1087,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         productListContainer.style.left = '0.5rem';
         this.calcListThumbSize();
         productListContainer!.style.gap = '0';
-        /* if (productDetailContainer.classList.contains('visible')) {
-          productDetailScrollThumb.style.visibility = 'visible';
-        } */
       } else {
         this.productListRolled = true;
         listContainer.style.visibility = 'hidden';
@@ -1094,7 +1096,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         productListContainer.style.left = (-productListContainer.clientWidth - productListScrollThumb.clientWidth - 2).toString() + 'px';
         productListScrollThumb.style.visibility = 'hidden';
         productListContainer!.style.gap = '0 0.75rem';
-        //productDetailScrollThumb.style.visibility = 'hidden';
       }
     }
     if (event != null) event.stopPropagation();
@@ -1288,14 +1289,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       filterOutputScrollThumb.style.visibility = 'hidden';
     }
   }
-  /* calcDetailThumbSize() {
-    if (productDetailScrollableDiv.scrollHeight > productDetailScrollableDiv.clientHeight) {
-      productDetailScrollThumb.style.visibility = 'visible';
-      this.scrollDetailSize = productDetailScrollableDiv.clientHeight * productDetailScrollableDiv.clientHeight / productDetailScrollableDiv.scrollHeight;
-    } else {
-      productDetailScrollThumb.style.visibility = 'hidden';
-    }
-  } */
   calcFootprintsMenuThumbSize() {
     if (footprintMenuScrollableDiv.scrollHeight > footprintMenuScrollableDiv.clientHeight) {
       footprintMenuScrollThumb.style.visibility = 'visible';
@@ -1364,25 +1357,26 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (productDetailContainer!.classList.contains('hidden')) {
       productDetailContainer!.classList.replace('hidden', 'visible');
     }
-    this.selectedProduct.push(this.productList.value.filter((product: any) => product.Id === id)[0]);
-    this.selectedProduct[this.selectedProduct.length - 1].isSelected = true;
-    this.selectedProduct[this.selectedProduct.length - 1].productListIndex = index;
+    this.selectedProducts.push(this.productList.value.filter((product: any) => product.Id === id)[0]);
+    this.selectedProducts[this.selectedProducts.length - 1].isSelected = true;
+    this.selectedProducts[this.selectedProducts.length - 1].productListIndex = index;
+    this.selectedProducts[this.selectedProducts.length - 1].isInList = true;
 
     listItemDiv[index].classList.add('selected');
 
-    let tempUnfilteredProductAttributes: any = this.selectedProduct[this.selectedProduct.length - 1].Attributes;
-    let tempAttributesToFilter: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProduct[this.selectedProduct.length - 1].platformShortName)[0].Attributes;
+    let tempUnfilteredProductAttributes: any = this.selectedProducts[this.selectedProducts.length - 1].Attributes;
+    let tempAttributesToFilter: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProducts[this.selectedProducts.length - 1].platformShortName)[0].Attributes;
 
-    this.selectedProduct[this.selectedProduct.length - 1].Attributes = [];
+    this.selectedProducts[this.selectedProducts.length - 1].Attributes = [];
     tempUnfilteredProductAttributes.forEach((unfilteredAttribute: any) => {
       tempAttributesToFilter.forEach((attributeNameToFilter: any) => {
         if (attributeNameToFilter === unfilteredAttribute.Name) {
-          this.selectedProduct[this.selectedProduct.length - 1].Attributes.push(unfilteredAttribute);
+          this.selectedProducts[this.selectedProducts.length - 1].Attributes.push(unfilteredAttribute);
         }
       });
     });
 
-    this.exchangeService.selectProductOnMap(this.selectedProduct[this.selectedProduct.length - 1].productListIndex, true);
+    this.exchangeService.selectProductOnMap(this.selectedProducts[this.selectedProducts.length - 1].productListIndex, true);
     this.exchangeService.setProductList(this.productList); // Refresh map
     setTimeout(() => {
       this.onScrollDetailsLast();
@@ -1394,19 +1388,20 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onHideProductDetails(id: string, index: number) {
-    for (var i = 0; i < this.selectedProduct.length; i++) {
-      if (this.selectedProduct[i].Id === id) {
-        listItemDiv[this.selectedProduct[i].productListIndex].classList.remove('selected');
-        this.exchangeService.selectProductOnMap(this.selectedProduct[i].productListIndex, false);
-        this.selectedProduct[i].isSelected = false;
-        this.selectedProduct.splice(i, 1);
+    if (this.productList.value[index].Id === id) {
+      listItemDiv[index].classList.remove('selected');
+      this.productList.value[index].isSelected = false;
+      this.exchangeService.selectProductOnMap(index, false);
+    }
+    for (var i = 0; i < this.selectedProducts.length; i++) {
+      if (this.selectedProducts[i].Id === id) {
+        this.selectedProducts.splice(i, 1);
       }
     }
-    if (this.selectedProduct.length == 0) {
-      this.selectedProduct = [];
+    if (this.selectedProducts.length == 0) {
+      this.selectedProducts = [];
       if (productDetailContainer.classList.contains('visible')) {
         productDetailContainer.classList.replace('visible', 'hidden');
-        //productDetailScrollThumb.style.visibility = 'hidden';
       }
     }
     this.checkScrollButtons();
@@ -1533,7 +1528,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateHoveredProduct([{index: -1}]);
   }
 
-  onClickOverTooltipProductTable(product: any) {
+  onZoomToList(product: any) {
     this.zoomToList(product.Id);
   }
 

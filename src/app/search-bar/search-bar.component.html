@@ -1,3 +1,4 @@
+<!-- Search Bar -->
 <div id="search-bar-main-div">
   <mat-icon *ngIf="advancedFilterIsActive == false" id="advanced-search-icon" aria-hidden="false" aria-label="advanced search icon" fontIcon="menu" title="Show advanced filter" (click)="onShowAdvancedSearch($event)"></mat-icon>
   <mat-icon *ngIf="advancedFilterIsActive == true" id="advanced-search-icon-filtered" aria-hidden="false" aria-label="advanced search icon" fontIcon="filter_list" title="Show advanced filter" (click)="onShowAdvancedSearch($event)"></mat-icon>
@@ -7,6 +8,7 @@
   </div>
 </div>
 
+<!-- OData Filter Output -->
 <div id="filter-output-div" class="hidden unpinned">
   <div id="filter-output-label-div">
     <div id="filter-output-label">Search filter output:</div>
@@ -30,6 +32,7 @@
   <div id="filter-output-scroll-thumb"></div>
 </div>
 
+<!-- Advanced Search -->
 <form id="advanced-search-menu" class="hidden">
   <div id="advanced-search-title-div">
     <p>Advanced Search</p>
@@ -128,6 +131,7 @@
   <div id="advanced-search-scroll-thumb"></div>
 </form>
 
+<!-- Product List Container -->
 <div id="product-list-container" class="hidden">
   <div id="product-list-div">
     <div id="product-list-header">
@@ -196,11 +200,11 @@
           <!-- Product Action Buttons Template -->
           <ng-template #qlButtons>
             <div class="ql-buttons-div">
-              <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="close"
+              <mat-icon *ngIf="product.isSelected === true" class="item-button-icon product-selected" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="remove"
               (click)="onHideProductDetails(product.Id, idx)"></mat-icon>
-              <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Select Product" title="Select Product" fontIcon="check"
+              <mat-icon *ngIf="product.isSelected === false" class="item-button-icon product-unselected" aria-hidden="false" aria-label="Select Product" title="Select Product" fontIcon="add"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
-              <mat-icon class="material-symbols-outlined item-button-icon" aria-hidden="false" aria-label="Zoom To Map" title="Zoom To Map Position" fontIcon="point_scan"
+              <mat-icon class="material-symbols-outlined item-button-icon" aria-hidden="false" aria-label="Zoom To Map" title="Zoom To Map Position" fontIcon="travel_explore"
               (click)="onZoomToProduct(product.Id)"></mat-icon>
               <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
               (click)="copyUrl(product.Id)"></mat-icon>
@@ -257,26 +261,60 @@
       </div>
     </div>
     <div id="product-details-item-list-container">
-      <div class="product-details-item-container" *ngFor="let product of selectedProduct; let i = index">
+      <div class="product-details-item-container" *ngFor="let product of selectedProducts; let i = index">
         <div class="product-details-inner-container">
           <div class="product-details-header">
             <p>{{product.Name}}</p>
-            <div class="product-details-title-buttons-div">
-              <!-- FIXIT!! -->
-              <mat-icon class="item-button-icon material-icons-outlined" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
-                (click)="onClickOverTooltipProductTable(product)"></mat-icon>
-              <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="close"
+            <!-- <div class="product-details-title-buttons-div">
+              <mat-icon class="item-button-icon material-icons-outlined zoom-to-list" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
+                (click)="onZoomToList(product)"></mat-icon>
+              <mat-icon class="item-button-icon unselect-product" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="remove"
                 (click)="onHideProductDetails(product.Id, product.productListIndex)"></mat-icon>
-              <!-- FIXIT!! -->
-            </div>
+            </div> -->
           </div>
           <div class="product-details-div">
             <hr>
-            <div class="product-details-ql" *ngIf="product.hasQL == true">
-              <img class="product-details-quicklook" [src]="product.qlURL">
-            </div>
-            <div class="product-details-ql" *ngIf="(product.hasQL == null || product.hasQL == false)">
-              No Preview Available
+            <div style="position: relative">
+              <div class="product-details-ql" *ngIf="product.hasQL == true">
+                <img class="product-details-quicklook" [src]="product.qlURL">
+              </div>
+              <div class="product-details-ql" *ngIf="(product.hasQL == null || product.hasQL == false)">
+                <p *ngIf="!(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">No Preview Available</p>
+              </div>
+              <!-- download buttons -->
+              <div class="product-details-download-column-div">
+                <div class="product-details-download-row-div">
+                  <div class="progress-div">
+                    <mat-progress-bar class="progress-bar"
+                      *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )"
+                      [mode]="product.download.state == 'PENDING' ? 'determinate' : 'determinate'"
+                      [value]="product.download.progress">
+                    </mat-progress-bar>
+                    <div class="progress-value" *ngIf="product.download && (product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING' )">
+                      {{product.download.progress}}%
+                    </div>
+                  </div>
+                  <div class="product-details-download-buttons-div">
+                    <mat-icon class="item-button-icon unselect-product" aria-hidden="false" aria-label="Unselect Product" title="Unselect Product" fontIcon="remove"
+                      (click)="onHideProductDetails(product.Id, product.productListIndex)"></mat-icon>
+                    <mat-icon class="item-button-icon material-icons-outlined zoom-to-list" aria-hidden="false" aria-label="Zoom Product On List" title="Show Product In List" fontIcon="manage_search"
+                      (click)="onZoomToList(product)"></mat-icon>
+                    <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
+                      (click)="copyUrl(product.Id)"></mat-icon>
+                    <ng-template [ngIf]="product.download.state" [ngIfElse]="downloadDefault">
+                      <mat-icon *ngIf="product.download.state == 'DONE'" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                        (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                      <mat-icon *ngIf="(product.download.state == 'IN_PROGRESS' || product.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
+                        (click)="unsubscribeDownload(product.Id)"></mat-icon>
+                    </ng-template>
+                    <ng-template #downloadDefault>
+                      <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
+                        (click)="downloadProduct(product.Id, product.Name)"></mat-icon>
+                    </ng-template>
+                  </div>
+                </div>
+                <div class="product-details-download-column-div-spacer" *ngIf="product.hasQL == true"></div>
+              </div>
             </div>
             <hr>
             <div class="product-details-attributes-div">
@@ -336,7 +374,7 @@
 
   <!-- show hide button -->
   <button id="show-hide-button-container" *ngIf="productTotalNumber > 0">
-    <div id="show-all-product-details" *ngIf="productDetailsContainerIsRolled && selectedProduct.length > 0" title="Show All Product Details" (click)="onShowAllProductDetails()">
+    <div id="show-all-product-details" *ngIf="productDetailsContainerIsRolled && selectedProducts.length > 0" title="Show All Product Details" (click)="onShowAllProductDetails()">
       <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Show All Product Details" fontIcon="visibility_on"></mat-icon>
     </div>
     <div id="show-hide-button" title="Show/Hide list" (click)="onShowHideButtonClick($event)">
@@ -355,7 +393,7 @@
     <div id="footprint-menu-scrollable-div">
       <div *ngFor="let product of hoveredProductShownArray" class="footprint-tooltip-list-container">
         <div class="footprint-tooltip-table-div">
-          <table class="footprint-tooltip-table" (mouseover)="onMouseOverTooltipProductTable(product)" (mouseleave)="onMouseLeaveTooltipProductTable()" (mousedown)="onClickOverTooltipProductTable(product)">
+          <table class="footprint-tooltip-table" (mouseover)="onMouseOverTooltipProductTable(product)" (mouseleave)="onMouseLeaveTooltipProductTable()" (mousedown)="onZoomToList(product)">
             <tr>
               <td style="width: 35%;">Platform</td>
               <td style="width: 65%;" title="{{product.platformShortName}}{{product.platformSerialIdentifier}}">{{product.platformShortName}}{{product.platformSerialIdentifier}}</td>
@@ -374,4 +412,5 @@
   <div id="footprints-menu-scroll-thumb"></div>
 </div>
 
+<!-- Service Fake Div -->
 <div id="get-properties-div"></div>
