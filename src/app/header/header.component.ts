@@ -240,11 +240,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  onShowLabelCheck(event: any) {
-    let showLabels = event.target.checked;
-    this.exchangeService.setShowLabels(showLabels);
-  }
-
   onUserMenuHover(event: any) {
     clearTimeout(this.showUserTimeoutId);
     event.stopPropagation();

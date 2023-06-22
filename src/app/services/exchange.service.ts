@@ -8,9 +8,6 @@ export class ExchangeService {
   private mapStyle = new BehaviorSubject<any>({});
   selectedMapStyle = this.mapStyle.asObservable();
 
-  private showLabels = new BehaviorSubject<any>({});
-  selectedShowLabels = this.showLabels.asObservable();
-
   private productList = new BehaviorSubject<any>({});
   productListExchange = this.productList.asObservable();
 
@@ -66,10 +63,6 @@ export class ExchangeService {
 
   setMapStyle(mapStyle: string) {
     this.mapStyle.next(mapStyle);
-  }
-
-  setShowLabels(showLabels: boolean) {
-    this.showLabels.next(showLabels);
   }
 
   setProductList(productList: object) {
