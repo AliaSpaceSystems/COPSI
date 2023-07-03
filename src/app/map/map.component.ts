@@ -261,6 +261,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         info.coordinate[0] = 360 + info.coordinate[0];
       }
 
+      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
+
       if(tempPolygonArray[0].length == 0) {
         /* First point */
         tempPolygonArray[0].push(info.coordinate, info.coordinate, info.coordinate, info.coordinate, info.coordinate);
@@ -342,6 +345,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tempDrawPolygonArray = tempPolygonArray;
       }
     } else if (this.canDrawPolygon) {
+
+      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
+
       let tempPolygonArray = this.tempDrawPolygonArray;
 
       let tempPointsArray = this.drawGeoSearchCirclesData;
@@ -361,6 +368,12 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         let tempArrayMulti: any;
         if (info.layer != null && info.layer.id === "scatterplot-layer" && info.index === 0) {
           /* Closing polygon */
+          if (tempPolygonArray[0].length < 5) {
+            this.onCancelDrawingButtonClicked(true);
+            this.toast.showInfoToast('error', 'POLYGON DELETED: AT LEAST 3 VERTEX NEEDED');
+            return;
+          }
+          this.toast.showInfoToast('success', 'POLYGON IS VALID');
           tempPolygonArray[0].splice(-2, 1);
           tempPointsArray = [];
           for (var i = 0; i < this.drawGeoSearchCirclesData.length; i++) {
@@ -389,7 +402,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           this.canShowFootprintsMenu = true;
         } else {
           /* Adding a vertex */
-          tempPolygonArray[0].length === 2 ?
+          tempPolygonArray[0].length === 3 ?
             this.toast.showInfoToast('info', 'CLICK ON MAP TO DRAW NEXT VERTEX') :
             this.toast.showInfoToast('info', 'CLICK ON FIRST POINT TO CLOSE POLYGON');
           tempPolygonArray[0].splice(-2, 0, info.coordinate);
@@ -489,6 +502,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let tempJson: any;
       let isCrossing: boolean = false;
 
+      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
+
       /* Check if a point has passed the 180° meridian */
       for (let i = 0; i < this.tempDrawPolygonArray[0].length; i++) {
         if (this.tempDrawPolygonArray[0][i][0] > 180) {
@@ -562,6 +578,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     } else if (this.canDrawPolygon) {
       let tempJson: any;
       let isCrossing: boolean = false;
+
+      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
 
       /* Check if a point has passed the 180° meridian */
       for (let i = 0; i < this.tempDrawPolygonArray[0].length; i++) {
