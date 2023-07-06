@@ -1177,24 +1177,22 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         next: (res: any) => {
           if (productInSelectedList != null) {
             productInSelectedList.download = res;
-          } else {
-            this.productList.value.forEach((product: any) => {
-              if (product.Id == id) {
-                product.download = res;
-              }
-            });
           }
+          this.productList.value.forEach((product: any) => {
+            if (product.Id == id) {
+              product.download = res;
+            }
+          });
         }
         , error: (e) => {
           if (productInSelectedList != null) {
             productInSelectedList.download = {};
-          } else {
-            this.productList.value.forEach((product: any) => {
-              if (product.Id == id) {
-                product.download = {};
-              }
-            });
           }
+          this.productList.value.forEach((product: any) => {
+            if (product.Id == id) {
+              product.download = {};
+            }
+          });
         }
       })
     );
