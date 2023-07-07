@@ -405,7 +405,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           tempPolygonArray[0].length === 3 ?
             this.toast.showInfoToast('info', 'CLICK ON MAP TO DRAW NEXT VERTEX') :
             this.toast.showInfoToast('info', 'CLICK ON FIRST POINT TO CLOSE POLYGON');
+
+          info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], tempPolygonArray[0]);
+
           tempPolygonArray[0].splice(-2, 0, info.coordinate);
+
 
           /* Check if polygon is crossing the 180° meridian  */
           for (var i = 0; i < tempPolygonArray[0].length - 1; i++) {
@@ -575,22 +579,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
       this.drawGeoSearchPolygonData = tempJson;
+
+
     } else if (this.canDrawPolygon) {
       let tempJson: any;
       let isCrossing: boolean = false;
 
       if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
       if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
-
-      /* Check if a point has passed the 180° meridian */
-      for (let i = 0; i < this.tempDrawPolygonArray[0].length; i++) {
-        if (this.tempDrawPolygonArray[0][i][0] > 180) {
-          this.tempDrawPolygonArray[0][i][0] = -360 + this.tempDrawPolygonArray[0][i][0];
-        }
-        if (this.tempDrawPolygonArray[0][i][0] < -180) {
-          this.tempDrawPolygonArray[0][i][0] = 360 + this.tempDrawPolygonArray[0][i][0];
-        }
-      }
 
       if(this.tempDrawPolygonArray[0].length > 0) {
         /* Check if a point has passed the 180° meridian */
@@ -602,6 +598,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.tempDrawPolygonArray[0].splice(-2, 1, info.coordinate);
       }
+      info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], this.tempDrawPolygonArray[0]);
 
       /* Check if polygon is crossing the 180° meridian */
       for (var i = 0; i < this.tempDrawPolygonArray[0].length - 1; i++) {
@@ -680,6 +677,48 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     this.changeDrawLayer();
+  }
+
+  limitPolygonTo180(xCoord: number, polygonArray: any):number {
+    if(polygonArray.length > 3) {
+      /* Limit drawing segments to 180° */
+      //console.clear();
+      let pointBefore = polygonArray[polygonArray.length - 3][0];
+      let pointAfter = polygonArray[0][0];
+      // console.log("Length of edge Before: " + (xCoord - pointBefore));
+      // console.log("Length of edge After: " + (xCoord - pointAfter));
+      // console.log("pointBefore: " + pointBefore);
+      // console.log("pointAfter: " + pointAfter);
+      // console.log("xCoord: " + xCoord);
+
+      if (xCoord >= 0) {
+        if (pointAfter < 0 || pointBefore < 0) {
+          // console.log("A<0<B");
+          if (xCoord - pointBefore > 180) {
+            // console.log("AB > 180");
+            xCoord = 180 + pointBefore;
+          }
+          if (xCoord - pointAfter > 180) {
+            // console.log("BC > 180");
+            xCoord = 180 + pointAfter;
+          }
+        }
+      } else if (xCoord < 0) {
+        if (pointAfter >= 0 || pointBefore >= 0) {
+          // console.log("B<0<A");
+          if (xCoord -  pointBefore < -180) {
+            // console.log("AB < -180");
+            xCoord = -180 + pointBefore;
+          }
+          if (xCoord - pointAfter < -180) {
+            // console.log("AB < -180");
+            xCoord = -180 + pointAfter;
+          }
+        }
+      }
+      // console.log("NEW info.coord: " + xCoord);
+    }
+    return xCoord;
   }
 
   onPointDragStart() {
