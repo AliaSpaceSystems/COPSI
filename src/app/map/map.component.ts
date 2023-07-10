@@ -406,17 +406,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             this.toast.showInfoToast('info', 'CLICK ON MAP TO DRAW NEXT VERTEX') :
             this.toast.showInfoToast('info', 'CLICK ON FIRST POINT TO CLOSE POLYGON');
 
-          info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], tempPolygonArray[0]);
-
-          tempPolygonArray[0].splice(-2, 0, info.coordinate);
-
-
           /* Check if polygon is crossing the 180° meridian  */
+          let crossPointsNumber: number = 0;
           for (var i = 0; i < tempPolygonArray[0].length - 1; i++) {
             if (this.checkDaylineCrossing([tempPolygonArray[0][i], tempPolygonArray[0][i+1]])) {
               isCrossing = true;
-              break;
+              crossPointsNumber++;
             }
+          }
+          if (crossPointsNumber <= 1) {
+            info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], this.tempDrawPolygonArray[0]);
+            tempPolygonArray[0].splice(-2, 0, info.coordinate);
+            isCrossing = false;
+          } else {
+            tempPolygonArray[0].splice(-2, 0, info.coordinate);
           }
           if (isCrossing) {
             tempArrayMulti = this.divideCrossingPolygonArray(tempPolygonArray);
@@ -598,14 +601,20 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.tempDrawPolygonArray[0].splice(-2, 1, info.coordinate);
       }
-      info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], this.tempDrawPolygonArray[0]);
-
       /* Check if polygon is crossing the 180° meridian */
+      let crossPointsNumber: number = 0;
       for (var i = 0; i < this.tempDrawPolygonArray[0].length - 1; i++) {
         if (this.checkDaylineCrossing([this.tempDrawPolygonArray[0][i], this.tempDrawPolygonArray[0][i+1]])) {
           isCrossing = true;
-          break;
+          crossPointsNumber++;
         }
+      }
+      if (crossPointsNumber === 1) {
+        info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], this.tempDrawPolygonArray[0]);
+        isCrossing = false;
+      } else {
+        console.log("Crossing points > 1");
+
       }
       if (isCrossing) {
         if(this.tempDrawPolygonArray[0].length > 0) {
@@ -682,41 +691,28 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   limitPolygonTo180(xCoord: number, polygonArray: any):number {
     if(polygonArray.length > 3) {
       /* Limit drawing segments to 180° */
-      //console.clear();
       let pointBefore = polygonArray[polygonArray.length - 3][0];
       let pointAfter = polygonArray[0][0];
-      // console.log("Length of edge Before: " + (xCoord - pointBefore));
-      // console.log("Length of edge After: " + (xCoord - pointAfter));
-      // console.log("pointBefore: " + pointBefore);
-      // console.log("pointAfter: " + pointAfter);
-      // console.log("xCoord: " + xCoord);
 
       if (xCoord >= 0) {
         if (pointAfter < 0 || pointBefore < 0) {
-          // console.log("A<0<B");
           if (xCoord - pointBefore > 180) {
-            // console.log("AB > 180");
             xCoord = 180 + pointBefore;
           }
           if (xCoord - pointAfter > 180) {
-            // console.log("BC > 180");
             xCoord = 180 + pointAfter;
           }
         }
       } else if (xCoord < 0) {
-        if (pointAfter >= 0 || pointBefore >= 0) {
-          // console.log("B<0<A");
+        if (pointAfter >= 0 && pointBefore >= 0) {
           if (xCoord -  pointBefore < -180) {
-            // console.log("AB < -180");
             xCoord = -180 + pointBefore;
           }
           if (xCoord - pointAfter < -180) {
-            // console.log("AB < -180");
             xCoord = -180 + pointAfter;
           }
         }
       }
-      // console.log("NEW info.coord: " + xCoord);
     }
     return xCoord;
   }
@@ -738,7 +734,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       if (info.layer != null && info.layer.id === "scatterplot-layer") {
         let tempPolygonJson: any;
 
-        /* let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates; */
         let tempPolygonArray = this.tempDrawPolygonArray;
         let precPolygonArray = this.tempDrawPolygonArray;
 
@@ -838,7 +833,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.canDragPolygon) {
       let isCrossing: boolean = false;
       let tempArrayMulti: any;
-      /* let tempPolygonArray = this.drawGeoSearchPolygonData.features[0].geometry.coordinates; */
       let tempPolygonArray = this.tempDrawPolygonArray;
       let tempPolygonJson = this.drawGeoSearchPolygonData;
       let tempPointsArray = [];
@@ -1250,7 +1244,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     onDragEnd: () => {
       this.onPolygonDragEnd();
     },
-    /* wrapLongitude: true, */
     wrapLongitude: false,
     fp64: true
   })
@@ -1621,8 +1614,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.drawCirclesLayerGlobe,
         this.mapOverlayGlobe
       ],
-      /* wrapLongitude: true, */
-      /* wrapLongitude: false, */
       onClick: (info: any, event: any) => {
         this.onClickOnMap(info, event)
       },
