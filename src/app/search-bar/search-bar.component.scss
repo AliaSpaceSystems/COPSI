@@ -1173,6 +1173,8 @@ input:invalid {
 .zoom-to-list.is-not-in-list{
   color: white;
   opacity: 0.5;
+}
+.zoom-to-list.is-not-in-list:active {
   pointer-events: none;
 }
 .unselect-product {

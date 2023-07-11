@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "3.0.0",
   "centreInfo": {
       "name": "",
       "image": "",
@@ -37,7 +37,7 @@
   "headerSettings": {
     "showUserEditButton": false,
     "showPasswordChangeButton": false,
-    "menuAutoHideTimeout": 3000
+    "menuAutoHideTimeout": 2000
   },
   "mapSettings": {
       "initialViewState": {
@@ -47,7 +47,8 @@
         "minZoom": 1.2,
         "maxZoom": 10
       },
-      "projection": "globe"
+      "projection": "globe",
+      "layer": "Terrain"
   },
   "geoSearchSettings": {
     "showGeoSearchToolbar": true,

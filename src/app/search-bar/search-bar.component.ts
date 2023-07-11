@@ -418,6 +418,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     let pinIcon = document.getElementById('pin-search-filter-output-icon')!;
     if (pinIcon.classList.contains('unpinned')) {
       pinIcon.classList.replace('unpinned', 'pinned');
+      pinIcon.title = 'Unpin search filter output';
       this.filterParsingDivIsPinned = true;
       productListContainer!.style.top = (58 + this.filterParsingDivHeight) + 'px';
       advancedSearchMenu!.style.top = (58 + this.filterParsingDivHeight) + 'px';
@@ -427,6 +428,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       clearTimeout(this.showParseFilterTimeoutId);
     } else {
       pinIcon.classList.replace('pinned', 'unpinned');
+      pinIcon.title = 'Pin search filter output';
       this.filterParsingDivIsPinned = false;
       productListContainer!.style.top = (48) + 'px';
       advancedSearchMenu!.style.top = (48) + 'px';
@@ -904,6 +906,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         if (tempProductDetailsZoomToListButtons.length > 0) {
           [].forEach.call(tempProductDetailsZoomToListButtons, (button: any) => {
             button.classList.add('is-not-in-list');
+            button.title = 'Product not visible in this pagination';
           });
         }
         this.productTotalNumber = res['@odata.count'];
@@ -980,7 +983,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   product.download = sel.download;
                   sel.isInList = true;
                   listItemDiv[sel.productListIndex].classList.add('selected');
-                  tempProductDetailsZoomToListButtons[index].classList.remove('is-not-in-list');
+                  let tempButton: any = tempProductDetailsZoomToListButtons[index];
+                  tempButton.classList.remove('is-not-in-list');
+                  tempButton.title = 'Show Product In List';
                   this.exchangeService.selectProductOnMap(sel.productListIndex, true);
                 }, 0);
               }

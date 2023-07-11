@@ -14,7 +14,7 @@
     <div id="filter-output-label">Search filter output:</div>
     <div id="filter-output-icons-div">
       <mat-icon id="copy-search-filter-output-icon" aria-hidden="false" aria-label="copy search filter output icon" title="Copy search filter output" (click)="onCopyOutputClicked($event)">content_copy</mat-icon>
-      <mat-icon id="pin-search-filter-output-icon" [class]="filterOutputIsPinnedByDefault ? 'pinned' : 'unpinned'" aria-hidden="false" aria-label="pin search filter output icon" title="Pin search filter output" (click)="onPushPinToggle($event)">push_pin</mat-icon>
+      <mat-icon id="pin-search-filter-output-icon" [class]="filterOutputIsPinnedByDefault ? 'pinned' : 'unpinned'" aria-hidden="false" aria-label="pin search filter output icon" [title]="filterOutputIsPinnedByDefault ? 'Unpin search filter output' : 'Pin search filter output'" (click)="onPushPinToggle($event)">push_pin</mat-icon>
     </div>
   </div>
   <hr>
@@ -369,7 +369,7 @@
     <div id="show-all-product-details" *ngIf="productDetailsContainerIsRolled && selectedProducts.length > 0" title="Show All Product Details" (click)="onShowAllProductDetails()">
       <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Show All Product Details" fontIcon="visibility_on"></mat-icon>
     </div>
-    <div id="show-hide-button" title="Show/Hide list" (click)="onShowHideButtonClick($event)">
+    <div id="show-hide-button" [title]="productListRolled ? 'Show list' : 'Hide list'" (click)="onShowHideButtonClick($event)">
       <mat-icon *ngIf="productListRolled == true" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_right</mat-icon>
       <mat-icon *ngIf="productListRolled == false" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
     </div>

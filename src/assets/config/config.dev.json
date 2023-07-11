@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "3.0.0",
   "centreInfo": {
       "name": "",
       "image": "",
@@ -30,14 +30,14 @@
         "value": "ASC"
       }
     ],
-    "hideFilterOutputTimeout": 1500,
+    "hideFilterOutputTimeout": 2000,
     "filterOutputIsPinnedByDefault": true,
     "useMultipleAttributesInOption": true
   },
   "headerSettings": {
     "showUserEditButton": true,
     "showPasswordChangeButton": true,
-    "menuAutoHideTimeout": 3000
+    "menuAutoHideTimeout": 2000
   },
   "mapSettings": {
     "initialViewState": {
