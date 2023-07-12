@@ -752,7 +752,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           }
           if (bracketOpenMissionInner) {
-            this.attributeFilter += "))";
+            if (this.useMultipleAttributesInOption) {
+              this.attributeFilter += ")";
+            }
+            this.attributeFilter += ")";
             bracketOpenMissionInner = false;
           }
 
