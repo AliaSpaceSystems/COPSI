@@ -47,8 +47,7 @@
         "minZoom": 1.2,
         "maxZoom": 10
     },
-    "projection": "globe",
-    "layer": "Terrain"
+    "projection": "globe"
   },
   "geoSearchSettings": {
     "showGeoSearchToolbar": true,
