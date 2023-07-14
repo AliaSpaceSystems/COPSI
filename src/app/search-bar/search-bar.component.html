@@ -323,7 +323,7 @@
                 <tr *ngFor="let property of propertiesList" title="{{beautifyCamelCase(property)}}: {{getTypeOf(selectedProduct[property]) === 'object' ? '' : selectedProduct[property]}}">
                   <td *ngIf="selectedProduct.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
                   <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number')" class="properties-table-value">{{selectedProduct[property]}}</td>
-                  <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object')" class="properties-table-value">
+                  <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object') && beautifyCamelCase(property) != 'Footprint'" class="properties-table-value">
                     <ng-container [ngTemplateOutlet]='Array.isArray(selectedProduct[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:selectedProduct[property]}" class="properties-table-value"></ng-container>
                     <ng-template #array let-obj='obj'>
                       <span *ngFor="let item of obj; let idx = index;">
@@ -341,13 +341,14 @@
                       </table>
                     </ng-template>
                   </td>
+                  <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object') && beautifyCamelCase(property) === 'Footprint'" class="properties-table-value">Invalid Footprint</td>
                 </tr>
               </table>
               <hr>
               <p>
                 Attributes
               </p>
-              <table class="attributes-table">
+              <table *ngIf="selectedProduct.Attributes.length > 0" class="attributes-table">
                 <tr>
                   <th style="width: 40%;">Name</th>
                   <th style="width: 60%;">Value</th>
@@ -365,15 +366,15 @@
   </div>
 
   <!-- show hide button -->
-  <button id="show-hide-button-container" *ngIf="productTotalNumber > 0">
-    <div id="show-all-product-details" *ngIf="productDetailsContainerIsRolled && selectedProducts.length > 0" title="Show All Product Details" (click)="onShowAllProductDetails()">
+  <div id="show-hide-button-container" *ngIf="productTotalNumber > 0">
+    <div id="show-all-product-details" *ngIf="productDetailsContainerIsRolled === true && selectedProducts.length > 0" title="Show All Product Details" (click)="onShowAllProductDetails()">
       <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Show All Product Details" fontIcon="visibility_on"></mat-icon>
     </div>
     <div id="show-hide-button" [title]="productListRolled ? 'Show list' : 'Hide list'" (click)="onShowHideButtonClick($event)">
       <mat-icon *ngIf="productListRolled == true" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_right</mat-icon>
       <mat-icon *ngIf="productListRolled == false" id="show-hide-list-icon" class="showHideList-icon" aria-hidden="false" aria-label="showHideList">keyboard_arrow_left</mat-icon>
     </div>
-  </button>
+  </div>
 </div>
 
 <!-- Footprint selection menu -->

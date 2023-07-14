@@ -1377,34 +1377,46 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onShowProductDetails(id: string, index: number) {
-    this.productDetailsContainerIsRolled = false;
-    if (productDetailContainer!.classList.contains('hidden')) {
-      productDetailContainer!.classList.replace('hidden', 'visible');
+    let tempSelectedProductFromList = this.productList.value.filter((product: any) => product.Id === id)[0];
+    if (tempSelectedProductFromList !== null) {
+      this.selectedProducts.push(tempSelectedProductFromList);
+      this.selectedProducts[this.selectedProducts.length - 1].isSelected = true;
+      this.selectedProducts[this.selectedProducts.length - 1].productListIndex = index;
+      this.selectedProducts[this.selectedProducts.length - 1].isInList = true;
+
+      this.productDetailsContainerIsRolled = false;
+
+      if (productDetailContainer!.classList.contains('hidden')) {
+        productDetailContainer!.classList.replace('hidden', 'visible');
+      }
+
+      listItemDiv[index].classList.add('selected');
+      let tempUnfilteredProductAttributes: any = this.selectedProducts[this.selectedProducts.length - 1].Attributes;
+      let tempAttributeListFiltered: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProducts[this.selectedProducts.length - 1].platformShortName);
+      let tempAttributesToFilter: any;
+      if (tempAttributeListFiltered.length > 0) {
+        tempAttributesToFilter = tempAttributeListFiltered[0].Attributes;
+        this.selectedProducts[this.selectedProducts.length - 1].Attributes = [];
+        tempUnfilteredProductAttributes.forEach((unfilteredAttribute: any) => {
+          tempAttributesToFilter.forEach((attributeNameToFilter: any) => {
+            if (attributeNameToFilter === unfilteredAttribute.Name) {
+              this.selectedProducts[this.selectedProducts.length - 1].Attributes.push(unfilteredAttribute);
+            }
+          });
+        });
+
+      } else {
+        console.error("Couldn't find any matching attribute.. please check details config.");
+      }
+      this.exchangeService.selectProductOnMap(this.selectedProducts[this.selectedProducts.length - 1].productListIndex, true);
+      this.exchangeService.setProductList(this.productList); // Refresh map
+
+      setTimeout(() => {
+        this.onScrollDetailsLast();
+      }, 50);
+    } else {
+      this.toast.showInfoToast('error', 'PRODUCT NOT SELECTABLE!');
     }
-    this.selectedProducts.push(this.productList.value.filter((product: any) => product.Id === id)[0]);
-    this.selectedProducts[this.selectedProducts.length - 1].isSelected = true;
-    this.selectedProducts[this.selectedProducts.length - 1].productListIndex = index;
-    this.selectedProducts[this.selectedProducts.length - 1].isInList = true;
-
-    listItemDiv[index].classList.add('selected');
-
-    let tempUnfilteredProductAttributes: any = this.selectedProducts[this.selectedProducts.length - 1].Attributes;
-    let tempAttributesToFilter: any = this.attributesList.filter((platformAttributeObject: any) => platformAttributeObject.platformShortName === this.selectedProducts[this.selectedProducts.length - 1].platformShortName)[0].Attributes;
-
-    this.selectedProducts[this.selectedProducts.length - 1].Attributes = [];
-    tempUnfilteredProductAttributes.forEach((unfilteredAttribute: any) => {
-      tempAttributesToFilter.forEach((attributeNameToFilter: any) => {
-        if (attributeNameToFilter === unfilteredAttribute.Name) {
-          this.selectedProducts[this.selectedProducts.length - 1].Attributes.push(unfilteredAttribute);
-        }
-      });
-    });
-
-    this.exchangeService.selectProductOnMap(this.selectedProducts[this.selectedProducts.length - 1].productListIndex, true);
-    this.exchangeService.setProductList(this.productList); // Refresh map
-    setTimeout(() => {
-      this.onScrollDetailsLast();
-    }, 50);
   }
 
   onZoomToProduct(id: string) {
@@ -1433,11 +1445,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onHideAllProductDetails() {
-    if (productDetailContainer.classList.contains('visible')) {
-      productDetailContainer.classList.replace('visible', 'hidden');
-    }
     this.productDetailsContainerIsRolled = true;
+    if (productDetailContainer!.classList.contains('visible')) {
+      productDetailContainer!.classList.replace('visible', 'hidden');
+    }
   }
+
   onShowAllProductDetails() {
     this.productDetailsContainerIsRolled = false;
     if (productDetailContainer!.classList.contains('hidden')) {
