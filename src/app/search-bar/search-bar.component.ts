@@ -486,25 +486,30 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onAdvancedSearchSubmit(event: any) {
     this.parseAdvancedFilter();
-    if (this.selectedProducts.length > 0) {
-      if (
-        this.parsedFilterPrec != this.parsedFilter ||
-        this.productFilterPrec != this.productFilter ||
-        this.attributeFilterPrec != this.attributeFilter ||
-        this.geoFilterPrec != this.geoFilter
-      ) {
-        this.toast.showInfoToast('info', 'FILTER CHANGED. REMOVING PRODUCT DETAILS');
-        for (let i = this.selectedProducts.length - 1; i >= 0; i--) {
-          this.onHideProductDetails(this.selectedProducts[i].Id, this.selectedProducts[i].productListIndex);
-        }
-      }
-    }
-    this.parsedFilterPrec = this.parsedFilter;
-    this.productFilterPrec = this.productFilter;
-    this.attributeFilterPrec = this.attributeFilter;
-    this.geoFilterPrec = this.geoFilter;
 
     if (this.canSubmitSearch) {
+      setTimeout(() => {
+        if (this.selectedProducts.length > 0) {
+          console.log("this.selectedProducts.length > 0");
+          if (
+            this.parsedFilterPrec != this.parsedFilter ||
+            this.productFilterPrec != this.productFilter ||
+            this.attributeFilterPrec != this.attributeFilter ||
+            this.geoFilterPrec != this.geoFilter
+          ) {
+            console.log("Filtro cambiato..");
+            this.toast.showInfoToast('info', 'FILTER CHANGED. REMOVING PRODUCT DETAILS');
+            for (let i = this.selectedProducts.length - 1; i >= 0; i--) {
+              this.onHideProductDetails(this.selectedProducts[i].Id, this.selectedProducts[i].productListIndex);
+            }
+          }
+        }
+        this.parsedFilterPrec = this.parsedFilter;
+        this.productFilterPrec = this.productFilter;
+        this.attributeFilterPrec = this.attributeFilter;
+        this.geoFilterPrec = this.geoFilter;
+      }, 50);
+
       if (this.productFilter === "" && this.attributeFilter === "") {
         this.advancedFilterIsActive = false;
       } else {
