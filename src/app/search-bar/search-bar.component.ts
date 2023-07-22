@@ -1389,6 +1389,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.selectedProducts[this.selectedProducts.length - 1].productListIndex = index;
       this.selectedProducts[this.selectedProducts.length - 1].isInList = true;
 
+      //console.log("this.selectedProducts[this.selectedProducts.length - 1]: " , this.selectedProducts[this.selectedProducts.length - 1]);
+
       this.productDetailsContainerIsRolled = false;
 
       if (productDetailContainer!.classList.contains('hidden')) {
