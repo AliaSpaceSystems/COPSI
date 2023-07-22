@@ -1,6 +1,11 @@
 <div id="canvas-container">
   <canvas id='map-globe'></canvas>
   <canvas id='map-plane'></canvas>
+  <div id="map-attribution" (click)="onMapAttributionClick()">
+    <p id="map-attribution-text" *ngIf="selectedMapStyle !== 'OSM' && mapAttributionIsVisible === true" style="padding: 0.5rem">© <a href="https://maps.eox.at/#data">EOX</a></p>
+    <p id="map-attribution-text" *ngIf="selectedMapStyle === 'OSM' && mapAttributionIsVisible === true" style="padding: 0.5rem">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></p>
+    <p id="map-attribution-text" *ngIf="mapAttributionIsVisible === false" style="padding: 0">©</p>
+  </div>
 </div>
 
 
