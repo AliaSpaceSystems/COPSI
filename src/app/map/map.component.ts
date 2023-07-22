@@ -2144,7 +2144,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(tempCoords);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
     } else {
-      this.toast.showInfoToast('error', 'NO VALID FOOTPRINT TO ZOOM TO.');
+      this.toast.showInfoToast('success', 'NO FOOTPRINT TO ZOOM TO.');
       return null;
     }
     zoomLevel = this.calcZoomLevelFromLatLonBounds(tempLatLonBounds);
