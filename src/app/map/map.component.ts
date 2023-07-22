@@ -475,217 +475,215 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onHoverOnMap(info: any) {
-    this.hoveredProductsArray = [];
-    /* set bools to change cursor type */
-    this.isHoveringOnPoints = false;
-    this.isHoveringOnPolygon = false;
-    this.isHoveringOnFootprint = false;
-    if (info.layer !== null) {
-      if (info.layer.id === 'scatterplot-layer') {
-        this.isHoveringOnPoints = true;
-        this.isHoveringOnPolygon = false;
-        this.isHoveringOnFootprint = false;
-      } else if (info.layer.id === 'draw-layer') {
-        this.isHoveringOnPoints = false;
-        this.isHoveringOnPolygon = true;
-        this.isHoveringOnFootprint = false;
-      } else if (info.layer.id === 'geojson-layer-selected') {
-        this.isHoveringOnPoints = false;
-        this.isHoveringOnPolygon = false;
-        if (info.index > -1) {
-          this.isHoveringOnFootprint = true;
-        } else {
-          this.hideProductFootprint();
-        }
-      }
-    }
-
-    if (this.canDrawRect || this.canDrawPolygon) {
-      this.hideProductFootprint();
-      this.exchangeService.updateHoveredProduct(undefined);
-    }
-
-    if (this.canDrawRect) {
-      let tempJson: any;
-      let isCrossing: boolean = false;
-
-      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
-      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
-
-      /* Check if a point has passed the 180° meridian */
-      for (let i = 0; i < this.tempDrawPolygonArray[0].length; i++) {
-        if (this.tempDrawPolygonArray[0][i][0] > 180) {
-          this.tempDrawPolygonArray[0][i][0] = -360 + this.tempDrawPolygonArray[0][i][0];
-        }
-        if (this.tempDrawPolygonArray[0][i][0] < -180) {
-          this.tempDrawPolygonArray[0][i][0] = 360 + this.tempDrawPolygonArray[0][i][0];
+    if (info.viewport !== undefined) {
+      this.hoveredProductsArray = [];
+      /* set bools to change cursor type */
+      this.isHoveringOnPoints = false;
+      this.isHoveringOnPolygon = false;
+      this.isHoveringOnFootprint = false;
+      if (info.layer !== null) {
+        if (info.layer.id === 'scatterplot-layer') {
+          this.isHoveringOnPoints = true;
+          this.isHoveringOnPolygon = false;
+          this.isHoveringOnFootprint = false;
+        } else if (info.layer.id === 'draw-layer') {
+          this.isHoveringOnPoints = false;
+          this.isHoveringOnPolygon = true;
+          this.isHoveringOnFootprint = false;
+        } else if (info.layer.id === 'geojson-layer-selected') {
+          this.isHoveringOnPoints = false;
+          this.isHoveringOnPolygon = false;
+          if (info.index > -1) {
+            this.isHoveringOnFootprint = true;
+          } else {
+            this.hideProductFootprint();
+          }
         }
       }
 
-      if(this.tempDrawPolygonArray[0].length > 0 && this.tempDrawPolygonArray[0].length <= 5) {
-        /* Check if a point has passed the 180° meridian */
-        if (info.coordinate[0] > 180) {
-          info.coordinate[0] = -360 + info.coordinate[0];
-        }
-        if (info.coordinate[0] < -180) {
-          info.coordinate[0] = 360 + info.coordinate[0];
-        }
-        this.tempDrawPolygonArray[0].splice(-4, 3, [info.coordinate[0], this.tempDrawPolygonArray[0][0][1]], info.coordinate, [this.tempDrawPolygonArray[0][0][0], info.coordinate[1]]);
-      }
-
-      /* Check if polygon is crossing the 180° meridian */
-      for (var i = 0; i < this.tempDrawPolygonArray[0].length - 1; i++) {
-        if (this.checkDaylineCrossing([this.tempDrawPolygonArray[0][i], this.tempDrawPolygonArray[0][i+1]])) {
-          isCrossing = true;
-          break;
-        }
-      }
-
-      if (isCrossing) {
-        if(this.tempDrawPolygonArray[0].length > 0 && this.tempDrawPolygonArray[0].length <= 5) {
-          let tempArrayMulti = this.divideCrossingPolygonArray(this.tempDrawPolygonArray);
-          tempJson = {
-            "type": "FeatureCollection",
-            "features": [
-              {
-                "type": "Feature",
-                "geometry": {
-                  "type": "MultiPolygon",
-                  "coordinates": tempArrayMulti
-                },
-                "properties": {
-                  "fillColor": this.geoSearchSettings.fillColorActive,
-                  "borderColor": this.geoSearchSettings.borderColorActive
-                }
-              }
-            ]
-          };
-        }
-      } else {
-        if(this.tempDrawPolygonArray[0].length > 0 && this.tempDrawPolygonArray[0].length <= 5) {
-          tempJson = {
-            "type": "FeatureCollection",
-            "features": [
-              {
-                "type": "Feature",
-                "geometry": {
-                  "type": "Polygon",
-                  "coordinates": this.tempDrawPolygonArray
-                },
-                "properties": {
-                  "fillColor": this.geoSearchSettings.fillColorActive,
-                  "borderColor": this.geoSearchSettings.borderColorActive
-                }
-              }
-            ]
-          };
-        }
-      }
-      this.drawGeoSearchPolygonData = tempJson;
-
-
-    } else if (this.canDrawPolygon) {
-      let tempJson: any;
-      let isCrossing: boolean = false;
-
-      if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
-      if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
-
-      if(this.tempDrawPolygonArray[0].length > 0) {
-        /* Check if a point has passed the 180° meridian */
-        if (info.coordinate[0] > 180) {
-          info.coordinate[0] = -360 + info.coordinate[0];
-        }
-        if (info.coordinate[0] < -180) {
-          info.coordinate[0] = 360 + info.coordinate[0];
-        }
-        this.tempDrawPolygonArray[0].splice(-2, 1, info.coordinate);
-      }
-      /* Check if polygon is crossing the 180° meridian */
-      let crossPointsNumber: number = 0;
-      for (var i = 0; i < this.tempDrawPolygonArray[0].length - 1; i++) {
-        if (this.checkDaylineCrossing([this.tempDrawPolygonArray[0][i], this.tempDrawPolygonArray[0][i+1]])) {
-          isCrossing = true;
-          crossPointsNumber++;
-        }
-      }
-      if (crossPointsNumber === 1) {
-        info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], this.tempDrawPolygonArray[0]);
-        isCrossing = false;
-      } else {
-        console.log("Crossing points > 1");
-
-      }
-      if (isCrossing) {
-        if(this.tempDrawPolygonArray[0].length > 0) {
-          let tempArrayMulti = this.divideCrossingPolygonArray(this.tempDrawPolygonArray);
-          tempJson = {
-            "type": "FeatureCollection",
-            "features": [
-              {
-                "type": "Feature",
-                "geometry": {
-                  "type": "MultiPolygon",
-                  "coordinates": tempArrayMulti
-                },
-                "properties": {
-                  "fillColor": this.geoSearchSettings.fillColorActive,
-                  "borderColor": this.geoSearchSettings.borderColorActive
-                }
-              }
-            ]
-          };
-          this.drawGeoSearchPolygonData = tempJson;
-        }
-      } else {
-        if(this.tempDrawPolygonArray[0].length > 0) {
-          tempJson = {
-            "type": "FeatureCollection",
-            "features": [
-              {
-                "type": "Feature",
-                "geometry": {
-                  "type": "Polygon",
-                  "coordinates": this.tempDrawPolygonArray
-                },
-                "properties": {
-                  "fillColor": this.geoSearchSettings.fillColorActive,
-                  "borderColor": this.geoSearchSettings.borderColorActive
-                }
-              }
-            ]
-          };
-          this.drawGeoSearchPolygonData = tempJson;
-        }
-
-      }
-    } else if (this.canShowFootprintsMenu) {
-      /* MultiProduct Picking */
-      let infos: any = undefined;
-      if (this.isHoveringOnFootprint) {
-        if (this.currentProjection == 'globe') {
-          infos = deckGlobe.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: this.maxPickableObjectsDepth});
-        } else {
-          infos = deckPlane.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: this.maxPickableObjectsDepth});
-        }
-        let tempHoveredIndexesArray: any[] = [-1];
-        if (infos.length > 0) {
-          infos = infos.filter((obj: any) => (obj.layer.id === "geojson-layer-selected"));
-          /* Uncomment to select only identical footprints: */
-          //infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
-
-          infos.forEach((info: any) => {
-            tempHoveredIndexesArray.push(info.index);
-          });
-          this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
-        }
-        this.showProductFootprint(tempHoveredIndexesArray);
-        this.exchangeService.updateHoveredProduct(infos);
-      } else {
+      if (this.canDrawRect || this.canDrawPolygon) {
+        this.hideProductFootprint();
         this.exchangeService.updateHoveredProduct(undefined);
       }
+
+      if (this.canDrawRect) {
+        let tempJson: any;
+        let isCrossing: boolean = false;
+
+        if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+        if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
+
+        /* Check if a point has passed the 180° meridian */
+        for (let i = 0; i < this.tempDrawPolygonArray[0].length; i++) {
+          if (this.tempDrawPolygonArray[0][i][0] > 180) {
+            this.tempDrawPolygonArray[0][i][0] = -360 + this.tempDrawPolygonArray[0][i][0];
+          }
+          if (this.tempDrawPolygonArray[0][i][0] < -180) {
+            this.tempDrawPolygonArray[0][i][0] = 360 + this.tempDrawPolygonArray[0][i][0];
+          }
+        }
+
+        if(this.tempDrawPolygonArray[0].length > 0 && this.tempDrawPolygonArray[0].length <= 5) {
+          /* Check if a point has passed the 180° meridian */
+          if (info.coordinate[0] > 180) {
+            info.coordinate[0] = -360 + info.coordinate[0];
+          }
+          if (info.coordinate[0] < -180) {
+            info.coordinate[0] = 360 + info.coordinate[0];
+          }
+          this.tempDrawPolygonArray[0].splice(-4, 3, [info.coordinate[0], this.tempDrawPolygonArray[0][0][1]], info.coordinate, [this.tempDrawPolygonArray[0][0][0], info.coordinate[1]]);
+        }
+
+        /* Check if polygon is crossing the 180° meridian */
+        for (var i = 0; i < this.tempDrawPolygonArray[0].length - 1; i++) {
+          if (this.checkDaylineCrossing([this.tempDrawPolygonArray[0][i], this.tempDrawPolygonArray[0][i+1]])) {
+            isCrossing = true;
+            break;
+          }
+        }
+
+        if (isCrossing) {
+          if(this.tempDrawPolygonArray[0].length > 0 && this.tempDrawPolygonArray[0].length <= 5) {
+            let tempArrayMulti = this.divideCrossingPolygonArray(this.tempDrawPolygonArray);
+            tempJson = {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "MultiPolygon",
+                    "coordinates": tempArrayMulti
+                  },
+                  "properties": {
+                    "fillColor": this.geoSearchSettings.fillColorActive,
+                    "borderColor": this.geoSearchSettings.borderColorActive
+                  }
+                }
+              ]
+            };
+          }
+        } else {
+          if(this.tempDrawPolygonArray[0].length > 0 && this.tempDrawPolygonArray[0].length <= 5) {
+            tempJson = {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": this.tempDrawPolygonArray
+                  },
+                  "properties": {
+                    "fillColor": this.geoSearchSettings.fillColorActive,
+                    "borderColor": this.geoSearchSettings.borderColorActive
+                  }
+                }
+              ]
+            };
+          }
+        }
+        this.drawGeoSearchPolygonData = tempJson;
+
+
+      } else if (this.canDrawPolygon) {
+        let tempJson: any;
+        let isCrossing: boolean = false;
+
+        if (info.coordinate[1] > this.geoSearchSettings.latitudeLimit) info.coordinate[1] = this.geoSearchSettings.latitudeLimit;
+        if (info.coordinate[1] < -this.geoSearchSettings.latitudeLimit) info.coordinate[1] = -this.geoSearchSettings.latitudeLimit;
+
+        if(this.tempDrawPolygonArray[0].length > 0) {
+          /* Check if a point has passed the 180° meridian */
+          if (info.coordinate[0] > 180) {
+            info.coordinate[0] = -360 + info.coordinate[0];
+          }
+          if (info.coordinate[0] < -180) {
+            info.coordinate[0] = 360 + info.coordinate[0];
+          }
+          this.tempDrawPolygonArray[0].splice(-2, 1, info.coordinate);
+        }
+        /* Check if polygon is crossing the 180° meridian */
+        let crossPointsNumber: number = 0;
+        for (var i = 0; i < this.tempDrawPolygonArray[0].length - 1; i++) {
+          if (this.checkDaylineCrossing([this.tempDrawPolygonArray[0][i], this.tempDrawPolygonArray[0][i+1]])) {
+            isCrossing = true;
+            crossPointsNumber++;
+          }
+        }
+        if (crossPointsNumber === 1) {
+          info.coordinate[0] = this.limitPolygonTo180(info.coordinate[0], this.tempDrawPolygonArray[0]);
+          isCrossing = false;
+        }
+        if (isCrossing) {
+          if(this.tempDrawPolygonArray[0].length > 0) {
+            let tempArrayMulti = this.divideCrossingPolygonArray(this.tempDrawPolygonArray);
+            tempJson = {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "MultiPolygon",
+                    "coordinates": tempArrayMulti
+                  },
+                  "properties": {
+                    "fillColor": this.geoSearchSettings.fillColorActive,
+                    "borderColor": this.geoSearchSettings.borderColorActive
+                  }
+                }
+              ]
+            };
+            this.drawGeoSearchPolygonData = tempJson;
+          }
+        } else {
+          if(this.tempDrawPolygonArray[0].length > 0) {
+            tempJson = {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": this.tempDrawPolygonArray
+                  },
+                  "properties": {
+                    "fillColor": this.geoSearchSettings.fillColorActive,
+                    "borderColor": this.geoSearchSettings.borderColorActive
+                  }
+                }
+              ]
+            };
+            this.drawGeoSearchPolygonData = tempJson;
+          }
+        }
+      } else if (this.canShowFootprintsMenu) {
+        /* MultiProduct Picking */
+        let infos: any = undefined;
+        if (this.isHoveringOnFootprint) {
+          if (this.currentProjection == 'globe') {
+            infos = deckGlobe.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: this.maxPickableObjectsDepth});
+          } else {
+            infos = deckPlane.pickMultipleObjects({x: info.x, y: info.y, radius: 1, depth: this.maxPickableObjectsDepth});
+          }
+          let tempHoveredIndexesArray: any[] = [-1];
+          if (infos.length > 0) {
+            infos = infos.filter((obj: any) => (obj.layer.id === "geojson-layer-selected"));
+            /* Uncomment to select only identical footprints: */
+            //infos = infos.filter((obj: any) => (this.arrayEquals(obj.object.geometry.coordinates[0], info.object.geometry.coordinates[0])));
+
+            infos.forEach((info: any) => {
+              tempHoveredIndexesArray.push(info.index);
+            });
+            this.hoveredProductsArray = this.productList.value.filter((product: any, index: number) => (tempHoveredIndexesArray.includes(index)));
+          }
+          this.showProductFootprint(tempHoveredIndexesArray);
+          this.exchangeService.updateHoveredProduct(infos);
+        } else {
+          this.exchangeService.updateHoveredProduct(undefined);
+        }
+      }
+      this.changeDrawLayer();
     }
-    this.changeDrawLayer();
   }
 
   limitPolygonTo180(xCoord: number, polygonArray: any):number {
@@ -1416,6 +1414,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initMapOverlays();
     this.initMap();
   }
+
 
   ngAfterViewInit(): void {
     this.mapStyleSubscription = this.exchangeService.selectedMapStyle.subscribe((value) => {
