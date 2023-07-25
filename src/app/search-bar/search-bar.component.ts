@@ -490,14 +490,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.canSubmitSearch) {
       setTimeout(() => {
         if (this.selectedProducts.length > 0) {
-          console.log("this.selectedProducts.length > 0");
           if (
             this.parsedFilterPrec != this.parsedFilter ||
             this.productFilterPrec != this.productFilter ||
             this.attributeFilterPrec != this.attributeFilter ||
             this.geoFilterPrec != this.geoFilter
           ) {
-            console.log("Filtro cambiato..");
             this.toast.showInfoToast('info', 'FILTER CHANGED. REMOVING PRODUCT DETAILS');
             for (let i = this.selectedProducts.length - 1; i >= 0; i--) {
               this.onHideProductDetails(this.selectedProducts[i].Id, this.selectedProducts[i].productListIndex);
@@ -1388,8 +1386,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.selectedProducts[this.selectedProducts.length - 1].isSelected = true;
       this.selectedProducts[this.selectedProducts.length - 1].productListIndex = index;
       this.selectedProducts[this.selectedProducts.length - 1].isInList = true;
-
-      //console.log("this.selectedProducts[this.selectedProducts.length - 1]: " , this.selectedProducts[this.selectedProducts.length - 1]);
 
       this.productDetailsContainerIsRolled = false;
 

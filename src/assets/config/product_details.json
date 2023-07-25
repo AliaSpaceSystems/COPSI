@@ -7,8 +7,7 @@
     "PublicationDate",
     "Checksum",
     "ContentDate",
-    "Footprint",
-    "GeoFootprint"
+    "Footprint"
   ],
   "Attributes": [
     {
