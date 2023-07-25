@@ -323,7 +323,8 @@
                 <tr *ngFor="let property of propertiesList" title="{{beautifyCamelCase(property)}}: {{getTypeOf(selectedProduct[property]) === 'object' ? '' : selectedProduct[property]}}">
                   <td *ngIf="selectedProduct.hasOwnProperty(property)" class="properties-table-name">{{beautifyCamelCase(property)}}</td>
                   <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'string' || getTypeOf(selectedProduct[property]) === 'number') && selectedProduct[property] !== null" class="properties-table-value">{{selectedProduct[property]}}</td>
-                  <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object') && (beautifyCamelCase(property) !== 'Footprint' && beautifyCamelCase(property) !== 'Geo Footprint')" class="properties-table-value">
+                  <!-- <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object') && (beautifyCamelCase(property) !== 'Footprint' && beautifyCamelCase(property) !== 'Geo Footprint')" class="properties-table-value"> -->
+                    <td *ngIf="selectedProduct.hasOwnProperty(property) && (getTypeOf(selectedProduct[property]) === 'object') && beautifyCamelCase(property) !== 'Footprint'" class="properties-table-value">
                     <ng-container [ngTemplateOutlet]='Array.isArray(selectedProduct[property]) ? array : notArray' [ngTemplateOutletContext]="{obj:selectedProduct[property]}" class="properties-table-value"></ng-container>
                     <ng-template #array let-obj='obj'>
                       <span *ngFor="let item of obj; let idx = index;">
