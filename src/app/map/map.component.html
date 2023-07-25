@@ -1,6 +1,11 @@
 <div id="canvas-container">
   <canvas id='map-globe'></canvas>
   <canvas id='map-plane'></canvas>
+  <div id="map-attribution" (click)="onMapAttributionClick()">
+    <p id="map-attribution-text" *ngIf="selectedMapStyle !== 'OSM' && mapAttributionIsVisible === true" style="padding: 0.5rem">© <a href="https://maps.eox.at/#data">EOX</a></p>
+    <p id="map-attribution-text" *ngIf="selectedMapStyle === 'OSM' && mapAttributionIsVisible === true" style="padding: 0.5rem">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></p>
+    <p id="map-attribution-text" *ngIf="mapAttributionIsVisible === false" style="padding: 0">©</p>
+  </div>
 </div>
 
 
@@ -12,18 +17,15 @@
     </div>
     <div id="geo-search-buttons-container">
       <div class="geo-search-command-div" (click)="this.onDrawRectButtonClicked(true)">
-        <!-- <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon> -->
         <img class="svg-icon" src="assets/images/draw-rect.svg" alt="draw rect icon" title="Draw rectangle"/>
         <p>Draw Rectangle</p>
       </div>
       <div class="geo-search-command-div" (click)="this.onDrawPolygonButtonClicked(true)">
-        <!-- <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon"></mat-icon> -->
         <img class="svg-icon" src="assets/images/draw-polygon.svg" alt="draw polygon icon" title="Draw polygon"/>
         <p>Draw Polygon</p>
       </div>
       <hr>
       <div class="geo-search-command-div" (click)="this.onCancelDrawingButtonClicked(true)">
-        <!-- <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon> -->
         <img class="svg-icon" src="assets/images/delete-polygon.svg" alt="draw polygon icon" title="Delete polygon"/>
         <p>Delete Polygon</p>
       </div>
@@ -34,16 +36,13 @@
 <div *ngIf="showGeoSearchToolbar && !hideGeoSearchToolbar" id="geosearch-fixed-container">
   <div id="geosearch-fixed-column-div">
     <div class="geo-search-command-div" (click)="this.onDrawRectButtonClicked(true)">
-      <!-- <mat-icon id="rectangle-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Rectangle icon" fontIcon="rectangle" title="Draw rectangle"></mat-icon> -->
       <img class="svg-icon" src="assets/images/draw-rect.svg" alt="draw rect icon" title="Draw rectangle"/>
     </div>
     <div class="geo-search-command-div" (click)="this.onDrawPolygonButtonClicked(true)">
-      <!-- <mat-icon id="polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Polygon icon" fontIcon="polyline" title="Draw polygon"></mat-icon> -->
       <img class="svg-icon" src="assets/images/draw-polygon.svg" alt="draw polygon icon" title="Draw polygon"/>
     </div>
     <hr>
     <div class="geo-search-command-div" (click)="this.onCancelDrawingButtonClicked(true)">
-      <!-- <mat-icon id="delete-polygon-icon" class="material-icons-outlined" aria-hidden="false" aria-label="Delete polygon icon" fontIcon="delete" title="Delete polygon"></mat-icon> -->
       <img class="svg-icon" src="assets/images/delete-polygon.svg" alt="draw polygon icon" title="Delete polygon"/>
     </div>
   </div>

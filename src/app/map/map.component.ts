@@ -30,7 +30,7 @@ let mapLayers: any;
 let mapOverlays: any;
 
 let selectedMapStyleIndex = 0;
-let selectedMapStyle: string;
+//let selectedMapStyle: string;
 
 let selectedMapOverlayIndex = 0;
 let selectedMapOverlay: string;
@@ -71,6 +71,9 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   public polygonAltitudeAddendum: number = 1000000000;
   public circlesAltitudeAddendum: number = 5000000000;
   public footprintZoomMultiplierFactor: number = 0;
+  public selectedMapStyle: string = "";
+  public mapAttributionIsVisible: boolean = true;
+  public mapAttributionShowTimeout: number = 5000;
 
   public drawGeoSearchCirclesData = [
     {
@@ -1476,6 +1479,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.onHideGeoSearchToolbar(value);
       }
     });
+
+    setTimeout(() => {
+      this.mapAttributionIsVisible = false;
+    }, this.mapAttributionShowTimeout);
   }
 
   ngOnDestroy(): void {
@@ -1796,7 +1803,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   changeMapLayer(layer: string) {
-    selectedMapStyle = layer;
+    this.selectedMapStyle = layer;
+    this.onMapAttributionClick();
     selectedMapStyleIndex = mapLayers.findIndex(function(item: any, i: any){
       return item.name === layer
     });
@@ -2076,6 +2084,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.showGeoSearchToolbar = true;
     }
     this.exchangeService.showGeoSearchToolbar(this.showGeoSearchToolbar);
+  }
+
+  onMapAttributionClick() {
+    this.mapAttributionIsVisible = true;
+    setTimeout(() => {
+      this.mapAttributionIsVisible = false;
+    }, this.mapAttributionShowTimeout);
   }
 
   getArrayDim(arr: any) {
