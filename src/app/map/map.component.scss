@@ -17,14 +17,26 @@ mat-icon:hover {
   height: 1.1rem;
   min-width: 1rem;
   border-radius: 0.5rem;
-  background-color: #fff8;
-  color: #000;
+  background-color: $menu-dark-bg-color;
+  color: white;
 
   cursor: pointer;
 }
 #map-attribution-text {
   padding: 0;
   margin: 0;
+}
+#map-attribution a:link {
+  color: $copsi-blue;
+}
+#map-attribution a:visited {
+  color: $copsi-blue-hover;
+}
+#map-attribution a:hover {
+  color: lighten($copsi-blue, 30);
+}
+#map-attribution a:active {
+  color: #666;
 }
 
 /* CONTEXT MENU */
