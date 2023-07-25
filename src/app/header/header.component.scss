@@ -94,12 +94,16 @@ hr {
   top: 3rem;
   right: 0.5rem;
   width: $header-menu-width;
+  max-height: calc(100vh - 3.5rem);
 
   border-radius: 0.25rem;
   border: $main-dark-border;
   box-shadow: $default-shadow;
   background-color: $main-dark-bg-color;
   color: $main-dark-text-color;
+
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 #user-menu p {
   text-align: center;
@@ -149,6 +153,7 @@ hr {
   top: 3rem;
   right: 0.5rem;
   width: $header-menu-width;
+  max-height: calc(100vh - 3.5rem);
 
   border-radius: 0.25rem;
   border: $main-dark-border;
@@ -156,6 +161,9 @@ hr {
   color: $main-dark-text-color;
 
   pointer-events: auto;
+
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 #settings-menu p {
   color: darken($main-dark-text-color, 15);
