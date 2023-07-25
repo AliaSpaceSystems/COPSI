@@ -341,7 +341,7 @@
                       </table>
                     </ng-template>
                   </td>
-                  <td *ngIf="selectedProduct.hasOwnProperty(property) && getTypeOf(selectedProduct[property]) === 'object' && selectedProduct[property] === null" class="properties-table-value">NULL</td>
+                  <td *ngIf="selectedProduct.hasOwnProperty(property) && getTypeOf(selectedProduct[property]) === 'object' && selectedProduct[property] === null" class="properties-table-value" title="no footprint"></td>
                 </tr>
               </table>
               <hr>
