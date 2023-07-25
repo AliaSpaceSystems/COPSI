@@ -644,6 +644,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       advancedSearchMagnifierIcon.classList.remove('invalid');
     }
 
+    /* Parse sensing dates */
     if (this.sensingStartEl.value !== "") {
       if (this.sensingStopEl.value === "" || (this.sensingStartEl.value <= this.sensingStopEl.value)) {
         this.sensingStartEl.setCustomValidity("");
@@ -677,6 +678,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
+    /* Parse publication dates */
     if (this.publicationStartEl.value !== "") {
       if (this.publicationStopEl.value === "" || (this.publicationStartEl.value <= this.publicationStopEl.value)) {
         this.publicationStartEl.setCustomValidity("");
@@ -731,88 +733,90 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         this.attributeFilter += "Attributes/" + this.platformDetailsList[i].attributeType +
           "/any(att:att/Name eq '" + this.platformDetailsList[i].attributeName +
           "' and att/" + this.platformDetailsList[i].attributeType + "/Value eq '" + this.platformDetailsList[i].value + "')";
-      }
-      let contentDiv = el.getElementsByClassName('content');
-      [].forEach.call(contentDiv, (missionDiv:any) => {
-        let missionItems = missionDiv.getElementsByClassName('advanced-search-filter-div');
-        [].forEach.call(missionItems, (item:any, k:any) => {
-          /* for each attribute in the mission */
-          let bracketOpenMissionInner: boolean = false;
-          if (this.platformDetailsList[i].filters[k].hasOwnProperty('selectedValues')) {
-            [].forEach.call(this.platformDetailsList[i].filters[k].selectedValues, (selectedValue: any) => {
+
+        /* Check every attribute in the mission */
+        let contentDiv = el.getElementsByClassName('content');
+        [].forEach.call(contentDiv, (missionDiv:any) => {
+          let missionItems = missionDiv.getElementsByClassName('advanced-search-filter-div');
+          [].forEach.call(missionItems, (item:any, k:any) => {
+            /* for each attribute in the mission */
+            let bracketOpenMissionInner: boolean = false;
+            if (this.platformDetailsList[i].filters[k].hasOwnProperty('selectedValues')) {
+              [].forEach.call(this.platformDetailsList[i].filters[k].selectedValues, (selectedValue: any) => {
+                if (this.useMultipleAttributesInOption) {
+                  this.attributeFilter += (bracketOpenMissionInner ? ", " : " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                  "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName + "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value in (") +
+                    (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + selectedValue + "'" : selectedValue);
+                    bracketOpenMissionInner = true;
+                } else {
+                  this.attributeFilter += (bracketOpenMissionInner ? " or " : " and (") + "Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                    "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
+                    "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value eq " +
+                    (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + selectedValue + "'" : selectedValue) + ")";
+                    bracketOpenMissionInner = true;
+                }
+              });
+            }
+            if (bracketOpenMissionInner) {
               if (this.useMultipleAttributesInOption) {
-                this.attributeFilter += (bracketOpenMissionInner ? ", " : " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
-                "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName + "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value in (") +
-                  (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + selectedValue + "'" : selectedValue);
-                  bracketOpenMissionInner = true;
-              } else {
-                this.attributeFilter += (bracketOpenMissionInner ? " or " : " and (") + "Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                this.attributeFilter += ")";
+              }
+              this.attributeFilter += ")";
+              bracketOpenMissionInner = false;
+            }
+
+            let inputs = item.getElementsByTagName('input');
+            [].forEach.call(inputs, (input:any) => {
+              let gotValue: boolean = false;
+              let value: string = "";
+              let gotMinValue: boolean = false;
+              let gotMaxValue: boolean = false;
+              if (input !== undefined) {
+                value = input.value;
+                if (value !== "") {
+                  if (input.classList.contains("input-min")) {
+                    let maxValueEl = this.getNextSibling(input, ".input-max")!;
+                    if(maxValueEl.value === "" || Number(maxValueEl.value) >= Number(input.value)) {
+                      gotMinValue = true;
+                      gotValue = true;
+                      input.setCustomValidity("");
+                    } else {
+                      advancedSearchSubmitIcon.classList.add('invalid');
+                      advancedSearchMagnifierIcon.classList.add('invalid');
+                      input.setCustomValidity("Please check input: Min Value > Max Value");
+                      this.canSubmitSearch = false;
+                    }
+                  }
+                  if (input.classList.contains("input-max")) {
+                    let minValueEl = this.getPreviousSibling(input, ".input-min")!;
+                    if(minValueEl.value === "" || Number(minValueEl.value) <= Number(input.value)) {
+                      gotMaxValue = true;
+                      gotValue = true;
+                      input.setCustomValidity("");
+                    } else {
+                      advancedSearchSubmitIcon.classList.add('invalid');
+                      advancedSearchMagnifierIcon.classList.add('invalid');
+                      input.setCustomValidity("Please check input: Max Value < Min Value");
+                      this.canSubmitSearch = false;
+                    }
+                  } else {
+                    gotValue = true;
+                  }
+                }
+              }
+              if (gotValue) {
+                this.attributeFilter += " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
                   "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
-                  "' and att/" + this.platformDetailsList[i].filters[k].attributeType + "/Value eq " +
-                  (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + selectedValue + "'" : selectedValue) + ")";
-                  bracketOpenMissionInner = true;
+                  "' and att/" + this.platformDetailsList[i].filters[k].attributeType + (gotMinValue ? "/Value ge " : (gotMaxValue ? "/Value le " : "/Value eq ")) +
+                  (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
               }
             });
-          }
-          if (bracketOpenMissionInner) {
-            if (this.useMultipleAttributesInOption) {
-              this.attributeFilter += ")";
-            }
-            this.attributeFilter += ")";
-            bracketOpenMissionInner = false;
-          }
-
-          let inputs = item.getElementsByTagName('input');
-          [].forEach.call(inputs, (input:any) => {
-            let gotValue: boolean = false;
-            let value: string = "";
-            let gotMinValue: boolean = false;
-            let gotMaxValue: boolean = false;
-            if (input !== undefined) {
-              value = input.value;
-              if (value !== "") {
-                if (input.classList.contains("input-min")) {
-                  let maxValueEl = this.getNextSibling(input, ".input-max")!;
-                  if(maxValueEl.value === "" || Number(maxValueEl.value) >= Number(input.value)) {
-                    gotMinValue = true;
-                    gotValue = true;
-                    input.setCustomValidity("");
-                  } else {
-                    advancedSearchSubmitIcon.classList.add('invalid');
-                    advancedSearchMagnifierIcon.classList.add('invalid');
-                    input.setCustomValidity("Please check input: Min Value > Max Value");
-                    this.canSubmitSearch = false;
-                  }
-                }
-                if (input.classList.contains("input-max")) {
-                  let minValueEl = this.getPreviousSibling(input, ".input-min")!;
-                  if(minValueEl.value === "" || Number(minValueEl.value) <= Number(input.value)) {
-                    gotMaxValue = true;
-                    gotValue = true;
-                    input.setCustomValidity("");
-                  } else {
-                    advancedSearchSubmitIcon.classList.add('invalid');
-                    advancedSearchMagnifierIcon.classList.add('invalid');
-                    input.setCustomValidity("Please check input: Max Value < Min Value");
-                    this.canSubmitSearch = false;
-                  }
-                } else {
-                  gotValue = true;
-                }
-              }
-            }
-            if (gotValue) {
-              this.attributeFilter += " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
-                "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
-                "' and att/" + this.platformDetailsList[i].filters[k].attributeType + (gotMinValue ? "/Value ge " : (gotMaxValue ? "/Value le " : "/Value eq ")) +
-                (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")";
-            }
           });
         });
-      });
-      if (bracketOpenInner) {
-        this.attributeFilter += ")";
-        bracketOpenInner = false;
+        if (bracketOpenInner) {
+          this.attributeFilter += ")";
+          bracketOpenInner = false;
+        }
       }
     });
 
