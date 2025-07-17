@@ -7,7 +7,7 @@ import { DetailsConfig } from '../services/details.config';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
-import { Download } from 'ngx-operators';
+//import { Download } from 'ngx-operators';
 
 declare let $: any;
 let listContainer: any;
@@ -143,7 +143,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public comboTimeoutId: any;
 
-  download$: Observable<Download> | undefined
+  //download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
 
   updateGeoSearchSubscription!: Subscription;
@@ -155,7 +155,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     private exchangeService: ExchangeService,
     private productSearch: ProductSearchService,
     private sanitizer: DomSanitizer,
-    private clipboard: Clipboard,
+    //private clipboard: Clipboard,
     private toast: ToastComponent
     ) {
   }
@@ -410,7 +410,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onCopyOutputClicked (event: any) {
     let filterOutput: string = filterOutputScrollableDiv.textContent;
-    this.clipboard.copy(filterOutput);
+    //this.clipboard.copy(filterOutput);
     this.toast.showInfoToast('success', 'FILTER OUTPUT COPIED');
   }
 
@@ -1501,7 +1501,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   copyUrl(id: string) {
     let copyUrl: any = (AppConfig.settings.baseUrl) ? AppConfig.settings.baseUrl + `odata/v1/Products(${id})`: window.location.origin + `/odata/v1/Products(${id})`;
-    this.clipboard.copy(copyUrl);
+    //this.clipboard.copy(copyUrl);
     this.toast.showInfoToast('success', 'PRODUCT URL COPIED!');
   }
 

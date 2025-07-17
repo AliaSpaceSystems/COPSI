@@ -2,7 +2,8 @@ import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+//import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MapComponent } from './map/map.component';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
@@ -22,7 +23,7 @@ import { HomeComponent } from './home/home.component';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { AlertComponent } from './alert/alert.component';
 import { ToastComponent } from './toast/toast.component';
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -47,20 +48,23 @@ export function initializeFootprintsCustomization(footprintsCustomizationConfig:
     ToastComponent,
     AlertComponent,
   ],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatIconModule,
     FormsModule,
-    HttpClientModule,
+    //HttpClientModule,
     MatProgressBarModule,
-    OAuthModule.forRoot({
-      resourceServer: {
-          allowedUrls: ['/odata/*','/test/*'],
-          sendAccessToken: true
-      }
-    })
+    OAuthModule.forRoot(
+    //   {
+    //   resourceServer: {
+    //       allowedUrls: ['/odata/*','/test/*'],
+    //       sendAccessToken: true
+    //   }
+    // }
+    )
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
@@ -84,9 +88,9 @@ export function initializeFootprintsCustomization(footprintsCustomizationConfig:
     AppConfig,
     DetailsConfig,
     FootprintsCustomizationConfig,
-    SpinnerComponent
-  ],
-  bootstrap: [AppComponent]
+    SpinnerComponent,
+    provideHttpClient(withInterceptorsFromDi())
+  ]
 })
 export class AppModule {
 
