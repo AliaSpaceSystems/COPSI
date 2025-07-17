@@ -22,7 +22,7 @@ import { HomeComponent } from './home/home.component';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { AlertComponent } from './alert/alert.component';
 import { ToastComponent } from './toast/toast.component';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
