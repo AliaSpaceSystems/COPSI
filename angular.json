@@ -73,11 +73,11 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "COPSI:build:production"
+              "buildTarget": "COPSI:build:production"
 
             },
             "development": {
-              "browserTarget": "COPSI:build:development"
+              "buildTarget": "COPSI:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -88,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "COPSI:build"
+            "buildTarget": "COPSI:build"
           }
         },
         "test": {
