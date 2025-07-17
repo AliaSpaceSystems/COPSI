@@ -45,9 +45,10 @@ let scrollDetailsLeft: any;
 let scrollDetailsRight: any;
 
 @Component({
-  selector: 'app-search-bar',
-  templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.scss']
+    selector: 'app-search-bar',
+    templateUrl: './search-bar.component.html',
+    styleUrls: ['./search-bar.component.scss'],
+    standalone: false
 })
 export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public productListSubscription!: Subscription;

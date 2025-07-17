@@ -7,27 +7,28 @@ import { AppConfig } from '../services/app.config';
 import jwt_decode from 'jwt-decode';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
-  animations: [
-    trigger('headerMenuAnimation', [
-      state('open', style({
-        /* 'top': '3rem', 'opacity': 1, 'visibility': 'visible' */
-        'opacity': 1, 'visibility': 'visible'
-      })),
-      state('closed', style({
-        /* 'top': '2.5rem', 'opacity': 0, 'visibility': 'hidden' */
-        'opacity': 0, 'visibility': 'hidden'
-      })),
-      transition('closed => open', [
-        animate('250ms ease-in')
-      ]),
-      transition('open => closed', [
-        animate('250ms ease-out')
-      ])
-    ])
-  ]
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    animations: [
+        trigger('headerMenuAnimation', [
+            state('open', style({
+                /* 'top': '3rem', 'opacity': 1, 'visibility': 'visible' */
+                'opacity': 1, 'visibility': 'visible'
+            })),
+            state('closed', style({
+                /* 'top': '2.5rem', 'opacity': 0, 'visibility': 'hidden' */
+                'opacity': 0, 'visibility': 'hidden'
+            })),
+            transition('closed => open', [
+                animate('250ms ease-in')
+            ]),
+            transition('open => closed', [
+                animate('250ms ease-out')
+            ])
+        ])
+    ],
+    standalone: false
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 

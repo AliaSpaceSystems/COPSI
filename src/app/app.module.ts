@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule, inject, provideAppInitializer } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -69,21 +69,18 @@ export function initializeFootprintsCustomization(footprintsCustomizationConfig:
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [AppConfig], multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeDetails,
-      deps: [DetailsConfig], multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeFootprintsCustomization,
-      deps: [FootprintsCustomizationConfig], multi: true
-    },
+    provideAppInitializer(() => {
+        const initializerFn = (initializeApp)(inject(AppConfig));
+        return initializerFn();
+      }),
+    provideAppInitializer(() => {
+        const initializerFn = (initializeDetails)(inject(DetailsConfig));
+        return initializerFn();
+      }),
+    provideAppInitializer(() => {
+        const initializerFn = (initializeFootprintsCustomization)(inject(FootprintsCustomizationConfig));
+        return initializerFn();
+      }),
     { provide: ErrorHandler, useClass: CustomErrorHandler},
     AppConfig,
     DetailsConfig,
