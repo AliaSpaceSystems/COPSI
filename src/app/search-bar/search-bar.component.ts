@@ -7,7 +7,7 @@ import { DetailsConfig } from '../services/details.config';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
-import { Download } from 'ngx-operators';
+//import { Download } from 'ngx-operators';
 
 declare let $: any;
 let listContainer: any;
@@ -144,7 +144,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public comboTimeoutId: any;
 
-  download$: Observable<Download> | undefined
+  //download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
 
   updateGeoSearchSubscription!: Subscription;
@@ -1186,6 +1186,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   downloadProduct(id: string, name: string) {
+    /*
     this.toast.showInfoToast('success', 'DOWNLOADING PRODUCT...');
     let downloadUrl: any = AppConfig.settings.baseUrl + `odata/v1/Products(${id})/$value`;
     let productInSelectedList = this.selectedProducts.filter((product: any) => product.Id === id)[0];
@@ -1212,6 +1213,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       })
     );
+    */
   }
 
   unsubscribeDownload(id: string) {

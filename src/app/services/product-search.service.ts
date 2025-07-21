@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { AppConfig } from '../services/app.config';
-import { download, Download } from 'ngx-operators';
+//import { download, Download } from 'ngx-operators';
 import { saveAs } from 'file-saver';
 
 const httpOptions = {
@@ -162,6 +162,7 @@ export class ProductSearchService {
       catchError(e => of(e)));
   }
 
+  /*
   download(url: string, filename: string): Observable<Download> {
     return this.http.get(url, {
       reportProgress: true,
@@ -169,4 +170,5 @@ export class ProductSearchService {
       responseType: 'blob'
     }).pipe(download(blob => saveAs(blob, filename)))
   }
+  */
 }

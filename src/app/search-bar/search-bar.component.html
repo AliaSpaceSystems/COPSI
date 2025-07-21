@@ -295,7 +295,7 @@
                       (click)="onZoomToList(selectedProduct)"></mat-icon>
                     <mat-icon class="item-button-icon" aria-hidden="false" aria-label="Copy Product Url" title="Copy Product Url" fontIcon="file_copy"
                       (click)="copyUrl(selectedProduct.Id)"></mat-icon>
-                    <ng-template [ngIf]="selectedProduct.download.state" [ngIfElse]="downloadDefault">
+                    <ng-template [ngIf]="selectedProduct.download.state" [ngIfElse]="downloadDefaultInner">
                       <mat-icon *ngIf="selectedProduct.download.state == 'DONE'" class="item-button-icon downloaded" aria-hidden="false" aria-label="Download Product" title="Download Product" fontIcon="download"
                         (click)="downloadProduct(selectedProduct.Id, selectedProduct.Name)"></mat-icon>
                       <mat-icon *ngIf="(selectedProduct.download.state == 'IN_PROGRESS' || selectedProduct.download.state == 'PENDING')" class="progress-cancel" aria-hidden="false" aria-label="cancel-download" title="Cancel download" fontIcon="clear"
