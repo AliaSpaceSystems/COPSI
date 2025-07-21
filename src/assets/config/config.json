@@ -102,38 +102,28 @@
   },
   "styles": [
     {
-      "name": "Terrain",
-      "url": "https://tiles.maps.eox.at/wmts/1.0.0/terrain_3857/default/g/{z}/{y}/{x}.jpg"
-    },
-    {
       "name": "OSM",
-      "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "path": "./assets/images/Preview_OSM.png",
+      "seaColor": [0, 0, 0],
+      "terrainColor": [0, 0, 0],
+      "borderColor": [0, 0, 0]
     },
     {
-      "name": "Terrain Light",
-      "url": "https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg"
+      "name": "Flat - Natural",
+      "url": "",
+      "path": "./assets/images/Preview_Flat_Natural.png",
+      "seaColor": [30, 70, 140],
+      "terrainColor": [80, 120, 60],
+      "borderColor": [0, 0, 0]
     },
     {
-      "name": "Black Marble",
-      "url": "https://tiles.maps.eox.at/wmts/1.0.0/blackmarble_3857/default/g/{z}/{y}/{x}.jpg"
-    },
-    {
-      "name": "Blue Marble",
-      "url": "https://tiles.maps.eox.at/wmts/1.0.0/bluemarble_3857/default/g/{z}/{y}/{x}.jpg"
-    },
-    {
-      "name": "S2 Cloudless",
-      "url": "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"
-    }
-  ],
-  "overlays": [
-    {
-      "name": "No Overlay",
-      "url": ""
-    },
-    {
-      "name": "Overlay",
-      "url": "https://tiles.maps.eox.at/wmts/1.0.0/overlay_bright_3857/default/g/{z}/{y}/{x}.jpg"
+      "name": "Flat - Grey",
+      "url": "",
+      "path": "./assets/images/Preview_Flat_Grey.png",
+      "seaColor": [60, 60, 60],
+      "terrainColor": [120, 120, 120],
+      "borderColor": [0, 0, 0]
     }
   ],
   "platformDetailsList": [

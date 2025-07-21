@@ -17,8 +17,8 @@ export class ExchangeService {
   private mapLayer = new BehaviorSubject<any>({});
   selectedMapLayer = this.mapLayer.asObservable();
 
-  private mapOverlay = new BehaviorSubject<any>({});
-  selectedMapOverlay = this.mapOverlay.asObservable();
+  // private mapOverlay = new BehaviorSubject<any>({});
+  // selectedMapOverlay = this.mapOverlay.asObservable();
 
   private showProductIndex = new BehaviorSubject<any>({});
   showProductOnMapExchange = this.showProductIndex.asObservable();
@@ -77,9 +77,9 @@ export class ExchangeService {
     this.mapLayer.next(mapLayer);
   }
 
-  setMapOverlay(mapOverlay: string) {
-    this.mapOverlay.next(mapOverlay);
-  }
+  // setMapOverlay(mapOverlay: string) {
+  //   this.mapOverlay.next(mapOverlay);
+  // }
 
   showProductOnMap(showProductIndex: any) {
     this.showProductIndex.next(showProductIndex);

@@ -1,17 +1,16 @@
 <div id="canvas-container">
   <canvas id='map-globe'></canvas>
   <canvas id='map-plane'></canvas>
-  <div id="map-attribution" (click)="onMapAttributionClick()">
-    @if (selectedMapStyle !== 'OSM' && mapAttributionIsVisible === true) {
-      <p id="map-attribution-text" style="padding: 0.5rem">© <a href="https://maps.eox.at/#data">EOX</a></p>
-    }
-    @if (selectedMapStyle === 'OSM' && mapAttributionIsVisible === true) {
-      <p id="map-attribution-text" style="padding: 0.5rem">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></p>
-    }
-    @if (mapAttributionIsVisible === false) {
-      <p id="map-attribution-text" style="padding: 0">©</p>
-    }
-  </div>
+  @if (selectedMapStyle === 'OSM') {
+    <div id="map-attribution" (click)="onMapAttributionClick()">
+      @if (mapAttributionIsVisible === true) {
+        <p id="map-attribution-text" style="padding: 0.5rem">© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></p>
+      }
+      @if (mapAttributionIsVisible === false) {
+        <p id="map-attribution-text" style="padding: 0">©</p>
+      }
+    </div>
+  }
 </div>
 
 

@@ -79,7 +79,7 @@
 
     <!-- Map Layer -->
     <div class="menu-item-div">
-      <label for="map-layer">Map layer:</label>
+      <label for="map-layer">Map style:</label>
       <div class="map-settings-buttons" id="map-layer" (click)="onMapLayerButtonClicked()">{{mapLayer}}</div>
     </div>
     <div id="layer-container" class="settings-sub-container" (mouseover)="onLayersMenuHover($event)" (mouseleave)="onLayerMenuLeave($event)">
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Map Overlay -->
-    <div class="menu-item-div">
+    <!-- <div class="menu-item-div">
       <label for="map-overlay">Map overlay:</label>
       <div class="map-settings-buttons" id="map-overlay" (click)="onMapOverlayButtonClicked()">{{mapOverlay}}</div>
     </div>
@@ -105,7 +105,7 @@
         <label for="overlay-item">Overlay</label>
         <img id="overlay-item" src={{mapOverlaysPreviewpaths[1].path}} alt={{mapOverlaysPreviewpaths[1].name}}>
       </div>
-    </div>
+    </div> -->
 
     <!-- Geo Toolbar -->
     <div class="menu-item-div">
