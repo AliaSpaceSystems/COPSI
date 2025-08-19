@@ -20,6 +20,9 @@ export class ExchangeService {
   // private mapOverlay = new BehaviorSubject<any>({});
   // selectedMapOverlay = this.mapOverlay.asObservable();
 
+  private gssProtocol = new BehaviorSubject<any>({});
+  selectedGssProtocol = this.gssProtocol.asObservable();
+
   private showProductIndex = new BehaviorSubject<any>({});
   showProductOnMapExchange = this.showProductIndex.asObservable();
 
@@ -80,6 +83,10 @@ export class ExchangeService {
   // setMapOverlay(mapOverlay: string) {
   //   this.mapOverlay.next(mapOverlay);
   // }
+
+  setGssProtocol(gssProtocol: string) {
+    this.gssProtocol.next(gssProtocol);
+  }
 
   showProductOnMap(showProductIndex: any) {
     this.showProductIndex.next(showProductIndex);

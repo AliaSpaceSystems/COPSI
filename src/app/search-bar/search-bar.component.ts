@@ -144,6 +144,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public comboTimeoutId: any;
 
+  public gssSelectedProtocol: string = AppConfig.settings.searchOptions.defaultGssProtocol;
+
   //download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
 
@@ -151,6 +153,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   updateHoveredProductSubscription! : Subscription;
   zoomToListSubscription!: Subscription;
   showFootprintsMenuSubscription!: Subscription;
+  updateGssProtocolSubscription!: Subscription;
 
   constructor(
     private exchangeService: ExchangeService,
@@ -347,6 +350,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.showFootprintsMenuSubscription = this.exchangeService.footprintMenuEventExchange.subscribe((value) => {
       this.showFootprintsMenu(value);
+    });
+    this.updateGssProtocolSubscription = this.exchangeService.selectedGssProtocol.subscribe((value) => {
+      if (typeof(value) === 'string') {
+        this.gssSelectedProtocol = value;
+      }
     });
 
     scrollDetailsLeft = document.getElementById('scroll-details-left')!;

@@ -227,6 +227,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onGssProtocolChanged(protocolSel: string) {
     this.gssSelectedProtocol = protocolSel;
+    this.exchangeService.setGssProtocol(protocolSel);
   }
 
   // onMapOverlayButtonClicked() {
