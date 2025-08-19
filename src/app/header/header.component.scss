@@ -201,7 +201,7 @@ hr {
   color: color.adjust($main-dark-text-color, $lightness: -15%);
 }
 
-.map-settings-buttons {
+.settings-buttons {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,10 +215,10 @@ hr {
   font-size: 1rem;
 }
 
-.map-settings-buttons:hover {
+.settings-buttons:hover {
   background-color: color.adjust($main-dark-bg-color, $lightness: 10%);
 }
-.map-settings-buttons:active {
+.settings-buttons:active {
   background-color: color.adjust($main-dark-bg-color, $lightness: 50%);
 }
 

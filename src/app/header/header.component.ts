@@ -86,6 +86,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public showGeoSearchToolbar: boolean = AppConfig.settings.geoSearchSettings.showGeoSearchToolbar;
   public hideGeoSearchToolbar: boolean = false;
 
+  public gssProtocols = AppConfig.settings.searchOptions.gssSupportedProtocols;
+  public gssSelectedProtocol = AppConfig.settings.searchOptions.defaultGssProtocol || this.gssProtocols[0];
+
   mapSettingsSubscription!: Subscription;
 
   public showUser: boolean = false;
@@ -98,6 +101,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public showLayersTimeoutId: any;
   //public showOverlays: boolean = false;
   //public showOverlaysTimeoutId: any;
+  public showProtocols: boolean = false;
+  public showProtocolsTimeoutId: any;
   public token: any;
   public name: string = '';
   public role: string = '';
@@ -111,6 +116,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public layerContainer: any;
   //public overlayContainer: any;
   //public overlayButton: any;
+  public protocolContainer: any;
   constructor(private exchangeService: ExchangeService,
               private oauthService: OAuthService) { }
 
@@ -132,6 +138,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.styleContainer = document.getElementById("style-container")!;
     this.layerContainer = document.getElementById("layer-container")!;
+    this.protocolContainer = document.getElementById("protocol-container")!;
     //this.overlayContainer = document.getElementById("overlay-container")!;
     //this.overlayButton = document.getElementById("map-overlay")!;
   }
@@ -170,8 +177,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.styleContainer.style.display = 'flex';
       this.showStyles = true;
       this.showLayers = false;
+      this.showProtocols = false;
       //this.showOverlays = false;
       this.layerContainer.style.display = 'none';
+      this.protocolContainer.style.display = 'none';
       //this.overlayContainer.style.display = 'none';
       this.setStylesTimeout();
     }
@@ -190,9 +199,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.exchangeService.hideGeoSearchToolbar(true);
       this.layerContainer.style.display = 'flex';
       this.showStyles = false;
+      this.showProtocols = false;
       this.showLayers = true;
       //this.showOverlays = false;
       this.styleContainer.style.display = 'none';
+      this.protocolContainer.style.display = 'none';
       //this.overlayContainer.style.display = 'none';
       this.setLayersTimeout();
     }
@@ -212,6 +223,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     //     this.onMapOverlayChanged(this.mapOverlayPrevious);
     //   }
     // }
+  }
+
+  onGssProtocolChanged(protocolSel: string) {
+    this.gssSelectedProtocol = protocolSel;
   }
 
   // onMapOverlayButtonClicked() {
@@ -240,6 +255,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.showGeoSearchToolbar = !this.showGeoSearchToolbar;
     this.exchangeService.hideGeoSearchToolbar(!this.showGeoSearchToolbar);
     event.stopPropagation();
+  }
+
+  onGssProtocolButtonClicked(event: any) {
+    if (this.showProtocols) {
+      this.showProtocols = false;
+      this.protocolContainer.style.display = 'none';
+      this.exchangeService.hideGeoSearchToolbar(false);
+    } else {
+      this.exchangeService.hideGeoSearchToolbar(true);
+      this.protocolContainer.style.display = 'flex';
+      this.showStyles = false;
+      this.showLayers = false;
+      this.showProtocols = true;
+      //this.showOverlays = false;
+      this.styleContainer.style.display = 'none';
+      this.layerContainer.style.display = 'none';
+      //this.overlayContainer.style.display = 'none';
+      this.setProtocolsTimeout();
+    }
   }
 
   onUserMenuHover(event: any) {
@@ -285,6 +319,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
+  onProtocolMenuHover(event: any) {
+    clearTimeout(this.showSettingsTimeoutId);
+    clearTimeout(this.showProtocolsTimeoutId);
+    event.stopPropagation();
+  }
+  onProtocolMenuLeave(event: any) {
+    this.setSettingsMenuTimeout();    
+    this.setProtocolsTimeout();
+    event.stopPropagation();
+  }
+
   onEditProfileClicked() {
     window.open(this.editProfileUrl, "_blank");
   }
@@ -315,7 +360,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     clearTimeout(this.showStylesTimeoutId);
     this.showStylesTimeoutId = setTimeout(() => {
       this.showStyles = false;
-      if (this.showLayers == false /* && this.showOverlays == false */ && this.showGeoSearchToolbar) {
+      if (this.showLayers == false && this.showProtocols == false && this.showGeoSearchToolbar) {
         this.exchangeService.hideGeoSearchToolbar(false);
       }
       this.styleContainer.style.display = 'none';
@@ -326,10 +371,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
     clearTimeout(this.showLayersTimeoutId);
     this.showLayersTimeoutId = setTimeout(() => {
       this.showLayers = false;
-      if (this.showStyles == false /* && this.showOverlays == false */ && this.showGeoSearchToolbar) {
+      if (this.showStyles == false && this.showProtocols == false && this.showGeoSearchToolbar) {
         this.exchangeService.hideGeoSearchToolbar(false);
       }
       this.layerContainer.style.display = 'none';
+    }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
+  }
+
+  setProtocolsTimeout() {
+    clearTimeout(this.showProtocolsTimeoutId);
+    this.showProtocolsTimeoutId = setTimeout(() => {
+      this.showProtocols = false;
+      if (this.showStyles == false && this.showLayers == false && this.showGeoSearchToolbar) {
+        this.exchangeService.hideGeoSearchToolbar(false);
+      }
+      this.protocolContainer.style.display = 'none';
     }, AppConfig.settings.headerSettings.menuAutoHideTimeout);
   }
 

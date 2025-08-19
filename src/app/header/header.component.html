@@ -53,7 +53,7 @@
 <div id="settings-menu" [@headerMenuAnimation]="showSettings ? 'open' : 'closed'" (mouseover)="onSettingsMenuHover($event)" (mouseleave)="setSettingsMenuTimeout()">
   <div id="settings-menu-header">
     <mat-icon id="settings-image" aria-hidden="false" aria-label="Settings image" fontIcon="settings"></mat-icon>
-    <p>Map Settings</p>
+    <p>Settings</p>
   </div>
 
   <hr style="width:100%;">
@@ -64,7 +64,7 @@
     <!-- Map Projection -->
     <div class="menu-item-div">
       <label for="map-style">Map projection:</label>
-      <div class="map-settings-buttons" id="map-style" (click)="onMapStyleButtonClicked()">{{(mapStyle == 'globe' ? 'Globe View' : "Plane View")}}</div>
+      <div class="settings-buttons" id="map-style" (click)="onMapStyleButtonClicked()">{{(mapStyle == 'globe' ? 'Globe View' : "Plane View")}}</div>
     </div>
     <div id="style-container" class="settings-sub-container" (mouseover)="onStylesMenuHover($event)" (mouseleave)="onStyleMenuLeave($event)">
       <div class="selection-item" (click)="onMapStyleChanged('globe')">
@@ -80,7 +80,7 @@
     <!-- Map Layer -->
     <div class="menu-item-div">
       <label for="map-layer">Map style:</label>
-      <div class="map-settings-buttons" id="map-layer" (click)="onMapLayerButtonClicked()">{{mapLayer}}</div>
+      <div class="settings-buttons" id="map-layer" (click)="onMapLayerButtonClicked()">{{mapLayer}}</div>
     </div>
     <div id="layer-container" class="settings-sub-container" (mouseover)="onLayersMenuHover($event)" (mouseleave)="onLayerMenuLeave($event)">
       @for (style of mapLayers; track style; let i = $index) {
@@ -94,7 +94,7 @@
     <!-- Map Overlay -->
     <!-- <div class="menu-item-div">
       <label for="map-overlay">Map overlay:</label>
-      <div class="map-settings-buttons" id="map-overlay" (click)="onMapOverlayButtonClicked()">{{mapOverlay}}</div>
+      <div class="settings-buttons" id="map-overlay" (click)="onMapOverlayButtonClicked()">{{mapOverlay}}</div>
     </div>
     <div id="overlay-container" class="settings-sub-container" (mouseover)="onOverlaysMenuHover($event)" (mouseleave)="onOverlaysMenuLeave($event)">
       <div class="selection-item" (click)="onMapOverlayChanged(mapOverlays[0].name)">
@@ -110,8 +110,27 @@
     <!-- Geo Toolbar -->
     <div class="menu-item-div">
       <label for="show-geo-search-toolbar">Geo-search Toolbar:</label>
-      <div class="map-settings-buttons" id="show-geo-search-toolbar" (click)="onShowGeoSearchToolbarClicked($event)">{{showGeoSearchToolbar ? 'Hide' : 'Show'}}</div>
+      <div class="settings-buttons" id="show-geo-search-toolbar" (click)="onShowGeoSearchToolbarClicked($event)">{{showGeoSearchToolbar ? 'Hide' : 'Show'}}</div>
     </div>
     <div class="vertical-spacer"></div>
+  </div>
+
+  <hr style="width:100%;">
+  <div id="menu-items-container">
+    <div class="vertical-spacer"></div>
+
+    <!-- GSS Protocol -->
+    <div class="menu-item-div">
+      <label for="gss-protocol">GSS Protocol:</label>
+      <div class="settings-buttons" id="gss-protocol" (click)="onGssProtocolButtonClicked($event)">{{gssSelectedProtocol}}</div>
+    </div>
+    <div id="protocol-container" class="settings-sub-container" (mouseover)="onProtocolMenuHover($event)" (mouseleave)="onProtocolMenuLeave($event)">
+      <div class="selection-item" (click)="onGssProtocolChanged('OData')">
+        <label for="selection-globe">OData</label>
+      </div>
+      <div class="selection-item" (click)="onGssProtocolChanged('Stac')">
+        <label for="selection-plane">Stac</label>
+      </div>
+    </div>
   </div>
 </div>

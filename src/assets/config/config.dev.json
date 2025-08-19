@@ -1,5 +1,5 @@
 {
-  "version": "3.0.1",
+  "version": "3.2.0",
   "centreInfo": {
       "name": "",
       "image": "",
@@ -32,7 +32,12 @@
     ],
     "hideFilterOutputTimeout": 2000,
     "filterOutputIsPinnedByDefault": true,
-    "useMultipleAttributesInOption": true
+    "useMultipleAttributesInOption": true,
+    "gssSupportedProtocols": [
+      "OData",
+      "Stac"
+    ],
+    "defaultGssProtocol": "OData"
   },
   "headerSettings": {
     "showUserEditButton": true,
