@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     this.oauthService.events.subscribe(event => {
       if (event instanceof OAuthSuccessEvent) {
         if(event.type == 'token_received') {
-          console.log('token_received');
+          //console.log('token_received');
           if(this.isFirst){
             this.toast.showInfoToast('success', 'LOGIN SUCCESSFUL!')
             this.isFirst = false;
@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
 
       } else if (event instanceof OAuthInfoEvent) {
         if(event.type == 'token_expires' && AppConfig.settings?.keycloak.useSilentRefresh) {
-          console.log('token is expiring...');
+          //console.log('token is expiring...');
           this.oauthService.refreshToken();
         }
       }
@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
 
   initConfig() {
     if(AppConfig.settings.keycloak) {
-      this.ssoConfig = AppConfig.settings.keycloak
+      this.ssoConfig = AppConfig.settings.keycloak;
 
     } else {
       this.ssoConfig = authFlowConfig;

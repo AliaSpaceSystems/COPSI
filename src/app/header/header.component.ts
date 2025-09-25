@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, ChangeDetectorRef } from '@angular/core';
 import { trigger, transition, style, animate, group, state } from '@angular/animations';
 import { ExchangeService } from '../services/exchange.service';
 import { Subscription, throwError } from 'rxjs';
@@ -87,7 +87,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public hideGeoSearchToolbar: boolean = false;
 
   public gssProtocols = AppConfig.settings.searchOptions.gssSupportedProtocols;
-  public gssSelectedProtocol = AppConfig.settings.searchOptions.defaultGssProtocol || this.gssProtocols[0];
+  public gssSelectedProtocol = signal(AppConfig.settings.searchOptions.defaultGssProtocol || this.gssProtocols[0]);
 
   mapSettingsSubscription!: Subscription;
 
@@ -117,8 +117,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   //public overlayContainer: any;
   //public overlayButton: any;
   public protocolContainer: any;
-  constructor(private exchangeService: ExchangeService,
-              private oauthService: OAuthService) { }
+  constructor(
+    private exchangeService: ExchangeService,
+    private oauthService: OAuthService,
+    private cd: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     const userClaims: any = this.oauthService.getIdentityClaims();
@@ -188,6 +191,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onMapStyleChanged(view: string) {
     this.mapStyle = view;
     this.exchangeService.setMapStyle(view);
+    this.cd.detectChanges();
   }
 
   onMapLayerButtonClicked() {
@@ -223,11 +227,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     //     this.onMapOverlayChanged(this.mapOverlayPrevious);
     //   }
     // }
+    this.cd.detectChanges();
   }
 
   onGssProtocolChanged(protocolSel: string) {
-    this.gssSelectedProtocol = protocolSel;
-    this.exchangeService.setGssProtocol(protocolSel);
+    this.gssSelectedProtocol.set(protocolSel);
+    this.exchangeService.setGssProtocol(this.gssSelectedProtocol());
+    this.cd.detectChanges();
   }
 
   // onMapOverlayButtonClicked() {

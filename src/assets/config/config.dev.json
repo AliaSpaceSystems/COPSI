@@ -7,9 +7,12 @@
       "alt": "",
       "title": ""
   },
-  "baseUrl": "",
+  "baseUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
+  "baseUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
+  "odataVersion": "v2",
   "searchOptions": {
     "productsPerPage": 100,
+    "productsPerPageStac": 100,
     "orderByOptions": [
       {
         "name": "Publication Date",
@@ -35,9 +38,9 @@
     "useMultipleAttributesInOption": true,
     "gssSupportedProtocols": [
       "OData",
-      "Stac"
+      "STAC"
     ],
-    "defaultGssProtocol": "OData"
+    "defaultGssProtocol": "STAC"
   },
   "headerSettings": {
     "showUserEditButton": true,
@@ -70,20 +73,28 @@
     "buttonText": "Sign in"
   },
   "keycloak": {
+    "issuer_NEW_GSS_REFERENCE": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
+    "issuer_NEW_GSS_OPE": "https://cda.copernicus.eu/auth/realms/CollaborativeDataAccess",
     "issuer_ALIA_NEW": "https://keycloak.alia-space.ovh/realms/COPSI",
     "issuer_ALIA_OLD": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
     "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
     "issuer_SERCO_GSS": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
-    "issuer": "https://keycloak.alia-space.ovh/realms/COPSI",
+    "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
     "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
     "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-    "redirectUri": "http://localhost:4200/home",
+    "redirectUri_home": "http://localhost:4200/home",
     "redirectUri_": "http://192.168.0.109:4200/home",
+    "redirectUri__": "https://cda.copernicus.eu/cda-stac/login/oauth2/code/keycloak",
+    "redirectUri___": "http://172.17.0.2:4200/home",
+    "redirectUri": "http://172.17.0.2:4200/home",
+    "clientId_NEW_GSS_REFERENCE": "ivv-gss1-client",
+    "clientId_NEW_GSS_OPE": "cda-gss-stac",
+    "clientId_NEW_GSS_OPE_2": "cda-dhr",
     "clientId_ALIA_NEW": "copsi",
     "clientId_ALIA_OLD": "prip-api",
     "clientId_SERCO": "ivv-prip-client",
     "clientId_SERCO_GSS": "ivv-gss1-client",
-    "clientId": "copsi",
+    "clientId": "ivv-gss1-client",
     "responseType": "code",
     "scope": "openid profile email",
     "requireHttps": false,
@@ -92,7 +103,8 @@
     "useSilentRefresh": true,
     "useSilentRefresh_": false
   },
-  "quicklookURL": "<base_url>/odata/v1/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
+  "quicklookURL": "<base_url>/odata/<odata_version>/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
+  "quicklookURLStac": "<base_url>/stac/download/quicklook/<productName>",
   "infoLogosLeft": [
     { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
     { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },
@@ -178,6 +190,13 @@
           "title": "Timeliness"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -295,7 +314,7 @@
     {
       "name": "Mission",
       "mission": "Sentinel-2",
-      "value": "Sentinel-2",
+      "value": "SENTINEL-2",
       "attributeName": "platformShortName",
       "attributeType": "OData.CSC.StringAttribute",
       "fillColor": "#17724564",

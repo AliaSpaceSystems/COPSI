@@ -198,6 +198,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.geoSearchPolygonPresent = false;
     this.changeDrawLayer();
     this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(this.drawGeoSearchCirclesData);
+    this.exchangeService.updateGeoSearchStac({});
     this.exchangeService.updateGeoSearch(this.geoSearchOutput);
     this.hideContextMenu();
     this.canShowFootprintsMenu = true;
@@ -205,7 +206,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   convertCoordinatesToGeographicQueryString(points: any) {
   /*     Geographic Criteria example from ICD:
-    Https://<service-root-uri>/odata/v1/Products?$filter=OData.CSC.Intersects(
+    Https://<service-root-uri>/odata/<odata-version>/Products?$filter=OData.CSC.Intersects(
       area=geography'SRID=4326;POLYGON((
         -127.8 45.2,
         -138.8 45.2,
@@ -344,6 +345,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.drawGeoSearchPolygonData = tempPolygonJson;
         this.changeDrawLayer();
 
+        this.exchangeService.updateGeoSearchStac(this.drawGeoSearchPolygonData.features[0].geometry);
         this.exchangeService.updateGeoSearch(this.geoSearchOutput);
         this.canShowFootprintsMenu = true;
         this.tempDrawPolygonArray = tempPolygonArray;
@@ -402,6 +404,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             this.geoSearchOutput = this.convertCoordinatesToGeographicQueryString(tempPolygonArray[0]);
           }
 
+          this.exchangeService.updateGeoSearchStac({type: (isCrossing ? "MultiPolygon" : "Polygon"), coordinates: (isCrossing ? tempArrayMulti : tempPolygonArray)});
           this.exchangeService.updateGeoSearch(this.geoSearchOutput);
           this.canShowFootprintsMenu = true;
         } else {
@@ -893,7 +896,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.drawGeoSearchCirclesData = tempPointsArray;
       this.changeDrawLayer();
       this.tempDrawPolygonArray = tempPolygonArray;
-
+      this.exchangeService.updateGeoSearchStac(this.drawGeoSearchPolygonData.features[0].geometry);
       this.exchangeService.updateGeoSearch(this.geoSearchOutput);
 
       deckGlobe.setProps({
@@ -1094,7 +1097,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.drawGeoSearchCirclesData = tempPointsArray;
       this.changeDrawLayer();
       this.tempDrawPolygonArray = tempPolygonArray;
-
+      
+      this.exchangeService.updateGeoSearchStac(this.drawGeoSearchPolygonData.features[0].geometry);
       this.exchangeService.updateGeoSearch(this.geoSearchOutput);
 
       deckGlobe.setProps({
@@ -1924,15 +1928,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     selectedMapStyleIndex = mapLayers.findIndex(function(item: any, i: any){
       return item.name === layer
     });
-    this.mapLayerPlane = this.mapLayerPlane.clone({
-      data: mapLayers[selectedMapStyleIndex].url
-    });
-    this.mapLayerGlobe = this.mapLayerGlobe.clone({
-      data: mapLayers[selectedMapStyleIndex].url
-    });
-
     if (selectedMapStyleIndex === 0) {    // Selected OSM Tile -> Make it visible.
       this.drawTileLayer = true;
+      this.mapLayerPlane = this.mapLayerPlane.clone({
+        data: mapLayers[selectedMapStyleIndex].url
+      });
+      this.mapLayerGlobe = this.mapLayerGlobe.clone({
+        data: mapLayers[selectedMapStyleIndex].url
+      });
     } else {
       this.drawTileLayer = false;
     }
@@ -2046,7 +2049,6 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           });
         }
-
         let tempPlatformArray = this.platformDetailsList.filter((platform: any) => (platform.value === product.platformShortName));
         let tempCustomAttributesArray = this.customAttributesList.filter((customAttribute: any) => {
           return product.Attributes.some((productAttribute: any) => (productAttribute.Name === customAttribute.name && productAttribute.Value === customAttribute.value));

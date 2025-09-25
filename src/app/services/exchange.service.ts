@@ -44,6 +44,9 @@ export class ExchangeService {
   private geoSearchOutput = new BehaviorSubject<any>({});
   geoSearchOutputExchange = this.geoSearchOutput.asObservable();
 
+  private geoSearchOutputStac = new BehaviorSubject<any>({});
+  geoSearchOutputStacExchange = this.geoSearchOutputStac.asObservable();
+
   private hoveredProduct = new BehaviorSubject<any>({});
   hoveredProductExchange = this.hoveredProduct.asObservable();
 
@@ -114,6 +117,10 @@ export class ExchangeService {
 
   updateGeoSearch(geoSearchOutput: string) {
     this.geoSearchOutput.next(geoSearchOutput);
+  }
+
+  updateGeoSearchStac(geoSearchOutput: {}) {
+    this.geoSearchOutputStac.next(geoSearchOutput);
   }
 
   updateHoveredProduct(hoveredProduct: any) {
