@@ -91,7 +91,6 @@
           }
         </select>
       </div>
-      <!-- hr -->
       <hr style="margin: 0.5rem 0;">
       <div class="advanced-search-item-div">
         <label for="sensing-start">Sensing date:</label>
@@ -105,9 +104,13 @@
         @if (gssSelectedProtocol === "OData") {
         <label for="publication-start">Publication date:</label>
         <div class="datepicker-div">
-          <input type="date" class="date" id="publication-start" name="publication-start" [max]="publicationStopEl.value === '' ? todayDate : publicationStopEl.value" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="publication-start" name="publication-start" 
+            [max]="(publicationStopEl.value && publicationStopEl.value === '') ? todayDate : publicationStopEl.value" title="Publication start date" 
+            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
           <span>-</span>
-          <input type="date" class="date" id="publication-stop" name="publication-stop" [min]="publicationStartEl.value === '' ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="publication-stop" name="publication-stop" 
+            [min]="(publicationStartEl.value && publicationStartEl.value === '' ) ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date" 
+            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         </div>
         }
         @else {
@@ -120,11 +123,10 @@
         }
       </div>
     </div>
-    <!-- hr -->
     <hr>
 
     <!-- Missions Sections -->
-    @if(gssSelectedProtocol == "OData") {
+    @if (gssSelectedProtocol === "OData") {
     @for(el of platformDetailsList; track el;) {
     <div class="collapsible-section">
       <div class="collapsible-header-div">

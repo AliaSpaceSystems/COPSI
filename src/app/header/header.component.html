@@ -122,13 +122,13 @@
     <!-- GSS Protocol -->
     <div class="menu-item-div">
       <label for="gss-protocol">GSS Protocol:</label>
-      <div class="settings-buttons" id="gss-protocol" (click)="onGssProtocolButtonClicked($event)">{{gssSelectedProtocol()}}</div>
+      <div class="settings-buttons" id="gss-protocol" (click)="onGssProtocolButtonClicked($event)">{{gssSelectedProtocol}}</div>
     </div>
     <div id="protocol-container" class="settings-sub-container" (mouseover)="onProtocolMenuHover($event)" (mouseleave)="onProtocolMenuLeave($event)">
-      <div class="selection-item" (click)="onGssProtocolChanged('OData')">
+      <div class="selection-item" [class.deactivated]="!isOdataActive" (click)="onGssProtocolChanged('OData')">
         <label for="selection-globe">OData</label>
       </div>
-      <div class="selection-item" (click)="onGssProtocolChanged('STAC')">
+      <div class="selection-item" [class.deactivated]="!isStacActive" (click)="onGssProtocolChanged('STAC')">
         <label for="selection-plane">STAC</label>
       </div>
     </div>

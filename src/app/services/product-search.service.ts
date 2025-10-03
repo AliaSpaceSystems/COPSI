@@ -267,6 +267,14 @@ export class ProductSearchService {
     );
   }
 
+  checkOdataService() {
+    let checkOdataUrl = AppConfig.settings.baseUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
+    return this.http.get<any>(checkOdataUrl, {observe: 'response'})
+      .pipe(map((res) => res),
+        catchError(e => of(e))
+      );
+  }
+
   getCollections() {
     let collectionsUrl = AppConfig.settings.baseUrlStac + '/stac/collections';
     return this.http.get<any>(collectionsUrl, httpOptions)

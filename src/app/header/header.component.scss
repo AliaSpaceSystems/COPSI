@@ -267,6 +267,10 @@ hr {
 .selection-item:active {
   background-color: color.adjust($main-dark-bg-color, $lightness: 50%);
 }
+.selection-item.deactivated {
+  color: color.change($main-dark-text-color, $lightness: 60%);
+  pointer-events: none;
+}
 
 .vertical-spacer {
   width: 100%;

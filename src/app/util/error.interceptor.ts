@@ -3,13 +3,11 @@ import { HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpInterceptor } fr
 import { Router } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import * as moment from 'moment';
 import { ExchangeService } from '../services/exchange.service';
 import { AlertComponent } from '../alert/alert.component';
 import { AppConfig } from '../services/app.config';
-import { indexOf } from 'underscore';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -25,9 +23,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   DOWNLOAD_SUBPATH = "$value";
   DOWNLOAD_SUBPATH_STAC = "download";
   NO_PREVIEW_SUBPATH = "assets/images/no-preview-1.png";
-  constructor(private oauthStorage: OAuthStorage,
-              private oauthService: OAuthService,
-              private router: Router,
+  constructor(private router: Router,
               private spinner: SpinnerComponent,
               private exchangeService: ExchangeService,
               private alert: AlertComponent

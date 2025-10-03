@@ -87,9 +87,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public hideGeoSearchToolbar: boolean = false;
 
   public gssProtocols = AppConfig.settings.searchOptions.gssSupportedProtocols;
-  public gssSelectedProtocol = signal(AppConfig.settings.searchOptions.defaultGssProtocol || this.gssProtocols[0]);
+  //public gssSelectedProtocol = signal(AppConfig.settings.searchOptions.defaultGssProtocol || this.gssProtocols[0]);
+  public gssSelectedProtocol: string = AppConfig.settings.searchOptions.defaultGssProtocol;
 
-  mapSettingsSubscription!: Subscription;
+  isOdataSubscription!: Subscription;
+  isStacSubscription!: Subscription;
+  updateGssProtocolSubscription!: Subscription;
+  public isOdataActive: boolean = false;
+  public isStacActive: boolean = false;
+  
 
   public showUser: boolean = false;
   public showUserTimeoutId: any;
@@ -144,9 +150,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.protocolContainer = document.getElementById("protocol-container")!;
     //this.overlayContainer = document.getElementById("overlay-container")!;
     //this.overlayButton = document.getElementById("map-overlay")!;
+
+    this.isOdataSubscription = this.exchangeService.isOdataActiveExchange.subscribe((value) => {
+      if (typeof(value) == 'boolean') {
+        this.isOdataActive = value;
+      }
+    });
+
+    this.isStacSubscription = this.exchangeService.isStacActiveExchange.subscribe((value) => {
+      if (typeof(value) == 'boolean') {
+        this.isStacActive = value;
+      }
+    });
+
+    this.updateGssProtocolSubscription = this.exchangeService.selectedGssProtocol.subscribe((value) => {
+      if (typeof(value) === 'string') {
+        //this.gssSelectedProtocol.set(value);
+        this.gssSelectedProtocol = value;
+        this.cd.detectChanges();
+      }
+    });
   }
 
   ngOnDestroy(): void {
+    this.isOdataSubscription.unsubscribe();
+    this.isStacSubscription.unsubscribe();
+    this.updateGssProtocolSubscription.unsubscribe();
   }
 
   onUserMenuIconClick(event: any) {
@@ -231,8 +260,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onGssProtocolChanged(protocolSel: string) {
-    this.gssSelectedProtocol.set(protocolSel);
-    this.exchangeService.setGssProtocol(this.gssSelectedProtocol());
+    //this.gssSelectedProtocol.set(protocolSel);
+    //this.exchangeService.setGssProtocol(this.gssSelectedProtocol());
+    this.gssSelectedProtocol = protocolSel;
+    this.exchangeService.setGssProtocol(this.gssSelectedProtocol);
     this.cd.detectChanges();
   }
 

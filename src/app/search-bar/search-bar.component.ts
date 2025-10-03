@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { ExchangeService } from '../services/exchange.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DownloadProgress, ProductSearchService } from '../services/product-search.service';
 import { AppConfig } from '../services/app.config';
 import { DetailsConfig } from '../services/details.config';
@@ -8,10 +8,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastComponent } from '../toast/toast.component';
 import _ from 'underscore';
-import { FakeMatIconRegistry } from '@angular/material/icon/testing';
-import { keyframes } from '@angular/animations';
-
-//import { Download } from 'ngx-operators';
+import { AlertComponent } from '../alert/alert.component';
 
 interface StacSearch {
   "datetime"?: string;
@@ -198,12 +195,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public gssSelectedProtocol: string = AppConfig.settings.searchOptions.defaultGssProtocol;
   public gssSelectedProtocolPrec: string = this.gssSelectedProtocol;
   public stacCollectionsList: string[] = [];
-
+  public isOdataActive: boolean = false;
+  public isStacActive: boolean = false;
   //download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
-
-
-
+  isLoggedSubscription!: Subscription;
   updateGeoSearchSubscription!: Subscription;
   updateGeoSearchStacSubscription!: Subscription;
   updateHoveredProductSubscription! : Subscription;
@@ -211,12 +207,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   showFootprintsMenuSubscription!: Subscription;
   updateGssProtocolSubscription!: Subscription;
 
+  public isLogged: boolean = false;
+
   constructor(
     private exchangeService: ExchangeService,
     private productSearch: ProductSearchService,
     private sanitizer: DomSanitizer,
     private clipboard: Clipboard,
-    private toast: ToastComponent
+    private toast: ToastComponent,
+    private alert: AlertComponent
     ) {
   }
 
@@ -255,14 +254,57 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     footprintMenuContainer = document.getElementById('footprint-menu-container')!;
     footprintMenuScrollableDiv = document.getElementById('footprint-menu-scrollable-div')!;
 
-    this.productSearch.getCollections().subscribe({
+    // Check GSS Protocols
+    this.productSearch.checkOdataService().subscribe({
       next: (res: any) => {
-        this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
+        if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
+          this.isOdataActive = true;
+        } else {
+          this.isOdataActive = false;
+        }
       },
       error: (err: any) => {
-        console.log("Error: ", err);
+        this.isOdataActive = false;
+        if (this.gssSelectedProtocol === "OData") {
+          this.exchangeService.setGssProtocol("STAC");
+        }
+        console.error(err);
+      },
+      complete: () => {
+        console.log("Check for OData module availability: ", this.isOdataActive);
+        this.exchangeService.setOdataActive(this.isOdataActive);
+
+        this.productSearch.getCollections().subscribe({
+          next: (res: any) => {
+            if (res.hasOwnProperty("collections")) {
+              this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
+              this.isStacActive = true;
+            } else {
+              this.isStacActive = false;
+            }
+          },
+          error: (err: any) => {
+            this.isStacActive = false;
+            console.log("Error: ", err);
+          },
+          complete: () => {
+            console.log("Check for STAC module availability: ", this.isStacActive);
+            this.exchangeService.setStacActive(this.isStacActive);
+            if (this.isStacActive === false && this.isOdataActive) {
+              console.log("changing gss protocol to OData..");
+              this.exchangeService.setGssProtocol("OData");
+            }
+            if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
+              advancedSearchSubmitIcon.classList.add('invalid');
+              advancedSearchMagnifierIcon.classList.add('invalid');
+              this.canSubmitSearch = false;
+              this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive."); 
+            }
+          }
+        });
       }
-    });
+    })
+    
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -400,6 +442,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     });
 
+    this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
+      if (typeof(value) === 'boolean') {
+        this.isLogged = value;
+      }
+    });
     this.updateGeoSearchSubscription = this.exchangeService.geoSearchOutputExchange.subscribe((value) => {
       if (typeof(value) === 'string') {
         this.geoSearchUpdate(value);
@@ -443,6 +490,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           setTimeout(() => {
             this.onShowHideButtonClick(null);
             this.showProductListContainer();
+            this.parseAdvancedFilter();
           }, 10);       
         }
         setTimeout(() => {
@@ -457,6 +505,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.productListSubscription.unsubscribe();
+    this.isLoggedSubscription.unsubscribe();
     this.updateGeoSearchSubscription.unsubscribe();
     this.updateHoveredProductSubscription.unsubscribe();
     this.zoomToListSubscription.unsubscribe();
@@ -466,6 +515,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         sub.unsubscribe();
       });
     }
+    this.updateGeoSearchStacSubscription.unsubscribe();
+    this.updateGssProtocolSubscription.unsubscribe();
   }
 
   checkFilterOutputHeight() {
@@ -643,7 +694,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       /* Send Search */
       this.onSearch(event);
     } else {
-      this.toast.showInfoToast('error', 'PLEASE CHECK INPUT: INVALID FIELDS');
+      if (!this.isOdataActive && !this.isStacActive) {
+        this.toast.showInfoToast('error', 'NO GSS PROTOCOL AVAILABLE');
+      } else {
+        this.toast.showInfoToast('error', 'PLEASE CHECK INPUT: INVALID FIELDS');
+      }
     }
   }
 
@@ -772,6 +827,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       advancedSearchMagnifierIcon.classList.remove('invalid');
     }
 
+    /* Check for GSS modules availability */
+    if (!this.isOdataActive && !this.isStacActive) {
+      advancedSearchSubmitIcon.classList.add('invalid');
+      advancedSearchMagnifierIcon.classList.add('invalid');
+      this.canSubmitSearch = false;
+    }
     /* Parse sensing dates */
     if (this.sensingStartEl.value !== "") {
       if (this.sensingStopEl.value === "" || (this.sensingStartEl.value <= this.sensingStopEl.value)) {
@@ -974,6 +1035,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     /* Parsing name (ids) */
     if (this.filter !== "") {
     this.stacFilter.ids = [this.filter];
+    }
+
+    /* Check for GSS modules availability */
+    if (!this.isOdataActive && !this.isStacActive) {
+      advancedSearchSubmitIcon.classList.add('invalid');
+      advancedSearchMagnifierIcon.classList.add('invalid');
+      this.canSubmitSearch = false;
     }
 
     /* Parsing datetime */

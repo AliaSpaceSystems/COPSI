@@ -23,6 +23,12 @@ export class ExchangeService {
   private gssProtocol = new BehaviorSubject<any>({});
   selectedGssProtocol = this.gssProtocol.asObservable();
 
+  private isOdataActive = new BehaviorSubject<any>({});
+  isOdataActiveExchange = this.isOdataActive.asObservable();
+
+  private isStacActive = new BehaviorSubject<any>({});
+  isStacActiveExchange = this.isStacActive.asObservable();
+
   private showProductIndex = new BehaviorSubject<any>({});
   showProductOnMapExchange = this.showProductIndex.asObservable();
 
@@ -89,6 +95,14 @@ export class ExchangeService {
 
   setGssProtocol(gssProtocol: string) {
     this.gssProtocol.next(gssProtocol);
+  }
+
+  setOdataActive(isOdataActive: boolean) {
+    this.isOdataActive.next(isOdataActive);
+  }
+
+  setStacActive(isStacActive: boolean) {
+    this.isStacActive.next(isStacActive);
   }
 
   showProductOnMap(showProductIndex: any) {
