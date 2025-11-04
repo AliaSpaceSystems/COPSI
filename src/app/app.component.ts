@@ -55,10 +55,15 @@ export class AppComponent implements OnInit {
 
   initConfig() {
     if(AppConfig.settings.keycloak) {
-      this.ssoConfig = AppConfig.settings.keycloak;
-
+      const keycloakSettings = AppConfig.settings.keycloak;
+      //keycloakSettings.redirectUri = window.location.origin + AppConfig.settings.baseUrl;
+      keycloakSettings.redirectUri = AppConfig.settings.keycloak.redirectUri;
+      this.ssoConfig = keycloakSettings;
     } else {
-      this.ssoConfig = authFlowConfig;
+      const keycloakSettings = authFlowConfig;
+      //keycloakSettings.redirectUri = window.location.origin + AppConfig.settings.baseUrl;
+      keycloakSettings.redirectUri = AppConfig.settings.keycloak.redirectUri;
+      this.ssoConfig = keycloakSettings;
     }
   }
 

@@ -134,8 +134,8 @@ export class ProductSearchService {
     let order = 'PublicationDate';
     let sort = 'desc';
     let skip = 0;
-    let productsCountUrl = AppConfig.settings.baseUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$count=true&$top=1`;
-    let productsUrl = AppConfig.settings.baseUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$expand=Attributes`;
+    let productsCountUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$count=true&$top=1`;
+    let productsUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$expand=Attributes`;
     //The option $count=true requires only the $filter parameter. No $orderby or $skip is needed for the count.
     //The $top is fixed to 1
     let filter = "";
@@ -192,13 +192,15 @@ export class ProductSearchService {
   }
 
   searchStac(stacFilter: any) {
-    let productsUrl = AppConfig.settings.baseUrlStac + '/stac/search';
+    let productsUrl = AppConfig.settings.serviceUrlStac + '/stac/search';
+    console.log("productsUrl: ", productsUrl);
+    console.log("stacFilter: ", stacFilter);
     return this.getProductsStac(productsUrl, stacFilter).pipe(map((res) => res), catchError(e => of(e)));
   }
 
   /* getQL(uuid: string) is used to check if there is a quicklook for that product id */
   getQL(uuid: string) {
-    let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', AppConfig.settings.baseUrl).replace('<odata_version>', AppConfig.settings.odataVersion).replace('<uuid>', uuid);
+    let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', AppConfig.settings.serviceUrl).replace('<odata_version>', AppConfig.settings.odataVersion).replace('<uuid>', uuid);
 
     return this.http.get(
       uuidURL, {
@@ -210,7 +212,7 @@ export class ProductSearchService {
 
   /* getQLStac(productName: string) is used to check if there is a quicklook for that product id */
   getQLStac(productName: string) {
-    let quicklookURL = AppConfig.settings.quicklookURLStac.replace('<base_url>', AppConfig.settings.baseUrlStac).replace('<productName>', productName);
+    let quicklookURL = AppConfig.settings.quicklookURLStac.replace('<base_url>', AppConfig.settings.serviceUrlStac).replace('<productName>', productName);
 
     return this.http.get(
       quicklookURL, {
@@ -268,7 +270,7 @@ export class ProductSearchService {
   }
 
   checkOdataService() {
-    let checkOdataUrl = AppConfig.settings.baseUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
+    let checkOdataUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
     return this.http.get<any>(checkOdataUrl, {observe: 'response'})
       .pipe(map((res) => res),
         catchError(e => of(e))
@@ -276,7 +278,7 @@ export class ProductSearchService {
   }
 
   getCollections() {
-    let collectionsUrl = AppConfig.settings.baseUrlStac + '/stac/collections';
+    let collectionsUrl = AppConfig.settings.serviceUrlStac + '/stac/collections';
     return this.http.get<any>(collectionsUrl, httpOptions)
       .pipe(map((res) => res),
         catchError(e => of(e))

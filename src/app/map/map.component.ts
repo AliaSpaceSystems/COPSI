@@ -1177,10 +1177,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public geoJsonMapLayerPlane = new GeoJsonLayer({
     id: 'geo-json-map-layer-plane',
-    //data: '../../assets/world-maps/world-countries.geojson', // Highly detailed map
-    data: '../../assets/world-maps/ne_50m_admin_0_countries.geojson', // Medium-high detailed map
-    //data: '../../assets/world-maps/ne_110m_admin_0_countries.geojson', // Mediumly detailed map
-    //data: '../../assets/world-maps/ne_110m_land.geojson', // Lowly detailed map
+    //data: AppConfig.settings.baseUrl + 'assets/world-maps/world-countries.geojson', // Highly detailed map
+    data: AppConfig.settings.baseUrl + 'assets/world-maps/ne_50m_admin_0_countries.geojson', // Medium-high detailed map
+    //data: AppConfig.settings.baseUrl + 'assets/world-maps/ne_110m_admin_0_countries.geojson', // Mediumly detailed map
+    //data: AppConfig.settings.baseUrl + 'assets/world-maps/ne_110m_land.geojson', // Lowly detailed map
     stroked: true,
     filled: true,
     visible: !this.drawTileLayer,
@@ -1206,10 +1206,10 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public geoJsonMapLayerGlobe = new GeoJsonLayer({
     id: 'geo-json-map-layer-globe',
-    //data: '../../assets/world-maps/world-countries.geojson', // Highly detailed map
-    data: '../../assets/world-maps/ne_50m_admin_0_countries.geojson', // Medium-high detailed map
-    //data: '../../assets/world-maps/ne_110m_admin_0_countries.geojson', // Mediumly detailed map
-    //data: '../../assets/world-maps/ne_110m_land.geojson', // Lowly detailed map
+    //data: AppConfig.settings.baseUrl + 'assets/world-maps/world-countries.geojson', // Highly detailed map
+    data: AppConfig.settings.baseUrl + 'assets/world-maps/ne_50m_admin_0_countries.geojson', // Medium-high detailed map
+    //data: AppConfig.settings.baseUrl + 'assets/world-maps/ne_110m_admin_0_countries.geojson', // Mediumly detailed map
+    //data: AppConfig.settings.baseUrl + 'assets/world-maps/ne_110m_land.geojson', // Lowly detailed map
     stroked: true,
     filled: true,
     visible: !this.drawTileLayer,

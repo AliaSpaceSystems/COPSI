@@ -7,8 +7,9 @@
       "alt": "",
       "title": ""
   },
-  "baseUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
-  "baseUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
+  "baseUrl": "",
+  "serviceUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
+  "serviceUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
   "odataVersion": "v2",
   "searchOptions": {
     "productsPerPage": 100,
@@ -85,8 +86,7 @@
     "redirectUri_home": "http://localhost:4200/home",
     "redirectUri_": "http://192.168.0.109:4200/home",
     "redirectUri__": "https://cda.copernicus.eu/cda-stac/login/oauth2/code/keycloak",
-    "redirectUri___": "http://172.17.0.2:4200/home",
-    "redirectUri": "http://172.17.0.2:4200/home",
+    "redirectUri": "http://172.17.0.2:4200/",
     "clientId_NEW_GSS_REFERENCE": "ivv-gss1-client",
     "clientId_NEW_GSS_OPE": "cda-gss-stac",
     "clientId_NEW_GSS_OPE_2": "cda-dhr",
@@ -100,8 +100,8 @@
     "requireHttps": false,
     "showDebugInformation": false,
     "disableAtHashCheck": true,
-    "useSilentRefresh": true,
-    "useSilentRefresh_": false
+    "useSilentRefresh_": true,
+    "useSilentRefresh": false
   },
   "quicklookURL": "<base_url>/odata/<odata_version>/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
   "quicklookURLStac": "<base_url>/stac/download/quicklook/<productName>",
@@ -348,6 +348,13 @@
           "title": "Datastrip Identifier"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -429,6 +436,13 @@
           "title": "Instrument"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -543,6 +557,13 @@
           "title": "Processing Level"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Product Type",

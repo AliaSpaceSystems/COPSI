@@ -7,8 +7,10 @@
       "alt": "",
       "title": ""
   },
-  "baseUrl": "http(s)://<domain>/<api_context>/",
-  "baseUrlStac": "http(s)://<domain>/<api_context>/",
+  "baseUrl": "/copsi-test/",
+  "serviceUrl": "http(s)://<domain>/<api_context>/",
+  "serviceUrlStac": "http(s)://<domain>/<api_context>/",
+  "odataVersion": "v2",
   "searchOptions": {
     "productsPerPage": 100,
     "productsPerPageStac": 100,
@@ -42,8 +44,8 @@
     "defaultGssProtocol": "STAC"
   },
   "headerSettings": {
-    "showUserEditButton": false,
-    "showPasswordChangeButton": false,
+    "showUserEditButton": true,
+    "showPasswordChangeButton": true,
     "menuAutoHideTimeout": 2000
   },
   "mapSettings": {
@@ -75,7 +77,7 @@
       "issuer": "https://<keycloak_url>/auth/realms/<realm>",
       "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
       "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-      "redirectUri": "http(s)://<copsy_domain>/home",
+      "redirectUri__": "http(s)://<copsy_domain>/home",
       "clientId": "<client_id>",
       "responseType": "code",
       "scope": "openid profile email",

@@ -255,56 +255,57 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     footprintMenuScrollableDiv = document.getElementById('footprint-menu-scrollable-div')!;
 
     // Check GSS Protocols
-    this.productSearch.checkOdataService().subscribe({
-      next: (res: any) => {
-        if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
-          this.isOdataActive = true;
-        } else {
-          this.isOdataActive = false;
-        }
-      },
-      error: (err: any) => {
-        this.isOdataActive = false;
-        if (this.gssSelectedProtocol === "OData") {
-          this.exchangeService.setGssProtocol("STAC");
-        }
-        console.error(err);
-      },
-      complete: () => {
-        console.log("Check for OData module availability: ", this.isOdataActive);
-        this.exchangeService.setOdataActive(this.isOdataActive);
 
-        this.productSearch.getCollections().subscribe({
-          next: (res: any) => {
-            if (res.hasOwnProperty("collections")) {
-              this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
-              this.isStacActive = true;
-            } else {
-              this.isStacActive = false;
-            }
-          },
-          error: (err: any) => {
-            this.isStacActive = false;
-            console.log("Error: ", err);
-          },
-          complete: () => {
-            console.log("Check for STAC module availability: ", this.isStacActive);
-            this.exchangeService.setStacActive(this.isStacActive);
-            if (this.isStacActive === false && this.isOdataActive) {
-              console.log("changing gss protocol to OData..");
-              this.exchangeService.setGssProtocol("OData");
-            }
-            if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
-              advancedSearchSubmitIcon.classList.add('invalid');
-              advancedSearchMagnifierIcon.classList.add('invalid');
-              this.canSubmitSearch = false;
-              this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive."); 
-            }
+      this.productSearch.checkOdataService().subscribe({
+        next: (res: any) => {
+          if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
+            this.isOdataActive = true;
+          } else {
+            this.isOdataActive = false;
           }
-        });
-      }
-    })
-    
+        },
+        error: (err: any) => {
+          this.isOdataActive = false;
+          if (this.gssSelectedProtocol === "OData") {
+            this.exchangeService.setGssProtocol("STAC");
+          }
+          console.error(err);
+        },
+        complete: () => {
+          console.log("Check for OData module availability: ", this.isOdataActive);
+          this.exchangeService.setOdataActive(this.isOdataActive);
+
+          this.productSearch.getCollections().subscribe({
+            next: (res: any) => {
+              if (res.hasOwnProperty("collections")) {
+                this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
+                this.isStacActive = true;
+              } else {
+                this.isStacActive = false;
+              }
+            },
+            error: (err: any) => {
+              this.isStacActive = false;
+              console.log("Error: ", err);
+            },
+            complete: () => {
+              console.log("Check for STAC module availability: ", this.isStacActive);
+              this.exchangeService.setStacActive(this.isStacActive);
+              if (this.isStacActive === false && this.isOdataActive) {
+                console.log("changing gss protocol to OData..");
+                this.exchangeService.setGssProtocol("OData");
+              }
+              if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
+                advancedSearchSubmitIcon.classList.add('invalid');
+                advancedSearchMagnifierIcon.classList.add('invalid');
+                this.canSubmitSearch = false;
+                this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
+              }
+            }
+          });
+        }
+      })
+
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -445,6 +446,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
         this.isLogged = value;
+        //console.log("isLogged: ", this.isLogged);
       }
     });
     this.updateGeoSearchSubscription = this.exchangeService.geoSearchOutputExchange.subscribe((value) => {
@@ -491,7 +493,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
             this.onShowHideButtonClick(null);
             this.showProductListContainer();
             this.parseAdvancedFilter();
-          }, 10);       
+          }, 10);
         }
         setTimeout(() => {
           this.checkFilterOutputHeight();
@@ -649,14 +651,14 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.canSubmitSearch) {
       setTimeout(() => {
         if (this.selectedProducts.length > 0) {
-          if (( 
+          if ((
               this.gssSelectedProtocol === "OData" && (
               this.parsedFilterPrec != this.parsedFilter ||
               this.productFilterPrec != this.productFilter ||
               this.attributeFilterPrec != this.attributeFilter ||
               this.geoFilterPrec != this.geoFilter)
             ) || (
-              this.gssSelectedProtocol === "STAC" && !_.isEqual(this.stacFilterPrec, this.stacFilter)              
+              this.gssSelectedProtocol === "STAC" && !_.isEqual(this.stacFilterPrec, this.stacFilter)
             )
           ) {
             this.toast.showInfoToast('info', 'FILTER CHANGED. REMOVING PRODUCT DETAILS');
@@ -817,7 +819,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.publicationStartEl = document.getElementById('publication-start')!;
     this.publicationStopEl = document.getElementById('publication-stop')!;
     this.missionEl = document.getElementsByClassName('collapsible-section')!;
-    
+
     let bracketOpen: boolean = false;
     this.canSubmitSearch = true;
     if (advancedSearchSubmitIcon.classList.contains('invalid')) {
@@ -1343,41 +1345,49 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               "@odata.count": this.productTotalNumber,
               value: []
             };
-
             res.features.forEach((feature: any) => {
               let tempProduct: any = {};
               // First add parsed properties
-              tempProduct.Name = feature.id;
-              tempProduct.platformShortName = feature.properties.constellation.toUpperCase();
-              tempProduct.platformSerialIdentifier = this.getPlatformSerialIdentifierFromProductId(feature.id);
-              tempProduct.ContentDate = {
+              tempProduct.Name = feature.hasOwnProperty('id') ? feature.id : "";
+              tempProduct.platformShortName = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) ? feature.properties.constellation.toUpperCase() : "";
+              tempProduct.platformSerialIdentifier = feature.hasOwnProperty('id') ? this.getPlatformSerialIdentifierFromProductId(feature.id) : "";
+              tempProduct.ContentDate = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('start_datetime')) ? {
                 Start: feature.properties.start_datetime,
                 End: feature.properties.end_datetime
-              };
+              } : {Start: "", End: ""};
               // Add autoconverted properties
               Object.entries(this.stacPropertiesList).forEach(([key, value]) => {
                 tempProduct[<string>key] = feature.properties[<string>value];
               })
               // Set other empty props
               tempProduct.isSelected = false;
-              tempProduct.download = {
-                url: feature.assets.product.href,
-                type: feature.assets.product.type
-              };
+              if (feature.hasOwnProperty('assets') && feature.assets.hasOwnProperty('product')) {
+                tempProduct.download = {
+                  url: feature.assets.product.hasOwnProperty('href') ? feature.assets.product.href : "",
+                  type: feature.assets.product.hasOwnProperty('type') ? feature.assets.product.type: ""
+                };
+              }
               tempProduct.tags = [];
               // Add Tags
               Object.entries(feature.properties).forEach(([propKey, propValue]) => {
                 this.platformDetailsList.forEach((platform: any) => {
-                  if (feature.properties.constellation.toLowerCase() === platform.value.toLowerCase()) {
-                    Object.entries(platform.stacTags).forEach(([tagKey, tagValue]) => {
-                      if (propKey == tagValue) {
-                        tempProduct.tags.push({name: propKey, value: propValue, color: platform.tags.filter((tag: any) => tag.name === tagKey)[0].color, title: platform.tags.filter((tag: any) => tag.name === tagKey)[0].title});
-                      }
-                    });
+                  if (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) {
+                    if (feature.properties.constellation.toLowerCase() === platform.value.toLowerCase()) {
+                      Object.entries(platform.stacTags).forEach(([tagKey, tagValue]) => {
+                        if (propKey == tagValue) {
+                          tempProduct.tags.push({
+                            name: propKey,
+                            value: propValue,
+                            color: platform.tags.filter((tag: any) => tag.name === tagKey)[0]?.color,
+                            title: platform.tags.filter((tag: any) => tag.name === tagKey)[0]?.title
+                          });
+                        }
+                      });
+                    }
                   }
                 });
               });
-              
+
               // Add Attributes
               tempProduct.Attributes = [];
               Object.entries(feature.properties).forEach(([key, value]) => {
@@ -1385,7 +1395,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               });
 
               // Add Footprint
-              tempProduct.GeoFootprint = feature.geometry;
+              tempProduct.GeoFootprint = feature.hasOwnProperty('geometry') ? feature.geometry : "";
 
 
               // Add QLs
@@ -1420,7 +1430,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
               this.productList.value.push(tempProduct);
             });
-            //console.log("this.productList: ", this.productList);
             this.exchangeService.setProductList(this.productList);
             this.listIsReady = true;
             this.productListRolled = true;
@@ -1618,7 +1627,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     let productInSelectedList = this.selectedProducts.filter((product: any) => product.Id === id)[0];
     let productInList = this.productList.value.filter((product: any) => product.Id === id)[0];
     if (this.gssSelectedProtocol === "OData") {
-      downloadUrl = AppConfig.settings.baseUrl + `/odata/${this.odataVersion}/Products(${id})/$value`;
+      downloadUrl = AppConfig.settings.serviceUrl + `/odata/${this.odataVersion}/Products(${id})/$value`;
     } else {
       downloadUrl = productInList.download.url;
     }
@@ -1946,7 +1955,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   copyUrl(id: string) {
     let copyUrl: string = "";
     if (this.gssSelectedProtocol == "OData") {
-      copyUrl = (AppConfig.settings.baseUrl) ? AppConfig.settings.baseUrl + `/odata/${this.odataVersion}/Products(${id})`: window.location.origin + `/odata/${this.odataVersion}/Products(${id})`;
+      copyUrl = (AppConfig.settings.serviceUrl) ? AppConfig.settings.serviceUrl + `/odata/${this.odataVersion}/Products(${id})`: window.location.origin + `/odata/${this.odataVersion}/Products(${id})`;
     } else {
       copyUrl = this.productList.value.filter((product: any) => product.Id == id)[0].download.url;
     }
