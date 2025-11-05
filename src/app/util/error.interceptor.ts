@@ -65,7 +65,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
       }),
       catchError(err => {
-        console.log("DEV - ERRORE: ", err);
+        //console.log("DEV - ERRORE: ", err);
         /* Spinner Service Off */
         if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
           this.spinner.setOff(now);

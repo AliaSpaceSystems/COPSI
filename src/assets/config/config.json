@@ -15,7 +15,6 @@
       "issuer": "https://<keycloak_url>/auth/realms/<realm>",
       "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
       "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-      "redirectUri": "http(s)://<copsy_domain>/home",
       "clientId": "<client_id>",
       "responseType": "code",
       "scope": "openid profile email",
@@ -182,7 +181,9 @@
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "A",
-            "B"
+            "B",
+            "C",
+            "D"
           ],
           "selectedValues": []
         },
@@ -333,7 +334,8 @@
           "attributeType": "OData.CSC.StringAttribute",
           "value": [
             "A",
-            "B"
+            "B",
+            "C"
           ],
           "selectedValues": []
         },
