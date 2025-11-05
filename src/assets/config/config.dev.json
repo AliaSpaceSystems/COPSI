@@ -7,7 +7,7 @@
       "alt": "",
       "title": ""
   },
-  "baseUrl": "/copsi-test/",
+  "baseUrl": "/copsi/",
   "serviceUrl": "http(s)://<domain>/<api_context>/",
   "serviceUrlStac": "http(s)://<domain>/<api_context>/",
   "odataVersion": "v2",
@@ -15,7 +15,7 @@
       "issuer": "https://<keycloak_url>/auth/realms/<realm>",
       "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
       "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-      "redirectUri__": "http(s)://<copsy_domain>/home",
+      "redirectUri": "http(s)://<copsy_domain>/home",
       "clientId": "<client_id>",
       "responseType": "code",
       "scope": "openid profile email",
