@@ -46,11 +46,11 @@ export class ErrorInterceptor implements HttpInterceptor {
     /* Spinner Service On */
     const now = moment.now().toLocaleString();
     if(
-      request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0 && 
-      request.url.indexOf(this.DOWNLOAD_SUBPATH_STAC) < 0 && 
-      request.url.indexOf(this.QL_SUBPATH) < 0 && 
-      request.url.indexOf(this.QL_SUBPATH_STAC) < 0 && 
-      request.url.indexOf(this.NO_PREVIEW_SUBPATH) < 0 && 
+      request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0 &&
+      request.url.indexOf(this.DOWNLOAD_SUBPATH_STAC) < 0 &&
+      request.url.indexOf(this.QL_SUBPATH) < 0 &&
+      request.url.indexOf(this.QL_SUBPATH_STAC) < 0 &&
+      request.url.indexOf(this.NO_PREVIEW_SUBPATH) < 0 &&
       request.url.indexOf("/token") < 0
     ) {
       this.spinner.setOn(now);
@@ -65,6 +65,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
       }),
       catchError(err => {
+        console.log("DEV - ERRORE: ", err);
         /* Spinner Service Off */
         if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
           this.spinner.setOff(now);
@@ -79,7 +80,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             /* auto logout if 401 response returned from api */
             //console.log("ERROR 401: Not Authorized");
             //this.oauthService.logOut();
-            this.exchangeService.setIsLogged(false);
+            //this.exchangeService.setIsLogged(false);
             break;
           }
           case 400: {
@@ -139,7 +140,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   private getSimplePlaceholderResponse(request: HttpRequest<any>): Observable<HttpEvent<any>> {
     const placeholderUrl = 'src/assets/images/no-preview-1.png';
-    
+
     const httpResponse = new HttpResponse({
       body: null,
       headers: request.headers.set('Location', placeholderUrl),

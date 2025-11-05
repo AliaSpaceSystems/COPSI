@@ -28,8 +28,8 @@ export class AppComponent implements OnInit {
     this.initConfig();
     this.configureSSO();
     const userClaims: any = this.oauthService.getIdentityClaims();
-
     this.name = (userClaims && userClaims.name) ? userClaims.name : "";
+
     this.oauthService.events.subscribe(event => {
       if (event instanceof OAuthSuccessEvent) {
         if(event.type == 'token_received') {

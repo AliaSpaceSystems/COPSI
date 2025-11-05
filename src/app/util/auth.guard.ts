@@ -20,11 +20,11 @@ export class AuthGuard  {
       let hasAccessToken = this.oauthService.hasValidAccessToken();
       if (hasIdToken && hasAccessToken) {
         //console.log("user is logged");
-        this.exchangeService.setIsLogged(true);
+        //this.exchangeService.setIsLogged(true);
         return true;
       } else {
         //console.log("user is NOT logged");
-        this.exchangeService.setIsLogged(false);
+        //this.exchangeService.setIsLogged(false);
         return true;
       }
 

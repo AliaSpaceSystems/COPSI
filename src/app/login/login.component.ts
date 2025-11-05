@@ -23,16 +23,16 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     if(this.oauthService.hasValidAccessToken()) {
-      //document.getElementById('main-login-container')!.style.display = 'none';
       this.userIsLogged = true;
+      this.exchangeService.setIsLogged(true);
     } else {
       this.userIsLogged = false
+      this.exchangeService.setIsLogged(false);
     }
     this.setComponentVisibility(this.userIsLogged);
   }
 
   ngAfterViewInit(): void {
-
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
         this.setComponentVisibility(value);

@@ -254,58 +254,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     footprintMenuContainer = document.getElementById('footprint-menu-container')!;
     footprintMenuScrollableDiv = document.getElementById('footprint-menu-scrollable-div')!;
 
-    // Check GSS Protocols
-
-      this.productSearch.checkOdataService().subscribe({
-        next: (res: any) => {
-          if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
-            this.isOdataActive = true;
-          } else {
-            this.isOdataActive = false;
-          }
-        },
-        error: (err: any) => {
-          this.isOdataActive = false;
-          if (this.gssSelectedProtocol === "OData") {
-            this.exchangeService.setGssProtocol("STAC");
-          }
-          console.error(err);
-        },
-        complete: () => {
-          console.log("Check for OData module availability: ", this.isOdataActive);
-          this.exchangeService.setOdataActive(this.isOdataActive);
-
-          this.productSearch.getCollections().subscribe({
-            next: (res: any) => {
-              if (res.hasOwnProperty("collections")) {
-                this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
-                this.isStacActive = true;
-              } else {
-                this.isStacActive = false;
-              }
-            },
-            error: (err: any) => {
-              this.isStacActive = false;
-              console.log("Error: ", err);
-            },
-            complete: () => {
-              console.log("Check for STAC module availability: ", this.isStacActive);
-              this.exchangeService.setStacActive(this.isStacActive);
-              if (this.isStacActive === false && this.isOdataActive) {
-                console.log("changing gss protocol to OData..");
-                this.exchangeService.setGssProtocol("OData");
-              }
-              if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
-                advancedSearchSubmitIcon.classList.add('invalid');
-                advancedSearchMagnifierIcon.classList.add('invalid');
-                this.canSubmitSearch = false;
-                this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
-              }
-            }
-          });
-        }
-      })
-
+    //this.checkGssProtocols();
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -447,6 +396,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       if (typeof(value) === 'boolean') {
         this.isLogged = value;
         //console.log("isLogged: ", this.isLogged);
+        this.checkGssProtocols();
       }
     });
     this.updateGeoSearchSubscription = this.exchangeService.geoSearchOutputExchange.subscribe((value) => {
@@ -519,6 +469,63 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.updateGeoSearchStacSubscription.unsubscribe();
     this.updateGssProtocolSubscription.unsubscribe();
+  }
+
+  checkGssProtocols() {
+    // Check GSS Protocols
+    this.productSearch.checkOdataService().subscribe({
+      next: (res: any) => {
+        if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
+          this.isOdataActive = true;
+        } else {
+          this.isOdataActive = false;
+        }
+      },
+      error: (err: any) => {
+        this.isOdataActive = false;
+        if (this.gssSelectedProtocol === "OData") {
+          this.exchangeService.setGssProtocol("STAC");
+        }
+        console.error(err);
+      },
+      complete: () => {
+        if (this.isLogged) {
+          console.log("Check for OData module availability: ", this.isOdataActive);
+        }
+        this.exchangeService.setOdataActive(this.isOdataActive);
+
+        this.productSearch.getCollections().subscribe({
+          next: (res: any) => {
+            if (res.hasOwnProperty("collections")) {
+              this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
+              this.isStacActive = true;
+            } else {
+              this.isStacActive = false;
+            }
+          },
+          error: (err: any) => {
+            this.isStacActive = false;
+            console.log("Error: ", err);
+          },
+          complete: () => {
+            if (this.isLogged) {
+              console.log("Check for STAC module availability: ", this.isStacActive);
+            }
+            this.exchangeService.setStacActive(this.isStacActive);
+            if (this.isStacActive === false && this.isOdataActive) {
+              console.log("changing gss protocol to OData..");
+              this.exchangeService.setGssProtocol("OData");
+            }
+            if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
+              advancedSearchSubmitIcon.classList.add('invalid');
+              advancedSearchMagnifierIcon.classList.add('invalid');
+              this.canSubmitSearch = false;
+              this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
+            }
+          }
+        });
+      }
+    })
   }
 
   checkFilterOutputHeight() {

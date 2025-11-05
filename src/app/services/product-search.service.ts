@@ -25,6 +25,7 @@ export class ProductSearchService {
   private gssSelectedProtocol: string = "";
   private exchangeService = inject(ExchangeService);
   private destroyRef = inject(DestroyRef);
+  private isLogged = false;
 
   constructor(
     private http: HttpClient,
@@ -41,9 +42,20 @@ export class ProductSearchService {
           }
         },
         error: (error) => {
-          console.error('Errore nel processing:', error);
+          console.error('Error on processing:', error);
         }
       });
+    this.exchangeService.isLoggedExchange
+      .subscribe({
+        next: (value) => {
+          if (typeof(value) === 'boolean') {
+            this.isLogged = value;
+          }
+        },
+        error: (error) => {
+          console.error('Error on getting logged status', error);
+        }
+      })
   }
 
   parseFilter(str: string) {
@@ -59,7 +71,7 @@ export class ProductSearchService {
         "and", "AND", "or", "OR", "("
       ];
       let filterPortions: string[] = str.split(' ');
-      
+
 
       try {
         filterPortions.forEach((portion: string) => {
@@ -230,7 +242,7 @@ export class ProductSearchService {
     switch (event.type) {
       case HttpEventType.Sent:
         return { state: 'PENDING' };
-      
+
       case HttpEventType.DownloadProgress:
         if (event.total) {
           const progress = Math.round((event.loaded / event.total) * 100);
@@ -240,19 +252,19 @@ export class ProductSearchService {
           };
         }
         return { state: 'IN_PROGRESS' };
-      
+
       case HttpEventType.Response:
         return {
           state: 'DONE',
           progress: 100,
           blob: (event.body === null ? undefined : event.body)
         };
-      
+
       default:
         return null;
     }
   }
-  
+
   download(url: string, filename: string): Observable<DownloadProgress> {
     return this.http.get(url, {
       reportProgress: true,
@@ -270,6 +282,7 @@ export class ProductSearchService {
   }
 
   checkOdataService() {
+    if (!this.isLogged) return of(null);
     let checkOdataUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
     return this.http.get<any>(checkOdataUrl, {observe: 'response'})
       .pipe(map((res) => res),
@@ -278,12 +291,12 @@ export class ProductSearchService {
   }
 
   getCollections() {
+    if (!this.isLogged) return of(null);
     let collectionsUrl = AppConfig.settings.serviceUrlStac + '/stac/collections';
     return this.http.get<any>(collectionsUrl, httpOptions)
       .pipe(map((res) => res),
         catchError(e => of(e))
       );
-    //return this.getProductsStac(productsUrl, stacFilter).pipe(map((res) => res), catchError(e => of(e)));
   }
   private saveWithLink(blob: Blob, filename: string): void {
     const url = window.URL.createObjectURL(blob);
@@ -295,5 +308,5 @@ export class ProductSearchService {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-  } 
+  }
 }

@@ -55,15 +55,8 @@ export function initializeFootprintsCustomization(footprintsCustomizationConfig:
     BrowserAnimationsModule,
     MatIconModule,
     FormsModule,
-    //HttpClientModule,
     MatProgressBarModule,
     OAuthModule.forRoot(
-    //   {
-    //   resourceServer: {
-    //       allowedUrls: ['/odata/*','/test/*'],
-    //       sendAccessToken: true
-    //   }
-    // }
     )
   ],
   providers: [
