@@ -1434,7 +1434,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   }, 0);
                 }
               });
-
               this.productList.value.push(tempProduct);
             });
             this.exchangeService.setProductList(this.productList);

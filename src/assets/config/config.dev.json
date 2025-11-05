@@ -7,7 +7,7 @@
       "alt": "",
       "title": ""
   },
-  "baseUrl": "/copsi/",
+  "baseUrl": "/",
   "serviceUrl": "http(s)://<domain>/<api_context>/",
   "serviceUrlStac": "http(s)://<domain>/<api_context>/",
   "odataVersion": "v2",
@@ -174,6 +174,13 @@
           "title": "Timeliness"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -327,6 +334,13 @@
           "title": "Datastrip Identifier"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -409,6 +423,13 @@
           "title": "Instrument"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -523,6 +544,13 @@
           "title": "Processing Level"
         }
       ],
+      "stacTags": {
+        "productType": "product:type",
+        "operationalMode": "sar:instrument_mode",
+        "polarisationChannels": "sar:polarizations",
+        "orbitNumber": "sat:absolute_orbit",
+        "timeliness": "product:timeliness"
+      },
       "filters": [
         {
           "name": "Product Type",
