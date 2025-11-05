@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       this.userIsLogged = true;
       this.exchangeService.setIsLogged(true);
     } else {
+      console.log("No valid access token is present.");
       this.userIsLogged = false
       this.exchangeService.setIsLogged(false);
     }
