@@ -7,10 +7,24 @@
       "alt": "",
       "title": ""
   },
-  "baseUrl": "",
+  "baseUrl": "/copsi-test/",
   "serviceUrl": "http(s)://<domain>/<api_context>/",
   "serviceUrlStac": "http(s)://<domain>/<api_context>/",
   "odataVersion": "v2",
+  "keycloak": {
+      "issuer": "https://<keycloak_url>/auth/realms/<realm>",
+      "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
+      "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
+      "redirectUri__": "http(s)://<copsy_domain>/home",
+      "clientId": "<client_id>",
+      "responseType": "code",
+      "scope": "openid profile email",
+      "requireHttps": false,
+      "showDebugInformation": false,
+      "disableAtHashCheck": true,
+      "useSilentRefresh": false
+  },
+
   "searchOptions": {
     "productsPerPage": 100,
     "productsPerPageStac": 100,
@@ -49,14 +63,14 @@
     "menuAutoHideTimeout": 2000
   },
   "mapSettings": {
-    "initialViewState": {
+      "initialViewState": {
         "longitude": 2.27,
         "latitude": 38.86,
         "zoom": 1.7,
         "minZoom": 1.2,
         "maxZoom": 10
-    },
-    "projection": "globe"
+      },
+      "projection": "globe"
   },
   "geoSearchSettings": {
     "showGeoSearchToolbar": true,
@@ -70,45 +84,21 @@
     "borderColorActive": [220, 150, 0, 255]
   },
   "loginSettings": {
-    "text": "Please Sign in to access our service",
-    "buttonText": "Sign in"
-  },
-  "keycloak": {
-    "issuer": "https://<keycloak_url>/auth/realms/<realm>",
-    "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
-    "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-    "redirectUri_home": "http://localhost:4200/home",
-    "redirectUri_": "http://192.168.0.109:4200/home",
-    "redirectUri__": "https://cda.copernicus.eu/cda-stac/login/oauth2/code/keycloak",
-    "redirectUri_old_test": "http://172.17.0.2:4200/home",
-    "redirectUri": "http://172.16.0.1:4200/home",
-    "clientId_NEW_GSS_REFERENCE": "ivv-gss1-client",
-    "clientId_NEW_GSS_OPE": "cda-gss-stac",
-    "clientId_NEW_GSS_OPE_2": "cda-dhr",
-    "clientId_ALIA_NEW": "copsi",
-    "clientId_ALIA_OLD": "prip-api",
-    "clientId_SERCO": "ivv-prip-client",
-    "clientId_SERCO_GSS": "ivv-gss1-client",
-    "clientId": "ivv-gss1-client",
-    "responseType": "code",
-    "scope": "openid profile email",
-    "requireHttps": false,
-    "showDebugInformation": false,
-    "disableAtHashCheck": true,
-    "useSilentRefresh_": true,
-    "useSilentRefresh": false
+      "text": "Please Sign in to access our service",
+      "buttonText": "Sign in"
   },
   "quicklookURL": "<base_url>/odata/<odata_version>/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
   "quicklookURLStac": "<base_url>/stac/download/quicklook/<productName>",
   "infoLogosLeft": [
-    { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
-    { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },
-    { "link": "http://www.copernicus.eu", "image": "./assets/images/copernicus_eu_logo_blu_white.png", "title": "Visit Copernicus website", "alt": "Copernicus logo" },
-    { "link": "https://ivvproxy.onda.onda-dias.com/col-dhs-website/", "image": "./assets/images/logoDHS.png", "title": "Visit DHS website" , "alt": "DHS logo"}
+      { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
+      { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },
+      { "link": "http://www.copernicus.eu", "image": "./assets/images/copernicus_eu_logo_blu_white.png", "title": "Visit Copernicus website", "alt": "Copernicus logo" },
+      { "link": "https://ivvproxy.onda.onda-dias.com/col-dhs-website/", "image": "./assets/images/logoDHS.png", "title": "Visit DHS website" , "alt": "DHS logo"}
+
   ],
   "infoLogosRight": [
-    { "link": "https://www.serco.com/", "image": "./assets/images/logo-serco-grey_cut.png", "title": "Visit Serco website", "alt": "Serco logo"  },
-    { "link": "http://www.alia-space.com/", "image": "./assets/images/logo_alia_white.png", "title": "Visit Alia website", "alt": "Alia Space logo"  }
+      { "link": "https://www.serco.com/", "image": "./assets/images/logo-serco-grey_cut.png", "title": "Visit Serco website", "alt": "Serco logo"  },
+      { "link": "http://www.alia-space.com/", "image": "./assets/images/logo_alia_white.png", "title": "Visit Alia website", "alt": "Alia Space logo"  }
   ],
   "footprints": {
     "fallBackColor": "#808080cc",
@@ -185,13 +175,6 @@
           "title": "Timeliness"
         }
       ],
-      "stacTags": {
-        "productType": "product:type",
-        "operationalMode": "sar:instrument_mode",
-        "polarisationChannels": "sar:polarizations",
-        "orbitNumber": "sat:absolute_orbit",
-        "timeliness": "product:timeliness"
-      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -343,13 +326,6 @@
           "title": "Datastrip Identifier"
         }
       ],
-      "stacTags": {
-        "productType": "product:type",
-        "operationalMode": "sar:instrument_mode",
-        "polarisationChannels": "sar:polarizations",
-        "orbitNumber": "sat:absolute_orbit",
-        "timeliness": "product:timeliness"
-      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -431,13 +407,6 @@
           "title": "Instrument"
         }
       ],
-      "stacTags": {
-        "productType": "product:type",
-        "operationalMode": "sar:instrument_mode",
-        "polarisationChannels": "sar:polarizations",
-        "orbitNumber": "sat:absolute_orbit",
-        "timeliness": "product:timeliness"
-      },
       "filters": [
         {
           "name": "Platform Identifier",
@@ -552,13 +521,6 @@
           "title": "Processing Level"
         }
       ],
-      "stacTags": {
-        "productType": "product:type",
-        "operationalMode": "sar:instrument_mode",
-        "polarisationChannels": "sar:polarizations",
-        "orbitNumber": "sat:absolute_orbit",
-        "timeliness": "product:timeliness"
-      },
       "filters": [
         {
           "name": "Product Type",

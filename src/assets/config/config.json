@@ -11,6 +11,20 @@
   "serviceUrl": "http(s)://<domain>/<api_context>/",
   "serviceUrlStac": "http(s)://<domain>/<api_context>/",
   "odataVersion": "v2",
+  "keycloak": {
+      "issuer": "https://<keycloak_url>/auth/realms/<realm>",
+      "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
+      "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
+      "redirectUri__": "http(s)://<copsy_domain>/home",
+      "clientId": "<client_id>",
+      "responseType": "code",
+      "scope": "openid profile email",
+      "requireHttps": false,
+      "showDebugInformation": false,
+      "disableAtHashCheck": true,
+      "useSilentRefresh": false
+  },
+
   "searchOptions": {
     "productsPerPage": 100,
     "productsPerPageStac": 100,
@@ -72,19 +86,6 @@
   "loginSettings": {
       "text": "Please Sign in to access our service",
       "buttonText": "Sign in"
-  },
-  "keycloak": {
-      "issuer": "https://<keycloak_url>/auth/realms/<realm>",
-      "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
-      "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-      "redirectUri__": "http(s)://<copsy_domain>/home",
-      "clientId": "<client_id>",
-      "responseType": "code",
-      "scope": "openid profile email",
-      "requireHttps": false,
-      "showDebugInformation": false,
-      "disableAtHashCheck": true,
-      "useSilentRefresh": false
   },
   "quicklookURL": "<base_url>/odata/<odata_version>/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
   "quicklookURLStac": "<base_url>/stac/download/quicklook/<productName>",
