@@ -8,8 +8,8 @@
       "title": ""
   },
   "baseUrl": "",
-  "serviceUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
-  "serviceUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
+  "serviceUrl": "http(s)://<domain>/<api_context>/",
+  "serviceUrlStac": "http(s)://<domain>/<api_context>/",
   "odataVersion": "v2",
   "searchOptions": {
     "productsPerPage": 100,
@@ -74,13 +74,7 @@
     "buttonText": "Sign in"
   },
   "keycloak": {
-    "issuer_NEW_GSS_REFERENCE": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
-    "issuer_NEW_GSS_OPE": "https://cda.copernicus.eu/auth/realms/CollaborativeDataAccess",
-    "issuer_ALIA_NEW": "https://keycloak.alia-space.ovh/realms/COPSI",
-    "issuer_ALIA_OLD": "https://keycloak.alia-space.com/auth/realms/PRIP-S2",
-    "issuer_SERCO_PRIP": "https://prip-test.onda-dias.eu/auth/realms/ivv-prip-realm",
-    "issuer_SERCO_GSS": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
-    "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
+    "issuer": "https://<keycloak_url>/auth/realms/<realm>",
     "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
     "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
     "redirectUri_home": "http://localhost:4200/home",
