@@ -24,7 +24,7 @@ export class AuthGuard  {
         return true;
       } else {
         //console.log("user is NOT logged");
-        //this.exchangeService.setIsLogged(false);
+        this.exchangeService.setIsLogged(false);
         return true;
       }
 

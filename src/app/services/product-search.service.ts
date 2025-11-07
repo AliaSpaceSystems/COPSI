@@ -29,7 +29,6 @@ export class ProductSearchService {
 
   constructor(
     private http: HttpClient,
-    //private exchangeService: ExchangeService
   ) {
     this.exchangeService.selectedGssProtocol
       .pipe(
@@ -59,7 +58,6 @@ export class ProductSearchService {
   }
 
   parseFilter(str: string) {
-    //console.log('initial filter: ', str);
     let processedString='';
     if (this.gssSelectedProtocol === "OData") {
       /* ODATA */
@@ -95,7 +93,6 @@ export class ProductSearchService {
           }
         });
         processedString = filterArray.join(' ');
-        //console.log('final replacement: ', processedString);
 
       } catch (error) {
         console.error("Error converting Filter!");
@@ -139,10 +136,7 @@ export class ProductSearchService {
     sort: string (asc|desc)
    }
   */
-  //search(filter: string, top: number, skip: number = 0, order: string='PublicationDate', sort: string='desc') {
   search(searchOptions: any) {
-    //console.log(searchOptions);
-    // return odata/${this.odataVersion}/Products?$count=true with additional optional filters response in JSON Format
     let order = 'PublicationDate';
     let sort = 'desc';
     let skip = 0;
@@ -183,7 +177,6 @@ export class ProductSearchService {
       sort = searchOptions.sort;
     }
     productsUrl+='&$skip=' + skip + '&$orderby=' + order + ' ' + sort.toLowerCase();
-    //console.log("Sent URL: " + productsUrl);
 
     return forkJoin({
       count: this.getProductsCount(productsCountUrl).pipe(map((res) => res), catchError(e => of(e))),

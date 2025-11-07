@@ -134,7 +134,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public productFilterPrec: string = "";
   public attributeFilterPrec: string = "";
   public geoFilterPrec: string = "";
-  public filterHasChanged: boolean = false;
 
   public productList: any = {
     "@odata.count": 0,
@@ -363,34 +362,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    /* Filter parsing while typing */
-    let searchFilterTextDiv: any = document.getElementById('search-input')!;
-    let parseFilterTimeoutId: any;
-    ['input', 'click'].forEach((inputEvent: any) => {
-      searchFilterTextDiv.addEventListener(inputEvent, (e: any) => {
-        this.checkFilterParsingToggle();
-        clearTimeout(parseFilterTimeoutId);
-        parseFilterTimeoutId = setTimeout(() => {
-          this.parsedFilter = this.productSearch.parseFilter(e.target.value);
-          setTimeout(() => {
-            this.checkFilterOutputHeight();
-          }, 50);
-        }, 500);
-      })
-    });
-
-    ['wheel', 'mousemove', 'click'].forEach((inputEvent: any) => {
-      filterOutputDiv.addEventListener(inputEvent, (e: any) => {
-        this.checkFilterParsingToggle();
-        clearTimeout(parseFilterTimeoutId);
-        parseFilterTimeoutId = setTimeout(() => {
-          this.parsedFilter = this.productSearch.parseFilter(e.target.value);
-          setTimeout(() => {
-            this.checkFilterOutputHeight();
-          }, 50);
-        }, 500);
-      })
-    });
+    this.checkTypedFilter();
 
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
@@ -443,6 +415,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
             this.onShowHideButtonClick(null);
             this.showProductListContainer();
             this.parseAdvancedFilter();
+            this.checkTypedFilter();
           }, 10);
         }
         setTimeout(() => {
@@ -469,6 +442,39 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.updateGeoSearchStacSubscription.unsubscribe();
     this.updateGssProtocolSubscription.unsubscribe();
+  }
+
+  checkTypedFilter() {
+    /* Filter parsing while typing */
+    let searchFilterTextDiv: any = document.getElementById('search-input')!;
+    let parseFilterTimeoutId: any;
+    ['input', 'click'].forEach((inputEvent: any) => {
+      searchFilterTextDiv.addEventListener(inputEvent, (e: any) => {
+        this.checkFilterParsingToggle();
+        clearTimeout(parseFilterTimeoutId);
+        parseFilterTimeoutId = setTimeout(() => {
+          this.parsedFilter = this.productSearch.parseFilter(e.target.value);
+          //this.parsedFilter = e.target.value;
+          this.parseAdvancedFilter();
+          setTimeout(() => {
+            this.checkFilterOutputHeight();
+          }, 50);
+        }, 500);
+      })
+    });
+
+    ['wheel', 'mousemove', 'click'].forEach((inputEvent: any) => {
+      filterOutputDiv.addEventListener(inputEvent, (e: any) => {
+        this.checkFilterParsingToggle();
+        clearTimeout(parseFilterTimeoutId);
+        parseFilterTimeoutId = setTimeout(() => {
+          this.parsedFilter = this.productSearch.parseFilter(e.target.value);
+          setTimeout(() => {
+            this.checkFilterOutputHeight();
+          }, 50);
+        }, 500);
+      })
+    });
   }
 
   checkGssProtocols() {
@@ -1043,7 +1049,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /* Parsing name (ids) */
     if (this.filter !== "") {
-    this.stacFilter.ids = [this.filter];
+      this.stacFilter.ids = [this.filter];
     }
 
     /* Check for GSS modules availability */
