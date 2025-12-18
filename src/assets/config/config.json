@@ -8,8 +8,8 @@
       "title": ""
   },
   "baseUrl": "/copsi/",
-  "serviceUrl": "http(s)://<domain>/<api_context>/",
-  "serviceUrlStac": "http(s)://<domain>/<api_context>/",
+  "serviceUrl": "http(s)://<domain>/<api_context>",
+  "serviceUrlStac": "http(s)://<domain>/<api_context>",
   "odataVersion": "v2",
   "keycloak": {
       "issuer": "https://<keycloak_url>/auth/realms/<realm>",

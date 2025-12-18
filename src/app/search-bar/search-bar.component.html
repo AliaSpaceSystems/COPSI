@@ -32,7 +32,7 @@
     @if (gssSelectedProtocol === "OData") {
     <p>
       <span>{{parsedFilter}}</span>
-      @if (parsedFilter !== '' && (productFilter !== '' || attributeFilter !== '' || geoFilter !== '')) {
+      @if (parsedFilter !== '' && parsedFilter !== undefined && (productFilter !== '' || attributeFilter !== '' || geoFilter !== '')) {
       <span> and </span>
       }
       <span>{{productFilter}}</span>
@@ -104,12 +104,12 @@
         @if (gssSelectedProtocol === "OData") {
         <label for="publication-start">Publication date:</label>
         <div class="datepicker-div">
-          <input type="date" class="date" id="publication-start" name="publication-start" 
-            [max]="(publicationStopEl.value && publicationStopEl.value === '') ? todayDate : publicationStopEl.value" title="Publication start date" 
+          <input type="date" class="date" id="publication-start" name="publication-start"
+            [max]="(publicationStopEl.value && publicationStopEl.value === '') ? todayDate : publicationStopEl.value" title="Publication start date"
             (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
           <span>-</span>
-          <input type="date" class="date" id="publication-stop" name="publication-stop" 
-            [min]="(publicationStartEl.value && publicationStartEl.value === '' ) ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date" 
+          <input type="date" class="date" id="publication-stop" name="publication-stop"
+            [min]="(publicationStartEl.value && publicationStartEl.value === '' ) ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date"
             (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         </div>
         }
@@ -138,7 +138,7 @@
           </label>
         </div>
       </div>
-      
+
       <div class="content">
         @for (filter of el.filters; let i = $index; track filter;) {
         <div class="advanced-search-filter-div">
@@ -152,7 +152,7 @@
                 @if (filter.selectedValues.length === 0) {
                 <div class="selected-option-placeholder">---</div>
                 }
-                @for (option of filter.selectedValues; let k = $index; track option;) {                
+                @for (option of filter.selectedValues; let k = $index; track option;) {
                 <div class="selected-option">
                   {{option}}
                   <mat-icon class="selected-option-button" aria-hidden="false" aria-label="Remove filter" title="Remove filter" fontIcon="clear"
@@ -492,7 +492,7 @@
                     <td class="properties-table-value" title="no footprint"></td>
                   }
                   }
-                  
+
                 </tr>
                 }
               </table>

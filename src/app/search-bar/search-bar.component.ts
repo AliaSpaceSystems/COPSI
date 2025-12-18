@@ -253,8 +253,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     footprintMenuContainer = document.getElementById('footprint-menu-container')!;
     footprintMenuScrollableDiv = document.getElementById('footprint-menu-scrollable-div')!;
 
-    //this.checkGssProtocols();
-
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
       (tempTodayDate.getMonth() + 1).toString().padStart(2, '0'),
@@ -454,7 +452,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         clearTimeout(parseFilterTimeoutId);
         parseFilterTimeoutId = setTimeout(() => {
           this.parsedFilter = this.productSearch.parseFilter(e.target.value);
-          //this.parsedFilter = e.target.value;
           this.parseAdvancedFilter();
           setTimeout(() => {
             this.checkFilterOutputHeight();
@@ -504,6 +501,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           next: (res: any) => {
             if (res.hasOwnProperty("collections")) {
               this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
+              console.log("Retrieved STAC Collections List from GSS: ", this.stacCollectionsList);
               this.isStacActive = true;
             } else {
               this.isStacActive = false;
@@ -519,7 +517,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             this.exchangeService.setStacActive(this.isStacActive);
             if (this.isStacActive === false && this.isOdataActive) {
-              console.log("changing gss protocol to OData..");
+              console.log("Changing gss protocol to OData..");
               this.exchangeService.setGssProtocol("OData");
             }
             if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
@@ -718,7 +716,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDateClicked(event: any) {
-    /* uncomment showPicker() to show picker calendar on date click */
+    /* uncomment to show picker calendar on date click */
     //event.target.showPicker();
   }
 
@@ -921,13 +919,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.productFilter += ")";
       bracketOpen = false;
     }
-    //console.log("ProductFilter: " + this.productFilter);
 
     /* Parse Attribute Filter */
     this.attributeFilter = "";
     [].forEach.call(this.missionEl, (el:any, i:any) => {
       let bracketOpenInner: boolean = false;
-      if (el.getElementsByTagName('input')[0].checked) {
+      if (el.getElementsByTagName('input')[0].checked && this.gssSelectedProtocol === 'OData') {
         /* a mission has been selected */
         if (this.attributeFilter !== "") {
           this.attributeFilter += " or "
@@ -1029,7 +1026,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.advancedFilterOutputIsActive = true;
     }
-    //console.log("AttributeFilter: " + this.attributeFilter);
 
     this.checkFilterParsingToggle();
     if (this.gssSelectedProtocol === 'STAC') {
@@ -1088,7 +1084,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     /* Parsing collections */
     [].forEach.call(this.missionEl, (el:any, i:any) => {
       if (el.getElementsByTagName('input')[0].checked) {
-        this.stacFilter.collections?.push(this.platformDetailsList[i].value);
+        // Commented, because when using STAC protocol, collections are retrieved directly from GSS.
+        // TODO: When there will be working GSS properties search, change the stacCollectionsList structure.
+        //this.stacFilter.collections?.push(this.platformDetailsList[i].value);
+        this.stacFilter.collections?.push(this.stacCollectionsList[i]);
       }
     });
 
@@ -1147,6 +1146,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.listIsReady = false;
     this.showProductList = true;
     this.currentPage = this.prevPage = 0;
+
     if (this.gssSelectedProtocol === "OData") {
       this.searchOptions = {
         filter: this.filter,
@@ -1226,7 +1226,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               value: []
             };
             this.exchangeService.setProductList(this.productList);
-
             setTimeout(() => {
               this.onShowHideButtonClick(null);
               this.showProductListContainer();
@@ -1234,61 +1233,63 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             /* got a list */
             this.productList = res;
-            this.productList.value.forEach((product: any) => {
-              product.isSelected = false;
-              product.download = {};
-              product.tags = [];
-              if ("Attributes" in product) {
-                product.Attributes.forEach((attribute: any) => {
-                  if (attribute.Name == "platformShortName") {
-                    product.platformShortName = attribute.Value;
-                  }
-                  if (attribute.Name == "platformSerialIdentifier") {
-                    product.platformSerialIdentifier = attribute.Value;
-                  }
-                });
-                product.Attributes.forEach((attribute: any) => {
-                  this.platformDetailsList.forEach((platform: any) => {
-                    if (product.platformShortName == platform.value) {
-                      platform.tags.forEach((tag: any) => {
-                        if (attribute.Name == tag.name) {
-                          product.tags.push({name: tag.name, value: attribute.Value, color: tag.color, title: tag.title});
-                        }
-                      });
+            if (this.productList.value) {
+              this.productList.value.forEach((product: any) => {
+                product.isSelected = false;
+                product.download = {};
+                product.tags = [];
+                if ("Attributes" in product) {
+                  product.Attributes.forEach((attribute: any) => {
+                    if (attribute.Name == "platformShortName") {
+                      product.platformShortName = attribute.Value;
+                    }
+                    if (attribute.Name == "platformSerialIdentifier") {
+                      product.platformSerialIdentifier = attribute.Value;
                     }
                   });
+                  product.Attributes.forEach((attribute: any) => {
+                    this.platformDetailsList.forEach((platform: any) => {
+                      if (product.platformShortName == platform.value) {
+                        platform.tags.forEach((tag: any) => {
+                          if (attribute.Name == tag.name) {
+                            product.tags.push({name: tag.name, value: attribute.Value, color: tag.color, title: tag.title});
+                          }
+                        });
+                      }
+                    });
+                  });
+                };
+                this.productSearch.getQL(product.Id).subscribe({
+                  next: (res: any) => {
+                    if ("type" in res) {
+                      product.hasQL = true;
+                      product.qlURL = this.sanitizeImageUrl(URL.createObjectURL(res));
+                    } else {
+                      product.hasQL = false;
+                      product.qlURL = "";
+                    }
+                  },
+                  error: (e) => {}
                 });
-              };
-              this.productSearch.getQL(product.Id).subscribe({
-                next: (res: any) => {
-                  if ("type" in res) {
-                    product.hasQL = true;
-                    product.qlURL = this.sanitizeImageUrl(URL.createObjectURL(res));
-                  } else {
-                    product.hasQL = false;
-                    product.qlURL = "";
-                  }
-                },
-                error: (e) => {}
-              });
 
-              /* Check if selected products are in the list */
-              [].forEach.call(this.selectedProducts ,(sel: any, index: number) => {
-                sel.isInList = false;
-                if (product.Id === sel.Id) {
-                  setTimeout(() => {
-                    product.isSelected = true;
-                    product.download = sel.download;
-                    sel.isInList = true;
-                    listItemDiv[sel.productListIndex].classList.add('selected');
-                    let tempButton: any = tempProductDetailsZoomToListButtons[index];
-                    tempButton.classList.remove('is-not-in-list');
-                    tempButton.title = 'Show Product In List';
-                    this.exchangeService.selectProductOnMap(sel.productListIndex, true);
-                  }, 0);
-                }
+                /* Check if selected products are in the list */
+                [].forEach.call(this.selectedProducts ,(sel: any, index: number) => {
+                  sel.isInList = false;
+                  if (product.Id === sel.Id) {
+                    setTimeout(() => {
+                      product.isSelected = true;
+                      product.download = sel.download;
+                      sel.isInList = true;
+                      listItemDiv[sel.productListIndex].classList.add('selected');
+                      let tempButton: any = tempProductDetailsZoomToListButtons[index];
+                      tempButton.classList.remove('is-not-in-list');
+                      tempButton.title = 'Show Product In List';
+                      this.exchangeService.selectProductOnMap(sel.productListIndex, true);
+                    }, 0);
+                  }
+                });
               });
-            });
+            }
             this.exchangeService.setProductList(this.productList);
 
             this.listIsReady = true;
@@ -1308,7 +1309,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               listContainer.scrollTop = 0;
             }
             this.prevPage = page;
-
             setTimeout(() => {
               prevPageButton = document.getElementById('load-prev')!;
               nextPageButton = document.getElementById('load-next')!;
@@ -1342,7 +1342,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stacFilter.page = page + 1;
       let searchReturn = this.productSearch.searchStac(this.stacFilter).subscribe(
         (res: any) => {
-          //console.log("RES: ", res);
           let tempProductDetailsZoomToListButtons = document.getElementsByClassName('zoom-to-list')!;
           if (tempProductDetailsZoomToListButtons.length > 0) {
             [].forEach.call(tempProductDetailsZoomToListButtons, (button: any) => {
@@ -1351,149 +1350,164 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
             });
           }
           this.productTotalNumber = res.numberMatched;
-          this.lastPage = Math.floor((this.productTotalNumber / this.searchOptions.top) % 1 == 0 ? (this.productTotalNumber / this.searchOptions.top) - 1 : (this.productTotalNumber / this.searchOptions.top));
-          if (res.hasOwnProperty("type") && res.type === "FeatureCollection") {
-            /* got a valid response */
-            this.productList = {
-              "@odata.count": this.productTotalNumber,
-              value: []
-            };
-            res.features.forEach((feature: any) => {
-              let tempProduct: any = {};
-              // First add parsed properties
-              tempProduct.Name = feature.hasOwnProperty('id') ? feature.id : "";
-              tempProduct.platformShortName = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) ? feature.properties.constellation.toUpperCase() : "";
-              tempProduct.platformSerialIdentifier = feature.hasOwnProperty('id') ? this.getPlatformSerialIdentifierFromProductId(feature.id) : "";
-              tempProduct.ContentDate = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('start_datetime')) ? {
-                Start: feature.properties.start_datetime,
-                End: feature.properties.end_datetime
-              } : {Start: "", End: ""};
-              // Add autoconverted properties
-              Object.entries(this.stacPropertiesList).forEach(([key, value]) => {
-                tempProduct[<string>key] = feature.properties[<string>value];
-              })
-              // Set other empty props
-              tempProduct.isSelected = false;
-              if (feature.hasOwnProperty('assets') && feature.assets.hasOwnProperty('product')) {
-                tempProduct.download = {
-                  url: feature.assets.product.hasOwnProperty('href') ? feature.assets.product.href : "",
-                  type: feature.assets.product.hasOwnProperty('type') ? feature.assets.product.type: ""
-                };
-              }
-              tempProduct.tags = [];
-              // Add Tags
-              Object.entries(feature.properties).forEach(([propKey, propValue]) => {
-                this.platformDetailsList.forEach((platform: any) => {
-                  if (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) {
-                    if (feature.properties.constellation.toLowerCase() === platform.value.toLowerCase()) {
-                      Object.entries(platform.stacTags).forEach(([tagKey, tagValue]) => {
-                        if (propKey == tagValue) {
-                          tempProduct.tags.push({
-                            name: propKey,
-                            value: propValue,
-                            color: platform.tags.filter((tag: any) => tag.name === tagKey)[0]?.color,
-                            title: platform.tags.filter((tag: any) => tag.name === tagKey)[0]?.title
-                          });
-                        }
-                      });
-                    }
-                  }
-                });
-              });
 
-              // Add Attributes
-              tempProduct.Attributes = [];
-              Object.entries(feature.properties).forEach(([key, value]) => {
-                tempProduct.Attributes.push({Name: key, Value: value});
-              });
-
-              // Add Footprint
-              tempProduct.GeoFootprint = feature.hasOwnProperty('geometry') ? feature.geometry : "";
-
-
-              // Add QLs
-              this.productSearch.getQLStac(tempProduct.Name).subscribe({
-                next: (resQL: any) => {
-                  if ("type" in resQL) {
-                    tempProduct.hasQL = true;
-                    tempProduct.qlURL = this.sanitizeImageUrl(URL.createObjectURL(resQL));
-                  } else {
-                    tempProduct.hasQL = false;
-                    tempProduct.qlURL = "";
-                  }
-                },
-                error: (e) => {}
-              });
-
-              [].forEach.call(this.selectedProducts ,(sel: any, index: number) => {
-                sel.isInList = false;
-                if (tempProduct.Id === sel.Id) {
-                  setTimeout(() => {
-                    tempProduct.isSelected = true;
-                    tempProduct.download = sel.download;
-                    sel.isInList = true;
-                    listItemDiv[sel.productListIndex].classList.add('selected');
-                    let tempButton: any = tempProductDetailsZoomToListButtons[index];
-                    tempButton.classList.remove('is-not-in-list');
-                    tempButton.title = 'Show Product In List';
-                    this.exchangeService.selectProductOnMap(sel.productListIndex, true);
-                  }, 0);
-                }
-              });
-              this.productList.value.push(tempProduct);
-            });
-            this.exchangeService.setProductList(this.productList);
+          if (this.productTotalNumber == 0) {
+            /* 0 products found */
+            this.showProductList = true;
             this.listIsReady = true;
             this.productListRolled = true;
-            this.productStartNumber = page * this.stacFilter.limit + 1;
-            this.productEndNumber = page * this.stacFilter.limit + this.stacFilter.limit;
-            if (this.productEndNumber > this.productTotalNumber) {
-              this.productEndNumber = this.productTotalNumber;
-            }
-            if (page > this.prevPage) {
-              listContainer.scrollTop = 0;
-            } else if (page < this.prevPage) {
-              setTimeout(() => {
-                listContainer.scrollTop = 99999;
-              }, 10);
-            } else {
-              listContainer.scrollTop = 0;
-            }
-            this.prevPage = page;
-
-            setTimeout(() => {
-              prevPageButton = document.getElementById('load-prev')!;
-              nextPageButton = document.getElementById('load-next')!;
-
-              /* Check if page buttons should be visible */
-              if (this.currentPage == 0) {
-                prevPageButton.classList.remove('active');
-                if (this.currentPage < this.lastPage) {
-                  nextPageButton.classList.add('active');
-                } else {
-                  nextPageButton.classList.remove('active');
-                }
-              } else if (this.currentPage == this.lastPage) {
-                nextPageButton.classList.remove('active');
-                if (this.currentPage > 0) {
-                prevPageButton.classList.add('active');
-                }
-              } else {
-                prevPageButton.classList.add('active');
-                nextPageButton.classList.add('active');
-              }
-              this.onShowHideButtonClick(null);
-              this.setListView(this.lastViewStyle);
-              this.showProductListContainer();
-            }, 10);
-
-          } else {
-            /* response error */
             this.productList = {
               "@odata.count": 0,
               value: []
             };
             this.exchangeService.setProductList(this.productList);
+            setTimeout(() => {
+              this.onShowHideButtonClick(null);
+              this.showProductListContainer();
+            }, 10);
+          } else {
+            /* got a list */
+            this.lastPage = Math.floor((this.productTotalNumber / this.searchOptions.top) % 1 == 0 ? (this.productTotalNumber / this.searchOptions.top) - 1 : (this.productTotalNumber / this.searchOptions.top));
+            if (res.hasOwnProperty("type") && res.type === "FeatureCollection") {
+              /* got a valid response */
+              this.productList = {
+                "@odata.count": this.productTotalNumber,
+                value: []
+              };
+              res.features.forEach((feature: any) => {
+                let tempProduct: any = {};
+                // First add parsed properties
+                tempProduct.Name = feature.hasOwnProperty('id') ? feature.id : "";
+                tempProduct.platformShortName = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) ? feature.properties.constellation.toUpperCase() : "";
+                tempProduct.platformSerialIdentifier = feature.hasOwnProperty('id') ? this.getPlatformSerialIdentifierFromProductId(feature.id) : "";
+                tempProduct.ContentDate = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('start_datetime')) ? {
+                  Start: feature.properties.start_datetime,
+                  End: feature.properties.end_datetime
+                } : {Start: "", End: ""};
+                // Add autoconverted properties
+                Object.entries(this.stacPropertiesList).forEach(([key, value]) => {
+                  tempProduct[<string>key] = feature.properties[<string>value];
+                })
+                // Set other empty props
+                tempProduct.isSelected = false;
+                if (feature.hasOwnProperty('assets') && feature.assets.hasOwnProperty('product')) {
+                  tempProduct.download = {
+                    url: feature.assets.product.hasOwnProperty('href') ? feature.assets.product.href : "",
+                    type: feature.assets.product.hasOwnProperty('type') ? feature.assets.product.type: ""
+                  };
+                }
+                tempProduct.tags = [];
+                // Add Tags
+                Object.entries(feature.properties).forEach(([propKey, propValue]) => {
+                  this.platformDetailsList.forEach((platform: any) => {
+                    if (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) {
+                      if (feature.properties.constellation.toLowerCase() === platform.value.toLowerCase()) {
+                        Object.entries(platform.stacTags).forEach(([tagKey, tagValue]) => {
+                          if (propKey == tagValue) {
+                            tempProduct.tags.push({
+                              name: propKey,
+                              value: propValue,
+                              color: platform.tags.filter((tag: any) => tag.name === tagKey)[0]?.color,
+                              title: platform.tags.filter((tag: any) => tag.name === tagKey)[0]?.title
+                            });
+                          }
+                        });
+                      }
+                    }
+                  });
+                });
+
+                // Add Attributes
+                tempProduct.Attributes = [];
+                Object.entries(feature.properties).forEach(([key, value]) => {
+                  tempProduct.Attributes.push({Name: key, Value: value});
+                });
+
+                // Add Footprint
+                tempProduct.GeoFootprint = feature.hasOwnProperty('geometry') ? feature.geometry : "";
+
+                // Add QLs
+                this.productSearch.getQLStac(tempProduct.Name).subscribe({
+                  next: (resQL: any) => {
+                    if ("type" in resQL) {
+                      tempProduct.hasQL = true;
+                      tempProduct.qlURL = this.sanitizeImageUrl(URL.createObjectURL(resQL));
+                    } else {
+                      tempProduct.hasQL = false;
+                      tempProduct.qlURL = "";
+                    }
+                  },
+                  error: (e) => {}
+                });
+
+                [].forEach.call(this.selectedProducts ,(sel: any, index: number) => {
+                  sel.isInList = false;
+                  if (tempProduct.Id === sel.Id) {
+                    setTimeout(() => {
+                      tempProduct.isSelected = true;
+                      tempProduct.download = sel.download;
+                      sel.isInList = true;
+                      listItemDiv[sel.productListIndex].classList.add('selected');
+                      let tempButton: any = tempProductDetailsZoomToListButtons[index];
+                      tempButton.classList.remove('is-not-in-list');
+                      tempButton.title = 'Show Product In List';
+                      this.exchangeService.selectProductOnMap(sel.productListIndex, true);
+                    }, 0);
+                  }
+                });
+                this.productList.value.push(tempProduct);
+              });
+              this.exchangeService.setProductList(this.productList);
+              this.listIsReady = true;
+              this.productListRolled = true;
+              this.productStartNumber = page * this.stacFilter.limit + 1;
+              this.productEndNumber = page * this.stacFilter.limit + this.stacFilter.limit;
+              if (this.productEndNumber > this.productTotalNumber) {
+                this.productEndNumber = this.productTotalNumber;
+              }
+              if (page > this.prevPage) {
+                listContainer.scrollTop = 0;
+              } else if (page < this.prevPage) {
+                setTimeout(() => {
+                  listContainer.scrollTop = 99999;
+                }, 10);
+              } else {
+                listContainer.scrollTop = 0;
+              }
+              this.prevPage = page;
+              setTimeout(() => {
+                prevPageButton = document.getElementById('load-prev')!;
+                nextPageButton = document.getElementById('load-next')!;
+                /* Check if page buttons should be visible */
+                if (this.currentPage == 0) {
+                  prevPageButton.classList.remove('active');
+                  if (this.currentPage < this.lastPage) {
+                    nextPageButton.classList.add('active');
+                  } else {
+                    nextPageButton.classList.remove('active');
+                  }
+                } else if (this.currentPage == this.lastPage) {
+                  nextPageButton.classList.remove('active');
+                  if (this.currentPage > 0) {
+                  prevPageButton.classList.add('active');
+                  }
+                } else {
+                  prevPageButton.classList.add('active');
+                  nextPageButton.classList.add('active');
+                }
+                this.onShowHideButtonClick(null);
+                this.setListView(this.lastViewStyle);
+                this.showProductListContainer();
+              }, 10);
+
+            } else {
+              /* response error */
+              this.productList = {
+                "@odata.count": 0,
+                value: []
+              };
+              this.exchangeService.setProductList(this.productList);
+            }
           }
         }
       );
@@ -1881,7 +1895,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
       this.exchangeService.selectProductOnMap(currentSelectedProduct.productListIndex, true);
-      this.exchangeService.setProductList(this.productList); // Refresh map
+      // Refresh map
+      this.exchangeService.setProductList(this.productList);
 
       setTimeout(() => {
         this.onScrollDetailsLast();

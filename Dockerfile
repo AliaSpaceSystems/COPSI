@@ -6,4 +6,4 @@ RUN apt-get update && apt-get -y upgrade && apt-get -y autoremove && set -eux &&
 
 COPY ./apache-conf/httpd.conf /usr/local/apache2/conf/httpd.conf
 
-COPY ./dist/copsi/ /usr/local/apache2/htdocs/
+COPY ./dist/copsi/browser/ /usr/local/apache2/htdocs/

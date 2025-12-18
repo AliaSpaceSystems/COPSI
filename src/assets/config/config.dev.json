@@ -8,14 +8,14 @@
       "title": ""
   },
   "baseUrl": "/",
-  "serviceUrl": "http(s)://<domain>/<api_context>/",
-  "serviceUrlStac": "http(s)://<domain>/<api_context>/",
+  "serviceUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
+  "serviceUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
   "odataVersion": "v2",
   "keycloak": {
-      "issuer": "https://<keycloak_url>/auth/realms/<realm>",
+    "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
       "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
       "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-      "clientId": "<client_id>",
+    "clientId": "ivv-gss1-client",
       "responseType": "code",
       "scope": "openid profile email",
       "requireHttps": false,

@@ -178,6 +178,8 @@ export class ProductSearchService {
     }
     productsUrl+='&$skip=' + skip + '&$orderby=' + order + ' ' + sort.toLowerCase();
 
+    console.log("Sent search using OData Filter Object: ", searchOptions);
+
     return forkJoin({
       count: this.getProductsCount(productsCountUrl).pipe(map((res) => res), catchError(e => of(e))),
       products: this.getProducts(productsUrl).pipe(map((res) => res), catchError(e => of(e)))
@@ -198,8 +200,7 @@ export class ProductSearchService {
 
   searchStac(stacFilter: any) {
     let productsUrl = AppConfig.settings.serviceUrlStac + '/stac/search';
-    console.log("productsUrl: ", productsUrl);
-    console.log("stacFilter: ", stacFilter);
+    console.log("Sent search using STAC Filter Object: ", stacFilter);
     return this.getProductsStac(productsUrl, stacFilter).pipe(map((res) => res), catchError(e => of(e)));
   }
 
