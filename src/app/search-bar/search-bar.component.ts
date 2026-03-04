@@ -198,7 +198,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public stacCollectionsList: string[] = [];
   public isOdataActive: boolean = false;
   public isStacActive: boolean = false;
-  //download$: Observable<Download> | undefined
   public downloadSubscription: Map<String, Subscription> = new Map();
   isLoggedSubscription!: Subscription;
   updateGeoSearchSubscription!: Subscription;
@@ -225,8 +224,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    console.log("SearchBar oninit");
-    console.log("gssSelectedProtocol: ", this.gssSelectedProtocol);
     window.addEventListener("resize", () => {
       setTimeout(() => {
         this.checkFilterOutputHeight();
@@ -365,16 +362,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       if (e.deltaY > 0) this.onScrollDetailsRight();
       if (e.deltaY < 0) this.onScrollDetailsLeft();
     })
-    console.log("SearchBar oninit - END");
   }
 
   ngAfterViewInit(): void {
-    console.log("AfterViewInit()");
     this.checkTypedFilter();
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
         this.isLogged = value;
-        console.log("isLogged: ", this.isLogged);
         this.checkGssProtocols();
       }
     });
@@ -421,7 +415,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
           setTimeout(() => {
             this.onShowHideButtonClick(null);
-            //this.showProductListContainer();
             this.parseAdvancedFilter();
             this.checkTypedFilter();
           }, 10);
@@ -485,11 +478,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkGssProtocols() {
-    console.log("Checking Protocols..");
+    //console.log("Checking Protocols..");
     // Check GSS Protocols
     this.productSearch.checkOdataService().subscribe({
       next: (res: any) => {
-        console.log("Checked OData Service and got res: ", res);
+        //console.log("Checked OData Service and got res: ", res);
         if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
           this.isOdataActive = true;
         } else {
@@ -514,7 +507,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           next: (res: any) => {
             if (res.hasOwnProperty("collections")) {
               this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
-              console.log("Retrieved STAC Collections List from GSS: ", this.stacCollectionsList);
+              //console.log("Retrieved STAC Collections List from GSS: ", this.stacCollectionsList);
               this.isStacActive = true;
             } else {
               this.isStacActive = false;
