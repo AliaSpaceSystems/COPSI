@@ -81,6 +81,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public sensingStopEl: any;
   public publicationStartEl: any;
   public publicationStopEl: any;
+  public minPublicationStopDate: string = "";
+  public maxPublicationStartDate: string = "";
   public missionEl: any;
 
   @Input()
@@ -223,6 +225,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    console.log("SearchBar oninit");
+    console.log("gssSelectedProtocol: ", this.gssSelectedProtocol);
     window.addEventListener("resize", () => {
       setTimeout(() => {
         this.checkFilterOutputHeight();
@@ -258,6 +262,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       (tempTodayDate.getMonth() + 1).toString().padStart(2, '0'),
       tempTodayDate.getDate().toString().padStart(2, '0')
     ].join('-');
+
+
+    this.maxPublicationStartDate = this.todayDate;
+    this.minPublicationStopDate = "";
 
     this.searchBarWidth = document.getElementById('search-bar-main-div')!.offsetWidth;
     copsyBlueColor = window.getComputedStyle(document.getElementById('get-properties-div')!).backgroundColor;
@@ -357,15 +365,16 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       if (e.deltaY > 0) this.onScrollDetailsRight();
       if (e.deltaY < 0) this.onScrollDetailsLeft();
     })
+    console.log("SearchBar oninit - END");
   }
 
   ngAfterViewInit(): void {
+    console.log("AfterViewInit()");
     this.checkTypedFilter();
-
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
         this.isLogged = value;
-        //console.log("isLogged: ", this.isLogged);
+        console.log("isLogged: ", this.isLogged);
         this.checkGssProtocols();
       }
     });
@@ -392,6 +401,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.updateGssProtocolSubscription = this.exchangeService.selectedGssProtocol.subscribe((value) => {
       if (typeof(value) === 'string') {
+        this.hideProductListContainer();
         this.gssSelectedProtocolPrec = this.gssSelectedProtocol;
         this.gssSelectedProtocol = value;
         if (this.gssSelectedProtocol !== this.gssSelectedProtocolPrec) {
@@ -411,7 +421,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
           setTimeout(() => {
             this.onShowHideButtonClick(null);
-            this.showProductListContainer();
+            //this.showProductListContainer();
             this.parseAdvancedFilter();
             this.checkTypedFilter();
           }, 10);
@@ -475,9 +485,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkGssProtocols() {
+    console.log("Checking Protocols..");
     // Check GSS Protocols
     this.productSearch.checkOdataService().subscribe({
       next: (res: any) => {
+        console.log("Checked OData Service and got res: ", res);
         if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
           this.isOdataActive = true;
         } else {
@@ -485,6 +497,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       },
       error: (err: any) => {
+        console.log("Checked OData Service and got ERROR: ", err);
         this.isOdataActive = false;
         if (this.gssSelectedProtocol === "OData") {
           this.exchangeService.setGssProtocol("STAC");
@@ -658,6 +671,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onAdvancedSearchSubmit(event: any) {
+    this.hideProductListContainer();
     this.parseAdvancedFilter();
     if (this.canSubmitSearch) {
       setTimeout(() => {
@@ -718,6 +732,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   onDateClicked(event: any) {
     /* uncomment to show picker calendar on date click */
     //event.target.showPicker();
+
+    this.publicationStartEl = document.getElementById('publication-start')!;
+    this.publicationStopEl = document.getElementById('publication-stop')!;
+    this.maxPublicationStartDate = this.publicationStopEl.value;
+    this.minPublicationStopDate = this.publicationStartEl.value;
   }
 
   onMissionFilterButtonClicked(event: any) {
@@ -1181,6 +1200,16 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   showProductListContainer() {
     if (productListContainer!.classList.contains('hidden')) {
       productListContainer!.classList.replace('hidden', 'visible');
+    }
+    if (this.filterParsingDivIsPinned) {
+      productListContainer!.style.top = (58 + this.filterParsingDivHeight) + 'px';
+    } else {
+      productListContainer!.style.top = (48) + 'px';
+    }
+  }
+  hideProductListContainer() {
+    if (productListContainer!.classList.contains('visible')) {
+      productListContainer!.classList.replace('visible', 'hidden');
     }
     if (this.filterParsingDivIsPinned) {
       productListContainer!.style.top = (58 + this.filterParsingDivHeight) + 'px';

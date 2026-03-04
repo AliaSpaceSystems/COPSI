@@ -13,11 +13,12 @@ import { AppConfig } from '../services/app.config';
 export class ErrorInterceptor implements HttpInterceptor {
 
   BAD_REQUEST_MSG = "Your request cannot be processed by the server. Please check the request's parameters and try again.";
-  INTERNAL_SERVER_ERROR_MSG = "There was a problem processing your request.";
+  INTERNAL_SERVER_ERROR_MSG = "There was a problem processing your request:";
   SERVICE_GATEWAY_TIMEOUT_MSG = "The service is temporarily unavailable. Please try again later.";
   NOT_ALLOWED_MSG = "You are not authorized to perform this request.";
   NOT_FOUND_MSG = "Request or product not available on the server.";
   TOO_MANY_MSG = "Maximum number of requests exceeded. Please wait the completion of the ongoing requests.";
+  PROTOCOL_UNAVAILABLE_MSG = "One of the selected GSS protocols is unavailable";
   QL_SUBPATH = "AttachedFiles";
   QL_SUBPATH_STAC = "quicklook";
   DOWNLOAD_SUBPATH = "$value";
@@ -120,16 +121,29 @@ export class ErrorInterceptor implements HttpInterceptor {
             }
             break;
           }
-          case 503:
+          case 503: {
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.message, this.SERVICE_GATEWAY_TIMEOUT_MSG);
+            }
+            break;
+          }
           case 504: {
             if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.SERVICE_GATEWAY_TIMEOUT_MSG);
             }
             break;
           }
-          default: {
+          case 200: {
+            // Manage stac communication error which answer with 200 and message: Http failure during parsing for...
             if(request.url.indexOf(this.QL_SUBPATH) < 0) {
-              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG + "<br><br>" + err.message);
+            }
+            break;
+          }
+          default: {
+            console.log("PRINT ERROR: ", err);
+            if(request.url.indexOf(this.QL_SUBPATH) < 0) {
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG + "<br><br>" + err.message);
             }
             break;
           }

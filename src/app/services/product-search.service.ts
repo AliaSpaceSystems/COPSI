@@ -292,6 +292,7 @@ export class ProductSearchService {
         catchError(e => of(e))
       );
   }
+
   private saveWithLink(blob: Blob, filename: string): void {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');

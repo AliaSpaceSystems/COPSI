@@ -1,29 +1,33 @@
 {
-  "version": "4.0.1",
+  "version": "4.0.2",
   "centreInfo": {
-      "name": "",
-      "image": "",
-      "link": "",
-      "alt": "",
-      "title": ""
+    "name": "",
+    "image": "",
+    "link": "",
+    "alt": "",
+    "title": ""
   },
   "baseUrl": "/",
+  "_serviceUrl": "https://s5.prodservice.eu",
+  "_serviceUrlStac": "",
+  "__serviceUrl": "",
   "serviceUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
   "serviceUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
   "odataVersion": "v2",
   "keycloak": {
+    "_issuer": "https://s5.prodservice.eu/auth/realms/prip_s5",
     "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
-      "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
-      "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
+    "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
+    "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
+    "_clientId": "prip_s5-catalogue",
     "clientId": "ivv-gss1-client",
-      "responseType": "code",
-      "scope": "openid profile email",
-      "requireHttps": false,
-      "showDebugInformation": false,
-      "disableAtHashCheck": true,
-      "useSilentRefresh": false
+    "responseType": "code",
+    "scope": "openid profile email",
+    "requireHttps": false,
+    "showDebugInformation": false,
+    "disableAtHashCheck": true,
+    "useSilentRefresh": false
   },
-
   "searchOptions": {
     "productsPerPage": 100,
     "productsPerPageStac": 100,
@@ -51,9 +55,9 @@
     "filterOutputIsPinnedByDefault": true,
     "useMultipleAttributesInOption": true,
     "gssSupportedProtocols": [
-      "OData",
       "STAC"
     ],
+    "_defaultGssProtocol": "OData",
     "defaultGssProtocol": "STAC"
   },
   "headerSettings": {
@@ -62,14 +66,14 @@
     "menuAutoHideTimeout": 2000
   },
   "mapSettings": {
-      "initialViewState": {
-        "longitude": 2.27,
-        "latitude": 38.86,
-        "zoom": 1.7,
-        "minZoom": 1.2,
-        "maxZoom": 10
-      },
-      "projection": "globe"
+    "initialViewState": {
+      "longitude": 2.27,
+      "latitude": 38.86,
+      "zoom": 1.7,
+      "minZoom": 1.2,
+      "maxZoom": 10
+    },
+    "projection": "globe"
   },
   "geoSearchSettings": {
     "showGeoSearchToolbar": true,
@@ -77,27 +81,76 @@
     "bigCircleRadius": 12,
     "smallCircleRadius": 3,
     "latitudeLimit": 85.05,
-    "fillColor": [220, 255, 100, 80],
-    "borderColor": [180, 220, 50, 255],
-    "fillColorActive": [255, 220, 60, 50],
-    "borderColorActive": [220, 150, 0, 255]
+    "fillColor": [
+      220,
+      255,
+      100,
+      80
+    ],
+    "borderColor": [
+      180,
+      220,
+      50,
+      255
+    ],
+    "fillColorActive": [
+      255,
+      220,
+      60,
+      50
+    ],
+    "borderColorActive": [
+      220,
+      150,
+      0,
+      255
+    ]
   },
   "loginSettings": {
-      "text": "Please Sign in to access our service",
-      "buttonText": "Sign in"
+    "text": "Please Sign in to access our service",
+    "buttonText": "Sign in"
   },
   "quicklookURL": "<base_url>/odata/<odata_version>/Products(<uuid>)/AttachedFiles('quick-look.jpg')/$value",
   "quicklookURLStac": "<base_url>/stac/download/quicklook/<productName>",
   "infoLogosLeft": [
-      { "link": "https://www.esa.int/", "image": "./assets/images/ESA_logo_2020_White_cut.png", "title": "Visit ESA website", "alt": "ESA logo" },
-      { "link": "https://european-union.europa.eu/", "image": "./assets/images/logoEU.svg", "title": "Visit EU website", "alt": "EU logo" },
-      { "link": "http://www.copernicus.eu", "image": "./assets/images/copernicus_eu_logo_blu_white.png", "title": "Visit Copernicus website", "alt": "Copernicus logo" },
-      { "link": "https://ivvproxy.onda.onda-dias.com/col-dhs-website/", "image": "./assets/images/logoDHS.png", "title": "Visit DHS website" , "alt": "DHS logo"}
-
+    {
+      "link": "https://www.esa.int/",
+      "image": "./assets/images/ESA_logo_2020_White_cut.png",
+      "title": "Visit ESA website",
+      "alt": "ESA logo"
+    },
+    {
+      "link": "https://european-union.europa.eu/",
+      "image": "./assets/images/logoEU.svg",
+      "title": "Visit EU website",
+      "alt": "EU logo"
+    },
+    {
+      "link": "http://www.copernicus.eu",
+      "image": "./assets/images/copernicus_eu_logo_blu_white.png",
+      "title": "Visit Copernicus website",
+      "alt": "Copernicus logo"
+    },
+    {
+      "link": "https://ivvproxy.onda.onda-dias.com/col-dhs-website/",
+      "image": "./assets/images/logoDHS.png",
+      "title": "Visit DHS website",
+      "alt": "DHS logo"
+    }
   ],
   "infoLogosRight": [
-      { "link": "https://www.serco.com/", "image": "./assets/images/logo-serco-grey_cut.png", "title": "Visit Serco website", "alt": "Serco logo"  },
-      { "link": "http://www.alia-space.com/", "image": "./assets/images/logo_alia_white.png", "title": "Visit Alia website", "alt": "Alia Space logo"  }
+    {
+      "link": "https://www.serco.com/",
+      "image": "./assets/images/logo-serco-grey_cut.png",
+      "title": "Visit Serco website",
+      "alt": "Serco logo"
+    },
+    {
+      "link": "http://www.alia-space.com/",
+      "image": "./assets/images/logo_alia_white.png",
+      "title": "Visit Alia website",
+      "alt": "Alia Space logo"
+    }
   ],
   "footprints": {
     "fallBackColor": "#808080cc",
@@ -115,25 +168,61 @@
       "name": "OSM",
       "url": "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
       "path": "./assets/images/Preview_OSM.png",
-      "seaColor": [0, 0, 0],
-      "terrainColor": [0, 0, 0],
-      "borderColor": [0, 0, 0]
+      "seaColor": [
+        0,
+        0,
+        0
+      ],
+      "terrainColor": [
+        0,
+        0,
+        0
+      ],
+      "borderColor": [
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "Flat - Natural",
       "url": "",
       "path": "./assets/images/Preview_Flat_Natural.png",
-      "seaColor": [30, 70, 140],
-      "terrainColor": [80, 120, 60],
-      "borderColor": [0, 0, 0]
+      "seaColor": [
+        30,
+        70,
+        140
+      ],
+      "terrainColor": [
+        80,
+        120,
+        60
+      ],
+      "borderColor": [
+        0,
+        0,
+        0
+      ]
     },
     {
       "name": "Flat - Grey",
       "url": "",
       "path": "./assets/images/Preview_Flat_Grey.png",
-      "seaColor": [60, 60, 60],
-      "terrainColor": [120, 120, 120],
-      "borderColor": [0, 0, 0]
+      "seaColor": [
+        60,
+        60,
+        60
+      ],
+      "terrainColor": [
+        120,
+        120,
+        120
+      ],
+      "borderColor": [
+        0,
+        0,
+        0
+      ]
     }
   ],
   "platformDetailsList": [

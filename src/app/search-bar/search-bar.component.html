@@ -104,12 +104,18 @@
         @if (gssSelectedProtocol === "OData") {
         <label for="publication-start">Publication date:</label>
         <div class="datepicker-div">
-          <input type="date" class="date" id="publication-start" name="publication-start"
+          <!-- <input type="date" class="date" id="publication-start" name="publication-start"
             [max]="(publicationStopEl.value && publicationStopEl.value === '') ? todayDate : publicationStopEl.value" title="Publication start date"
+            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)"> -->
+          <input type="date" class="date" id="publication-start" name="publication-start"
+            [max]="maxPublicationStartDate" title="Publication start date"
             (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
           <span>-</span>
+          <!-- <input type="date" class="date" id="publication-stop" name="publication-stop"
+            [min]="(publicationStartEl && publicationStartEl.value && publicationStartEl.value === '' ) ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date"
+            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)"> -->
           <input type="date" class="date" id="publication-stop" name="publication-stop"
-            [min]="(publicationStartEl.value && publicationStartEl.value === '' ) ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date"
+            [min]="minPublicationStopDate" [max]="todayDate" title="Publication start date"
             (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         </div>
         }
@@ -220,16 +226,14 @@
 <div id="product-list-container" class="hidden">
   <div id="product-list-div">
     <div id="product-list-header">
+      @if (productTotalNumber == 0) {
+      <div id="product-list-header-text">No products found..</div>
+      }
       @if(productTotalNumber > 0) {
       <div id="page-buttons-div">
         <mat-icon id="load-prev" class="load-page-icon" aria-hidden="false" aria-label="load prev page" title="Load prev page" fontIcon="navigate_before" (click)="loadPageFromButtons(-1)"></mat-icon>
         <mat-icon id="load-next" class="load-page-icon" aria-hidden="false" aria-label="load next page" title="Load next page" fontIcon="navigate_next" (click)="loadPageFromButtons(1)"></mat-icon>
       </div>
-      }
-      @if (productTotalNumber == 0) {
-      <div id="product-list-header-text">No products found..</div>
-      }
-      @if (productTotalNumber > 0) {
       <div id="product-list-header-text" title="Order By: {{returnOptionNameFromValue(orderBy, orderByOptions)}} - {{returnOptionNameFromValue(sortBy, sortByOptions)}}">Displaying {{productStartNumber}} to {{productEndNumber}} of {{productTotalNumber}} products</div>
       <div id="product-list-header-icons-div">
         <mat-icon id="detailed-view" class="view-style-icon" aria-hidden="false" aria-label="detailed view" title="Detailed view" fontIcon="format_align_justify" (click)="setListView('detailed')"></mat-icon>

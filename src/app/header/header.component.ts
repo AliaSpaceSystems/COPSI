@@ -4,6 +4,7 @@ import { ExchangeService } from '../services/exchange.service';
 import { Subscription, throwError } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { AppConfig } from '../services/app.config';
+import { AlertComponent } from '../alert/alert.component';
 import jwt_decode from 'jwt-decode';
 
 @Component({
@@ -95,7 +96,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   updateGssProtocolSubscription!: Subscription;
   public isOdataActive: boolean = false;
   public isStacActive: boolean = false;
-  
+
 
   public showUser: boolean = false;
   public showUserTimeoutId: any;
@@ -126,10 +127,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private exchangeService: ExchangeService,
     private oauthService: OAuthService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private alert: AlertComponent
   ) { }
 
   ngOnInit(): void {
+    if (!this.gssProtocols.includes(this.gssSelectedProtocol)) {
+      this.onGssProtocolChanged(this.gssProtocols[0]);
+      this.alert.showErrorAlert("CONFIGURATION ERROR", "Please check gssSupportedProtocols and defaultGssProtocol settings.");
+    }
     const userClaims: any = this.oauthService.getIdentityClaims();
     if (userClaims) {
       this.name = (userClaims && userClaims.preferred_username) ? userClaims.preferred_username : "";
@@ -153,18 +159,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.isOdataSubscription = this.exchangeService.isOdataActiveExchange.subscribe((value) => {
       if (typeof(value) == 'boolean') {
+        console.log("isOdataSubscription: ", value);
         this.isOdataActive = value;
       }
     });
 
     this.isStacSubscription = this.exchangeService.isStacActiveExchange.subscribe((value) => {
       if (typeof(value) == 'boolean') {
+        console.log("isStacSubscription: ", value);
         this.isStacActive = value;
       }
     });
 
     this.updateGssProtocolSubscription = this.exchangeService.selectedGssProtocol.subscribe((value) => {
       if (typeof(value) === 'string') {
+        console.log("updateGssProtocolSubscription: ", value);
         //this.gssSelectedProtocol.set(value);
         this.gssSelectedProtocol = value;
         this.cd.detectChanges();
@@ -363,7 +372,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
   onProtocolMenuLeave(event: any) {
-    this.setSettingsMenuTimeout();    
+    this.setSettingsMenuTimeout();
     this.setProtocolsTimeout();
     event.stopPropagation();
   }
