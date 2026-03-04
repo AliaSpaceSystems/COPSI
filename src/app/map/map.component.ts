@@ -2206,7 +2206,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           initialViewState: {
             longitude: zoomToViewState.centerCoordinates[0],
             latitude: zoomToViewState.centerCoordinates[1],
-            zoom: zoomToViewState.zoomLevel,
+            zoom: zoomToViewState.zoomLevel + (Math.random() * 2 - 1) * 0.00001,
             transitionDuration: 'auto',
             transitionInterpolator: new FlyToInterpolator({
               speed: 1,
@@ -2219,7 +2219,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           initialViewState: {
             longitude: zoomToViewState.centerCoordinates[0],
             latitude: zoomToViewState.centerCoordinates[1],
-            zoom: zoomToViewState.zoomLevel,
+            zoom: zoomToViewState.zoomLevel + (Math.random() * 2 - 1) * 0.00001,
             transitionDuration: 'auto',
             transitionInterpolator: new FlyToInterpolator({
               speed: 1,

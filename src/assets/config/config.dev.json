@@ -55,10 +55,11 @@
     "filterOutputIsPinnedByDefault": true,
     "useMultipleAttributesInOption": true,
     "gssSupportedProtocols": [
+      "OData",
       "STAC"
     ],
-    "_defaultGssProtocol": "OData",
-    "defaultGssProtocol": "STAC"
+    "defaultGssProtocol": "OData",
+    "_defaultGssProtocol": "STAC"
   },
   "headerSettings": {
     "showUserEditButton": true,
