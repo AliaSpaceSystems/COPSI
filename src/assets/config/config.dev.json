@@ -8,19 +8,14 @@
     "title": ""
   },
   "baseUrl": "/",
-  "serviceUrl": "https://s5.prodservice.eu",
-  "serviceUrlStac": "",
-  "__serviceUrl": "",
-  "_serviceUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
-  "_serviceUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
+  "serviceUrl": "https://dhs-test.onda-dias.eu/gss-cat-02",
+  "serviceUrlStac": "https://dhs-test.onda-dias.eu/stac-02",
   "odataVersion": "v2",
   "keycloak": {
-    "issuer": "https://s5.prodservice.eu/auth/realms/prip_s5",
-    "_issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
+    "issuer": "https://collaborative-dhs.onda-dias.eu/auth/realms/collaborative-dhs",
     "editProfileUrl": "<issuer>/account/?referrer=<clientId>#/personal-info",
     "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
-    "clientId": "prip_s5-catalogue",
-    "_clientId": "ivv-gss1-client",
+    "clientId": "ivv-gss1-client",
     "responseType": "code",
     "scope": "openid profile email",
     "requireHttps": false,
@@ -55,7 +50,8 @@
     "filterOutputIsPinnedByDefault": true,
     "useMultipleAttributesInOption": true,
     "gssSupportedProtocols": [
-      "OData"
+      "OData",
+      "STAC"
     ],
     "defaultGssProtocol": "OData"
   },
