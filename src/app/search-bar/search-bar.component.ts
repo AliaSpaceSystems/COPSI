@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { ExchangeService } from '../services/exchange.service';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { DownloadProgress, ProductSearchService } from '../services/product-search.service';
 import { AppConfig } from '../services/app.config';
 import { DetailsConfig } from '../services/details.config';
@@ -206,6 +206,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   zoomToListSubscription!: Subscription;
   showFootprintsMenuSubscription!: Subscription;
   updateGssProtocolSubscription!: Subscription;
+  public gssProtocols = AppConfig.settings.searchOptions.gssSupportedProtocols;
 
   public isLogged: boolean = false;
 
@@ -478,62 +479,83 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkGssProtocols() {
-    //console.log("Checking Protocols..");
-    // Check GSS Protocols
-    this.productSearch.checkOdataService().subscribe({
+    const calls: Record<string, any> = {
+      ...(this.gssProtocols.includes('OData') && {
+        odata: this.productSearch.checkOdataService()
+      }),
+      ...(this.gssProtocols.includes('STAC') && {
+        stac: this.productSearch.getCollections()
+      })
+    };
+
+    if (Object.keys(calls).length === 0) {
+      advancedSearchSubmitIcon.classList.add('invalid');
+      advancedSearchMagnifierIcon.classList.add('invalid');
+      this.canSubmitSearch = false;
+      this.alert.showErrorAlert("GSS PROTOCOL ERROR", "No correct GSS protocols have been set.");
+      return;
+    }
+
+    forkJoin(calls).subscribe({
       next: (res: any) => {
-        //console.log("Checked OData Service and got res: ", res);
-        if (res.status == 200 && res.body.hasOwnProperty('$Version')) {
-          this.isOdataActive = true;
-        } else {
-          this.isOdataActive = false;
+        if (res.odata) {
+          //console.log("res.odata: ", res.odata);
+          if (res.odata.error) {
+            console.log("res.odata.error: ", res.odata.error);
+            this.isOdataActive = false;
+            console.log("OData failed: ", res.odata.details ?? "");
+          } else if (res.odata.data.status == 200 && res.odata.data.body.hasOwnProperty('$Version')) {
+            this.isOdataActive = true;
+          } else {
+            this.isOdataActive = false;
+          };
+        }
+        if (res.stac) {
+          //console.log("res.stac: ", res.stac);
+          if (res.stac.error) {
+            console.log("res.stac.error: ", res.stac.error);
+            this.isStacActive = false;
+            console.log("STAC failed: ", res.stac.details ?? "");
+          } else if (res.stac.data.hasOwnProperty("collections")) {
+            this.stacCollectionsList = res.stac.data.collections.map((obj: any) => obj.id);
+            this.isStacActive = true;
+          } else {
+            this.isStacActive = false;
+          }
         }
       },
       error: (err: any) => {
-        console.log("Checked OData Service and got ERROR: ", err);
         this.isOdataActive = false;
-        if (this.gssSelectedProtocol === "OData") {
-          this.exchangeService.setGssProtocol("STAC");
-        }
+        this.isStacActive = false;
         console.error(err);
       },
       complete: () => {
         if (this.isLogged) {
           console.log("Check for OData module availability: ", this.isOdataActive);
+          console.log("Check for STAC module availability: ", this.isStacActive);
         }
         this.exchangeService.setOdataActive(this.isOdataActive);
-
-        this.productSearch.getCollections().subscribe({
-          next: (res: any) => {
-            if (res.hasOwnProperty("collections")) {
-              this.stacCollectionsList = res.collections.map((obj: any) => obj.id);
-              //console.log("Retrieved STAC Collections List from GSS: ", this.stacCollectionsList);
-              this.isStacActive = true;
-            } else {
-              this.isStacActive = false;
-            }
-          },
-          error: (err: any) => {
-            this.isStacActive = false;
-            console.log("Error: ", err);
-          },
-          complete: () => {
-            if (this.isLogged) {
-              console.log("Check for STAC module availability: ", this.isStacActive);
-            }
-            this.exchangeService.setStacActive(this.isStacActive);
-            if (this.isStacActive === false && this.isOdataActive) {
-              console.log("Changing gss protocol to OData..");
-              this.exchangeService.setGssProtocol("OData");
-            }
-            if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
-              advancedSearchSubmitIcon.classList.add('invalid');
-              advancedSearchMagnifierIcon.classList.add('invalid');
-              this.canSubmitSearch = false;
-              this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
-            }
+        this.exchangeService.setStacActive(this.isStacActive);
+        if (this.gssSelectedProtocol === "OData" && this.isOdataActive === false) {
+          if (this.gssProtocols.includes('STAC')) {
+            this.exchangeService.setGssProtocol("STAC");
+          } else {
+            console.log("ERROR: OData is not available, but STAC is not set as an alternative");
           }
-        });
+        }
+        if (this.gssSelectedProtocol === "STAC" && this.isStacActive === false) {
+          if (this.gssProtocols.includes('OData')) {
+            this.exchangeService.setGssProtocol("OData");
+          } else {
+            console.log("ERROR: STAC is not available, but OData is not set as an alternative");
+          }
+        }
+        if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
+          advancedSearchSubmitIcon.classList.add('invalid');
+          advancedSearchMagnifierIcon.classList.add('invalid');
+          this.canSubmitSearch = false;
+          this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
+        }
       }
     })
   }
