@@ -140,8 +140,10 @@ export class ProductSearchService {
     let order = 'PublicationDate';
     let sort = 'desc';
     let skip = 0;
-    let productsCountUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$count=true&$top=1`;
-    let productsUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$expand=Attributes`;
+    // let productsCountUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$count=true&$top=1`;
+    // let productsUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/Products?$expand=Attributes`;
+    let productsCountUrl = `/odata/${AppConfig.settings.odataVersion}/Products?$count=true&$top=1`;
+    let productsUrl = `/odata/${AppConfig.settings.odataVersion}/Products?$expand=Attributes`;
     //The option $count=true requires only the $filter parameter. No $orderby or $skip is needed for the count.
     //The $top is fixed to 1
     let filter = "";
@@ -206,8 +208,8 @@ export class ProductSearchService {
 
   /* getQL(uuid: string) is used to check if there is a quicklook for that product id */
   getQL(uuid: string) {
-    let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', AppConfig.settings.serviceUrl).replace('<odata_version>', AppConfig.settings.odataVersion).replace('<uuid>', uuid);
-
+    //let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', AppConfig.settings.serviceUrl).replace('<odata_version>', AppConfig.settings.odataVersion).replace('<uuid>', uuid);
+    let uuidURL = AppConfig.settings.quicklookURL.replace('<base_url>', '').replace('<odata_version>', AppConfig.settings.odataVersion).replace('<uuid>', uuid);
     return this.http.get(
       uuidURL, {
         responseType: 'blob'
@@ -286,8 +288,9 @@ export class ProductSearchService {
 
   checkOdataService() {
     if (!this.isLogged) return of({ error: false, data: null });
-    const url = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
-    return this.http.get<any>(url, { observe: 'response' }).pipe(
+    //const url = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
+    const url = `/odata/${AppConfig.settings.odataVersion}/$metadata`;
+    return this.http.get<any>(url, httpOptions).pipe(
       map(res => ({
         error: false,
         data: res
