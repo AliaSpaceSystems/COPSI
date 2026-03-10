@@ -1,0 +1,8 @@
+{
+  "/odata": {
+    "target": "https://s5.prodservice.eu",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
