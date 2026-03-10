@@ -488,7 +488,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         stac: this.productSearch.getCollections()
       })
     };
-
+    console.log("Object.keys(calls).length: " + Object.keys(calls).length);
     if (Object.keys(calls).length === 0) {
       advancedSearchSubmitIcon.classList.add('invalid');
       advancedSearchMagnifierIcon.classList.add('invalid');
@@ -556,6 +556,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           advancedSearchMagnifierIcon.classList.add('invalid');
           this.canSubmitSearch = false;
           this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
+        } else {
+          advancedSearchSubmitIcon.classList.remove('invalid');
+          advancedSearchMagnifierIcon.classList.remove('invalid');
+          this.canSubmitSearch = true;
         }
       }
     })
@@ -877,6 +881,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /* Check for GSS modules availability */
     if (!this.isOdataActive && !this.isStacActive) {
+      console.log("HERE???");
       advancedSearchSubmitIcon.classList.add('invalid');
       advancedSearchMagnifierIcon.classList.add('invalid');
       this.canSubmitSearch = false;
