@@ -370,6 +370,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
         this.isLogged = value;
+        this.exchangeService.setGssProtocol(this.gssSelectedProtocol);
         this.checkGssProtocols();
       }
     });
