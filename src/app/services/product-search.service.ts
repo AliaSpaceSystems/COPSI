@@ -93,7 +93,6 @@ export class ProductSearchService {
           }
         });
         processedString = filterArray.join(' ');
-
       } catch (error) {
         console.error("Error converting Filter!");
         console.error(error);
