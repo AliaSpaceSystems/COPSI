@@ -2313,7 +2313,8 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       tempLatLonBounds = this.calcMinMaxCoordinatesValues(tempCoords);
       centerCoordinates = [(tempLatLonBounds.coordsMax[0] + tempLatLonBounds.coordsMin[0])/2, (tempLatLonBounds.coordsMax[1] + tempLatLonBounds.coordsMin[1])/2];
     } else {
-      this.toast.showInfoToast('success', 'NO FOOTPRINT TO ZOOM TO.');
+      console.error("Footprint coordinates bounds cannot be calculated. Footprint seems not to be valid");
+      this.toast.showInfoToast('success', 'NO VALID FOOTPRINT TO ZOOM TO.');
       return null;
     }
     zoomLevel = this.calcZoomLevelFromLatLonBounds(tempLatLonBounds);
@@ -2329,6 +2330,24 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       if (coord[0] > coordsMax[0]) coordsMax[0] = coord[0];
       if (coord[1] > coordsMax[1]) coordsMax[1] = coord[1];
     });
+    if (coordsMin[0] == -180 && coordsMin[1] == -90 && coordsMax[0] == 180 && coordsMax[1] == 90) {
+      let coordsMin: any[] = [null, null];
+      let coordsMax: any[] = [null, null];
+      coordinates.forEach((coord: number[]) => {
+        if (coord[1] > -10 && coord[1] < 10) {
+          if (coordsMin[0] == null) coordsMin[0] = coord[0];
+          if (coordsMax[0] == null) coordsMax[0] = coord[0];
+
+          if (coord[0] < coordsMin[0]) coordsMin[0] = coord[0];
+          if (coord[0] > coordsMax[0]) coordsMax[0] = coord[0];
+        }
+      });
+      coordsMin[1] = -50;
+      coordsMax[1] = 50;
+      if (coordsMin[0] == -180) coordsMin[0] = 179;
+      if (coordsMax[0] == 180) coordsMax[0] = 180;
+      return {coordsMin, coordsMax};
+    }
     return {coordsMin, coordsMax};
   }
 
