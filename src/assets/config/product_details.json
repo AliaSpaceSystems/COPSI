@@ -99,7 +99,7 @@
       ]
     },
     {
-      "platformShortName": "SENTINEL-5P",
+      "platformShortName": "SGA1",
       "Attributes": [
         "platformShortName",
         "instrumentShortName",
