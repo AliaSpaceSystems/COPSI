@@ -286,8 +286,10 @@ export class ProductSearchService {
 
   checkOdataService() {
     if (!this.isLogged) return of({ error: false, data: null });
-    const url = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
-    return this.http.get<any>(url, { observe: 'response' }).pipe(
+    // Commented because using a proxy, to send requests as localhost (OData only needed):
+    //const url = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
+    const url = `/odata/${AppConfig.settings.odataVersion}/$metadata`;
+    return this.http.get<any>(url, httpOptions).pipe(
       map(res => ({
         error: false,
         data: res
