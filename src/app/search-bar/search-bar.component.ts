@@ -500,7 +500,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     forkJoin(calls).subscribe({
       next: (res: any) => {
         if (res.odata) {
-          //console.log("res.odata: ", res.odata);
+          console.log("res.odata: ", res.odata);
           if (res.odata.error) {
             console.log("res.odata.error: ", res.odata.error);
             this.isOdataActive = false;
@@ -1283,7 +1283,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             /* got a list */
             this.productList = res;
-            console.log("this.productList: ", this.productList);
+            console.log("this.productList stringify: " + JSON.stringify(this.productList, null, 2));
+            //console.log("this.productList: " , this.productList);
             if (this.productList.value) {
               this.productList.value.forEach((product: any) => {
                 product.isSelected = false;

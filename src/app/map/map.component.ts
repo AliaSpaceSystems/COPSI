@@ -1980,6 +1980,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let featureList: any[] = [];
       this.productList.value.forEach((product: any, index: number) => {
         if (product.GeoFootprint != null) {
+          console.log("GeoFootprint is present!");
           let tempGeojson = this.getGeojsonFromGeoFootprint(product.GeoFootprint);
           featureList.push(tempGeojson);
         } else if (product.Footprint != null) {
@@ -2381,8 +2382,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   /* Convert GeoFootprint footprints to geojson Feature */
   getGeojsonFromGeoFootprint(footprint: any) {
     if (footprint.type === "Polygon") {
+      //console.log("footprint.coordinates: ", footprint.coordinates);
       let polygons: Array<any> = [];
       /*
+        TODO: This is not working if a single polygon contains both poles..
+        -----
         Check if footprint is crossing the daytime line.
         Method:
           - Check if crosses on -180.0
@@ -2395,12 +2399,17 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           - Divide coords array on every FirstPoint recurrence
           - If more than one recurrence modify GeoFootprint to MultiPolygon
       */
-      for (var i = 0; i < footprint.coordinates[0].length - 1; i++) {
-        if (this.checkDaylineCrossing([footprint.coordinates[0][i], footprint.coordinates[0][i+1]])) {
-          if (this.arrayEquals(footprint.coordinates[0][i], footprint.coordinates[0][0])) {
-            polygons = this.fixCrossingMultiPolygon(footprint);
-          } else {
-            polygons = this.fixCrossingPolygon(footprint);
+     console.log("footprint.coordinates[0].reverse(): ", JSON.stringify(footprint.coordinates, null, 2));
+      if (this.checkDaylineHalfCrossing(footprint.coordinates)) {
+        console.log("checkDaylineHalfCrossing: true!");
+      } else {
+        for (var i = 0; i < footprint.coordinates[0].length - 1; i++) {
+          if (this.checkDaylineCrossing([footprint.coordinates[0][i], footprint.coordinates[0][i+1]])) {
+            if (this.arrayEquals(footprint.coordinates[0][i], footprint.coordinates[0][0])) {
+              polygons = this.fixCrossingMultiPolygon(footprint);
+            } else {
+              polygons = this.fixCrossingPolygon(footprint);
+            }
           }
         }
       }
@@ -2494,8 +2503,29 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkDaylineCrossing(line: Array<Array<number>>, angleThreshold: number = 180.0): boolean {
+    //console.log("checkDaylineCrossing on line: ", line);
     if (Math.abs(line[1][0] - line[0][0]) > angleThreshold) {
+      console.log("checkDaylineCrossing TRUE!! : ", line);
       return true;
+    }
+    return false;
+  }
+
+  checkDaylineHalfCrossing(coordinates: Array<any>): boolean {
+    //console.log("coordinates[0] length: ", coordinates[0].length);
+    if (coordinates.length == 1) {
+      if (coordinates[0].length < 5) {
+        return false;
+      }
+      for (let i = 0; i < coordinates[0].length; i++) {
+        //console.log(coordinates[0][i]);
+        if (
+          (coordinates[0][i].includes(179.999999) && coordinates[0][i].includes(90)) ||
+          (coordinates[0][i].includes(179.999999) && coordinates[0][i].includes(-90)) ||
+          (coordinates[0][i].includes(-179.999999) && coordinates[0][i].includes(90)) ||
+          (coordinates[0][i].includes(-179.999999) && coordinates[0][i].includes(-90))
+        ) return true;
+      }
     }
     return false;
   }
