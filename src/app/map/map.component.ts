@@ -1980,6 +1980,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       let featureList: any[] = [];
       this.productList.value.forEach((product: any, index: number) => {
         if (product.GeoFootprint != null) {
+          // Temp test cases:
+          // W_nl-esa-noordwijk,SAT,SGA1-SN5-1B-SWR_C_EUMT_20260314000100_G_D_20260313204140_20260313214012_C_N____.nc*
+          // W_nl-esa-noordwijk,SAT,SGA1-SN5-1B-UVR_C_EUMT_20260316081039_G_D_20260316060743_20260316070438_C_N____.nc*
+          // W_nl-esa-noordwijk,SAT,SGA1-SN5-1B-NIR_C_EUMT_20260227060020_G_D_20260227033935_20260227043442_C_N____.nc*
+
           let tempGeojson = this.getGeojsonFromGeoFootprint(product.GeoFootprint);
           featureList.push(tempGeojson);
         } else if (product.Footprint != null) {
@@ -2395,12 +2400,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
           - Divide coords array on every FirstPoint recurrence
           - If more than one recurrence modify GeoFootprint to MultiPolygon
       */
-      for (var i = 0; i < footprint.coordinates[0].length - 1; i++) {
-        if (this.checkDaylineCrossing([footprint.coordinates[0][i], footprint.coordinates[0][i+1]])) {
-          if (this.arrayEquals(footprint.coordinates[0][i], footprint.coordinates[0][0])) {
-            polygons = this.fixCrossingMultiPolygon(footprint);
-          } else {
-            polygons = this.fixCrossingPolygon(footprint);
+      if (!this.checkDaylineHalfCrossing(footprint.coordinates)) {
+        for (var i = 0; i < footprint.coordinates[0].length - 1; i++) {
+          if (this.checkDaylineCrossing([footprint.coordinates[0][i], footprint.coordinates[0][i+1]])) {
+            if (this.arrayEquals(footprint.coordinates[0][i], footprint.coordinates[0][0])) {
+              polygons = this.fixCrossingMultiPolygon(footprint);
+            } else {
+              polygons = this.fixCrossingPolygon(footprint);
+            }
           }
         }
       }
@@ -2496,6 +2503,23 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   checkDaylineCrossing(line: Array<Array<number>>, angleThreshold: number = 180.0): boolean {
     if (Math.abs(line[1][0] - line[0][0]) > angleThreshold) {
       return true;
+    }
+    return false;
+  }
+
+  checkDaylineHalfCrossing(coordinates: Array<any>): boolean {
+    if (coordinates.length == 1) {
+      if (coordinates[0].length < 5) {
+        return false;
+      }
+      for (let i = 0; i < coordinates[0].length; i++) {
+        if (
+          (coordinates[0][i].includes(179.999999) && coordinates[0][i].includes(90)) ||
+          (coordinates[0][i].includes(179.999999) && coordinates[0][i].includes(-90)) ||
+          (coordinates[0][i].includes(-179.999999) && coordinates[0][i].includes(90)) ||
+          (coordinates[0][i].includes(-179.999999) && coordinates[0][i].includes(-90))
+        ) return true;
+      }
     }
     return false;
   }

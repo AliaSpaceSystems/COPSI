@@ -881,7 +881,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /* Check for GSS modules availability */
     if (!this.isOdataActive && !this.isStacActive) {
-      console.log("HERE???");
       advancedSearchSubmitIcon.classList.add('invalid');
       advancedSearchMagnifierIcon.classList.add('invalid');
       this.canSubmitSearch = false;
