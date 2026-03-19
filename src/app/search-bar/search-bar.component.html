@@ -271,6 +271,12 @@
                   <div class="metadata-value">{{product.ContentDate.Start}}</div>
                   }
                 </div>
+                <div class="metadata-row" title="Publication Date">
+                  <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-publication-date" fontIcon="event"></mat-icon>
+                  @if (product.PublicationDate != null) {
+                  <div class="metadata-value">{{product.PublicationDate}}</div>
+                  }
+                </div>
                 <div class="metadata-row" title="Size">
                   <mat-icon class="metadata-icon" aria-hidden="false" aria-label="product-size" fontIcon="dns"></mat-icon>
                   @if (product.ContentLength != null) {
