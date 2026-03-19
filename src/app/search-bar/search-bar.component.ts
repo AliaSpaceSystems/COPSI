@@ -1282,6 +1282,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             /* got a list */
             this.productList = res;
+            //console.log("this.productList: ", this.productList);
             if (this.productList.value) {
               this.productList.value.forEach((product: any) => {
                 product.isSelected = false;
