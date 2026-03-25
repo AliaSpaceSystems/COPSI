@@ -2335,7 +2335,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       if (coord[0] > coordsMax[0]) coordsMax[0] = coord[0];
       if (coord[1] > coordsMax[1]) coordsMax[1] = coord[1];
     });
-    if (coordsMin[0] == -180 && coordsMin[1] == -90 && coordsMax[0] == 180 && coordsMax[1] == 90) {
+    if (coordsMin[0] < -179 && coordsMin[1] < -89 && coordsMax[0] > 179 && coordsMax[1] > 89) {
       let coordsMin: any[] = [null, null];
       let coordsMax: any[] = [null, null];
       coordinates.forEach((coord: number[]) => {
