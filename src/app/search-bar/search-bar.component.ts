@@ -261,7 +261,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       tempTodayDate.getDate().toString().padStart(2, '0')
     ].join('-');
 
-
     this.maxPublicationStartDate = this.todayDate;
     this.minPublicationStopDate = "";
 
@@ -429,6 +428,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     scrollDetailsLeft = document.getElementById('scroll-details-left')!;
     scrollDetailsRight = document.getElementById('scroll-details-right')!;
+
+    if (this.missionEl.length == 1) {
+      let header = this.missionEl[0].querySelector('.collapsible-header-div');
+      let missionInput = header.querySelector('.checkbox');
+      missionInput.click();
+      this.parseAdvancedFilter();
+    }
   }
 
   ngOnDestroy(): void {
@@ -488,7 +494,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         stac: this.productSearch.getCollections()
       })
     };
-    console.log("Object.keys(calls).length: " + Object.keys(calls).length);
     if (Object.keys(calls).length === 0) {
       advancedSearchSubmitIcon.classList.add('invalid');
       advancedSearchMagnifierIcon.classList.add('invalid');
