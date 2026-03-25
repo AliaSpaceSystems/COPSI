@@ -22,7 +22,7 @@
     "clientId": "prip_s5-catalogue",
     "_clientId": "ivv-gss1-client",
     "responseType": "code",
-    "scope": "openid profile email",
+    "scope": "openid profile email offline_access",
     "requireHttps": false,
     "showDebugInformation": false,
     "disableAtHashCheck": true,

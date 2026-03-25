@@ -74,6 +74,7 @@ export class AppComponent implements OnInit {
       this.oauthService.configure(this.ssoConfig);
       this.oauthService.tokenValidationHandler = new JwksValidationHandler();
       this.oauthService.loadDiscoveryDocumentAndTryLogin();
+      this.oauthService.setupAutomaticSilentRefresh();
   }
 
   get token() {
