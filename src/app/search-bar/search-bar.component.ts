@@ -500,12 +500,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     forkJoin(calls).subscribe({
       next: (res: any) => {
         if (res.odata) {
-          //console.log("res.odata: ", res.odata);
+          console.log("res.odata: ", res.odata);
           if (res.odata.error) {
             console.log("res.odata.error: ", res.odata.error);
             this.isOdataActive = false;
             console.log("OData failed: ", res.odata.details ?? "");
-          } else if (res.odata.data.status == 200 && res.odata.data.body.hasOwnProperty('$Version')) {
+          } else if (res.odata.error == false && res.odata.data.hasOwnProperty('$Version')) {
             this.isOdataActive = true;
           } else {
             this.isOdataActive = false;
@@ -1282,6 +1282,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             /* got a list */
             this.productList = res;
+            //console.log("this.productList: ", this.productList);
             if (this.productList.value) {
               this.productList.value.forEach((product: any) => {
                 product.isSelected = false;
