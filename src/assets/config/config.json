@@ -17,7 +17,7 @@
       "changePasswordUrl": "<issuer>/account/?referrer=<clientId>#/security/signingin",
       "clientId": "<client_id>",
       "responseType": "code",
-      "scope": "openid profile email",
+      "scope": "openid profile email offline_access",
       "requireHttps": false,
       "showDebugInformation": false,
       "disableAtHashCheck": true,
