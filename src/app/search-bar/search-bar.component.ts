@@ -429,6 +429,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     scrollDetailsLeft = document.getElementById('scroll-details-left')!;
     scrollDetailsRight = document.getElementById('scroll-details-right')!;
+
+    if (this.missionEl.length == 1) {
+      let header = this.missionEl[0].querySelector('.collapsible-header-div');
+      let missionInput = header.querySelector('.checkbox');
+      missionInput.click();
+      this.parseAdvancedFilter();
+    }
   }
 
   ngOnDestroy(): void {
