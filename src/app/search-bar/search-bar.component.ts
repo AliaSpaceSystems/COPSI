@@ -787,7 +787,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.missionEl.length > 1 || (this.missionEl.length == 1 && !this.isFirstMissionSelect)) {
       this.parseAdvancedFilter();
-    } else {
     }
     this.isFirstMissionSelect = false;
   }
