@@ -369,9 +369,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.checkTypedFilter();
     this.isLoggedSubscription = this.exchangeService.isLoggedExchange.subscribe((value) => {
       if (typeof(value) === 'boolean') {
+        let shouldCheck = !this.isLogged;
         this.isLogged = value;
-        this.exchangeService.setGssProtocol(this.gssSelectedProtocol);
-        this.checkGssProtocols();
+        if (shouldCheck) {
+          this.exchangeService.setGssProtocol(this.gssSelectedProtocol);
+          this.checkGssProtocols();
+        }
       }
     });
     this.updateGeoSearchSubscription = this.exchangeService.geoSearchOutputExchange.subscribe((value) => {
