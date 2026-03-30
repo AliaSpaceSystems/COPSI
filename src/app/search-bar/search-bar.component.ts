@@ -207,6 +207,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   showFootprintsMenuSubscription!: Subscription;
   updateGssProtocolSubscription!: Subscription;
   public gssProtocols = AppConfig.settings.searchOptions.gssSupportedProtocols;
+  private isFirstMissionSelect = true;
 
   public isLogged: boolean = false;
 
@@ -434,7 +435,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       let header = this.missionEl[0].querySelector('.collapsible-header-div');
       let missionInput = header.querySelector('.checkbox');
       missionInput.click();
-      this.parseAdvancedFilter();
     }
   }
 
@@ -787,7 +787,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       header.classList.add("active");
       content.style.maxHeight = "10000px";
     }
-    this.parseAdvancedFilter();
+    if (this.missionEl.length > 1 || (this.missionEl.length == 1 && !this.isFirstMissionSelect)) {
+      this.parseAdvancedFilter();
+    }
+    this.isFirstMissionSelect = false;
   }
 
   onSortByChanged(event: any) {
