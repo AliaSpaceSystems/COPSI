@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ExchangeService } from '../services/exchange.service';
 import { Subscription } from 'rxjs';
 /* Map Imports */
-import { Deck, MapView, _GlobeView as GlobeView, COORDINATE_SYSTEM, FlyToInterpolator } from '@deck.gl/core';
+import { Deck, MapView, _GlobeView as GlobeView, FlyToInterpolator } from '@deck.gl/core';
 import { TileLayer } from '@deck.gl/geo-layers';
 import { BitmapLayer, GeoJsonLayer, ScatterplotLayer, SolidPolygonLayer } from '@deck.gl/layers';
 import { wktToGeoJSON } from '@terraformer/wkt';
@@ -1675,12 +1675,13 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   initMap() {
     deckGlobe = new Deck({
       parameters: {
+        cullMode: 'back',
         cull: true
       },
       initialViewState: initialViewState,
       views: new GlobeView({
         id: 'globe',
-        resolution: 1,
+        resolution: 2,
         nearZMultiplier: 1.4, // 1.4 max near limit
         farZMultiplier: 2.0,
         controller: {keyboard: false, inertia: true, doubleClickZoom: false},
@@ -1737,6 +1738,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     deckPlane = new Deck({
       parameters: {
+        cullMode: 'back',
         cull: true
       },
       initialViewState: initialViewState,
