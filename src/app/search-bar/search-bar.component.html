@@ -212,7 +212,28 @@
           </label>
         </div>
       </div>
-      <div class="content"></div>
+      <div class="content">
+        @for (filter of stacQueryablesList; let i = $index; track filter;) {
+        <div class="advanced-search-filter-div">
+
+          <label for="filter">{{filter.title}}:</label>
+          @if (filter.type == "string") {
+          <input class="input stac" type="string" name="filter" title="{{filter.description}}" (change)="parseAdvancedFilter()">
+          }
+          @if (filter.type == "timestamp") {
+          <input class="input stac" type="date" name="filter" title="{{filter.description}}" (change)="parseAdvancedFilter()">
+          }
+          @if (filter.type == "boolean") {
+          <input class="input stac" type="number" name="filter" [min]="0" [max]="1" title="{{filter.description}}" (change)="parseAdvancedFilter()">
+          }
+          @if (filter.type == "number") {
+          <!-- <input class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()"> -->
+           <input class="input stac" type="number" name="filter" [min]="-999999" [max]="999999" [step]="1" title="{{filter.description}}" (change)="parseAdvancedFilter()">
+          }
+
+        </div>
+        }
+      </div>
       <hr>
     </div>
     }
@@ -328,7 +349,7 @@
               <mat-icon class="item-button-icon product-unselected" aria-hidden="false" aria-label="Select Product" title="Select Product" fontIcon="add"
               (click)="onShowProductDetails(product.Id, idx)"></mat-icon>
               }
-              @if (product.Footprint) {
+              @if (product.Footprint || product.GeoFootprint) {
                 <mat-icon class="material-symbols-outlined item-button-icon" title="Zoom To Map Position" aria-hidden="false" aria-label="Zoom To Map" fontIcon="travel_explore"
               (click)="onZoomToProduct(product.Id)"></mat-icon>
               }

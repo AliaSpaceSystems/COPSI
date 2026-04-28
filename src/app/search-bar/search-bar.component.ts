@@ -196,6 +196,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public gssSelectedProtocol: string = AppConfig.settings.searchOptions.defaultGssProtocol;
   public gssSelectedProtocolPrec: string = this.gssSelectedProtocol;
   public stacCollectionsList: string[] = [];
+  public stacQueryablesList: any[] = [];
   public isOdataActive: boolean = false;
   public isStacActive: boolean = false;
   public downloadSubscription: Map<String, Subscription> = new Map();
@@ -372,8 +373,9 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       if (typeof(value) === 'boolean') {
         let shouldCheck = !this.isLogged;
         this.isLogged = value;
+        this.exchangeService.setGssProtocol(this.gssSelectedProtocol);
         if (shouldCheck) {
-          this.exchangeService.setGssProtocol(this.gssSelectedProtocol);
+
           this.checkGssProtocols();
         }
       }
@@ -496,9 +498,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       }),
       ...(this.gssProtocols.includes('STAC') && {
         stac: this.productSearch.getCollections()
+      }),
+      ...(this.gssProtocols.includes('STAC') && {
+        stacQueryables: this.productSearch.getQueryables()
       })
     };
-    console.log("Object.keys(calls).length: " + Object.keys(calls).length);
+    //console.log("Object.keys(calls).length: " + Object.keys(calls).length);
     if (Object.keys(calls).length === 0) {
       advancedSearchSubmitIcon.classList.add('invalid');
       advancedSearchMagnifierIcon.classList.add('invalid');
@@ -530,17 +535,29 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           } else if (res.stac.data.hasOwnProperty("collections")) {
             this.stacCollectionsList = res.stac.data.collections.map((obj: any) => obj.id);
             this.isStacActive = true;
+            if (res.stacQueryables) {
+              //console.log("Queryables: ", res.stacQueryables);
+              if (res.stacQueryables.error) {
+                console.log("res.stac.error: ", res.stacQueryables.error);
+                this.isStacActive = false;
+                console.log("STAC failed: ", res.stacQueryables.details ?? "");
+              } else if (res.stacQueryables.data.hasOwnProperty("properties")) {
+                this.stacQueryablesList = Object.entries(res.stacQueryables.data.properties).map(([key, value]) => ({
+                  name: key,
+                  ...(value as Record<string, any>)
+                }));
+                //console.log("this.stacQueryablesList: ", this.stacQueryablesList);
+                //console.log(JSON.stringify(this.stacQueryablesList, null, 2));
+                this.isStacActive = true;
+              } else {
+                this.isStacActive = false;
+              }
+            }
           } else {
             this.isStacActive = false;
           }
         }
-      },
-      error: (err: any) => {
-        this.isOdataActive = false;
-        this.isStacActive = false;
-        console.error(err);
-      },
-      complete: () => {
+
         if (this.isLogged) {
           console.log("Check for OData module availability: ", this.isOdataActive);
           console.log("Check for STAC module availability: ", this.isStacActive);
@@ -555,6 +572,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
         if (this.gssSelectedProtocol === "STAC" && this.isStacActive === false) {
+          console.log("CHECK HERE!");
           if (this.gssProtocols.includes('OData')) {
             this.exchangeService.setGssProtocol("OData");
           } else {
@@ -571,6 +589,44 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           advancedSearchMagnifierIcon.classList.remove('invalid');
           this.canSubmitSearch = true;
         }
+      },
+      error: (err: any) => {
+        this.isOdataActive = false;
+        this.isStacActive = false;
+        console.error(err);
+      },
+      complete: () => {
+        /* if (this.isLogged) {
+          console.log("Check for OData module availability: ", this.isOdataActive);
+          console.log("Check for STAC module availability: ", this.isStacActive);
+        }
+        this.exchangeService.setOdataActive(this.isOdataActive);
+        this.exchangeService.setStacActive(this.isStacActive);
+        if (this.gssSelectedProtocol === "OData" && this.isOdataActive === false) {
+          if (this.gssProtocols.includes('STAC')) {
+            this.exchangeService.setGssProtocol("STAC");
+          } else {
+            console.log("ERROR: OData is not available, but STAC is not set as an alternative");
+          }
+        }
+        if (this.gssSelectedProtocol === "STAC" && this.isStacActive === false) {
+          console.log("CHECK HERE!");
+          if (this.gssProtocols.includes('OData')) {
+            this.exchangeService.setGssProtocol("OData");
+          } else {
+            console.log("ERROR: STAC is not available, but OData is not set as an alternative");
+          }
+        }
+        if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
+          advancedSearchSubmitIcon.classList.add('invalid');
+          advancedSearchMagnifierIcon.classList.add('invalid');
+          this.canSubmitSearch = false;
+          this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
+        } else {
+          advancedSearchSubmitIcon.classList.remove('invalid');
+          advancedSearchMagnifierIcon.classList.remove('invalid');
+          this.canSubmitSearch = true;
+        } */
       }
     })
   }
@@ -1090,9 +1146,11 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   parseAdvancedFilterStac() {
+    delete this.stacFilter.filter;
     this.stacFilter.collections = [];
     this.stacFilter.ids = [];
     this.stacFilter.datetime = "";
+
     this.canSubmitSearch = true;
 
     /* Parsing name (ids) */
@@ -1140,6 +1198,77 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         // TODO: When there will be working GSS properties search, change the stacCollectionsList structure.
         //this.stacFilter.collections?.push(this.platformDetailsList[i].value);
         this.stacFilter.collections?.push(this.stacCollectionsList[i]);
+
+        /* Check every attribute in the mission */
+        let contentDiv = el.getElementsByClassName('content');
+        [].forEach.call(contentDiv, (missionDiv:any) => {
+          let missionItems = missionDiv.getElementsByClassName('advanced-search-filter-div');
+          [].forEach.call(missionItems, (item:any, k:any) => {
+            // for each attribute in the mission
+
+            let inputs = item.getElementsByTagName('input');
+            [].forEach.call(inputs, (input:any) => {
+              let gotValue: boolean = false;
+              let value: string = "";
+              let gotMinValue: boolean = false;
+              let gotMaxValue: boolean = false;
+              if (input !== undefined) {
+                value = input.value;
+                if (value !== "") {
+                  if (input.classList.contains("input-min")) {
+                    let maxValueEl = this.getNextSibling(input, ".input-max")!;
+                    if(maxValueEl.value === "" || Number(maxValueEl.value) >= Number(input.value)) {
+                      gotMinValue = true;
+                      gotValue = true;
+                      input.setCustomValidity("");
+                    } else {
+                      advancedSearchSubmitIcon.classList.add('invalid');
+                      advancedSearchMagnifierIcon.classList.add('invalid');
+                      input.setCustomValidity("Please check input: Min Value > Max Value");
+                      this.canSubmitSearch = false;
+                    }
+                  }
+                  if (input.classList.contains("input-max")) {
+                    let minValueEl = this.getPreviousSibling(input, ".input-min")!;
+                    if(minValueEl.value === "" || Number(minValueEl.value) <= Number(input.value)) {
+                      gotMaxValue = true;
+                      gotValue = true;
+                      input.setCustomValidity("");
+                    } else {
+                      advancedSearchSubmitIcon.classList.add('invalid');
+                      advancedSearchMagnifierIcon.classList.add('invalid');
+                      input.setCustomValidity("Please check input: Max Value < Min Value");
+                      this.canSubmitSearch = false;
+                    }
+                  } else {
+                    gotValue = true;
+                  }
+                }
+              }
+              if (gotValue) {
+                //console.log("TODO - gotValue - gotMinValue: ", gotMinValue);
+                //console.log("TODO - gotValue - gotMaxValue: ", gotMaxValue);
+                //console.log("TODO - gotValue - value: ", value);
+                if (!this.stacFilter.hasOwnProperty('filter')) {
+                  this.stacFilter.filter = {op: "and", args: []};
+                }
+                if (this.stacFilter.filter) {
+                  this.stacFilter.filter['args'].push({
+                    op: "=",
+                    args: [{
+                      property: this.stacQueryablesList[k].name
+                    }, value]
+                  });
+                }
+                /* this.attributeFilter += " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
+                  "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
+                  "' and att/" + this.platformDetailsList[i].filters[k].attributeType + (gotMinValue ? "/Value ge " : (gotMaxValue ? "/Value le " : "/Value eq ")) +
+                  (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")"; */
+              }
+            });
+          });
+        });
+
       }
     });
 
@@ -1295,6 +1424,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             /* got a list */
             this.productList = res;
+            console.log("this.productList: ", this.productList);
             if (this.productList.value) {
               this.productList.value.forEach((product: any) => {
                 product.isSelected = false;
@@ -1436,10 +1566,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 "@odata.count": this.productTotalNumber,
                 value: []
               };
+              console.log(res.features);
               res.features.forEach((feature: any) => {
                 let tempProduct: any = {};
                 // First add parsed properties
                 tempProduct.Name = feature.hasOwnProperty('id') ? feature.id : "";
+                //tempProduct.Id = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('uuid')) ? feature.properties.uuid : "N/D";
                 tempProduct.platformShortName = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) ? feature.properties.constellation.toUpperCase() : "";
                 tempProduct.platformSerialIdentifier = feature.hasOwnProperty('id') ? this.getPlatformSerialIdentifierFromProductId(feature.id) : "";
                 tempProduct.ContentDate = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('start_datetime')) ? {
@@ -1448,8 +1580,13 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 } : {Start: "", End: ""};
                 // Add autoconverted properties
                 Object.entries(this.stacPropertiesList).forEach(([key, value]) => {
-                  tempProduct[<string>key] = feature.properties[<string>value];
+                  if (key == 'Id') {
+                    tempProduct[<string>key] = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('uuid')) ? feature.properties.uuid : "N/D";
+                  } else {
+                    tempProduct[<string>key] = feature.properties[<string>value];
+                  }
                 })
+
                 // Set other empty props
                 tempProduct.isSelected = false;
                 if (feature.hasOwnProperty('assets') && feature.assets.hasOwnProperty('product')) {
@@ -1501,6 +1638,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   },
                   error: (e) => {}
                 });
+
+                //console.log("tempProduct: ", tempProduct);
 
                 [].forEach.call(this.selectedProducts ,(sel: any, index: number) => {
                   sel.isInList = false;

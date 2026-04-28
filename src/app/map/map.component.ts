@@ -1655,7 +1655,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
       id: "mapLayer",
       data: mapLayers[selectedMapStyleIndex].url,
       maxZoom: 14,
-      tileSize: 256,
+      tileSize: 512,
 
       renderSubLayers: (props: any) => {
         const {boundingBox} = props.tile;

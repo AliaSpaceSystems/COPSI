@@ -406,6 +406,12 @@ hr {
   color: $main-dark-text-color-select;
   font-size: $search-bar-font-size-small;
 }
+.advanced-search-filter-div .input.stac, .input-min.stac, .input-max.stac {
+  width: 60%;
+}
+.advanced-search-filter-div > :last-child {
+  margin-left: auto;
+}
 
 .collapsible-section {
   width: 100%;

@@ -325,6 +325,22 @@ export class ProductSearchService {
     );
   }
 
+  getQueryables() {
+    if (!this.isLogged) return of({ error: false, data: null });
+    const url = AppConfig.settings.serviceUrlStac + '/stac/queryables';
+    return this.http.get<any>(url, httpOptions).pipe(
+      map(res => ({
+        error: false,
+        data: res
+      })),
+      catchError(e => of({
+        error: true,
+        data: null,
+        details: e
+      }))
+    );
+  }
+
   private saveWithLink(blob: Blob, filename: string): void {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');

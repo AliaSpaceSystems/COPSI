@@ -53,7 +53,7 @@
       "OData",
       "STAC"
     ],
-    "defaultGssProtocol": "OData"
+    "defaultGssProtocol": "STAC"
   },
   "headerSettings": {
     "showUserEditButton": true,
