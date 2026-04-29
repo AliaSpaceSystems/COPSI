@@ -53,6 +53,7 @@ let advancedSearchSubmitIcon: any;
 let footprintMenuContainer: any;
 let footprintMenuScrollableDiv: any;
 let footprintMenuScrollThumb: any;
+let textSearchSuggestionsContainer: any;
 
 let scrollDetailsLeft: any;
 let scrollDetailsRight: any;
@@ -212,6 +213,14 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public isLogged: boolean = false;
 
+  private typingTimeoutId: any;
+  private typingTimeout: number = 750;
+  private suggestionTimeoutId: any;
+  private suggestionTimeout: number = 5000;
+  public foundSuggestions: string[] = []; //["product:type", "processingMode", "sar:instrument_mode", "altro.."];
+  private foundSuggestionMaxNum: number = 8;
+  public foundSuggestionSelected: number = -1;
+
   constructor(
     private exchangeService: ExchangeService,
     private productSearch: ProductSearchService,
@@ -256,6 +265,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     productDetailsItemListContainer = document.getElementById('product-details-item-list-container')!;
     footprintMenuContainer = document.getElementById('footprint-menu-container')!;
     footprintMenuScrollableDiv = document.getElementById('footprint-menu-scrollable-div')!;
+    textSearchSuggestionsContainer = document.getElementById('search-suggestion-div');
 
     let tempTodayDate = new Date();
     this.todayDate = [tempTodayDate.getFullYear(),
@@ -459,6 +469,34 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateGssProtocolSubscription.unsubscribe();
   }
 
+  onTextSearchKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      if (this.foundSuggestionSelected === -1) {
+        this.onAdvancedSearchSubmit(event);
+      } else {
+        this.insertSuggestedStacFilter(this.foundSuggestions[this.foundSuggestionSelected]);
+        this.foundSuggestionSelected = -1;
+        document.getElementById('search-input')?.focus();
+      }
+    }
+    if (event.key === 'ArrowDown') {
+      this.foundSuggestionSelected += 1;
+      if (this.foundSuggestionSelected > this.foundSuggestionMaxNum - 1) this.foundSuggestionSelected = this.foundSuggestionMaxNum - 1;
+      clearTimeout(this.suggestionTimeoutId);
+      this.suggestionTimeoutId = setTimeout(() => {
+        this.hideTextSearchSuggestionDiv();
+      }, this.suggestionTimeout);
+    }
+    if (event.key === 'ArrowUp') {
+      this.foundSuggestionSelected -= 1;
+      if (this.foundSuggestionSelected < -1) this.foundSuggestionSelected = -1;
+      clearTimeout(this.suggestionTimeoutId);
+      this.suggestionTimeoutId = setTimeout(() => {
+        this.hideTextSearchSuggestionDiv();
+      }, this.suggestionTimeout);
+    }
+  }
+
   checkTypedFilter() {
     /* Filter parsing while typing */
     let searchFilterTextDiv: any = document.getElementById('search-input')!;
@@ -473,7 +511,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           setTimeout(() => {
             this.checkFilterOutputHeight();
           }, 50);
-        }, 500);
+        }, 750);
       })
     });
 
@@ -486,7 +524,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
           setTimeout(() => {
             this.checkFilterOutputHeight();
           }, 50);
-        }, 500);
+        }, 750);
       })
     });
   }
@@ -546,7 +584,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   name: key,
                   ...(value as Record<string, any>)
                 }));
-                //console.log("this.stacQueryablesList: ", this.stacQueryablesList);
+                console.log("this.stacQueryablesList: ", this.stacQueryablesList);
+                console.log("Types: ", [...new Set(this.stacQueryablesList.map(item => item.type))]);
                 //console.log(JSON.stringify(this.stacQueryablesList, null, 2));
                 this.isStacActive = true;
               } else {
@@ -594,39 +633,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isOdataActive = false;
         this.isStacActive = false;
         console.error(err);
-      },
-      complete: () => {
-        /* if (this.isLogged) {
-          console.log("Check for OData module availability: ", this.isOdataActive);
-          console.log("Check for STAC module availability: ", this.isStacActive);
-        }
-        this.exchangeService.setOdataActive(this.isOdataActive);
-        this.exchangeService.setStacActive(this.isStacActive);
-        if (this.gssSelectedProtocol === "OData" && this.isOdataActive === false) {
-          if (this.gssProtocols.includes('STAC')) {
-            this.exchangeService.setGssProtocol("STAC");
-          } else {
-            console.log("ERROR: OData is not available, but STAC is not set as an alternative");
-          }
-        }
-        if (this.gssSelectedProtocol === "STAC" && this.isStacActive === false) {
-          console.log("CHECK HERE!");
-          if (this.gssProtocols.includes('OData')) {
-            this.exchangeService.setGssProtocol("OData");
-          } else {
-            console.log("ERROR: STAC is not available, but OData is not set as an alternative");
-          }
-        }
-        if (!this.isOdataActive && !this.isStacActive && this.isLogged) {
-          advancedSearchSubmitIcon.classList.add('invalid');
-          advancedSearchMagnifierIcon.classList.add('invalid');
-          this.canSubmitSearch = false;
-          this.alert.showErrorAlert("GSS PROTOCOL ERROR", "Both STAC and OData protocols seem to be inactive.");
-        } else {
-          advancedSearchSubmitIcon.classList.remove('invalid');
-          advancedSearchMagnifierIcon.classList.remove('invalid');
-          this.canSubmitSearch = true;
-        } */
       }
     })
   }
@@ -685,6 +691,10 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.toast.showInfoToast('success', 'FILTER OUTPUT COPIED');
   }
 
+  getStringified(obj: any) {
+    return JSON.stringify(obj, null, 2)
+  }
+
   onPushPinToggle (event: any) {
     let pinIcon = document.getElementById('pin-search-filter-output-icon')!;
     if (pinIcon.classList.contains('unpinned')) {
@@ -715,6 +725,71 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.checkFilterOutputHeight();
       this.checkAdvancedSearchThumbSize();
     }, 300);
+  }
+
+  onTextSearchChanged(event: any) {
+    const inputEl = event.target;
+    const inputWordsArr = inputEl.value.split(' ');
+    const inputText = inputWordsArr[inputWordsArr.length - 1];
+    if (inputText === "" || inputWordsArr.length === 0) {
+      clearTimeout(this.typingTimeoutId);
+      this.hideTextSearchSuggestionDiv();
+      return;
+    }
+    clearTimeout(this.typingTimeoutId);
+    clearTimeout(this.suggestionTimeoutId);
+    this.typingTimeoutId = setTimeout(() => {
+      this.foundSuggestionSelected = -1;
+      this.foundSuggestions = this.stacQueryablesList.map(item => item.name).filter(item => item.includes(inputText)).slice(0, this.foundSuggestionMaxNum);
+      //console.log("this.foundSuggestions: ", this.foundSuggestions);
+      textSearchSuggestionsContainer?.classList.remove('display-none');
+      setTimeout(() => {this.showTextSearchSuggestionsDiv();}, 10);
+      this.suggestionTimeoutId = setTimeout(() => {
+        this.hideTextSearchSuggestionDiv();
+      }, this.suggestionTimeout);
+    }, this.typingTimeout);
+  }
+  onTextSearchSuggestionDivMouseOver(event: any) {
+    clearTimeout(this.suggestionTimeoutId);
+  }
+  onTextSearchSuggestionDivMouseLeave(event: any) {
+    clearTimeout(this.suggestionTimeoutId);
+    this.suggestionTimeoutId = setTimeout(() => {
+      this.hideTextSearchSuggestionDiv();
+    }, this.suggestionTimeout);
+  }
+  onTextSearchSuggestedMouseOver(event: any, i: number) {
+    this.foundSuggestionSelected = i;
+    setTimeout(() => {
+      clearTimeout(this.suggestionTimeoutId);
+    }, 10)
+  }
+  onTextSearchSuggestionMouseClick(event: any) {
+    const text = event.target.innerText;
+    this.insertSuggestedStacFilter(text);
+    document.getElementById('search-input')?.focus();
+    this.suggestionTimeoutId = setTimeout(() => {
+      this.hideTextSearchSuggestionDiv();
+    }, 250);
+  }
+  showTextSearchSuggestionsDiv() {
+    if (this.foundSuggestions.length > 0) {
+      textSearchSuggestionsContainer?.classList.remove('hidden');
+    }
+  }
+  hideTextSearchSuggestionDiv() {
+    textSearchSuggestionsContainer?.classList.add('hidden');
+    setTimeout(() => {
+      textSearchSuggestionsContainer?.classList.add('display-none');
+    }, 250);
+  }
+  insertSuggestedStacFilter(text: string) {
+    // cleanup last typed characters
+    this.filter = this.filter.slice(0, this.filter.lastIndexOf(' ') > -1 ? this.filter.lastIndexOf(' ') : 0);
+    // insert text into search filter
+    this.filter = this.filter === '' ? text + ' = ' : this.filter + ' ' + text + ' = ';
+    this.hideTextSearchSuggestionDiv();
+    this.parseAdvancedFilterStac();
   }
 
   onAdvancedSearchClear() {
@@ -818,11 +893,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   onDateClicked(event: any) {
     /* uncomment to show picker calendar on date click */
     //event.target.showPicker();
-
-    this.publicationStartEl = document.getElementById('publication-start')!;
-    this.publicationStopEl = document.getElementById('publication-stop')!;
-    this.maxPublicationStartDate = this.publicationStopEl.value;
-    this.minPublicationStopDate = this.publicationStartEl.value;
   }
 
   onMissionFilterButtonClicked(event: any) {
@@ -1155,7 +1225,108 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /* Parsing name (ids) */
     if (this.filter !== "") {
-      this.stacFilter.ids = [this.filter];
+      const filterWordsArr = this.filter.split(' ');
+      let isQueryable: boolean[] = Array(filterWordsArr.length).fill(false);
+
+      filterWordsArr.forEach((filterWordItem: any, index: number) => {
+        // Check if it is a queryable filter
+        [].forEach.call(this.stacQueryablesList, (queryableItem: any) => {
+          // if it is a valid queryable filter, insert text into stac filter output
+          if (filterWordItem.toLowerCase() === queryableItem.name.toLowerCase()) {
+            if (filterWordsArr.length -1 >= index + (filterWordsArr[index + 1].toLowerCase() === 'isnull' ? 1 : 2)) {
+              // mark this and the next 2 words as part of the queryable filter
+              isQueryable[index] = isQueryable[index + 1] = true;
+              if (filterWordsArr[index + 1].toLowerCase() !== 'isnull') {
+                isQueryable[index + 2] = true;
+              }
+              if (!this.stacFilter.hasOwnProperty('filter')) {
+                // use AND logic as default. Can be changed after if another logic word will be found
+                this.stacFilter.filter = {op: "and", args: []};
+              }
+
+              // Check stac queryable filter type
+              let queryValue: any;
+              if (queryableItem.type === 'string') {
+                if (filterWordsArr[index + 1].toLowerCase() === 'in') {
+                  queryValue = [filterWordsArr[index + 2], filterWordsArr[index + 3]];
+                  isQueryable[index + 3] = true;
+                } else if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
+                  queryValue = null;
+                } else {
+                  queryValue = filterWordsArr[index + 2];
+                }
+              } else if (queryableItem.type === 'number') {
+                if (filterWordsArr[index + 1].toLowerCase() === 'between' || filterWordsArr[index + 1].toLowerCase() === 'in') {
+                  queryValue = [parseInt(filterWordsArr[index + 2]), parseInt(filterWordsArr[index + 3])];
+                  isQueryable[index + 3] = true;
+                } else if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
+                  queryValue = null;
+                } else {
+                  queryValue = parseInt(filterWordsArr[index + 2]);
+                }
+              } else if (queryableItem.type === 'timestamp') {
+                if (filterWordsArr[index + 1].toLowerCase() === 'between' || filterWordsArr[index + 1].toLowerCase() === 'in') {
+                  const inputValue1 = filterWordsArr[index + 2].replace('/', '-');
+                  const inputValue2 = filterWordsArr[index + 3].replace('/', '-');
+                  queryValue = [new Date(inputValue1).toISOString(), new Date(inputValue2).toISOString()];
+                  isQueryable[index + 3] = true;
+                } else if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
+                  queryValue = null;
+                } else {
+                  const inputValue = filterWordsArr[index + 2].replace('/', '-');
+                  queryValue = new Date(inputValue).toISOString();
+                }
+              } else if (queryableItem.type === 'boolean') {
+                if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
+                  queryValue = null;
+                } else {
+                  // Accept:  value = 1 OR value = true OR value = True
+                  queryValue = filterWordsArr[index + 2];
+                }
+              }
+
+              //console.log("queryValue: ", queryValue);
+              if (this.stacFilter.filter) {
+                this.stacFilter.filter['args'].push({
+                  op: filterWordsArr[index + 1].toLowerCase() === 'isnull' ? 'isNull' : filterWordsArr[index + 1].toLowerCase(),
+                  args: [
+                    {
+                      property: filterWordsArr[index]
+                    }
+                  ]
+                });
+                if (filterWordsArr[index + 1].toLowerCase() !== 'isnull') {
+                  let tempValue: any = null;
+                  Array.isArray(queryValue) ? (filterWordsArr[index + 1].toLowerCase() === 'between' ? tempValue = queryValue[0] : filterWordsArr[index + 1].toLowerCase() === 'in' ? tempValue = queryValue : tempValue = queryValue[0]) : tempValue = queryValue;
+                  this.stacFilter.filter['args'][this.stacFilter.filter['args'].length - 1]['args'].push(tempValue);
+                  if (Array.isArray(queryValue) && filterWordsArr[index + 1].toLowerCase() === 'between') {
+                    this.stacFilter.filter['args'][this.stacFilter.filter['args'].length - 1]['args'].push(queryValue[1]);
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        // perform other checks if the word is not part of a queryable filter
+        if (!isQueryable[index]) {
+          if (["and", "or"].includes(filterWordsArr[index])) {
+            isQueryable[index] = true;
+            if (!this.stacFilter.hasOwnProperty('filter')) {
+              // use AND logic as default. Can be changed after if another logic word will be found
+              this.stacFilter.filter = {op: filterWordsArr[index].toLowerCase(), args: []};
+            } else {
+              this.stacFilter.filter!['op'] = filterWordsArr[index].toLowerCase();
+            }
+          }
+        }
+      });
+      isQueryable.forEach((isQueryableItem: boolean, index: number) => {
+        if (!isQueryableItem && filterWordsArr[index] != '') {
+          if (!this.stacFilter.ids) this.stacFilter.ids = [];
+          this.stacFilter.ids.push(filterWordsArr[index]);
+        }
+      });
     }
 
     /* Check for GSS modules availability */
@@ -1165,7 +1336,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       this.canSubmitSearch = false;
     }
 
-    /* Parsing datetime */
+    /* Parsing sensing datetime */
     if (this.sensingStartEl.value !== "") {
       if (this.sensingStopEl.value === "" || (this.sensingStartEl.value <= this.sensingStopEl.value)) {
         this.sensingStartEl.setCustomValidity("");
@@ -1187,6 +1358,66 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         advancedSearchSubmitIcon.classList.add('invalid');
         advancedSearchMagnifierIcon.classList.add('invalid');
         this.sensingStopEl.setCustomValidity("Please check Sensing Stop Date: Stop Date < Start Date");
+        this.canSubmitSearch = false;
+      }
+    }
+
+    /* Parsing publication datetime */
+    if (this.publicationStartEl.value !== "") {
+      if (!this.stacFilter.hasOwnProperty('filter')) {
+        this.stacFilter.filter = {op: "and", args: []};
+      }
+      this.publicationStartEl.setCustomValidity("");
+      this.stacFilter.filter!['args'].push({
+        op: '>',
+        args: [
+          {
+            property: 'published'
+          },
+          new Date(this.publicationStartEl.value).toISOString()
+        ]
+      });
+    }
+    if (this.publicationStopEl.value !== "") {
+      if (this.publicationStartEl.value === "") {
+        // Commented because the op 'between' doesn't work with 'published'
+        /* if (!this.stacFilter.hasOwnProperty('filter')) {
+          this.stacFilter.filter = {op: "and", args: []};
+        }
+        this.publicationStartEl.setCustomValidity("");
+        this.stacFilter.filter!['args'].push({
+          op: '<',
+          args: [
+            {
+              property: 'published'
+            },
+            new Date(this.publicationStopEl.value + 'T23:59:59.999Z').toISOString()
+          ]
+        }); */
+      } else if (this.publicationStartEl.value <= this.publicationStopEl.value) {
+        this.publicationStopEl.setCustomValidity("");
+        // Commented because the op 'between' doesn't work with 'published'
+        /* this.stacFilter.filter!['args'][this.stacFilter.filter!['args'].length - 1]['op'] = 'between';
+        this.stacFilter.filter!['args'][this.stacFilter.filter!['args'].length - 1]['args'].push(new Date(this.publicationStopEl.value).toISOString()); */
+
+        // Just add another filter in place of 'between' method
+        if (!this.stacFilter.hasOwnProperty('filter')) {
+          this.stacFilter.filter = {op: "and", args: []};
+        }
+        this.publicationStartEl.setCustomValidity("");
+        this.stacFilter.filter!['args'].push({
+          op: '<',
+          args: [
+            {
+              property: 'published'
+            },
+            new Date(this.publicationStopEl.value + 'T23:59:59.999Z').toISOString()
+          ]
+        });
+      } else {
+        advancedSearchSubmitIcon.classList.add('invalid');
+        advancedSearchMagnifierIcon.classList.add('invalid');
+        this.publicationStartEl.setCustomValidity("Please check Publication Stop Date: Stop Date < Start Date");
         this.canSubmitSearch = false;
       }
     }

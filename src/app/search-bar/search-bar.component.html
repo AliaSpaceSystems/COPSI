@@ -10,11 +10,21 @@
   <input id="search-input" type="text" placeholder="Type a search string: e.g. *MSIL1C*" [(ngModel)]="filter" (keydown.enter)="onAdvancedSearchSubmit($event)" value="{{filter}}" title="Type a search string">
   }
   @else {
-  <input id="search-input" type="text" placeholder="Type a product name to search" [(ngModel)]="filter" (keydown.enter)="onAdvancedSearchSubmit($event)" value="{{filter}}" title="Type a search string">
+  <input id="search-input" type="text" placeholder="Type a product name to search" [(ngModel)]="filter" (keydown)="onTextSearchKeyDown($event)" (input)="onTextSearchChanged($event)" value="{{filter}}" title="Type a search string">
   }
   <div id="search-magnifier-icon-div">
     <mat-icon id="search-magnifier-icon" aria-hidden="false" aria-label="Search icon" fontIcon="search" title="Perform search" (click)="onAdvancedSearchSubmit($event)"></mat-icon>
   </div>
+</div>
+
+<div id="search-suggestion-div" class="hidden" (mouseover)="onTextSearchSuggestionDivMouseOver($event)">
+  <ul>
+  @for (suggestion of foundSuggestions; track suggestion; let i = $index;) {
+    <li [class.selected]="i === foundSuggestionSelected" (mouseover)="onTextSearchSuggestedMouseOver($event, i)" (mouseleave)="onTextSearchSuggestionDivMouseLeave($event)" (click)="onTextSearchSuggestionMouseClick($event)">
+      {{suggestion}}
+    </li>
+  }
+  </ul>
 </div>
 
 <!-- OData Filter Output -->
@@ -23,14 +33,14 @@
     <div id="filter-output-label">Search filter output:</div>
     <div id="filter-output-icons-div">
       <div id="filter-output-protocol-div">Protocol:<span>{{gssSelectedProtocol}}</span></div>
-      <mat-icon id="copy-search-filter-output-icon" aria-hidden="false" aria-label="copy search filter output icon" title="Copy search filter output" (click)="onCopyOutputClicked($event)">content_copy</mat-icon>
+      <mat-icon id="copy-search-filter-output-icon" aria-hidden="false" aria-label="copy search filter output icon" title="Copy the complete search filter output" (click)="onCopyOutputClicked($event)">content_copy</mat-icon>
       <mat-icon id="pin-search-filter-output-icon" [class]="filterOutputIsPinnedByDefault ? 'pinned' : 'unpinned'" aria-hidden="false" aria-label="pin search filter output icon" [title]="filterOutputIsPinnedByDefault ? 'Unpin search filter output' : 'Pin search filter output'" (click)="onPushPinToggle($event)">push_pin</mat-icon>
     </div>
   </div>
   <hr>
   <div id="filter-output-scrollable-div">
     @if (gssSelectedProtocol === "OData") {
-    <p>
+    <p title="{{parsedFilter}} {{productFilter}} {{attributeFilter}} {{geoFilter}}">
       <span>{{parsedFilter}}</span>
       @if (parsedFilter !== '' && parsedFilter !== undefined && (productFilter !== '' || attributeFilter !== '' || geoFilter !== '')) {
       <span> and </span>
@@ -48,7 +58,7 @@
     }
     @else {
     <p>
-      <span><pre>{{convertStacJsonToOutputString(stacFilter)}}</pre></span>
+      <span><pre title="{{getStringified(stacFilter)}}">{{convertStacJsonToOutputString(stacFilter)}}</pre></span>
     </p>
     }
   </div>
@@ -101,32 +111,12 @@
         </div>
       </div>
       <div class="advanced-search-item-div">
-        @if (gssSelectedProtocol === "OData") {
         <label for="publication-start">Publication date:</label>
         <div class="datepicker-div">
-          <!-- <input type="date" class="date" id="publication-start" name="publication-start"
-            [max]="(publicationStopEl.value && publicationStopEl.value === '') ? todayDate : publicationStopEl.value" title="Publication start date"
-            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)"> -->
-          <input type="date" class="date" id="publication-start" name="publication-start"
-            [max]="maxPublicationStartDate" title="Publication start date"
-            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="publication-start" name="publication-start" [max]="maxPublicationStartDate" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
           <span>-</span>
-          <!-- <input type="date" class="date" id="publication-stop" name="publication-stop"
-            [min]="(publicationStartEl && publicationStartEl.value && publicationStartEl.value === '' ) ? undefined : publicationStartEl.value" [max]="todayDate" title="Publication start date"
-            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)"> -->
-          <input type="date" class="date" id="publication-stop" name="publication-stop"
-            [min]="minPublicationStopDate" [max]="todayDate" title="Publication start date"
-            (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
+          <input type="date" class="date" id="publication-stop" name="publication-stop" [min]="minPublicationStopDate" [max]="todayDate" title="Publication start date" (change)="parseAdvancedFilter()" (click)="onDateClicked($event)">
         </div>
-        }
-        @else {
-        <label for="publication-start" class="stac-disabled">Publication date:</label>
-        <div class="datepicker-div">
-          <input type="date" class="date stac-disabled" id="publication-start" name="publication-start" title="Publication start date" value="">
-          <span class="stac-disabled">-</span>
-          <input type="date" class="date stac-disabled" id="publication-stop" name="publication-stop" title="Publication start date" value="">
-        </div>
-        }
       </div>
     </div>
     <hr>
@@ -216,7 +206,7 @@
         @for (filter of stacQueryablesList; let i = $index; track filter;) {
         <div class="advanced-search-filter-div">
 
-          <label for="filter">{{filter.title}}:</label>
+          <label for="filter" title="{{filter.title}}">{{filter.name}}:</label>
           @if (filter.type == "string") {
           <input class="input stac" type="string" name="filter" title="{{filter.description}}" (change)="parseAdvancedFilter()">
           }
