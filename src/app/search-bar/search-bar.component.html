@@ -78,20 +78,12 @@
   <div id="advanced-search-scrollable-container">
     <div class="advanced-search-main-filters">
       <div class="advanced-search-item-div">
-        @if (gssSelectedProtocol === "OData") {
         <label for="order-by">Order by:</label>
         <select class="select" title="Change order value" (change)="onOrderByChanged($event)">
           @for (option of orderByOptions; track option.name;) {
           <option>{{option.name}}</option>
           }
         </select>
-        }
-        @else {
-        <label class="stac-disabled" for="order-by" disabled>Order by:</label>
-        <select class="select stac-disabled" title="Change order value" disabled>
-          <option>---</option>
-        </select>
-        }
       </div>
       <div class="advanced-search-item-div">
         <label for="sort-by">Sort by:</label>
@@ -203,7 +195,7 @@
         </div>
       </div>
       <div class="content">
-        @for (filter of stacQueryablesList; let i = $index; track filter;) {
+        <!-- @for (filter of stacQueryablesList; let i = $index; track filter;) {
         <div class="advanced-search-filter-div">
 
           <label for="filter" title="{{filter.title}}">{{filter.name}}:</label>
@@ -217,12 +209,11 @@
           <input class="input stac" type="number" name="filter" [min]="0" [max]="1" title="{{filter.description}}" (change)="parseAdvancedFilter()">
           }
           @if (filter.type == "number") {
-          <!-- <input class="input" type="number" name="filter" [min]="filter.minValue" [max]="filter.maxValue" [step]="filter.step" title="Type a number from {{filter.minValue}} to {{filter.maxValue}}" (change)="parseAdvancedFilter()"> -->
            <input class="input stac" type="number" name="filter" [min]="-999999" [max]="999999" [step]="1" title="{{filter.description}}" (change)="parseAdvancedFilter()">
           }
 
         </div>
-        }
+        } -->
       </div>
       <hr>
     </div>

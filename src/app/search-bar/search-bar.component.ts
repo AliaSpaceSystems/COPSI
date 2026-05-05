@@ -17,7 +17,7 @@ interface StacSearch {
   "fields"?: {[key: string]: any};
   "collections"?: [string?];
   "intersects"?: {[key: string]: any};
-  "sortby": [{[key: string]: any}];
+  "sortby": {[key: string]: any}[];
   "limit": number;
   "page": number;
 }
@@ -72,6 +72,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public sortBy: string = this.sortByOptions[0].value;
   public orderByOptions = AppConfig.settings.searchOptions.orderByOptions;
   public orderBy: string = this.orderByOptions[0].value;
+  public orderByStac: string = this.orderByOptions[0].stacValue;
   public platformDetailsList = AppConfig.settings.platformDetailsList;
   public advancedFilterIsActive: boolean = false;
   public advancedFilterOutputIsActive: boolean = false;
@@ -93,10 +94,12 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   public attributeFilter: string = "";
   public geoFilter: string = "";
   public stacFilter: StacSearch = {
-    "sortby": [{
-        "field": "properties.updated",
+    "sortby": [
+      {
+        "field": "properties.published",
         "direction": "desc"
-    }],
+      }
+    ],
     "limit": AppConfig.settings.searchOptions.productsPerPageStac,
     "page": 1
   };
@@ -584,8 +587,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   name: key,
                   ...(value as Record<string, any>)
                 }));
-                console.log("this.stacQueryablesList: ", this.stacQueryablesList);
-                console.log("Types: ", [...new Set(this.stacQueryablesList.map(item => item.type))]);
+                //console.log("this.stacQueryablesList: ", this.stacQueryablesList);
+                //console.log("Types: ", [...new Set(this.stacQueryablesList.map(item => item.type))]);
                 //console.log(JSON.stringify(this.stacQueryablesList, null, 2));
                 this.isStacActive = true;
               } else {
@@ -924,10 +927,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSortByChanged(event: any) {
     this.sortBy = AppConfig.settings.searchOptions.sortByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
+    this.stacFilter.sortby[0]['direction'] = this.sortBy.toLowerCase();
+    this.parseAdvancedFilter();
   }
 
   onOrderByChanged(event: any) {
     this.orderBy = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].value;
+    this.orderByStac = AppConfig.settings.searchOptions.orderByOptions.filter((option: any) => option.name === (event.target as HTMLInputElement).value)[0].stacValue;
+    this.stacFilter.sortby[0]['field'] = this.orderByStac.toLowerCase();
+    this.parseAdvancedFilter();
   }
 
   showComboSelect(event: any) {
@@ -1265,12 +1273,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   queryValue = parseInt(filterWordsArr[index + 2]);
                 }
               } else if (queryableItem.type === 'timestamp') {
-                if (filterWordsArr[index + 1].toLowerCase() === 'between' || filterWordsArr[index + 1].toLowerCase() === 'in') {
-                  const inputValue1 = filterWordsArr[index + 2].replace('/', '-');
-                  const inputValue2 = filterWordsArr[index + 3].replace('/', '-');
-                  queryValue = [new Date(inputValue1).toISOString(), new Date(inputValue2).toISOString()];
-                  isQueryable[index + 3] = true;
-                } else if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
+                if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
                   queryValue = null;
                 } else {
                   const inputValue = filterWordsArr[index + 2].replace('/', '-');
@@ -1298,7 +1301,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (filterWordsArr[index + 1].toLowerCase() !== 'isnull') {
                   let tempValue: any = null;
                   Array.isArray(queryValue) ? (filterWordsArr[index + 1].toLowerCase() === 'between' ? tempValue = queryValue[0] : filterWordsArr[index + 1].toLowerCase() === 'in' ? tempValue = queryValue : tempValue = queryValue[0]) : tempValue = queryValue;
-                  this.stacFilter.filter['args'][this.stacFilter.filter['args'].length - 1]['args'].push(tempValue);
+                  this.stacFilter.filter['args'][this.stacFilter.filter['args'].length - 1]['args'].push(queryableItem.type === 'timestamp' ? {"timestamp": tempValue} : tempValue);
                   if (Array.isArray(queryValue) && filterWordsArr[index + 1].toLowerCase() === 'between') {
                     this.stacFilter.filter['args'][this.stacFilter.filter['args'].length - 1]['args'].push(queryValue[1]);
                   }
@@ -1369,49 +1372,30 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.publicationStartEl.setCustomValidity("");
       this.stacFilter.filter!['args'].push({
-        op: '>',
+        op: '>=',
         args: [
           {
             property: 'published'
           },
-          new Date(this.publicationStartEl.value).toISOString()
+          {"timestamp": new Date(this.publicationStartEl.value).toISOString()}
         ]
       });
     }
     if (this.publicationStopEl.value !== "") {
       if (this.publicationStartEl.value === "") {
-        // Commented because the op 'between' doesn't work with 'published'
-        /* if (!this.stacFilter.hasOwnProperty('filter')) {
-          this.stacFilter.filter = {op: "and", args: []};
-        }
-        this.publicationStartEl.setCustomValidity("");
-        this.stacFilter.filter!['args'].push({
-          op: '<',
-          args: [
-            {
-              property: 'published'
-            },
-            new Date(this.publicationStopEl.value + 'T23:59:59.999Z').toISOString()
-          ]
-        }); */
       } else if (this.publicationStartEl.value <= this.publicationStopEl.value) {
         this.publicationStopEl.setCustomValidity("");
-        // Commented because the op 'between' doesn't work with 'published'
-        /* this.stacFilter.filter!['args'][this.stacFilter.filter!['args'].length - 1]['op'] = 'between';
-        this.stacFilter.filter!['args'][this.stacFilter.filter!['args'].length - 1]['args'].push(new Date(this.publicationStopEl.value).toISOString()); */
-
-        // Just add another filter in place of 'between' method
         if (!this.stacFilter.hasOwnProperty('filter')) {
           this.stacFilter.filter = {op: "and", args: []};
         }
         this.publicationStartEl.setCustomValidity("");
         this.stacFilter.filter!['args'].push({
-          op: '<',
+          op: '<=',
           args: [
             {
               property: 'published'
             },
-            new Date(this.publicationStopEl.value + 'T23:59:59.999Z').toISOString()
+            {"timestamp": new Date(this.publicationStopEl.value + 'T23:59:59.999Z').toISOString()}
           ]
         });
       } else {
@@ -1425,9 +1409,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     /* Parsing collections */
     [].forEach.call(this.missionEl, (el:any, i:any) => {
       if (el.getElementsByTagName('input')[0].checked) {
-        // Commented, because when using STAC protocol, collections are retrieved directly from GSS.
-        // TODO: When there will be working GSS properties search, change the stacCollectionsList structure.
-        //this.stacFilter.collections?.push(this.platformDetailsList[i].value);
         this.stacFilter.collections?.push(this.stacCollectionsList[i]);
 
         /* Check every attribute in the mission */
@@ -1797,7 +1778,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 "@odata.count": this.productTotalNumber,
                 value: []
               };
-              console.log(res.features);
+              console.log("Products found:", res.features);
               res.features.forEach((feature: any) => {
                 let tempProduct: any = {};
                 // First add parsed properties

@@ -29,11 +29,13 @@
     "orderByOptions": [
       {
         "name": "Publication Date",
-        "value": "PublicationDate"
+        "value": "PublicationDate",
+        "stacValue": "properties.published"
       },
       {
         "name": "Sensing Date",
-        "value": "ContentDate/Start"
+        "value": "ContentDate/Start",
+        "stacValue": "properties.datetime"
       }
     ],
     "sortByOptions": [
@@ -65,7 +67,7 @@
       "longitude": 2.27,
       "latitude": 38.86,
       "zoom": 3.0,
-      "minZoom": 2.0,
+      "minZoom": 2.5,
       "maxZoom": 12
     },
     "projection": "globe"
