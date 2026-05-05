@@ -220,7 +220,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
   private typingTimeout: number = 750;
   private suggestionTimeoutId: any;
   private suggestionTimeout: number = 5000;
-  public foundSuggestions: string[] = []; //["product:type", "processingMode", "sar:instrument_mode", "altro.."];
+  public foundSuggestions: string[] = [];
   private foundSuggestionMaxNum: number = 8;
   public foundSuggestionSelected: number = -1;
 
@@ -544,7 +544,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
         stacQueryables: this.productSearch.getQueryables()
       })
     };
-    //console.log("Object.keys(calls).length: " + Object.keys(calls).length);
     if (Object.keys(calls).length === 0) {
       advancedSearchSubmitIcon.classList.add('invalid');
       advancedSearchMagnifierIcon.classList.add('invalid');
@@ -587,9 +586,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   name: key,
                   ...(value as Record<string, any>)
                 }));
-                //console.log("this.stacQueryablesList: ", this.stacQueryablesList);
-                //console.log("Types: ", [...new Set(this.stacQueryablesList.map(item => item.type))]);
-                //console.log(JSON.stringify(this.stacQueryablesList, null, 2));
                 this.isStacActive = true;
               } else {
                 this.isStacActive = false;
@@ -744,7 +740,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.typingTimeoutId = setTimeout(() => {
       this.foundSuggestionSelected = -1;
       this.foundSuggestions = this.stacQueryablesList.map(item => item.name).filter(item => item.includes(inputText)).slice(0, this.foundSuggestionMaxNum);
-      //console.log("this.foundSuggestions: ", this.foundSuggestions);
       textSearchSuggestionsContainer?.classList.remove('display-none');
       setTimeout(() => {this.showTextSearchSuggestionsDiv();}, 10);
       this.suggestionTimeoutId = setTimeout(() => {
@@ -1235,21 +1230,20 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.filter !== "") {
       const filterWordsArr = this.filter.split(' ');
       let isQueryable: boolean[] = Array(filterWordsArr.length).fill(false);
+      let filtersNumber: number = 0;
+      let firstOperator: string = "and";
 
       filterWordsArr.forEach((filterWordItem: any, index: number) => {
         // Check if it is a queryable filter
         [].forEach.call(this.stacQueryablesList, (queryableItem: any) => {
           // if it is a valid queryable filter, insert text into stac filter output
           if (filterWordItem.toLowerCase() === queryableItem.name.toLowerCase()) {
+            filtersNumber += 1;
             if (filterWordsArr.length -1 >= index + (filterWordsArr[index + 1].toLowerCase() === 'isnull' ? 1 : 2)) {
               // mark this and the next 2 words as part of the queryable filter
               isQueryable[index] = isQueryable[index + 1] = true;
               if (filterWordsArr[index + 1].toLowerCase() !== 'isnull') {
                 isQueryable[index + 2] = true;
-              }
-              if (!this.stacFilter.hasOwnProperty('filter')) {
-                // use AND logic as default. Can be changed after if another logic word will be found
-                this.stacFilter.filter = {op: "and", args: []};
               }
 
               // Check stac queryable filter type
@@ -1283,13 +1277,32 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
                   queryValue = null;
                 } else {
-                  // Accept:  value = 1 OR value = true OR value = True
+                  // Accept as true:  value = 1 OR value = true OR value = True
                   queryValue = filterWordsArr[index + 2];
                 }
               }
 
-              //console.log("queryValue: ", queryValue);
-              if (this.stacFilter.filter) {
+              if (filtersNumber === 1) {
+                this.stacFilter.filter = {
+                  op: filterWordsArr[index + 1].toLowerCase() === 'isnull' ? 'isNull' : filterWordsArr[index + 1].toLowerCase(),
+                  args: [
+                    {
+                      property: filterWordsArr[index]
+                    }
+                  ]
+                }
+                if (filterWordsArr[index + 1].toLowerCase() !== 'isnull') {
+                  let tempValue: any = null;
+                  Array.isArray(queryValue) ? (filterWordsArr[index + 1].toLowerCase() === 'between' ? tempValue = queryValue[0] : filterWordsArr[index + 1].toLowerCase() === 'in' ? tempValue = queryValue : tempValue = queryValue[0]) : tempValue = queryValue;
+                  this.stacFilter.filter['args'].push(queryableItem.type === 'timestamp' ? {"timestamp": tempValue} : tempValue);
+                  if (Array.isArray(queryValue) && filterWordsArr[index + 1].toLowerCase() === 'between') {
+                    this.stacFilter.filter['args'].push(queryValue[1]);
+                  }
+                }
+              } else if (filtersNumber === 2) {
+                let singleFilter = this.stacFilter.filter;
+                this.stacFilter.filter = {op: firstOperator, args: []};
+                this.stacFilter.filter['args'].push(singleFilter);
                 this.stacFilter.filter['args'].push({
                   op: filterWordsArr[index + 1].toLowerCase() === 'isnull' ? 'isNull' : filterWordsArr[index + 1].toLowerCase(),
                   args: [
@@ -1306,6 +1319,23 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                     this.stacFilter.filter['args'][this.stacFilter.filter['args'].length - 1]['args'].push(queryValue[1]);
                   }
                 }
+              } else {
+                this.stacFilter.filter!['args'].push({
+                  op: filterWordsArr[index + 1].toLowerCase() === 'isnull' ? 'isNull' : filterWordsArr[index + 1].toLowerCase(),
+                  args: [
+                    {
+                      property: filterWordsArr[index]
+                    }
+                  ]
+                });
+                if (filterWordsArr[index + 1].toLowerCase() !== 'isnull') {
+                  let tempValue: any = null;
+                  Array.isArray(queryValue) ? (filterWordsArr[index + 1].toLowerCase() === 'between' ? tempValue = queryValue[0] : filterWordsArr[index + 1].toLowerCase() === 'in' ? tempValue = queryValue : tempValue = queryValue[0]) : tempValue = queryValue;
+                  this.stacFilter.filter!['args'][this.stacFilter.filter!['args'].length - 1]['args'].push(queryableItem.type === 'timestamp' ? {"timestamp": tempValue} : tempValue);
+                  if (Array.isArray(queryValue) && filterWordsArr[index + 1].toLowerCase() === 'between') {
+                    this.stacFilter.filter!['args'][this.stacFilter.filter!['args'].length - 1]['args'].push(queryValue[1]);
+                  }
+                }
               }
             }
           }
@@ -1313,17 +1343,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // perform other checks if the word is not part of a queryable filter
         if (!isQueryable[index]) {
-          if (["and", "or"].includes(filterWordsArr[index])) {
-            isQueryable[index] = true;
-            if (!this.stacFilter.hasOwnProperty('filter')) {
-              // use AND logic as default. Can be changed after if another logic word will be found
-              this.stacFilter.filter = {op: filterWordsArr[index].toLowerCase(), args: []};
-            } else {
-              this.stacFilter.filter!['op'] = filterWordsArr[index].toLowerCase();
+            if (["and", "or"].includes(filterWordsArr[index])) {
+              isQueryable[index] = true;
+              firstOperator = filterWordsArr[index].toLowerCase();
             }
-          }
         }
       });
+      if (filtersNumber > 1) {
+        this.stacFilter.filter!['op'] = firstOperator;
+      }
       isQueryable.forEach((isQueryableItem: boolean, index: number) => {
         if (!isQueryableItem && filterWordsArr[index] != '') {
           if (!this.stacFilter.ids) this.stacFilter.ids = [];
@@ -1458,9 +1486,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
               }
               if (gotValue) {
-                //console.log("TODO - gotValue - gotMinValue: ", gotMinValue);
-                //console.log("TODO - gotValue - gotMaxValue: ", gotMaxValue);
-                //console.log("TODO - gotValue - value: ", value);
                 if (!this.stacFilter.hasOwnProperty('filter')) {
                   this.stacFilter.filter = {op: "and", args: []};
                 }
@@ -1472,10 +1497,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                     }, value]
                   });
                 }
-                /* this.attributeFilter += " and Attributes/" + this.platformDetailsList[i].filters[k].attributeType +
-                  "/any(att:att/Name eq '" + this.platformDetailsList[i].filters[k].attributeName +
-                  "' and att/" + this.platformDetailsList[i].filters[k].attributeType + (gotMinValue ? "/Value ge " : (gotMaxValue ? "/Value le " : "/Value eq ")) +
-                  (this.platformDetailsList[i].filters[k].attributeType === "OData.CSC.StringAttribute" ? "'" + value + "'" : value) + ")"; */
               }
             });
           });
@@ -1783,7 +1804,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 let tempProduct: any = {};
                 // First add parsed properties
                 tempProduct.Name = feature.hasOwnProperty('id') ? feature.id : "";
-                //tempProduct.Id = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('uuid')) ? feature.properties.uuid : "N/D";
                 tempProduct.platformShortName = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('constellation')) ? feature.properties.constellation.toUpperCase() : "";
                 tempProduct.platformSerialIdentifier = feature.hasOwnProperty('id') ? this.getPlatformSerialIdentifierFromProductId(feature.id) : "";
                 tempProduct.ContentDate = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('start_datetime')) ? {
@@ -1850,8 +1870,6 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                   },
                   error: (e) => {}
                 });
-
-                //console.log("tempProduct: ", tempProduct);
 
                 [].forEach.call(this.selectedProducts ,(sel: any, index: number) => {
                   sel.isInList = false;
