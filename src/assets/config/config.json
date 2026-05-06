@@ -1,5 +1,5 @@
 {
-  "version": "4.0.6",
+  "version": "4.1.0",
   "centreInfo": {
       "name": "",
       "image": "",
@@ -30,11 +30,13 @@
     "orderByOptions": [
       {
         "name": "Publication Date",
-        "value": "PublicationDate"
+        "value": "PublicationDate",
+        "stacValue": "properties.published"
       },
       {
         "name": "Sensing Date",
-        "value": "ContentDate/Start"
+        "value": "ContentDate/Start",
+        "stacValue": "properties.datetime"
       }
     ],
     "sortByOptions": [
