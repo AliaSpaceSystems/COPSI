@@ -23,7 +23,6 @@
       "disableAtHashCheck": true,
       "useSilentRefresh": false
   },
-
   "searchOptions": {
     "productsPerPage": 100,
     "productsPerPageStac": 100,
@@ -68,7 +67,7 @@
         "longitude": 2.27,
         "latitude": 38.86,
         "zoom": 3.0,
-        "minZoom": 2.0,
+        "minZoom": 2.5,
         "maxZoom": 12
       },
       "projection": "globe"
