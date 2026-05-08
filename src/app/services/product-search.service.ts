@@ -275,15 +275,6 @@ export class ProductSearchService {
     );
   }
 
-  /* checkOdataService() {
-    if (!this.isLogged) return of(null);
-    let checkOdataUrl = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
-    return this.http.get<any>(checkOdataUrl, {observe: 'response'})
-      .pipe(map((res) => res),
-        catchError(e => of(e))
-      );
-  } */
-
   checkOdataService() {
     if (!this.isLogged) return of({ error: false, data: null });
     const url = AppConfig.settings.serviceUrl + `/odata/${AppConfig.settings.odataVersion}/$metadata`;
@@ -299,15 +290,6 @@ export class ProductSearchService {
       }))
     );
   }
-
-  /* getCollections() {
-    if (!this.isLogged) return of(null);
-    let collectionsUrl = AppConfig.settings.serviceUrlStac + '/stac/collections';
-    return this.http.get<any>(collectionsUrl, httpOptions)
-      .pipe(map((res) => res),
-        catchError(e => of(e))
-      );
-  } */
 
   getCollections() {
     if (!this.isLogged) return of({ error: false, data: null });

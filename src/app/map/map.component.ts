@@ -1741,7 +1741,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         cullMode: 'back',
         cull: true
       },
-      initialViewState: initialViewState,
+      initialViewState: {...initialViewState, "minZoom": 1.0},
       views: new MapView({
         id: 'plane',
         controller: {keyboard: false, inertia: true, doubleClickZoom: false},

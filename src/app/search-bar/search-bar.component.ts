@@ -1250,8 +1250,8 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
               let queryValue: any;
               if (queryableItem.type === 'string') {
                 if (filterWordsArr[index + 1].toLowerCase() === 'in') {
-                  queryValue = [filterWordsArr[index + 2], filterWordsArr[index + 3]];
-                  isQueryable[index + 3] = true;
+                  let tempValue = filterWordsArr[index + 2];
+                  queryValue = (tempValue.startsWith('[') && tempValue.endsWith(']')) ? tempValue.slice(1, -1).split(',') : tempValue;
                 } else if (filterWordsArr[index + 1].toLowerCase() === 'isnull') {
                   queryValue = null;
                 } else {
@@ -1293,8 +1293,15 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
                 if (filterWordsArr[index + 1].toLowerCase() !== 'isnull') {
                   let tempValue: any = null;
-                  Array.isArray(queryValue) ? (filterWordsArr[index + 1].toLowerCase() === 'between' ? tempValue = queryValue[0] : filterWordsArr[index + 1].toLowerCase() === 'in' ? tempValue = queryValue : tempValue = queryValue[0]) : tempValue = queryValue;
+                  Array.isArray(queryValue)
+                    ? (filterWordsArr[index + 1].toLowerCase() === 'between'
+                      ? tempValue = queryValue[0]
+                      : (filterWordsArr[index + 1].toLowerCase() === 'in'
+                        ? tempValue = queryValue
+                        : tempValue = queryValue[0]))
+                    : tempValue = queryValue;
                   this.stacFilter.filter['args'].push(queryableItem.type === 'timestamp' ? {"timestamp": tempValue} : tempValue);
+
                   if (Array.isArray(queryValue) && filterWordsArr[index + 1].toLowerCase() === 'between') {
                     this.stacFilter.filter['args'].push(queryValue[1]);
                   }

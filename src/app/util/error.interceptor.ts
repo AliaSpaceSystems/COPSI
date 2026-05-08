@@ -66,7 +66,6 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
       }),
       catchError(err => {
-        //console.log("DEV - ERRORE: ", err);
         /* Spinner Service Off */
         if(request.url.indexOf(this.DOWNLOAD_SUBPATH) < 0) {
           this.spinner.setOff(now);
@@ -79,8 +78,6 @@ export class ErrorInterceptor implements HttpInterceptor {
         switch (err.status) {
           case 401: {
             /* auto logout if 401 response returned from api */
-            //console.log("ERROR 401: Not Authorized");
-            //this.oauthService.logOut();
             this.exchangeService.setIsLogged(false);
             break;
           }
@@ -88,12 +85,6 @@ export class ErrorInterceptor implements HttpInterceptor {
             if(request.url.indexOf(this.QL_SUBPATH) < 0) {
               this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.BAD_REQUEST_MSG);
             }
-            /* Show alert on any other error */
-            /*if (err.error.hasOwnProperty('error')) {
-              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.error.error.message);
-            } else {
-              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, err.message);
-            }*/
             break;
           }
           case 403: {
