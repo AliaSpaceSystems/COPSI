@@ -768,6 +768,7 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
     const text = event.target.innerText;
     this.insertSuggestedStacFilter(text);
     document.getElementById('search-input')?.focus();
+    this.foundSuggestionSelected = -1;
     this.suggestionTimeoutId = setTimeout(() => {
       this.hideTextSearchSuggestionDiv();
     }, 250);
