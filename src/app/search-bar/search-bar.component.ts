@@ -576,16 +576,18 @@ export class SearchBarComponent implements OnInit, OnDestroy, AfterViewInit {
             this.stacCollectionsList = res.stac.data.collections.map((obj: any) => obj.id);
             this.isStacActive = true;
             if (res.stacQueryables) {
-              //console.log("Queryables: ", res.stacQueryables);
+              console.log("Queryables: ", res.stacQueryables);
               if (res.stacQueryables.error) {
                 console.log("res.stac.error: ", res.stacQueryables.error);
                 this.isStacActive = false;
                 console.log("STAC failed: ", res.stacQueryables.details ?? "");
               } else if (res.stacQueryables.data.hasOwnProperty("properties")) {
-                this.stacQueryablesList = Object.entries(res.stacQueryables.data.properties).map(([key, value]) => ({
-                  name: key,
-                  ...(value as Record<string, any>)
-                }));
+                this.stacQueryablesList = Object.entries(res.stacQueryables.data.properties)
+                  .filter(([key]) => key !== 'geometry')
+                  .map(([key, value]) => ({
+                    name: key,
+                    ...(value as Record<string, any>)
+                  }));
                 this.isStacActive = true;
               } else {
                 this.isStacActive = false;
