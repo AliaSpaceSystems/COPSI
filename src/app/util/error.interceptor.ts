@@ -13,7 +13,7 @@ import { AppConfig } from '../services/app.config';
 export class ErrorInterceptor implements HttpInterceptor {
 
   BAD_REQUEST_MSG = "Your request cannot be processed by the server. Please check the request's parameters and try again.";
-  INTERNAL_SERVER_ERROR_MSG = "There was a problem processing your request:";
+  INTERNAL_SERVER_ERROR_MSG = "There was a problem processing your request.";
   SERVICE_GATEWAY_TIMEOUT_MSG = "The service is temporarily unavailable. Please try again later.";
   NOT_ALLOWED_MSG = "You are not authorized to perform this request.";
   NOT_FOUND_MSG = "Request or product not available on the server.";
@@ -108,7 +108,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           }
           case 500: {
             if(request.url.indexOf(this.QL_SUBPATH) < 0 && request.url.indexOf(this.QL_SUBPATH_STAC) < 0) {
-              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG);
+              this.alert.showErrorAlert("ERROR " + err.status + ": " + err.statusText, this.INTERNAL_SERVER_ERROR_MSG + "<br><br>" + err.message);
             }
             break;
           }
