@@ -2065,7 +2065,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         getLineColor: this.mapLayers[selectedMapStyleIndex].borderColor,
       })
       this.backgroundLayerGlobe = this.backgroundLayerGlobe.clone({
-      data: this.worldBackgroundFeature,
+        data: this.worldBackgroundFeature,
         visible: !this.drawTileLayer,
         getFillColor: this.mapLayers[selectedMapStyleIndex].seaColor
       })
@@ -2135,7 +2135,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
         visible: this.drawTileLayer
       });
       this.backgroundLayerGlobe = this.backgroundLayerGlobe.clone({
-      data: this.worldBackgroundFeature,
+        data: this.worldBackgroundFeature,
         visible: !this.drawTileLayer,
         getFillColor: this.mapLayers[selectedMapStyleIndex].seaColor
       })
